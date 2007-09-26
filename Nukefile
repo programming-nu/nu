@@ -92,7 +92,8 @@
       (SH "cp -pRfv #{@framework}.framework /Library/Frameworks/#{@framework}.framework")
       (SH "sudo mkdir -p #{@prefix}/share")
       (SH "sudo rm -rf #{@prefix}/share/nu")
-      (SH "sudo svn export share/nu #{@prefix}/share/nu"))
+      (SH "sudo cp -pRfv share/nu #{@prefix}/share/nu")
+      (SH "sudo cp -pRfv examples #{@prefix}/share/nu/examples"))
 
 ;; Build a disk image for distributing the framework.
 (task "framework_image" => "framework" is
