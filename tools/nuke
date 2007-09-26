@@ -1,0 +1,543 @@
+#!/usr/local/bin/nush
+#
+# @file nuke
+# The Nu software construction tool.
+#
+# @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+
+;; basic declarations that allow nuke to run in mininush
+(global NO 0)
+(global YES 1)
+(NSArray include: NuEnumerable)
+(NSSet include: NuEnumerable)
+
+(function SH (command)
+     (puts "nuke: #{command}")
+     (system command))
+
+(class NSString
+     ;; Change the extension at the end of a file name to a new specified value.
+     (imethod (id) stringByReplacingPathExtensionWith:(id) newExtension is
+          ((self stringByDeletingPathExtension) stringByAppendingPathExtension:newExtension))
+     
+     ;; Get the directory name component of a file name.
+     (imethod (id) dirName is
+          (set components (self componentsSeparatedByString:"/"))
+          (set result ((NSMutableString alloc) init))
+          ((- (components count) 1) times:
+           (do (n) 
+               (result appendString:(components objectAtIndex:n))
+               (result appendString:"/")))
+          result)
+     
+     ;; Get the file name component of a file name.
+     (imethod (id) fileName is
+          (set components (self componentsSeparatedByString:"/"))
+          (components objectAtIndex:(- (components count) 1))))
+
+(class NSDictionary 
+     ;; Create a dictionary from a list.
+     (cmethod (id) dictionaryWithList: (id) l is
+          (set dict ((NSMutableDictionary alloc) init))
+          (l eachPair: (do (key object) (dict setObject:object forKey:key)))
+          dict))
+
+(class NSArray
+     ;; Create an array from a list.
+     (cmethod (id) arrayWithList:(id) list is
+          (set l ((NSMutableArray alloc) init))
+          (list each: (do (item) (if item (l addObject:item))))
+          l)
+     
+     ;; Join the members of an array into a string with array elements separated by spaces.
+     (imethod (id) join is
+          (self componentsJoinedByString:" "))
+     
+     ;; Get the element of an array with the maximum value (as obtained using the specified block).
+     (imethod (id) maximum:(id)block from:(id)initial is
+          (self reduce:
+                (do (max d)
+                    (set value (block d))
+                    (if (> value max) (then value) (else max)))
+                from: initial)))
+
+(class NuCell
+     ;; Join the elements of a list into a string with list elements separated by spaces.
+     (imethod (id) join is
+          ((NSArray arrayWithList:self) join)))
+
+;; creates a named directory if it does not already exist
+(function make-directory (dir)
+     (set components (dir componentsSeparatedByString:"/"))
+     ((components count) times:
+      (do (i)
+          (set partial
+               ((components subarrayWithRange:(list 0 (+ i 1))) componentsJoinedByString:"/"))
+          (unless (eq (NSFileManager directoryExistsNamed:partial) YES)
+                  (SH "mkdir '#{partial}'"))))
+     0)
+
+;; returns an array of filenames matching a given pattern
+(function filelist (pattern)
+     (set regex (NuRegex regexWithPattern:pattern))
+     (set results ((NSMutableSet alloc) init))
+     (let (enumerator ((NSFileManager defaultManager) enumeratorAtPath:"."))
+          (while (set filename (enumerator nextObject))
+                 (if (regex findInString:(filename stringValue))
+                     (results addObject:filename))))
+     results)
+
+;; @abstract A task description, complete with action and dependency information.
+;; @discussion NukeTasks are used to represent tasks in nuke, 
+;; the Nu build tool.  A NukeTask may be associated with a file
+;; or may represent an abstract set of operations.  Tasks have
+;; dependencies; each dependency must be satisfied before 
+;; the task action is attempted.  In nuke, tasks are created 
+;; using the <b>task</b> and <b>file</b> macros.
+(class NukeTask is NSObject
+     (ivar (id) name)			;; the name of the task
+     (ivar (id) dependencies)	;; an array of references to other tasks
+     (ivar (id) action)			;; a block which performs the necessary build action
+     (ivar (int) isFile)		;; if nonzero, task is a file task
+     (ivar (id) result)			;; the result of executing the task
+     
+     ;; @discussion Create a task with a specified name.
+     (imethod (id) initWithName:(id) name is
+          (super init)
+          (set @name name)
+          (set @isFile 1)
+          (set @dependencies ((NSMutableArray alloc) init))
+          self)
+     
+     ;; Get a task's name.
+     (imethod (id) name is @name)
+     
+     ;; Get the array containing the task's dependencies.
+     (imethod (id) dependencies is @dependencies)
+     
+     ;; Set the action of a task to a specified block.
+     (imethod (void) setAction:(id) action is (set @action action))
+     
+     ;; Indicate whether or not a task is a file creation task.
+     (imethod (void) setIsFile:(int) f is (set @isFile f))
+     
+     ;; Determine whether or not a task is a file creation task.
+     (imethod (int) isFile is @isFile)
+     
+     ;; Get a time stamp for the target of a task.
+     (imethod (id) timestamp is
+          (set date (NSFileManager creationTimeForFileNamed:@name))
+          (cond ((eq @isFile 0) 0)
+                (date           ((NSFileManager modificationTimeForFileNamed:@name) timeIntervalSinceReferenceDate))
+                (else           0)))
+     
+     ;; Attempt to update a task, first by updating all its dependencies, 
+     ;; then, if no errors occurred, by performing the the action of a task.
+     (imethod (id) update is
+          (unless @result
+                  ;; first update all dependencies
+                  (set @result (@dependencies reduceLeft: (do (r d) (+ r (d update))) from:0))
+                  
+                  ;; continue only if there were no errors
+                  (if (eq @result 0)
+                      ;; then get the largest timestamp -- it represents the newest dependency
+                      (set dependency-timestamp
+                           (@dependencies maximum:(do (d) (d timestamp)) from:0))
+                      ;; if the largest timestamp is greater than or equal to this task's timestamp, perform the task's action
+                      (if (or (eq (self timestamp) 0) (> dependency-timestamp (self timestamp)))
+                          ;;(puts "task #{@name} dependency #{dependency-timestamp} self #{(self timestamp)}")
+                          (set @result (@action self))
+                          (unless @result (set @result 0))
+                          nil))
+                  (if $verbose (puts "task #{@name} result is #{@result}")))
+          @result))
+
+;; do not use this directly. It is common code extracted from the file and task macros.
+(macro task-helper
+     (set __dependency nil)
+     (set __action nil)
+     (set __taskName (eval (car margs)))
+     (set __cursor (cdr margs))
+     ;; get dependencies
+     (if (and __cursor (eq (car __cursor) (quote =>)))
+         (set __cursor (cdr __cursor))
+         (while (and __cursor (!= (car __cursor) (quote is)))
+                (set __dependency (eval (car __cursor)))
+                (self addDependency:__taskName on:__dependency)
+                (set __cursor (cdr __cursor))))
+     ;; get action
+     (if (and __cursor (eq (car __cursor) (quote is)))
+         (set __action (cdr __cursor))
+         (set __block (eval (append '(do (target)) __action)))
+         (self addTask:__taskName action:__block))
+     ;; return the name of the task
+     __taskName)
+
+;; use this to define tasks that create files.
+(macro file
+     ((self taskNamed: (eval (cons (quote task-helper) margs))) setIsFile:1))
+
+;; use this to define tasks that DON'T create files.
+(macro task
+     ((self taskNamed: (eval (cons (quote task-helper) margs))) setIsFile:0))
+
+;; use this to create all the compilation tasks for the files in the @c_files and @m_files collections
+(macro compilation-tasks
+     (unless @cc (set @cc "gcc"))
+     (unless @cflags (set @cflags "-g"))
+     (unless @mflags (set @mflags "-fobjc-exceptions"))
+     (unless @includes (set @includes ""))
+     (unless (and @arch (@arch length))
+             (set @arch (list (NSString stringWithShellCommand:"arch"))))
+     (unless @ldflags (set @ldflags ""))
+     
+     (@arch each: (do (architecture) (system "mkdir -p build/#{architecture}")))
+     
+     ;; compile c files
+     (set @c_objects (NSMutableDictionary dictionary))
+     (@arch each: (do (architecture) (@c_objects setObject:(NSMutableArray array) forKey:architecture)))
+     (@c_files each:
+          (do (sourceName)
+              (@arch each:                      
+                     (do (architecture)
+                         (set objectName "build/#{architecture}/")
+                         (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
+                         ((@c_objects objectForKey:architecture) addObject: objectName)
+                         (file objectName => sourceName is
+                               (SH "#{@cc} #{@cflags} -arch #{architecture} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
+     
+     ;; compile objc files
+     (set @m_objects (NSMutableDictionary dictionary))
+     (@arch each: (do (architecture) (@m_objects setObject:(NSMutableArray array) forKey:architecture)))
+     (@m_files each:
+          (do (sourceName)
+              (@arch each: 
+                     (do (architecture)          
+                         (set objectName "build/#{architecture}/")
+                         (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
+                         ((@m_objects objectForKey:architecture) addObject: objectName)
+                         (file objectName => sourceName is
+                               (SH "#{@cc} #{@cflags} #{@mflags} -arch #{architecture} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
+     
+     ;(puts (@c_objects description))
+     ;(puts (@m_objects description))
+     
+     ;; cleanup
+     (task "clean" is
+           (system "rm -rf build")))
+
+;; use this to create all the linking and assembly tasks to build a Cocoa application
+(macro application-tasks
+     ;; DEFAULT: if no application name is specified, use something dumb and complain.
+     (unless @application 
+             (set @application "Untitled")
+             (NSLog "Please name your application by setting @application in your Nukefile"))
+     
+     ;; DEFAULT: if no application identifier is specifed, use something dumb and complain.
+     (unless @application_identifier
+             (set @application_identifier "nu.programming.untitled")
+             (NSLog "Please set an @application_identifier in your Nukefile"))
+     
+     ;; DEFAULT: if no icon is specified, use the nu icon for the application.
+     (unless @application_icon_file (set @application_icon_file "nu.icns"))
+     (unless @icon_files (set @icon_files (NSArray arrayWithList:'("/usr/local/share/nu/nu.icns"))))
+     
+     ;; DEFAULT: if no nib files are specified, use the standard (empty) Nu MainMenu.nib.
+     (unless @nib_files (set @nib_files (NSArray arrayWithList:'("/usr/local/share/nu/resources/English.lproj/MainMenu.nib"))))
+     
+     ;; DEFAULT: if no creator code is specified, use "????"
+     (unless @application_creator_code (set @application_creator_code "????"))
+     
+     ;; app directory tasks
+     (set @application_dir                    "#{@application}.app")
+     (set @application_contents_dir           "#{@application_dir}/Contents")
+     (set @application_executable_dir         "#{@application_contents_dir}/MacOS")
+     (set @application_resource_dir           "#{@application_contents_dir}/Resources")
+     (set @application_resource_localized_dir "#{@application_resource_dir}/English.lproj")
+     
+     ;; make the application directory structure
+     ((list @application_dir 
+            @application_contents_dir 
+            @application_executable_dir 
+            @application_resource_dir 
+            @application_resource_localized_dir)
+      each: (do (dir) (file dir is (make-directory (target name)))))
+     
+     ;; application executable
+     (set @application_executable_name "#{@application_executable_dir}/#{@application}")   
+     (if (or (and @c_objects (@c_objects count) (((@c_objects allValues) objectAtIndex:0) count))
+             (and @m_objects (@m_objects count) (((@m_objects allValues) objectAtIndex:0) count)))
+         (then
+              ;; application architecture-specific executable
+              (set @application_executables (NSMutableArray array))
+              (@arch each:
+                     (do (architecture)
+                         (set application_executable "build/#{architecture}/application-#{@application}")
+                         (@application_executables addObject:application_executable)
+                         (file application_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                               (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} -arch #{architecture} #{@cflags} #{@ldflags} -o '#{(target name)}'")
+                               (SH command))))
+              ;; application fat executable
+              (file @application_executable_name => @application_executable_dir @application_executables is
+                    (set command "lipo -create #{(@application_executables join)} -output #{@application_executable_name}")
+                    (SH command)))
+         (else
+              (file @application_executable_name => @application_executable_dir is 
+                    (SH "cp /usr/local/bin/nush '#{(target name)}'"))))
+     
+     ;; copy application_resources into the application
+     (task "application_resources" => @application_resource_dir)
+     ((list @nu_files @icon_files) each:
+      (do (l)
+          (l each:
+             (do (f)
+                 (set baseName ((f componentsSeparatedByString:"/") lastObject))
+                 (set targetFile "#{@application_resource_dir}/#{baseName}")
+                 (file targetFile => f is
+                       (SH "cp #{f} '#{targetFile}'"))
+                 (task "application_resources" => targetFile)))))
+     ((list @nib_files @resources) each:
+      (do (l)
+          (l each:
+             (do (f)
+                 (set g ((f componentsSeparatedByString:"/") lastObject))
+                 (file "#{@application_resource_localized_dir}/#{g}" => f @application_resource_localized_dir is
+                       (SH "cp -R '#{f}' '#{(target name)}'")
+                       (SH "find '#{(target name)}' -name .svn -exec rm -rf {} \;")
+                       0)
+                 (task "application_resources" => "#{@application_resource_localized_dir}/#{g}")))))
+     
+     ;; create the application_infoplist
+     (set application_infoplist "#{@application_contents_dir}/Info.plist")
+     (file application_infoplist => @application_contents_dir is
+           (set info (NSDictionary dictionaryWithList:
+                          (list "CFBundleDevelopmentRegion" "English"
+                                "CFBundleExecutable" @application
+                                "CFBundleIconFile" @application_icon_file
+                                "CFBundleIdentifier" @application_identifier
+                                "CFBundleInfoDictionaryVersion" "6.0"
+                                "CFBundleName" @application
+                                "CFBundlePackageType" "APPL"
+                                "CFBundleSignature" @application_creator_code
+                                "CFBundleVersion" "1.0"
+                                "NSMainNibFile" "MainMenu"
+                                "NSHumanReadableCopyright" "Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc."
+                                "NSPrincipalClass" "NSApplication")))
+           (if @application_help_folder
+               (info setObject:@application_help_folder forKey:"CFBundleHelpBookFolder")
+               (info setObject:@application_help_folder forKey:"CFBundleHelpBookName"))           
+           (if @info (info addEntriesFromDictionary: @info))
+           (info writeToFile:(target name) atomically:NO)
+           0)
+     
+     ;; write the application_pkginfo
+     (unless @creator_code (set @creator_code "????"))
+     (set application_pkginfo "#{@application_contents_dir}/PkgInfo")
+     (file application_pkginfo => @application_contents_dir is
+           (SH "echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
+     
+     (task "application" => @application_executable_name "application_resources" application_infoplist application_pkginfo)
+     
+     (task "run" => "application" is
+           (SH "open '#{@application_dir}'"))
+     
+     (task "debug" => "application" is
+           (SH  "'#{@application_dir}/Contents/MacOS/#{@application}'"))
+     
+     (task "gdb" => "application" is
+           (SH  "gdb '#{@application_dir}/Contents/MacOS/#{@application}'"))
+     
+     (task "clobber" => "clean" is
+           (system "rm -rf '#{@application_dir}'"))
+     
+     ; Build a disk image for distributing the application.
+     (task "application_image" => "application" is
+           (system "rm -rf '#{@application}.dmg' dmg")
+           (system "mkdir dmg; cp -Rp '#{@application}.app' dmg")
+           (system "hdiutil create -srcdir dmg '#{@application}.dmg' -volname '#{@application}'")
+           (system "rm -rf dmg")))
+
+
+;; use this to create all the linking and assembly tasks to build a Cocoa framework
+(macro framework-tasks
+     (unless (and @arch (@arch length))
+             (set @arch (list (NSString stringWithShellCommand:"arch"))))
+     
+     ;; framework directory tasks
+     (set @framework_dir                    "#{@framework}.framework")
+     (set @framework_versions_dir           "#{@framework_dir}/Versions")
+     (set @framework_contents_dir           "#{@framework_versions_dir}/A")
+     (set @framework_headers_dir            "#{@framework_contents_dir}/Headers")
+     (set @framework_resource_dir           "#{@framework_contents_dir}/Resources")
+     (set @framework_resource_localized_dir "#{@framework_resource_dir}/English.lproj")
+     
+     ((list @framework_dir 
+            @framework_versions_dir
+            @framework_contents_dir 
+            @framework_headers_dir
+            @framework_resource_dir
+            @framework_resource_localized_dir)
+      each: (do (dir) (file dir is (make-directory (target name)))))
+     
+     (set @initflags (if @framework_initializer 
+                         (then "-Wl,-init -Wl,_#{@framework_initializer}") 
+                         (else "")))
+     
+     ;; framework architecture-specific executable
+     (set @framework_executables (NSMutableArray array))
+     (@arch each:
+            (do (architecture)
+                (set framework_executable "build/#{architecture}/framework-#{@framework}")
+                (@framework_executables addObject:framework_executable)
+                (file framework_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} -arch #{architecture} #{@cflags} #{@ldflags} #{@initflags} -install_name #{@framework_executable_name} -dynamiclib -o '#{(target name)}'")
+                      (SH command))))
+     
+     ;; framework fat executable
+     (set @framework_executable_name "#{@framework_contents_dir}/#{@framework}")
+     (file @framework_executable_name => @framework_contents_dir @framework_executables is
+           (set command "lipo -create #{(@framework_executables join)} -output #{@framework_executable_name}")
+           (SH command))
+     
+     ;; framework_resources
+     (task "framework_resources" => @framework_resource_dir @framework_resource_localized_dir)
+     ((list @nu_files @resource_files) each:
+      (do (l)
+          (l each:
+             (do (f)
+                 (set baseName ((f componentsSeparatedByString:"/") lastObject))
+                 (set targetFile "#{@framework_resource_dir}/#{baseName}")
+                 (file targetFile => f is
+                       (SH "cp #{f} '#{targetFile}'"))
+                 (task "framework_resources" => targetFile)))))
+     (@nib_files each:
+          (do (f)
+              (set g ((f componentsSeparatedByString:"/") lastObject))
+              (file "#{@framework_resource_localized_dir}/#{g}" => f @framework_resource_localized_dir is
+                    (SH "cp -R #{f} '#{((target name) dirName)}'")
+                    (SH "find #{(target name)} -name .svn -exec rm -rf {} \;")
+                    0)
+              (task "framework_resources" => "#{@framework_resource_localized_dir}/#{g}")))
+     
+     
+     ;; framework_infoplist
+     (set framework_infoplist "#{@framework_resource_dir}/Info.plist")
+     (file framework_infoplist => @framework_resource_dir is
+           (set info (NSDictionary dictionaryWithList:
+                          (list "CFBundleDevelopmentRegion" "English"
+                                "CFBundleExecutable" @framework
+                                "CFBundleIdentifier" @framework_identifier
+                                "CFBundleGetInfoString" "Nu. Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc."
+                                "CFBundleInfoDictionaryVersion" "6.0"
+                                "CFBundleName" @framework
+                                "CFBundlePackageType" "FMWK"
+                                "CFBundleSignature" @framework_creator_code
+                                "CFBundleVersion" "0.1"
+                                "NSHumanReadableCopyright" "Nu. Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc."
+                                )))
+           (if @info (info addEntriesFromDictionary: @info))
+           (info writeToFile:(target name) atomically:NO)
+           0)
+     
+     ;; framework_links
+     (task "framework_links" => @framework_versions_dir @framework_dir is
+           (unless (eq 1 (NSFileManager directoryExistsNamed: "#{@framework_versions_dir}/Current"))
+                   (SH "cd #{@framework_versions_dir}; ln -sf A Current"))
+           (unless (eq 1 (NSFileManager directoryExistsNamed: "#{@framework_dir}/Headers"))
+                   (SH "cd #{@framework_dir}; ln -sf Versions/Current/Headers Headers"))
+           (unless (eq 1 (NSFileManager directoryExistsNamed: "#{@framework_dir}/Resources"))
+                   (SH "cd #{@framework_dir}; ln -sf Versions/Current/Resources Resources"))
+           (unless (eq 1 (NSFileManager fileExistsNamed: "#{@framework_dir}/Versions/Current/#{@framework}"))
+                   (SH "cd #{@framework_dir}; ln -sf Versions/Current/#{@framework} #{@framework}"))
+           0)
+     
+     (task "framework" => @framework_executable_name @framework_headers_dir "framework_resources" framework_infoplist "framework_links"))
+
+;; @abstract A project consisting of an interrelated set of NukeTasks.
+;; @discussion NukeProjects gather together a related set of NukeTask task descriptions
+;; and allow them to be more easily referred to by name.  There is typically 
+;; one NukeProject for a given run of nuke.  A Nukefile is evaluated inside 
+;; an instance method of a NukeProject; so all instance variables in a Nukefile
+;; belong to the NukeProject instance.
+(class NukeProject is NSObject
+     (ivars)
+     
+     ;; Get the dictionary of tasks managed by a project.
+     (imethod (id) tasks is @tasks)
+     
+     ;; Get a task by its name.
+     (imethod (id) taskNamed:(id) taskName is
+          (set task (@tasks objectForKey:taskName))
+          (if (eq task nil)
+              (set task ((NukeTask alloc) initWithName:taskName))
+              (@tasks setObject:task forKey:taskName))
+          task)
+     
+     ;; Add a new task by to a project. 
+     ;; The new task is specified by its name.
+     ;; The task action should be specified as a block.
+     (imethod (id) addTask:(id) taskName action:(id) action is
+          (set task (self taskNamed:taskName))
+          (task setAction:action)
+          task)
+     
+     ;; Add a dependency between named tasks.
+     (imethod (void) addDependency:(id) taskName on:(id) dependency is
+          (if (eq YES (dependency isKindOfClass:NSString))
+              (then 
+                    (((self taskNamed:taskName) dependencies) addObject: (self taskNamed:dependency)))
+              (else ;; if it's not a string, the dependency must be enumerable
+                    (dependency each:
+                         (do (element)
+                             (self addDependency:taskName on:element))))))
+     
+     ;; Perform the tasks needed to complete a named target task.
+     (imethod (void) nuke:(id) targetName is
+          (set target (@tasks objectForKey:targetName))
+          (if target 
+              (then (target update))
+              (else (puts "error, unknown target: #{targetName}"))))
+     
+     ;; Initialize a NukeProject.
+     (imethod (id) init is
+          (super init)
+          (set @tasks ((NSMutableDictionary alloc) init))
+          self)
+     
+     ;; Load and evaluate code from a named file. This is typically used to read a Nukefile.
+     (imethod (id) load: (id) filename is
+          (load filename)
+          self))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;; main program
+;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; there's lots more that we could do here, like 
+;; adding command line options to get task lists
+;; or to control the verbosity.
+
+(set argv ((NuApplication sharedApplication) arguments))
+(set target (if (> (argv count) 0) 
+                (then (argv objectAtIndex:0))
+                (else "default")))
+
+;; We expect there to be a file named "Nukefile" in the current directory
+(try
+    (set project (((NukeProject alloc) init) load: "Nukefile"))
+    (catch (exception) 
+           (puts "nuke error: #{(exception reason)}")
+           ;; bridge and call a standard C function
+           (set exit (NuBridgedFunction functionWithName:"exit" signature:"i"))
+           (exit)))
+
+(if $verbose
+    (((project tasks) allKeys) each:
+     (do (key)
+         (set task ((project tasks) objectForKey:key))
+         (if (eq (task isFile) 0) (puts "#{key}")))))
+
+(project nuke:target)
+
+
+

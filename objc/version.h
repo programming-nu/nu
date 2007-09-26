@@ -1,0 +1,11 @@
+
+#define NU_VERSION "0.1.0"
+#define NU_VERSION_MAJOR 0
+#define NU_VERSION_MINOR 1
+#define NU_VERSION_TWEAK 0
+
+#define NU_RELEASE_DATE "2007-09-15"
+#define NU_RELEASE_YEAR  2007
+#define NU_RELEASE_MONTH 9
+#define NU_RELEASE_DAY   15
+

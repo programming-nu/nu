@@ -1,0 +1,36 @@
+;; Nukefile for Nu framework and demo application
+
+;; source files
+(set @c_files     (filelist "^objc/.*.c$"))
+(set @m_files     (filelist "^objc/.*.m$"))
+(set @nu_files 	  (filelist "^nu/.*nu$"))
+(set @frameworks  '("Cocoa" "Nu"))
+(set @icon_files (filelist "^resources/.*icns$"))
+(set @resources   (filelist "^resources/Benwanu Help$"))
+
+(@resources addObjectsFromArray:((filelist "^resources/Credits.rtf$") allObjects))
+
+;; application description
+(set @application "Benwanu")
+(set @application_identifier   "nu.programming.benwanu")
+(set @application_icon_file "benwanu.icns")
+(set @application_help_folder "Benwanu Help")
+
+;; build configuration
+(set @cc "gcc")
+(set @cflags "-g -O3 -DMACOSX ")
+(set @mflags "-fobjc-exceptions")
+(set @arch (list "i386" "ppc"))
+
+(set @ldflags
+     ((list
+           ((@frameworks map: (do (framework) " -framework #{framework}")) join)
+           ((@libs map: (do (lib) " -l#{lib}")) join)
+           ((@lib_dirs map: (do (libdir) " -L#{libdir}")) join))
+      join))
+
+(compilation-tasks)
+(application-tasks)
+
+(task "default" => "application")
+

@@ -1,0 +1,112 @@
+NU DEMO
+=======
+
+Here's a short exercise that you can work through in nush.
+
+% (set a (NSMutableArray array))
+<NSCFArray:1d5ce0>
+% (class NSMutableArray 
+-   (imethod (void) << (id) object is (self addObject:object)))
+()
+% (a << 0)
+()
+% (a << 1)
+()
+% (a << 2)
+()
+% (a count)
+3
+% (set a (NSMutableArray array))
+<NSCFArray:1dba60>
+% (10 times: (do (i) (a << i)))
+10
+% (a count)
+10
+% (set a (NSMutableArray array))
+<NSCFArray:1fbe20>
+% (10 times: (do (i) (a << (* i i))))
+10
+% (a 0)
+0
+% (a 5)
+25
+% (a map: (do (i) (NuMath sqrt:i)))
+<NSCFArray:15d01da0>
+% ((a map: (do (i) (NuMath sqrt:i))) 5)
+()
+% (a map: (do (i) (NuMath sqrt:i)))
+<NSCFArray:1f7fa0>
+% ((a map: (do (i) (NuMath sqrt:i))) objectAtIndex:5)
+()
+% (NuMath sqrt:25)
+()
+% (NuMath sqrt:25)
+5
+% ((a map: (do (i) (NuMath sqrt:i))) objectAtIndex:5)
+5
+% ((a map: (do (i) (NuMath sqrt:i))) 5)
+5
+% ((a map: (do (i) (NuMath sqrt:i))) 6)
+6
+% ((a map: (do (i) (NuMath sqrt:i))) each: (do (i) (puts i)))
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+<NSCFArray:1dac50>
+% (class NSNumber
+-   (imethod (id) sqrt is (NuMath sqrt:self)))
+()
+% (2 sqrt)
+1.414213562373095
+% (class NSArray 
+-   (imethod (void) dump is (self each: (do (i) (puts i)))))
+()
+% (a dump)
+0
+1
+4
+9
+16
+25
+36
+49
+64
+81
+()
+% ((a map: (do (i) (NuMath sqrt:i))) dump)
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+()
+% (a list)
+(0 1 4 9 16 25 36 49 64 81)
+% ((a list) reverse)
+NuUnknownMessage: unable to find message handler for ((0 1 4 9 16 25 36 49 64 81) reverse)
+% (class NuCell 
+-   (imethod (id) reverse is
+-      (cond ((eq (self cdr) nil) self)
+-            (t (append ((self cdr) reverse) (list (self car)))))))
+()
+% ((a list) reverse)
+(81 64 49 36 25 16 9 4 1 0)
+% (class NuCell
+-   (imethod (id) array is
+-      (cond ((eq (self cdr) nil) (set a (NSMutableArray array)) (a addObject:(self car)) a)
+-            (t (set a ((self cdr) array)) (a insertObject:(self car) atIndex:0) a))))
+()
+% (('(1 2 3) array) 1)
+2

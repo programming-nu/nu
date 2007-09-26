@@ -1,0 +1,16 @@
+#!/usr/local/bin/nush
+#
+# @file enu
+# Embedded Nu, the standalone Nu template processor.
+#
+# @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+
+(load "template")
+
+(set input ((NSString alloc) 
+            initWithData:((NSFileHandle fileHandleWithStandardInput) readDataToEndOfFile) 
+            encoding:"NSUTF8StringEncoding"))
+
+(set output (eval (NuTemplate codeForString:input)))
+
+(print output)

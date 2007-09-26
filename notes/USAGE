@@ -1,0 +1,178 @@
+USING NU
+========
+
+1. Running nush
+---------------
+
+One way to use Nu is to write programs that run in nush, the Nu shell.
+
+nush command-line options
+
+-f <framework>		Loads the named framework.
+			This option may be specified multiple times.
+					
+-e <expression>		Evaluates the specified Nu expression.
+			This option may be specified multiple times.
+
+-i 			Runs the interpreter interactively at the console.
+			This need not be specified if no filename is given 
+			as an argument.
+					
+<filename>		Loads and evaluates the named file.
+
+Running nush interactively is a great way to explore and test
+Objective-C components.
+
+You can write executable scripts in Nu if you begin them with a
+"shebang" line that identifies nush as the shell.  For example,
+
+#!/usr/bin/env nush
+(puts "Everything old is Nu again.")
+
+
+2. Building Cocoa Applications
+------------------------------
+
+Another way to use Nu is to use it to write Cocoa applications.
+
+Option 1: No compilation needed
+
+If you don't need to compile any Objective-C code into your application
+then you can build a Cocoa application by simply copying nush into the 
+Contents/MacOS directory of your application bundle and renaming it to 
+your application's name.  Upon startup, the resulting application will 
+load and evaluate "main.nu" from its Contents/Resource directory.  
+To see examples of this, see the RandomApp, CurrencyConverter, and 
+NuRocks example applications.
+
+Here is a simple main.nu, taken from the RandomApp example:
+-----------------------------------------------------------------------------
+;; main.nu
+;;  Entry point for a Nu program.
+;;
+;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+
+(load "Nu:nu")		;; basics
+(load "Nu:cocoa")	;; cocoa definitions
+(load "Nu:menu")	;; menu generation
+(load "randomapp")  	;; Aaron Hillegass' famous example
+
+;; define the application delegate class
+(class ApplicationDelegate is NSObject
+     (imethod (void) applicationDidFinishLaunching: (id) sender is
+          (build-menu default-application-menu "RandomApp")
+          (set $random ((RandomAppWindowController alloc) init))))
+
+;; install the delegate and keep a reference to it since the application won't retain it.
+((NSApplication sharedApplication) setDelegate:(set delegate ((ApplicationDelegate alloc) init)))
+
+;; this makes the application window take focus when we've started it from the terminal
+((NSApplication sharedApplication) activateIgnoringOtherApps:YES)
+
+;; run the main Cocoa event loop
+(NSApplicationMain 0 nil)
+-----------------------------------------------------------------------------
+
+If you have Objective-C code to compile into your application, you could
+compile it into a framework and load it from Nu, making it unnecessary to
+ever replace nush as the main program of your application.
+
+Option 2: Use the Nu main.
+
+If you want to compile your Objective-C code directly into your application,
+you can make your application start with Nu by having it use the following main 
+function:
+
+    extern int NuMain(int argc, const char *argv[]);
+
+    int main(int argc, const char *argv[])
+    {
+	    return NuMain(argc, argv);
+    }
+
+This also will look for a "main.nu" file in the Resource directory upon
+startup.
+
+Option 3: Load and use the Nu parser at runtime.
+
+If you don't want to modify your main function, you can also use Nu
+by loading the Nu framework into your application and using the Nu 
+class to get a parser.
+
+        id parser = [Nu parser];
+	
+You can then use this parser to parse and evaluate Nu expressions,
+which you can load from a file or provide inline.
+
+        id code = [parser parse:@"(+ 2 2)"];
+        id result = [parser eval:code];
+
+In this case, the result of the evaluation will be an NSNumber with
+an integer value of 4.
+
+
+3. Building Cocoa Frameworks
+----------------------------
+
+A third way to use Nu is to use it in a Cocoa framework that you write.
+There are nuke tasks to help you with this; they require that you compile
+at least a small amount of C code for your framework, but in practice,
+interesting frameworks will probably be a combination of Nu and Objective-C.
+
+One important C function that your framework should include is an initialization
+function.  This function will load the equivalent of "main.nu" for your
+framework.  Here's an example:
+
+void ProspectInit()
+{
+    static initialized = 0;
+    if (!initialized) {
+        initialized = 1;
+        load_nu_files(@"com.neontology.prospect", @"prospect");
+    }
+}
+
+The function that it calls loads a Nu file (in this case, named 
+"prospect.nu") from a named bundle.  That Nu file should load any
+other needed Nu files from the bundle using the "load" operator.
+
+static int load_nu_files(NSString *bundleIdentifier, NSString *mainFile)
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSBundle *bundle = [NSBundle bundleWithIdentifier:bundleIdentifier];
+    NSString *main_path = [bundle pathForResource:mainFile ofType:@"nu"];
+    if (main_path) {
+        NSString *main = [NSString stringWithContentsOfFile:main_path];
+        if (main) {
+            id parser = [Nu parser];
+            id script = [parser parse: main];
+            [parser eval:script];
+        }
+    }
+    [pool release];
+    return 0;
+}
+
+Note that it is important to correctly specify the framework identifier.
+You can do this in a Nukefile with the following line:
+	(set @framework_identifier "com.neontology.prospect")
+
+You also need to specify the name of your framework initialization 
+function.  You can also do this in a Nukefile:
+	(set @framework_initializer "ProspectInit")
+
+The appropriate build tasks are created when your Nukefile includes the 
+following command:
+	(framework-tasks)
+
+With an initialization function, you can create frameworks containing
+classes written in Nu that can be used directly by Objective-C clients.
+Those clients need not know anything about Nu; to them, they are simply
+interacting with classes and objects using Objective-C conventions.
+It is also possible to use Nu in frameworks without including an
+initialization function, but for these frameworks, a client application
+must load their Nu code explicitly using the "load" operator.  For 
+example,
+	(load "FigLeaf:server")
+loads the "server.nu" file from the "FigLeaf" bundle.
+

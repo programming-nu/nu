@@ -1,0 +1,35 @@
+PITFALLS
+========
+
+Here's some trouble that I've gotten into so far while programming with Nu.  
+All of it is avoidable, and some of it might be preventable with future improvements.
+
+* Trying to evaluate string expressions with (eval "expression"). 
+  They should be parsed first. Parse them with the parse operator.
+	
+* Code can be unevaluated due to incompletely-balanced parentheses, 
+  usually causing a class or method declaration to be left open.
+  Nested classes and imethods should generate warnings.  
+  An open sexpr at end of file should also be an error.
+
+* Accidentally calling junk in the objc runtime like this deprecated class:
+  [NSATSGlyphGenerator initialize] invocation.  The class is deprecated.
+
+* There are also problems with classes that aren't inherited from NSObject.
+  % (NSProxy alloc)
+  2007-07-05 14:46:10.356 nush[435:807] exception NSInvalidArgumentException: *** -[NSProxy methodSignatureForSelector:] called!
+
+* Releasing NSPlaceholder objects.  This usually causes a messy crash.  
+  Currently, I keep a list of known placeholder classes and update it 
+  whenever I trip over a new one. If there's an automated way to identify them, 
+  I don't know what it is.
+
+* Certain classes (like NSDate) crash when you do this: [[NSDate alloc] retain];  
+  This happens as part of Nu (and RubyCocoa/RubyObjC) object management.  
+  Three cheers for consistency.
+
+* When I try to load code from a bundle without properly setting the bundle signature,
+  the load fails.
+
+* Return values can be messed up when I use results of methods with the wrong return 
+  type (usually the problem is that the method is declared to return (void)).

@@ -1,0 +1,195 @@
+;; @file       generate.nu
+;; @discussion Code generator for Objective-C classes.
+;;             Generates instance variables, accessors, setters, and archiving functions.
+;;
+;; @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+
+(load "template")
+
+(class NSString 
+     ;; Get the last character of a string.
+     (imethod (int) lastCharacter is
+          (self characterAtIndex:(- (self length) 1)))
+     ;; Capitalize the first character of a string.
+     (imethod (id) capitalizeFirstCharacter is
+          (self stringByReplacingCharactersInRange:'(0 1)
+                withString:((self substringWithRange:'(0 1)) capitalizedString)))
+     ;; Remove the parentheses surrounding a string.
+     (imethod (id) stripParens is
+          (self substringWithRange:(list 1 (- (self length) 2)))))
+
+;; @abstract A code generator for Objective-C classes.
+;; @discussion Given a list of instance variables and their types,
+;; NuGenerator generates code for Objective-C classes.  This
+;; code includes variable declarations, accessors, and
+;; encoding and decoding methods.  Much of this capability
+;; is available in Objective-C 2.0 using properties,
+;; but it is provided here to show how easy it is to 
+;; use Nu to take direct control of the process.
+;; 
+(class NuGenerator is NSObject
+     (ivars)
+     
+     ;; Initialize a generator with a list that describes a set of classes to be generated.
+     (imethod (id) initWithDescription:(id) description is
+          (super init)
+          (set @description description)
+          self)
+     
+     ;; Generate class declarations; usually these are placed in header files.
+     (imethod (id) generateDeclarations is          
+          (set result ((NSMutableString alloc) init))
+          
+          (@description each: 
+               (do (declaration)
+                   (if (eq (car declaration) 'class)
+                       ;; open the class interface
+                       (result appendString:<<-END
+@interface #{(declaration second)} : #{(declaration fourth)} {
+END)                 
+                       (set cursor (cdr (cdr (cdr (cdr declaration)))))
+                       (while cursor
+                              (set group (cursor car))
+                              (if (eq (group car) 'ivar)
+                                  ((group cdr) eachPair: 
+                                   (do (type name)
+                                       ;; declare each variable
+                                       (result appendString:<<-END
+	#{((type stringValue) stripParens)} _#{name};									
+END)									
+                                       )))
+                              (set cursor (cursor cdr)))
+                       ;; close the instance variables section
+                       (result appendString:<<-END
+}							
+END)                      
+                       (set remainder (cdr (cdr (cdr (cdr declaration)))))
+                       (remainder each:
+                            (do (group)
+                                (if (eq (group car) 'ivar)
+                                    ((group cdr) eachPair:
+                                     (do (type name)
+                                         ;; declare each getter and setter
+                                         (result appendString:<<-END
+- #{type} #{name};
+- (void) set#{((name stringValue) capitalizeFirstCharacter)}: #{type} #{name};	
+END)
+                                         
+                                         )))))                      
+                       ;; close the class interface
+                       (result appendString:<<-END
+@end
+
+END) 
+                       )))
+          result)
+     
+     ;; Generate class definitions; usually these are placed in source (.m) files.
+     (imethod (id) generateDefinitions is          
+          (set result ((NSMutableString alloc) init))
+          
+          (@description each: 
+               (do (declaration)
+                   (if (eq (car declaration) 'class)
+                       ;; open the class implementation
+                       (result appendString:<<-END
+@implementation #{(declaration second)} 
+
+END)
+                       
+                       (set remainder (cdr (cdr (cdr (cdr declaration)))))
+                       (remainder each:
+                            (do (group)
+                                (if (eq (group car) 'ivar)
+                                    ((group cdr) eachPair:
+                                     (do (type name)
+                                         ;; define each getter and setter
+                                         (result appendString:<<-END
+- #{type} #{name} {return _#{name};}
+
+- (void) set#{((name stringValue) capitalizeFirstCharacter)}:#{type} #{name} {
+END)
+                                         (if (or (eq type '(id)) (eq (((type stringValue) stripParens) lastCharacter) 42))
+                                             (result appendString:<<-END
+    [#{name} retain];
+    [_#{name} release];
+END))
+                                         (result appendString:<<-END
+    _#{name} = #{name};
+}
+
+END))))))
+                       
+                       ;; define the archiving method
+                       (result appendString:<<-END
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+END)
+                       (set remainder (cdr (cdr (cdr (cdr declaration)))))
+                       (remainder each:
+                            (do (group)
+                                (if (eq (group car) 'ivar)
+                                    ((group cdr) eachPair:
+                                     (do (type name)
+                                         (result appendString: (self encodeVariable:name withType:type))
+                                         (result appendString: (NSString carriageReturn))
+                                         )))))
+                       (result appendString:<<-END
+}
+
+END)
+                       
+                       ;; define the unarchiving method
+                       (result appendString:<<-END
+- (id) initWithCoder:(NSCoder *)coder
+{
+    [super init];
+END)
+                       (set remainder (cdr (cdr (cdr (cdr declaration)))))
+                       (remainder each:
+                            (do (group)
+                                (if (eq (group car) 'ivar)
+                                    ((group cdr) eachPair:
+                                     (do (type name)
+                                         (result appendString: (self decodeVariable:name withType:type))
+                                         (result appendString: (NSString carriageReturn))
+                                         )))))
+                       (result appendString:<<-END
+    return self;
+}
+                    
+END)
+                       ;; close the class implementation
+                       (result appendString:<<-END
+@end
+
+END))))
+          result)
+     
+     ;; Generate code to encode instance variables during archiving.
+     (cmethod (id) encodeVariable:(id) name withType:(id) type is
+          (set typeName ((type stringValue) stripParens))
+          (cond ((eq typeName "int")
+                 "    [coder encodeValueOfObjCType:@encode(int) at:&_#{name}];")
+                ((eq typeName "double")
+                 "    [coder encodeValueOfObjCType:@encode(double) at:&_#{name}];")
+                ((eq typeName "bool")
+                 "    [coder encodeValueOfObjCType:@encode(bool) at:&_#{name}];")
+                ((eq (typeName lastCharacter) 42)
+                 "    [coder encodeObject:_#{name}];")
+                (t
+                  "    [coder encodeValueOfObjCType:@encode(int) at:&_#{name}];")))   
+     
+     ;; Generate code to decode instance variables during unarchiving.
+     (cmethod (id) decodeVariable:(id) name withType:(id) type is
+          (set typeName ((type stringValue) stripParens))
+          (cond ((eq typeName "int")
+                 "    [coder decodeValueOfObjCType:@encode(int) at:&_#{name}];")
+                ((eq typeName "double")
+                 "    [coder decodeValueOfObjCType:@encode(double) at:&_#{name}];")
+                ((eq typeName "bool")
+                 "    [coder decodeValueOfObjCType:@encode(bool) at:&_#{name}];")
+                ((eq (typeName lastCharacter) 42)
+                 "    _#{name} = [[coder decodeObject] retain];")
+                (t
+                  "    [coder decodeValueOfObjCType:@encode(int) at:&_#{name}];"))))

@@ -1,0 +1,25 @@
+#!/usr/local/bin/nush
+#
+# @file nutest
+# The Nu testing tool.
+#
+# @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+
+(load "test")
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;; main program
+;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(set argv ((NuApplication sharedApplication) arguments))
+
+(if (> (argv count) 0) 
+    (then
+         (set tests argv)
+         (tests each:
+                (do (target)                  
+                    ((filelist target) each: 
+                     (do (file) 
+                         (load file)))))))
+
+(NuTestCase runAllTests)

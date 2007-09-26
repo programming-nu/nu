@@ -1,0 +1,53 @@
+GETTING HELP
+============
+
+Nu includes a simple built-in help system.
+
+All objects derived from NSObject support the "help" message,
+which returns an NSString presenting help information for
+the object.
+
+You can use this from Nu by either sending the help message
+to an object or by using the help operator.  Here's an example
+showing the use of the help operator:
+
+% (help 99)
+This is an instance of NSCFNumber.
+% (help (NSApplication sharedApplication))
+This is an instance of NSApplication.
+
+This gets more interesting when we override the help method for
+specific subclasses.  In nu/help.nu there are definitions of help
+methods for most of the built-in Nu operators.  Here are some
+examples:
+
+% (help do)
+This operator is used to create blocks.
+For example, the following expression creates a 
+block that returns the sum of its two arguments:
+(do (x y)
+        (+ x y))
+
+% (help set)
+This operator sets the value of a symbol to the result of an
+expression evaluation.
+
+% (help help)
+This operator gets the help text for an object.
+
+In that last case, the help operator is being called with itself
+as an argument.  While this appears indistinguishable from 
+sending the help message to the help object, the Nu precedence
+policy is for lists beginning with operators to be treated as
+operator calls and not message sends.  To send the help message
+to the help object, use the send operator as follows:
+
+% (send help help)
+This operator gets the help text for an object.
+
+In the future, more mechanisms for adding help information
+will be built into Nu.  In the meantime, you can provide
+help information for any of your objects by simply adding
+the following method to your classes:
+
+- (NSString *) help;

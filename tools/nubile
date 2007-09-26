@@ -1,0 +1,16 @@
+#!/usr/local/bin/nush
+#
+# @file nubile 
+# The Nu code beautification tool.
+#
+# @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+
+(load "beautify")
+
+(set input ((NSString alloc) 
+            initWithData:((NSFileHandle fileHandleWithStandardInput) readDataToEndOfFile) 
+            encoding:NSUTF8StringEncoding))
+
+(set output (((NuBeautifier alloc) init) beautify:input))
+
+(print output)

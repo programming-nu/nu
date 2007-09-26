@@ -1,0 +1,109 @@
+NU TO DO
+========
+
+Here's a loosely sorted list of improvements that I think are needed.
+
+OPEN ISSUES
+-----------
+
+* generalize blog server.
+
+* Textile and/or Markdown in Nu/ObjC.
+
+* version control.
+
+* web site.
+
+* mailing list.
+
+* issue tracking
+
+* icons, logo.
+
+* add help text ivars to blocks, make them accessible for functions,
+macros, and methods.
+
+* man pages for nush and related tools would be nice.
+
+* @@class variables.
+
+* better error-handling.
+
+* YAML for Nu. I think this would make it easier to port Rails apps to Nu.
+
+* support for calling methods with variadic arguments.
+
+* messaging [NSNull null] should be like messaging nil.
+
+* fix the parser to allow strings in embedded Nu expressions (in strings).
+
+* escape sequences for strings.
+
+* (maybe) a literal notation for regular expressions.  Maybe by surrounding them with "/" characters.
+
+* automatic operator registration so that objc operators can be easily added by third-party code.
+
+* resolve this question: should symbol tables be global or thread-specific?
+
+* expose method bodies.  
+	(send (object method) block) === shows block that implements method 
+
+* import bridge-support files.
+
+* (maybe) replace st.[hc] with NSHashTables and NSMapTables.
+
+
+COMPLETED
+---------
+
+* string interpolation.
+
+* app building.
+
+* method moving.
+
+* ivars.
+
+* class syntax.
+
+* let function.
+
+* other control structures.
+   - if
+   - unless
+   - while
+
+* clean memory management - will need regular revisiting.
+
+* here strings.
+
+* undeclared ivars (store in a dictionary in every object).
+
+* build nu as a framework.
+
+* load nu library code for automatic initialization.
+
+* macros.
+
+* nuke build tool.
+
+* nubile code beautifier.
+
+* install as a framework, build nush to depend on it.  Get library source from framework.
+
+* nu packaging for frameworks.
+
+* nu code templating solution.
+
+* method missing (numeric messages for NSArrays, possible automatic keys for dictionaries...).
+
+* class inherited method.
+
+* code beautifier.
+
+* documentation generation (nudoc) - class support is finished, needs additional work for ivars, enums, functions, macros.
+
+* nutest - unit testing framework.
+
+* nuke builds for apps with spaces in their names.
+

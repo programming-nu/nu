@@ -1,0 +1,62 @@
+INTRODUCTION
+
+Hello and welcome to Nu.
+
+I created Nu because I wanted a better way to write software.
+
+I wanted to write with a language as flexible and powerful as Lisp, but I 
+also wanted to be able to work with the many libraries and high-performance
+subsystems written in C, including the ones that I write myself.  So a tight 
+integration with C was my highest priority; that ruled and drove the 
+implementation of Nu.  That's why Nu is "C over lambda."
+
+It is easier to integrate with C when you have a disciplined way of structuring 
+C code.  Popular scripting languages (Python, Ruby, Lua, etc.) make many 
+implementation-dependent impositions on the C code that they call.  Their
+artifacts are often called "glue code" and are usually ugly, cumbersome, and 
+unpleasant to generate.
+
+Objective-C provides a proven way of structuring C code that has no scripting 
+language implementation dependencies.  But it can do much more than that.
+Objective-C can also serve as a platform for a powerful dynamic language.  
+Nu was designed to take full advantage of that.  It was also designed to 
+provide many of the elements of successful scripting languages, notably 
+Ruby, while adding the syntactic simplicity and flexibility of Lisp.   
+
+LEGAL
+
+Nu is open-source software that is copyrighted by me and released under the
+same terms as Ruby.  For details on the license, see the notes/COPYING file.
+In its use to name a programming language, "Nu" is a trademark of Neon Design 
+Technology, Inc.
+
+SYSTEM REQUIREMENTS
+
+Nu currently requires Mac OS X version 10.4 or greater.
+
+INSTALLATION
+
+Installation instructions are in the notes/INSTALL file.
+
+GOING FURTHER
+
+notes/DEMO contains a simple tutorial exercise that can acquaint you with Nu.
+
+notes/USAGE describes a few of the ways that you can use Nu.
+
+notes/ERRORS contains some pitfalls that I've encountered when programming 
+with Nu.
+
+notes/TODO contains some open issues that I'd like to address in Nu.
+
+The examples directory contains several fun and interesting examples.
+
+TextMate users can drag and drop share/Nu.tmbundle onto the TextMate 
+application icon to add Nu-specific features to TextMate.
+
+AUTHOR
+
+Tim Burks (tim@neontology.com)
+Neon Design Technology, Inc.
+Los Altos, California, USA
+http://www.neontology.com
