@@ -1,5 +1,21 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
+(global VERSION '(0 1 0)) #(major minor tweak)
+
+(task "version" is
+      (set now (NSCalendarDate date))
+      (set version <<-END
+#define NU_VERSION "#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}"
+#define NU_VERSION_MAJOR #{(VERSION first)}
+#define NU_VERSION_MINOR #{(VERSION second)}
+#define NU_VERSION_TWEAK #{(VERSION third)}
+#define NU_RELEASE_DATE "#{(now yearOfCommonEra)}-#{(now monthOfYear)}-#{(now dayOfMonth)}"
+#define NU_RELEASE_YEAR  #{(now yearOfCommonEra)}
+#define NU_RELEASE_MONTH #{(now monthOfYear)}
+#define NU_RELEASE_DAY   #{(now dayOfMonth)}
+END)
+      (version writeToFile:"objc/version.h" atomically:NO encoding:NSUTF8StringEncoding error:(set error (NuReference new))))
+
 ;; source files
 (set @c_files     (filelist "^objc/.*\.c$"))
 (set @m_files     (filelist "^objc/.*\.m$"))
