@@ -102,7 +102,8 @@
       (SH "hdiutil create -srcdir dmg '#{@framework}.dmg' -volname '#{@framework}'")
       (SH "rm -rf dmg"))
 
-(task "installer" => "framework" is
+;; Build an installer and wrap it in a disk image.
+(task "installer" => "framework" "nush" is
       (SH "sudo rm -rf package dmg Nu.dmg")
       (SH "mkdir -p package/Library/Frameworks")
       (SH "mkdir -p package/usr/local/bin")
