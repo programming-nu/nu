@@ -345,7 +345,7 @@ static char pattern[1000];
                         [hereString appendString:string];
                     }
                     if (hereString == nil)
-                        hereString = @"";
+                        hereString = [NSMutableString string];
                     //NSLog(@"got herestring **%@**", hereString);
                     [self addAtom:hereString];
                     // to continue, set i to point to the next character after the tag
