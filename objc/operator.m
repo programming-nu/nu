@@ -539,7 +539,7 @@ static bool valueIsTrue(id value)
 @implementation Nu_synchronized
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+//  NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
 
     id object = [[cdr car] evalWithContext:context];
     id result = Nu__null;

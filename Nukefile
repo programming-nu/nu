@@ -35,7 +35,7 @@ END)
 
 ;; build configuration
 (set @cc "gcc")
-(set @cflags "-g -DMACOSX -I/usr/local/include")
+(set @cflags "-g -DMACOSX -I/usr/local/include -isysroot /Developer/SDKs/MacOSX10.4u.sdk")
 (set @mflags "-fobjc-exceptions") ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
 
 (cond

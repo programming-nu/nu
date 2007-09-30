@@ -106,3 +106,12 @@
 /*! Test for the existence of a file. */
 + (int) fileExistsNamed:(NSString *) filename;
 @end
+
+/*!
+    @category NSMethodSignature(Nu)
+    @abstract NSMethodSignature extensions for Nu programming.
+ */
+@interface NSMethodSignature (Nu)
+/*! Get the type string for a method signature */
+- (NSString *) typeString;
+@end
