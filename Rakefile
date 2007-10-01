@@ -14,6 +14,9 @@ else
   FFI_INCLUDE = "-I ./libffi/include"
 end
 
+@include_dirs = %w{/opt/local/include /foo/bar}
+@includes = @include_dirs.map{|include| " -I#{include}"}.join
+
 @frameworks = %w{Cocoa}
 @libs = %w{objc}
 @lib_dirs = []
@@ -45,7 +48,7 @@ rule ".o" => [".c"] do |t|
 end
 
 file "mininush" => @gcc_objects do
-  sh "gcc #{@gcc_objects} #{@arch} -g -O2 -o mininush -L/usr/local/lib -lreadline -lpcre #{FFI_LIB} -framework Cocoa"
+  sh "gcc #{@gcc_objects} #{@arch} -g -O2 -o mininush -L/usr/local/lib -L/opt/local/lib -lreadline -lpcre #{FFI_LIB} -framework Cocoa"
 end
 
 task :default => "mininush"
