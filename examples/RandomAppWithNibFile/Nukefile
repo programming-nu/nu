@@ -1,0 +1,13 @@
+;; Nukefile for Nu demo application
+
+;; source files
+(set @nu_files 	  (filelist "^nu/.*nu$"))
+
+;; application description
+(set @application 	       "RandomAppWithNibFile")
+(set @application_identifier   "nu.programming.randomappwithnibfile")
+(set @nib_files                (filelist "^resources/.*\.lproj/[^/]*\.nib$"))
+
+;; tasks
+(application-tasks)
+(task "default" => "application")
