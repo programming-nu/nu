@@ -113,15 +113,17 @@
 
 - (id) car
 {
-    NSLog(@"Error: car called on atom for object %@", self);
-    assert(0);
+    [NSException raise:@"NuCarCalledOnAtom"
+        format:@"car called on atom for object %@",
+        self];
     return Nu__null;
 }
 
 - (id) cdr
 {
-    NSLog(@"Error: cdr called on atom for object %@", self);
-    assert(0);
+    [NSException raise:@"NuCdrCalledOnAtom"
+        format:@"cdr called on atom for object %@",
+        self];
     return Nu__null;
 }
 
@@ -472,7 +474,7 @@
     Class superclass = [self superclass];
     if (superclass)
         return [superclass isKindOfClass:c];
-	return false;
+return false;
 }
 */
 + (NSString *) help
