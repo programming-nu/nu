@@ -240,7 +240,7 @@
      
      ;; DEFAULT: if no icon is specified, use the nu icon for the application.
      (unless @application_icon_file (set @application_icon_file "nu.icns"))
-     (unless @icon_files (set @icon_files (NSArray arrayWithList:'("/usr/local/share/nu/nu.icns"))))
+     (unless @icon_files (set @icon_files (NSArray arrayWithList:'("/usr/local/share/nu/resources/nu.icns"))))
      
      ;; DEFAULT: if no nib files are specified, use the standard (empty) Nu MainMenu.nib.
      (unless @nib_files (set @nib_files (NSArray arrayWithList:'("/usr/local/share/nu/resources/English.lproj/MainMenu.nib"))))

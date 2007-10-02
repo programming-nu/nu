@@ -849,6 +849,10 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
     return result;
 }
 
+@interface NSAutoreleasePool (UndocumentedInterface)
++ (BOOL) autoreleasePoolExists;
+@end
+
 @interface NSMethodSignature (UndocumentedInterface)
 + (id) signatureWithObjCTypes:(const char*)types;
 @end
@@ -1184,11 +1188,11 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
         if ((returnType == Nu__null) || ([argumentTypes length] < [argumentNames length])) {
             // look up the signature
             SEL selector = sel_registerName([methodName cStringUsingEncoding:NSUTF8StringEncoding]);
-            signature = [classToExtend instanceMethodSignatureForSelector:selector];
-            if (!signature)
-                signature = [classToExtend methodSignatureForSelector:selector];
-            if (signature)
-                signature = [signature typeString];
+            NSMethodSignature *methodSignature = [classToExtend instanceMethodSignatureForSelector:selector];
+            if (!methodSignature)
+                methodSignature = [classToExtend methodSignatureForSelector:selector];
+            if (methodSignature)
+                signature = [NSMutableString stringWithString:[methodSignature typeString]];
             // if we can't find a signature, use a default
             if (!signature) {
                 // NSLog(@"no signature found.  treating all arguments and the return type as (id)");

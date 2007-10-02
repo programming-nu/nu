@@ -1,5 +1,21 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
+(global VERSION '(0 1 1)) #(major minor tweak)
+
+(task "version" is
+      (set now (NSCalendarDate date))
+      (set version <<-END
+#define NU_VERSION "#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}"
+#define NU_VERSION_MAJOR #{(VERSION first)}
+#define NU_VERSION_MINOR #{(VERSION second)}
+#define NU_VERSION_TWEAK #{(VERSION third)}
+#define NU_RELEASE_DATE "#{(now yearOfCommonEra)}-#{(now monthOfYear)}-#{(now dayOfMonth)}"
+#define NU_RELEASE_YEAR  #{(now yearOfCommonEra)}
+#define NU_RELEASE_MONTH #{(now monthOfYear)}
+#define NU_RELEASE_DAY   #{(now dayOfMonth)}
+END)
+      (version writeToFile:"objc/version.h" atomically:NO encoding:NSUTF8StringEncoding error:(set error (NuReference new))))
+
 ;; source files
 (set @c_files     (filelist "^objc/.*\.c$"))
 (set @m_files     (filelist "^objc/.*\.m$"))
@@ -19,7 +35,7 @@
 
 ;; build configuration
 (set @cc "gcc")
-(set @cflags "-g -DMACOSX -I/usr/local/include")
+(set @cflags "-g -DMACOSX -I/usr/local/include -isysroot /Developer/SDKs/MacOSX10.4u.sdk")
 (set @mflags "-fobjc-exceptions") ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
 
 (cond
@@ -101,3 +117,21 @@
       (SH "mkdir dmg; cp -Rp '#{@framework}.framework' dmg")
       (SH "hdiutil create -srcdir dmg '#{@framework}.dmg' -volname '#{@framework}'")
       (SH "rm -rf dmg"))
+
+;; Build an installer and wrap it in a disk image.
+(task "installer" => "framework" "nush" is
+      (SH "sudo rm -rf package dmg Nu.dmg")
+      (SH "mkdir -p package/Library/Frameworks")
+      (SH "mkdir -p package/usr/local/bin")
+      (SH "mkdir -p package/usr/local/share")
+      (SH "cp -pRfv #{@framework}.framework package/Library/Frameworks/#{@framework}.framework")
+      (SH "cp -pRfv share/nu package/usr/local/share")
+      (SH "cp -pRfv examples package/usr/local/share/nu")
+      (SH "cp nush package/usr/local/bin")
+      (SH "cp tools/* package/usr/local/bin")
+      (SH "sudo chown -R root package")
+      (SH "sudo chgrp -R admin package")
+      (SH "/Developer/Tools/packagemaker -build -f package -p Nu.pkg -d pkg/Description.plist -i pkg/Info.plist")
+      (SH "mkdir dmg; mv Nu.pkg dmg")
+      (SH "hdiutil create -srcdir dmg Nu.dmg -volname Nu")
+      (SH "sudo rm -rf dmg package"))

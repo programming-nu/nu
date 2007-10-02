@@ -20,7 +20,6 @@
 (set @cc "gcc")
 (set @cflags "-g -O3 -DMACOSX ")
 (set @mflags "-fobjc-exceptions")
-(set @arch (list "i386" "ppc"))
 
 (set @ldflags
      ((list

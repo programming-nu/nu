@@ -113,28 +113,28 @@
 
 - (id) car
 {
-    NSLog(@"Error: car called on atom for object %@", self);
-    assert(0);
+    [NSException raise:@"NuCarCalledOnAtom"
+        format:@"car called on atom for object %@",
+        self];
     return Nu__null;
 }
 
 - (id) cdr
 {
-    NSLog(@"Error: cdr called on atom for object %@", self);
-    assert(0);
+    [NSException raise:@"NuCdrCalledOnAtom"
+        format:@"cdr called on atom for object %@",
+        self];
     return Nu__null;
 }
 
 - (id) sendMessage:(id)cdr withContext:(NSMutableDictionary *)context
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
     // By themselves, Objective-C objects evaluate to themselves.
     if (!cdr || (cdr == Nu__null))
         return self;
 
     // But when they're at the head of a list, that list is converted into a message that is sent to the object.
-    //NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     // Collect the method selector and arguments.
     // This seems like a bottleneck, and it also lacks flexibility.
@@ -461,20 +461,6 @@
     return Nu__null;
 }
 
-/*
- * this breaks nib loading... it causes the nib loader to fail to find user-defined classes.
- *
-+ (BOOL) isKindOfClass:(Class) c
-{
-    Class myclass = [self class];
-    if (myclass == c)
-        return true;
-    Class superclass = [self superclass];
-    if (superclass)
-        return [superclass isKindOfClass:c];
-	return false;
-}
-*/
 + (NSString *) help
 {
     return [NSString stringWithFormat:@"This is a class named %s.", [self class]->name];
