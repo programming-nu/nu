@@ -1,6 +1,6 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(global VERSION '(0 1 1)) #(major minor tweak)
+(global VERSION '(0 1 2)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
@@ -133,5 +133,5 @@ END)
       (SH "sudo chgrp -R admin package")
       (SH "/Developer/Tools/packagemaker -build -f package -p Nu.pkg -d pkg/Description.plist -i pkg/Info.plist")
       (SH "mkdir dmg; mv Nu.pkg dmg")
-      (SH "hdiutil create -srcdir dmg Nu.dmg -volname Nu")
+      (SH "hdiutil create -srcdir dmg Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}.dmg -volname Nu")
       (SH "sudo rm -rf dmg package"))

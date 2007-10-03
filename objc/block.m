@@ -39,6 +39,16 @@ extern id Nu__null;
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context
 {
+    int numberOfArguments = [cdr length];
+    int numberOfParameters = [parameters length];
+    if (numberOfArguments != numberOfParameters) {
+        [NSException raise:@"NuIncorrectNumberOfArguments"
+            format:@"Incorrect number of arguments to block. Received %d but expected %d, %@",
+            numberOfArguments,
+            numberOfParameters,
+            [parameters stringValue]];
+    }
+
     //NSLog(@"block eval %@", [cdr stringValue]);
     // loop over the arguments, looking up their values in the calling_context and copying them into the evaluation_context
     id alist = parameters;
@@ -74,6 +84,15 @@ extern id Nu__null;
 
 - (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context self:(id)object
 {
+    int numberOfArguments = [cdr length];
+    int numberOfParameters = [parameters length];
+    if (numberOfArguments != numberOfParameters) {
+        [NSException raise:@"NuIncorrectNumberOfArguments"
+            format:@"Incorrect number of arguments to method. Received %d but expected %d, %@",
+            numberOfArguments,
+            numberOfParameters,
+            [parameters stringValue]];
+    }
     //    NSLog(@"block eval %@", [cdr stringValue]);
     // loop over the arguments, looking up their values in the calling_context and copying them into the evaluation_context
     id alist = parameters;

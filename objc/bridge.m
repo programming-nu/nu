@@ -694,7 +694,13 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
 
 static void raise_argc_exception(SEL s, int count, int given)
 {
-    NSLog(@"incorrect number of arguments for selector %s, %d expected but %d provided", sel_getName(s), count, given);
+    if (given != count) {
+        [NSException raise:@"NuIncorrectNumberOfArguments"
+            format:@"Incorrect number of arguments to selector %s. Received %d but expected %d",
+            sel_getName(s),
+            given,
+            count];
+    }
 }
 
 #define BUFSIZE 500
