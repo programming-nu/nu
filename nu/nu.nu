@@ -133,6 +133,26 @@
               (then (array subarrayWithRange:(list 0 (- (array count) 1))))
               (else array))))
 
+(class NuCell
+     ;; Test another list for equality.
+     (imethod (BOOL) isEqual:(id) other is
+          (try 
+               (and ((self car) isEqual:(other car))
+                    ((self cdr) isEqual:(other cdr)))
+               (catch (exception) nil)))
+     
+     ;; Convert a list into an NSRect. The list must have at least four elements.
+     (imethod (NSRect) rectValue is (list (self first) (self second) (self third) (self fourth)))
+     
+     ;; Convert a list into an NSPoint.  The list must have at least two elements.
+     (imethod (NSPoint) pointValue is (list (self first) (self second)))
+     
+     ;; Convert a list into an NSSize.  The list must have at least two elements.
+     (imethod (NSSize) sizeValue is (list (self first) (self second)))
+     
+     ;; Convert a list into an NSRange.  The list must have at least two elements.
+     (imethod (NSRange) rangeValue is (list (self first) (self second))))
+
 ;; Call this macro in a class declaration to give a class automatic accessors for its instance variables.
 ;; Watch out for conflicts with other uses of handleUnknownMessage:withContext:.
 ;; The odd-looking use of the global operator is to define the macro globally.

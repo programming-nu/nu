@@ -128,8 +128,9 @@ char get_typeChar_from_typeString(const char *typeString)
         (typeChar == 'o') || (typeChar == 'O') ||
         (typeChar == 'V')
     ) {
-        if (typeChar != 'r')                      // don't worry about const
-            NSLog(@"ignoring qualifier %c in %s", typeChar, typeString);
+	    // uncomment the following two lines to complain about unused quantifiers in ObjC type encodings
+        // if (typeChar != 'r')                      // don't worry about const
+        //     NSLog(@"ignoring qualifier %c in %s", typeChar, typeString);
         typeChar = typeString[++i];
     }
     return typeChar;
