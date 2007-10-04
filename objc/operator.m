@@ -408,13 +408,13 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id result = Nu__null;
-    id controls = [cdr car]; // this could use some error checking!
+    id controls = [cdr car];                      // this could use some error checking!
     id loopinit = [controls car];
     id looptest = [[controls cdr] car];
     id loopincr = [[[controls cdr] cdr] car];
-	// initialize the loop
+    // initialize the loop
     [loopinit evalWithContext:context];
-	// evaluate the loop condition
+    // evaluate the loop condition
     id test = [looptest evalWithContext:context];
     while (valueIsTrue(test)) {
         @try
@@ -434,9 +434,9 @@ static bool valueIsTrue(id value)
         @catch (id exception) {
             @throw(exception);
         }
-		// perform the end of loop increment step
+        // perform the end of loop increment step
         [loopincr evalWithContext:context];
-		// evaluate the loop condition
+        // evaluate the loop condition
         test = [looptest evalWithContext:context];
     }
     return result;
@@ -539,7 +539,7 @@ static bool valueIsTrue(id value)
 @implementation Nu_synchronized
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-//  NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+    //  NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
 
     id object = [[cdr car] evalWithContext:context];
     id result = Nu__null;
@@ -999,7 +999,6 @@ static bool valueIsTrue(id value)
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     id console = [[symbolTable symbolWithCString:"$$console"] value];
-
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
@@ -1250,7 +1249,10 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass]->isa;
+    Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    if (classToExtend) classToExtend = classToExtend->isa;
+    if (!classToExtend)
+        [NSException raise:@"NuMisplacedDeclaration" format:@"class method declaration with no enclosing class declaration"];
     return help_add_method_to_class(classToExtend, cdr, context);
 }
 
@@ -1264,6 +1266,8 @@ static bool valueIsTrue(id value)
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    if (!classToExtend)
+        [NSException raise:@"NuMisplacedDeclaration" format:@"instance method declaration with no enclosing class declaration"];
     return help_add_method_to_class(classToExtend, cdr, context);
 }
 
@@ -1276,6 +1280,9 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    if (!classToExtend)
+        [NSException raise:@"NuMisplacedDeclaration" format:@"instance variable declaration with no enclosing class declaration"];
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
         id variableType = [cursor car];
@@ -1283,8 +1290,6 @@ static bool valueIsTrue(id value)
         id variableName = [cursor car];
         cursor = [cursor cdr];
         NSString *signature = signature_for_identifier(variableType, symbolTable);
-
-        Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
         [classToExtend addInstanceVariable:[variableName stringValue] signature:signature];
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
@@ -1301,6 +1306,8 @@ static bool valueIsTrue(id value)
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    if (!classToExtend)
+        [NSException raise:@"NuMisplacedDeclaration" format:@"dynamic instance variables declaration with no enclosing class declaration"];
     [classToExtend addInstanceVariable:@"__nuivars" signature:@"@"];
     return Nu__null;
 }

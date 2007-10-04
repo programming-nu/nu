@@ -3,7 +3,37 @@
 ;;
 ;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
+;; use these functions to call class construction operators outside of any class scope.
+(function misplaced-imethod () (imethod foo is nil))
+(function misplaced-cmethod () (cmethod foo is nil))
+(function misplaced-ivar () (ivar (id) foo))
+(function misplaced-ivars () (ivars))
+
 (class TestErrors is NuTestCase
+     
+     (imethod (id) testMisplacedImethod is
+          (try 
+               (misplaced-imethod)
+               (catch (exception) (set myException exception)))
+          (assert_equal "NuMisplacedDeclaration" (myException name)))
+     
+     (imethod (id) testMisplacedCmethod is
+          (try 
+               (misplaced-cmethod)
+               (catch (exception) (set myException exception)))
+          (assert_equal "NuMisplacedDeclaration" (myException name)))
+     
+     (imethod (id) testMisplacedIvar is
+          (try 
+               (misplaced-ivar)
+               (catch (exception) (set myException exception)))
+          (assert_equal "NuMisplacedDeclaration" (myException name)))
+     
+     (imethod (id) testMisplacedIvars is
+          (try 
+               (misplaced-ivars)
+               (catch (exception) (set myException exception)))
+          (assert_equal "NuMisplacedDeclaration" (myException name)))
      
      (imethod (id) testParseError is
           (try
