@@ -23,7 +23,7 @@ END)
 (set @icon_files  (filelist "^lib/.*\.icns$"))
 (set @frameworks  '("Cocoa"))
 (set @libs 	  '("edit" "ffi" ))
-(set @lib_dirs	  '("/usr/lib" "/usr/local/lib"))
+(set @lib_dirs	  '("/usr/lib" "/usr/local/lib" "/opt/local/lib"))
 (set @nib_files   '("share/nu/resources/English.lproj/MainMenu.nib"))
 
 ;; framework description
@@ -35,7 +35,7 @@ END)
 
 ;; build configuration
 (set @cc "gcc")
-(set @cflags "-g -DMACOSX -I/usr/local/include -isysroot /Developer/SDKs/MacOSX10.4u.sdk")
+(set @cflags "-g -DMACOSX -I/usr/local/include -I/opt/local/include -isysroot /Developer/SDKs/MacOSX10.4u.sdk")
 (set @mflags "-fobjc-exceptions") ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
 
 (cond
@@ -50,7 +50,10 @@ END)
 
 (set @ldflags
      ((list
-           "/usr/local/lib/libpcre.a" ;; statically link in pcre since most people won't have it..
+           ;;"/usr/local/lib/libpcre.a" ;; statically link in pcre since most people won't have it..
+           (cond 
+               ((NSFileManager fileExistsNamed:"/usr/local/lib/libpcre.a") ("/usr/local/lib/libpcre.a"))
+               ((NSFileManager fileExistsNamed:"/opt/local/lib/libpcre.a") ("/opt/local/lib/libpcre.a")) )
            ((@frameworks map: (do (framework) " -framework #{framework}")) join)
            ((@libs map: (do (lib) " -l#{lib}")) join)
            ((@lib_dirs map: (do (libdir) " -L#{libdir}")) join))
