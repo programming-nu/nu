@@ -7,19 +7,24 @@ require 'rake'
 require 'rake/clean'
 
 if File.exist? "/usr/lib/libffi.dylib"
+  # Use the libffi that ships with OS X.
   FFI_LIB = "-L/usr/lib -lffi"
   FFI_INCLUDE = "-I /usr/include/ffi"
-else
+else 
+  # Use the libffi that is distributed with Nu.
   FFI_LIB = "-L./libffi -lffi"
   FFI_INCLUDE = "-I ./libffi/include"
 end
 
-@include_dirs = %w{/opt/local/include /foo/bar}
-@includes = @include_dirs.map{|include| " -I#{include}"}.join
+@includes = FFI_INCLUDE
+@includes += " -I /usr/local/include" if File.exist? "/usr/local/include"
+@includes += " -I /opt/local/include" if File.exist? "/opt/local/include" 
 
 @frameworks = %w{Cocoa}
-@libs = %w{objc}
+@libs = %w{objc pcre readline}
 @lib_dirs = []
+@lib_dirs << "/usr/local/lib" if File.exist? "/usr/local/lib"
+@lib_dirs << "/opt/local/lib" if File.exist? "/opt/local/lib"
 
 CLEAN.include("*/*.o")
 CLOBBER.include("mininush")
@@ -30,9 +35,8 @@ CLOBBER.include("mininush")
 @gcc_objects = @gcc_files.sub(/\.c$/, '.o').sub(/\.m$/, '.o')
 
 @cc = "gcc"
-@cflags = "-g -O2 -Wall #{FFI_INCLUDE} -DMACOSX"
+@cflags = "-g -O2 -Wall -DMACOSX"
 @mflags = "-fobjc-exceptions"
-@arch = ""
 
 @ldflags = @frameworks.map {|framework| " -framework #{framework}"}.join
 @ldflags += @libs.map {|lib| " -l#{lib}"}.join
@@ -40,15 +44,15 @@ CLOBBER.include("mininush")
 @ldflags += " #{FFI_LIB}"
 
 rule ".o" => [".m"] do |t|
-  sh "#{@cc} #{@cflags} #{@mflags} #{@arch} #{@includes} -c -o #{t.name} #{t.source}"
+  sh "#{@cc} #{@cflags} #{@mflags} #{@includes} -c -o #{t.name} #{t.source}"
 end
 
 rule ".o" => [".c"] do |t|
-  sh "#{@cc} #{@cflags} #{@arch} #{@includes} -c -o #{t.name} #{t.source}"
+  sh "#{@cc} #{@cflags} #{@includes} -c -o #{t.name} #{t.source}"
 end
 
 file "mininush" => @gcc_objects do
-  sh "gcc #{@gcc_objects} #{@arch} -g -O2 -o mininush -L/usr/local/lib -L/opt/local/lib -lreadline -lpcre #{FFI_LIB} -framework Cocoa"
+  sh "gcc #{@gcc_objects} -g -O2 -o mininush #{@ldflags}"
 end
 
 task :default => "mininush"

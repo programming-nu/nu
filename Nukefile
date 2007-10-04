@@ -21,10 +21,27 @@ END)
 (set @m_files     (filelist "^objc/.*\.m$"))
 (set @nu_files 	  (filelist "^nu/.*\.nu$"))
 (set @icon_files  (filelist "^lib/.*\.icns$"))
-(set @frameworks  '("Cocoa"))
-(set @libs 	  '("edit" "ffi" ))
-(set @lib_dirs	  '("/usr/lib" "/usr/local/lib" "/opt/local/lib"))
 (set @nib_files   '("share/nu/resources/English.lproj/MainMenu.nib"))
+
+;; libraries
+(set @frameworks  '("Cocoa"))
+(set @libs 	      '("edit" "ffi" ))
+
+(set @lib_dirs	  (NSMutableArray arrayWithObject:"/usr/lib"))
+(if (NSFileManager directoryExistsNamed:"/usr/local/lib") (@lib_dirs addObject:"/usr/local/lib"))
+(if (NSFileManager directoryExistsNamed:"/opt/local/lib") (@lib_dirs addObject:"/opt/local/lib"))
+
+;; includes
+(set @includes "")
+(if (NSFileManager directoryExistsNamed:"/usr/local/include") (@includes appendString:" -I /usr/local/include"))
+(if (NSFileManager directoryExistsNamed:"/opt/local/include") (@includes appendString:" -I /opt/local/include"))
+
+(if (NSFileManager fileExistsNamed:"/usr/lib/libffi.dylib")
+    (then ;; Use the libffi that ships with OS X.
+          (@includes appendString:" -I /usr/include/ffi"))
+    (else ;; Use the libffi that is distributed with Nu.
+          (@includes appendString:" -I ./libffi/include")
+          (@lib_dirs addObject:"./libffi")))
 
 ;; framework description
 (set @framework "Nu")
@@ -35,25 +52,20 @@ END)
 
 ;; build configuration
 (set @cc "gcc")
-(set @cflags "-g -DMACOSX -I/usr/local/include -I/opt/local/include -isysroot /Developer/SDKs/MacOSX10.4u.sdk")
+(set @cflags "-g -DMACOSX -isysroot /Developer/SDKs/MacOSX10.4u.sdk")
 (set @mflags "-fobjc-exceptions") ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
 
-(cond
-     ((NSFileManager fileExistsNamed:"/usr/lib/libffi.dylib")
-      (set @includes "-I /usr/include/ffi"))
-     (t
-       (set @includes "-I ./libffi/include")
-       (set @lib_dirs (append @lib_dirs '("./libffi")))))
-
+;; use this to build a universal binary
 (set @arch '("ppc" "i386"))
+;; or this to just build for your current platform
 ;(set @arch nil)
 
 (set @ldflags
      ((list
-           ;;"/usr/local/lib/libpcre.a" ;; statically link in pcre since most people won't have it..
-           (cond 
-               ((NSFileManager fileExistsNamed:"/usr/local/lib/libpcre.a") ("/usr/local/lib/libpcre.a"))
-               ((NSFileManager fileExistsNamed:"/opt/local/lib/libpcre.a") ("/opt/local/lib/libpcre.a")) )
+           (cond  ;; statically link in pcre since most people won't have it..
+                  ((NSFileManager fileExistsNamed:"/usr/local/lib/libpcre.a") ("/usr/local/lib/libpcre.a"))
+                  ((NSFileManager fileExistsNamed:"/opt/local/lib/libpcre.a") ("/opt/local/lib/libpcre.a")) 
+                  (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
            ((@frameworks map: (do (framework) " -framework #{framework}")) join)
            ((@libs map: (do (lib) " -l#{lib}")) join)
            ((@lib_dirs map: (do (libdir) " -L#{libdir}")) join))
