@@ -13,7 +13,7 @@
 
 @implementation NuClass
 
-+ (Class) classWithName:(NSString *)string
++ (NuClass *) classWithName:(NSString *)string
 {
     const char *name = [string cStringUsingEncoding:NSUTF8StringEncoding];
     Class class = objc_getClass(name);

@@ -1002,7 +1002,8 @@ static bool valueIsTrue(id value)
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
-        string = [[[cursor car] evalWithContext:context] stringValue];
+        id value = [[cursor car] evalWithContext:context];
+        string = [value stringValue];
         if (console && (console != Nu__null)) {
             [console write:string];
             [console write:[NSString carriageReturn]];

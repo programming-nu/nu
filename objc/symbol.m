@@ -180,7 +180,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 
     // If the symbol is still unknown, try to find a class with this name.
     id className = [self stringValue];
-    value = [NuClass classWithName:className];
+    value = [[NuClass classWithName:className] retain]; // the symbol should retain its value.
     if (value)
         return value;
 

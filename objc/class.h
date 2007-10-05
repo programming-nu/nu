@@ -19,7 +19,7 @@
 	Class c;
 }
 /*! Create a class wrapper for the named Objective-C class. */
-+ (Class) classWithName:(NSString *)string;
++ (NuClass *) classWithName:(NSString *)string;
 /*! Initialize a class wrapper for the specified class (used from Objective-C). */
 - (id) initWithClass:(Class) class;
 /*! Initialize a class wrapper for the named Objective-C class. */
