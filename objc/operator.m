@@ -1222,17 +1222,22 @@ static bool valueIsTrue(id value)
         id parentName = [[[cdr cdr] cdr] car];
         //NSLog(@"parent name: %@", [parentName stringValue]);
         Class parentClass = NSClassFromString([parentName stringValue]);
+        if (!parentClass)
+            [NSException raise:@"NuUndefinedSuperclass" format:@"undefined superclass %@", [parentName stringValue]];
         [parentClass createSubclassNamed:[className stringValue]];
         body = [[[cdr cdr] cdr] cdr];
     }
     else {
         body = [cdr cdr];
     }
+    NuClass *childClass = [NuClass classWithName:[className stringValue]];
+    if (!childClass)
+        [NSException raise:@"NuUndefinedClass" format:@"undefined class %@", [className stringValue]];
     id result = nil;
     if (body && (body != Nu__null)) {
         NuBlock *block = [[NuBlock alloc] initWithParameters:Nu__null body:body context:context];
         [[block context]
-            setObject:[NuClass classWithName:[className stringValue]]
+            setObject:childClass
             forKey:[symbolTable symbolWithCString:"__class"]];
         result = [block evalWithArguments:Nu__null context:Nu__null];
         [block release];

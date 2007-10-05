@@ -35,6 +35,18 @@
                (catch (exception) (set myException exception)))
           (assert_equal "NuMisplacedDeclaration" (myException name)))
      
+     (imethod (id) testUndefinedClass is
+          (try 
+               (class Undefined)
+               (catch (exception) (set myException exception)))
+          (assert_equal "NuUndefinedClass" (myException name)))
+     
+     (imethod (id) testUndefinedSuperClass is
+          (try 
+               (class Undefined is AlsoUndefined)
+               (catch (exception) (set myException exception)))
+          (assert_equal "NuUndefinedSuperclass" (myException name)))
+     
      (imethod (id) testParseError is
           (try
               (parse "(1 + ))") ;; parse error
