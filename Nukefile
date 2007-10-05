@@ -38,7 +38,7 @@ END)
 
 (if (NSFileManager fileExistsNamed:"/usr/lib/libffi.dylib")
     (then ;; Use the libffi that ships with OS X.
-          (@includes appendString:" -I /usr/include/ffi"))
+          (@includes appendString:" -I /usr/include"))
     (else ;; Use the libffi that is distributed with Nu.
           (@includes appendString:" -I ./libffi/include")
           (@lib_dirs addObject:"./libffi")))
@@ -52,7 +52,11 @@ END)
 
 ;; build configuration
 (set @cc "gcc")
-(set @cflags "-g -DMACOSX -isysroot /Developer/SDKs/MacOSX10.4u.sdk")
+(set @sdk 
+     (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk") (" -isysroot /Developer/SDKs/MacOSX10.5.sdk"))
+           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk") (" -isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
+           (else "")))
+(set @cflags "-g -DMACOSX #{@sdk}")
 (set @mflags "-fobjc-exceptions") ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
 
 ;; use this to build a universal binary
