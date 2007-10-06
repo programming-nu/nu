@@ -12,7 +12,6 @@
               (do (i)        
                   (set superName "NuLittleCat#{(Alphabet letterAtIndex:i)}")        
                   (set className "NuLittleCat#{(Alphabet letterAtIndex:(+ i 1))}")
-                  (puts "#{className} is #{superName}")
                   (eval (list 'class (className symbolValue) 
                              'is (superName symbolValue)))))                            
           (assert_equal "Voom!" ((NuLittleCatA new) takeOffYourHat)))
@@ -24,7 +23,6 @@
               (do (i)        
                   (set superName "ObjCLittleCat#{(Alphabet letterAtIndex:i)}")        
                   (set className "ObjCLittleCat#{(Alphabet letterAtIndex:(+ i 1))}")
-                  (puts "#{className} is #{superName}")
                   ((NuClass classWithName:superName) createSubclassNamed:className)))          
           (assert_equal "Voom!" ((ObjCLittleCatA new) takeOffYourHat))))
 
