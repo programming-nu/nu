@@ -1,8 +1,8 @@
-#define NU_VERSION "0.1.2"
+#define NU_VERSION "0.1.3"
 #define NU_VERSION_MAJOR 0
 #define NU_VERSION_MINOR 1
-#define NU_VERSION_TWEAK 2
-#define NU_RELEASE_DATE "2007-10-2"
+#define NU_VERSION_TWEAK 3
+#define NU_RELEASE_DATE "2007-10-5"
 #define NU_RELEASE_YEAR  2007
 #define NU_RELEASE_MONTH 10
-#define NU_RELEASE_DAY   2
+#define NU_RELEASE_DAY   5
