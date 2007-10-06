@@ -146,7 +146,7 @@
     id nextSymbol = [cursor car];
     if ([nextSymbol isKindOfClass:[NuSymbol class]]) {
         // The commented out code below was the original approach.
-        // methods were identified by concatenatig symbols and looking up the resulting method -- on every method call
+        // methods were identified by concatenating symbols and looking up the resulting method -- on every method call
         // that was slow but simple
         // NSMutableString *selectorString = [NSMutableString stringWithString:[nextSymbol stringValue]];
         NuSelectorCache *selectorCache = [[NuSelectorCache sharedSelectorCache] lookupSymbol:nextSymbol];

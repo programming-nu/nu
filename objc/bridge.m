@@ -128,7 +128,7 @@ char get_typeChar_from_typeString(const char *typeString)
         (typeChar == 'o') || (typeChar == 'O') ||
         (typeChar == 'V')
     ) {
-	    // uncomment the following two lines to complain about unused quantifiers in ObjC type encodings
+        // uncomment the following two lines to complain about unused quantifiers in ObjC type encodings
         // if (typeChar != 'r')                      // don't worry about const
         //     NSLog(@"ignoring qualifier %c in %s", typeChar, typeString);
         typeChar = typeString[++i];
@@ -737,7 +737,7 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
     IMP imp = method_getImplementation(m);
 
     // if the imp has an associated block, this is a nu-to-nu call.
-    // skip going through the objc runtime and evaluate the block directly.
+    // skip going through the ObjC runtime and evaluate the block directly.
     NuBlock *block = nil;
     if (nu_block_table && st_lookup(nu_block_table, (unsigned long)imp, (unsigned long *)&block)) {
         //NSLog(@"nu calling nu method %s of class %@", sel_getName(method_getName(m)), [target class]);
@@ -751,9 +751,13 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
             [cursor setCar:[args objectAtIndex:i]];
         }
         id result = [block evalWithArguments:[arguments cdr] context:nil self:target];
-        return result;
+        // ensure that methods declared to return void always return void.
+        char return_type_buffer[BUFSIZE];
+        method_getReturnType(m, return_type_buffer, BUFSIZE);
+        return (!strcmp(return_type_buffer, "v")) ? [NSNull null] : result;
     }
 
+	// if we get here, we're going through the ObjC runtime to make the call.
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     SEL s = method_getName(m);
@@ -870,7 +874,7 @@ static void obj_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void*
     id rcv = *((id*)args[0]);                     // this is the object getting the message
     // unused: SEL sel = *((SEL*)args[1]);
 
-    // we might need an autorelease pool
+    // we might need an autorelease pool (added for detachNewThreadSelector:toTarget:withObject:)
     NSAutoreleasePool *pool = [NSAutoreleasePool autoreleasePoolExists] ? 0 : [[NSAutoreleasePool alloc] init];
 
     NuBlock *block = ((NuBlock **)userdata)[1];
