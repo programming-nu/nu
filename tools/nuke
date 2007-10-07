@@ -189,9 +189,10 @@
      (unless @includes (set @includes ""))
      (unless (and @arch (@arch length))
              (set @arch (list (NSString stringWithShellCommand:"arch"))))
-     (unless @ldflags (set @ldflags ""))
-     
      (@arch each: (do (architecture) (system "mkdir -p build/#{architecture}")))
+     
+     (unless @ldflags ;; not for compilation, but common across all builds 
+             (set @ldflags ((@frameworks map: (do (framework) " -framework #{framework}")) join)))   
      
      ;; compile c files
      (set @c_objects (NSMutableDictionary dictionary))
@@ -450,6 +451,74 @@
            0)
      
      (task "framework" => @framework_executable_name @framework_headers_dir "framework_resources" framework_infoplist "framework_links"))
+
+;; use this to create all the linking and assembly tasks to build a Cocoa bundle
+(macro bundle-tasks
+     (unless (and @arch (@arch length))
+             (set @arch (list (NSString stringWithShellCommand:"arch"))))
+     
+     ;; bundle directory tasks
+     (set @bundle_dir                    "#{@bundle}.bundle")
+     (set @bundle_contents_dir           "#{@bundle_dir}/Contents")
+     (set @bundle_executable_dir         "#{@bundle_contents_dir}/MacOS")
+     (set @bundle_resource_dir           "#{@bundle_contents_dir}/Resources")     
+     ((list @bundle_dir 
+            @bundle_contents_dir 
+            @bundle_executable_dir
+            @bundle_resource_dir)
+      each: (do (dir) (file dir is (make-directory (target name)))))
+     
+     ;; bundle architecture-specific executable
+     (set @bundle_executables (NSMutableArray array))
+     (@arch each:
+            (do (architecture)
+                (set bundle_executable "build/#{architecture}/bundle-#{@bundle}")
+                (@bundle_executables addObject:bundle_executable)
+                (file bundle_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} -arch #{architecture} #{@cflags} #{@ldflags} -bundle -o '#{(target name)}'")
+                      (SH command))))
+     
+     ;; bundle fat executable
+     (set @bundle_executable_name "#{@bundle_executable_dir}/#{@bundle}")
+     (file @bundle_executable_name => @bundle_executable_dir @bundle_executables is
+           (set command "lipo -create #{(@bundle_executables join)} -output #{@bundle_executable_name}")
+           (SH command))
+     
+     ;; bundle_resources
+     (task "bundle_resources" => @bundle_resource_dir @bundle_resource_localized_dir)
+     ((list @nu_files @resource_files) each:
+      (do (l)
+          (l each:
+             (do (f)
+                 (set baseName ((f componentsSeparatedByString:"/") lastObject))
+                 (set targetFile "#{@bundle_resource_dir}/#{baseName}")
+                 (file targetFile => f is
+                       (SH "cp #{f} '#{targetFile}'"))
+                 (task "bundle_resources" => targetFile)))))     
+     
+     ;; bundle_infoplist
+     (set bundle_infoplist "#{@bundle_contents_dir}/Info.plist")
+     (file bundle_infoplist => @bundle_contents_dir is
+           (set bundle_info (NSDictionary dictionaryWithList:
+                                 (list "CFBundleDevelopmentRegion" "English"
+                                       "CFBundleExecutable" @bundle
+                                       "CFBundleIdentifier" @bundle_identifier
+                                       "CFBundleInfoDictionaryVersion" "6.0"
+                                       "CFBundleName" @bundle
+                                       "CFBundlePackageType" "BNDL"
+                                       "CFBundleSignature" @bundle_creator_code
+                                       "CFBundleVersion" "0.1")))
+           (if @bundle_info (bundle_info addEntriesFromDictionary: @info))
+           (bundle_info writeToFile:(target name) atomically:NO)
+           0)
+     
+     ;; bundle_pkginfo
+     (unless @bundle_creator_code (set @bundle_creator_code "????"))
+     (set bundle_pkginfo "#{@bundle_contents_dir}/PkgInfo")
+     (file bundle_pkginfo => @bundle_contents_dir is
+           (SH "echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
+     
+     (task "bundle" => @bundle_executable_name "bundle_resources" bundle_infoplist bundle_pkginfo))
 
 ;; @abstract A project consisting of an interrelated set of NukeTasks.
 ;; @discussion NukeProjects gather together a related set of NukeTask task descriptions

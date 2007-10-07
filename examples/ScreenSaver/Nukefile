@@ -1,0 +1,28 @@
+
+;; source files
+(set @m_files     (filelist "^objc/.*\.m$"))
+(set @nu_files 	  (filelist "^nu/.*nu$"))
+(set @frameworks  '("Cocoa" "Nu" "ScreenSaver"))
+
+;; bundle descriptors
+(set @bundle "NuScreenSaver")
+(set @bundle_identifier "nu.programming.screensaver")
+
+(compilation-tasks)
+(bundle-tasks)
+
+(task "clobber" => "clean" is
+      (system "rm -rf #{@bundle}.bundle #{@bundle}.saver"))
+
+(task "default" => "bundle")
+
+(set INSTALLDIR "/Library/Screen Savers")
+
+(task "install" => "bundle" is
+      (SH "rm -rf #{@bundle}.saver")
+      (SH "mv #{@bundle}.bundle #{@bundle}.saver")
+      (SH "rm -rf '#{INSTALLDIR}/#{@bundle}.saver'")
+      (SH "cp -r #{@bundle}.saver '#{INSTALLDIR}'"))
+
+(task "uninstall" is
+      (SH "rm -rf '#{INSTALLDIR}/#{@bundle}.saver'"))
