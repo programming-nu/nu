@@ -471,7 +471,9 @@ END))
 <font size="-2">
 <div style="float:left; margin-left:10px">Documentation by NuDoc</div>
 <div style="float:right; margin-right:10px">Updated <%= ((NSDate date) descriptionForDocumentation) %></div>
+<% (if (eq $sitename "programming.nu") %>
 <a href="http://blog.neontology.com">&copy; 2007, Neon Design Technology, Inc.</a>
+<% ) %>
 </font>
 </center>
 </div>
