@@ -335,7 +335,8 @@
                                       (self write:(NSString carriageReturn))
                                       (catch (exception)
                                              (self write:"#{(exception name)}: #{(exception reason)}")
-                                             (self write:(NSString carriageReturn))))))
+                                             (self write:(NSString carriageReturn))
+                                             (@parser reset)))))
                      (else      
                           (set @insertionPoint @startOfInput)))
                  (self prompt)
