@@ -1,0 +1,24 @@
+
+;; source files
+(set @c_files     (filelist "^objc/.*\.c$"))
+(set @m_files     (filelist "^objc/.*\.m$"))
+(set @nu_files 	  (filelist "^nu/.*\.nu$"))
+(set @frameworks  '("Cocoa" "Nu" "Carbon"))
+
+(set @ldflags " -framework Cocoa -framework Nu -framework Carbon -linject -L../libinject ")
+(set @includes " -I../libinject/objc")
+
+;; framework description
+(set @framework "NuInject")
+(set @framework_identifier "nu.programming.inject")
+(set @framework_creator_code "????")
+
+(set @arch '("i386" "ppc"))
+
+(compilation-tasks)
+(framework-tasks)
+
+(task "default" => "framework")
+
+(task "clobber" => "clean" is
+      (SH "rm -rf #{@framework}.framework"))

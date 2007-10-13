@@ -1,0 +1,45 @@
+
+This *experimental* example shows one way to inject bundles 
+of Nu into running Cocoa applications.
+
+It uses Jonathan Rentzsch's mach_star toolkit.
+	http://rentzsch.com/mach_star
+
+INSTALLATION AND USAGE
+
+0. cd libinject; nuke
+
+This builds the libinject.a library, which contains code from the mach_star
+toolkit.  This library will be linked into both of the next two components.
+
+1. cd NuInject; nuke
+
+This builds the NuInject.framework, which adds an injection method to Nu.
+This method injects a bundle into a running Cocoa application using
+mach injection.
+
+2. cd NuConsole; nuke
+
+This builds NuConsole.bundle which, when injected into a running Cocoa
+application, adds a Nu console.
+
+3. sudo nu-anywhere Safari 
+(or TextEdit, "Address Book", Pages, Numbers, Mail...)
+
+This uses the NuInject.framework to inject NuConsole.bundle into the
+named application (which must already be running).  Note that this
+must be run as root.
+
+You'll get a Nu console in a panel.  That console is running inside
+the injected application.  You should also find a "Show/Hide Nu Console"
+menu item in your application's Window menu.  For fun, type "(raw)"
+(without quotes) in your console.  You just added RandomApp to Safari,
+Address Book, or whatever Cocoa application you chose for injection.
+
+TO GO FURTHER
+
+Once you have that working, take a look at the Nu code in the
+NuConsole bundle.  You can put any Nu code you want there and
+add all kinds of interesting things to Cocoa applications,
+whether you have the source for them or not.
+

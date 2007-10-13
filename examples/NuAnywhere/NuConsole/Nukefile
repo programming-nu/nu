@@ -1,0 +1,21 @@
+;; Nukefile for Nu framework and nush, the Nu shell
+
+;; source files
+(set @c_files     (filelist "^objc/.*\.c$"))
+(set @m_files     (filelist "^objc/.*\.m$"))
+(set @nu_files 	  (filelist "^nu/.*\.nu$"))
+(set @frameworks  '("Cocoa" "Nu" "Carbon" ))
+
+(set @ldflags " -framework Cocoa -framework Nu -framework Carbon -linject -L../libinject -all_load ")
+
+;; bundle description
+(set @bundle "NuConsole")
+(set @bundle_identifier "nu.programming.console")
+
+(compilation-tasks)
+(bundle-tasks)
+
+(task "default" => "bundle")
+
+(task "clobber" => "clean" is
+      (SH "rm -rf #{@bundle}.bundle"))

@@ -1,0 +1,38 @@
+#!/usr/local/bin/nush
+#
+# nu-anywhere
+#   This script injects a Nu Console into a running Cocoa application.
+#
+#   This script must be run as root.
+#
+#   Because paths to the framework and bundle are hard-coded, 
+#   this script must be run from the current directory.
+#
+#   The application must already be running.
+#
+#   Usage: sudo nu-anywhere <application>
+#
+#   Examples: sudo nu-anywhere "Address Book"
+#             sudo nu-anywhere Safari
+# 
+(load "NuInject/NuInject")
+
+(set bundle "NuConsole/NuConsole.bundle") ;; this is the bundle to inject
+
+;; add something useful to NSString
+(class NSString
+     (- split is ((self componentsSeparatedByString:" ") select: (do (x) (!= x ""))))) 
+
+;; the application name is (argv 0), the first argument to the script.  We want its pid.
+(set argv ((NuApplication sharedApplication) arguments))
+(set ps (NSString stringWithShellCommand:"ps auxww | grep '#{(argv 0)}' | grep -v grep | grep -v nu-anywhere"))
+(set fields (ps split))
+
+(if (> (fields count) 2)
+    (then 
+          (set pid ((fields 1) intValue))
+          (puts "Injecting #{bundle} into #{(argv 0)}, process #{pid}.")
+          (Nu injectBundleWithPath:bundle intoProcess:pid)
+          (puts "Injection complete."))
+    (else
+         (puts "Unable to find pid for #{(argv 0)}.")))
