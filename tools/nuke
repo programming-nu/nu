@@ -294,7 +294,7 @@
              (do (f)
                  (set baseName ((f componentsSeparatedByString:"/") lastObject))
                  (set targetFile "#{@application_resource_dir}/#{baseName}")
-                 (file targetFile => f is
+                 (file targetFile => f @application_resource_dir is
                        (SH "cp #{f} '#{targetFile}'"))
                  (task "application_resources" => targetFile)))))
      ((list @nib_files @resources) each:
@@ -407,7 +407,7 @@
              (do (f)
                  (set baseName ((f componentsSeparatedByString:"/") lastObject))
                  (set targetFile "#{@framework_resource_dir}/#{baseName}")
-                 (file targetFile => f is
+                 (file targetFile => f @framework_resource_dir is
                        (SH "cp #{f} '#{targetFile}'"))
                  (task "framework_resources" => targetFile)))))
      (@nib_files each:
@@ -492,7 +492,7 @@
              (do (f)
                  (set baseName ((f componentsSeparatedByString:"/") lastObject))
                  (set targetFile "#{@bundle_resource_dir}/#{baseName}")
-                 (file targetFile => f is
+                 (file targetFile => f @bundle_resource_dir is
                        (SH "cp #{f} '#{targetFile}'"))
                  (task "bundle_resources" => targetFile)))))     
      
