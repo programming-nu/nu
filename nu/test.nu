@@ -65,7 +65,7 @@
      (imethod (id) run is
           (set @failures 0)
           (set @assertions 0)
-          (set pattern (regex "^test(.*)$"))
+          (set pattern /^test(.*)$/)
           (set testcases (((self instanceMethods) sort) select: (do (method) ((pattern findInString:(method name))))))
           (puts "")
           (puts "#{((self class) name)}: running")
@@ -83,21 +83,30 @@
 
 (macro assert_equal
      (set @assertions (+ @assertions 1))
-     (set golden (eval (car margs)))
-     (set actual (eval (car (cdr margs))))
-     (unless (eq golden actual)
-             (puts "failure: #{(car (cdr margs))} expected '#{golden}' got '#{actual}'")
+     (set __golden (eval (car margs)))
+     (set __actual (eval (car (cdr margs))))
+     (unless (eq __golden __actual)
+             (puts "failure: #{(car (cdr margs))} expected '#{__golden}' got '#{__actual}'")
              (set @failures (+ @failures 1)))
+     nil)
+
+(macro assert_not_equal
+     (set @assertions (+ @assertions 1))
+     (set __ungolden (eval (car margs)))
+     (set __actual (eval (car (cdr margs))))
+     (if (eq __ungolden __actual)
+         (puts "failure: #{(car (cdr margs))} did not want '#{__actual} to be '#{__ungolden}'")
+         (set @failures (+ @failures 1)))
      nil)
 
 (macro assert_in_delta 
      (set @assertions (+ @assertions 1))
-     (set golden (eval (car margs)))
-     (set actual (eval (car (cdr (margs)))))
-     (set delta (eval (car (cdr (cdr (margs))))))
-     (set difference (NuMath abs:(- golden actual)))
-     (if (> difference delta)
-         (puts "failure: #{(car (cdr margs))} expected #{golden} got #{actual} which is outside margin #{delta}")
+     (set __golden (eval (car margs)))
+     (set __actual (eval (car (cdr (margs)))))
+     (set __delta (eval (car (cdr (cdr (margs))))))
+     (set __difference (NuMath abs:(- __golden __actual)))
+     (if (> __difference __delta)
+         (puts "failure: #{(car (cdr margs))} expected #{__golden} got #{__actual} which is outside margin #{__delta}")
          (set @failures (+ @failures 1)))
      nil)
 

@@ -3,11 +3,11 @@
 ;;
 ;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
-(global LPAREN ("(" characterAtIndex:0))
-(global RPAREN (")" characterAtIndex:0))
-(global SPACE  (" " characterAtIndex:0))
-(global COLON  (":" characterAtIndex:0))
-(global TAB    9) 
+(global LPAREN '(')
+(global RPAREN ')')
+(global SPACE  ' ')
+(global COLON  ':')
+(global TAB    '\x09') 
 
 (class NSString
      ;; Create a copy of a string with leading whitespace removed.
@@ -43,7 +43,7 @@
           (set indentation_stack ((NuStack alloc) init))
           (indentation_stack push:0)
           
-          (set pattern (regex "\(def|\(macro|\(function|\(class|\(imethod|\(cmethod"))
+          (set pattern /\(def|\(macro|\(function|\(class|\(imethod|\(cmethod/)
           
           (set nube-parser ((NuParser alloc) init))
           (set @olddepth 0)
@@ -52,7 +52,8 @@
           (lines eachWithIndex:
                  (do (input-line line-number)
                      ;; indent line to current level of indentation
-                     (if (eq (nube-parser state) 3) ;; parsing a herestring
+                     (if (or (eq (nube-parser state) 3) ;; parsing a herestring
+                             (eq (nube-parser state) 4)) ;; parsing a regex
                          (then (set line input-line))
                          (else (set line "#{(NSString spaces:(indentation_stack top))}#{(input-line strip)}")))
                      

@@ -134,6 +134,12 @@ extern id Nu__null;
     return self;
 }
 
+- (NSString *) hexValue
+{
+    int x = [self intValue];
+    return [NSString stringWithFormat:@"0x%x", x];
+}
+
 @end
 
 @implementation NuMath
@@ -331,5 +337,3 @@ extern id Nu__null;
 }
 
 @end
-
-

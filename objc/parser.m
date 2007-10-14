@@ -6,11 +6,13 @@
 #import "parser.h"
 #import "symbol.h"
 #import "extensions.h"
+#import "regex.h"
 
 #define PARSE_NORMAL     0
 #define PARSE_COMMENT    1
 #define PARSE_STRING     2
 #define PARSE_HERESTRING 3
+#define PARSE_REGEX      4
 
 #include <readline/readline.h>
 
@@ -29,6 +31,18 @@
 - (void) addAtom:(id)atom;
 -(void) quoteNextElement;
 - (int) interact;
+@end
+
+@interface NSMutableString(Nu)
+- (void) appendCharacter:(unichar) c;
+@end
+
+@implementation NSMutableString(Nu)
+- (void) appendCharacter:(unichar) c
+{
+    [self appendFormat:@"%C", c];
+}
+
 @end
 
 extern void load_builtins(NuSymbolTable *);
@@ -56,7 +70,65 @@ id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTa
     return string;
 }
 
+id atomWithString(NSString *string, NuSymbolTable *symbolTable)
+{
+    const char *cstring = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    char *endptr;
+    // If the string can be converted to a long, it's an NSNumber.
+    long lvalue = strtol(cstring, &endptr, 0);
+    if (*endptr == 0) {
+        return [NSNumber numberWithLong:lvalue];
+    }
+    // If the string can be converted to a double, it's an NSNumber.
+    double dvalue = strtod(cstring, &endptr);
+    if (*endptr == 0) {
+        return [NSNumber numberWithDouble:dvalue];
+    }
+    // Otherwise, it's a symbol.
+    NuSymbol *symbol = [symbolTable symbolWithString:string];
+    return symbol;
+}
+
+id regexWithString(NSString *string)
+{
+    // If the first character of the string is a forward slash, it's a regular expression literal.
+    if (([string characterAtIndex:0] == '/') && ([string length] > 1)) {
+        int lastSlash = [string length];
+        int i = lastSlash-1;
+        while (i > 0) {
+            if ([string characterAtIndex:i] == '/') {
+                lastSlash = i;
+                break;
+            }
+            i--;
+        }
+        // characters after the last slash specify options.
+        int options = 0;
+        int j;
+        for (j = lastSlash+1; j < [string length]; j++) {
+            unichar c = [string characterAtIndex:j];
+            switch (c) {
+                case 'i': options += 1; break;
+                case 's': options += 2; break;
+                case 'x': options += 4; break;
+                case 'l': options += 8; break;
+                case 'm': options += 16; break;
+                default:
+                    [NSException raise:@"NuParseError" format:@"unsupported regular expression option character: %C", c];
+            }
+        }
+        return [NuRegex regexWithPattern:[string substringWithRange:NSMakeRange(1, lastSlash-1)] options:options];
+    }
+    else {
+        return nil;
+    }
+}
+
 @implementation NuParser
+
+static BOOL nu_parse_escapes = NO;
++ (BOOL) parseEscapes {return nu_parse_escapes;}
++ (void) setParseEscapes:(BOOL) v {nu_parse_escapes = v;}
 
 - (BOOL) incomplete
 {
@@ -111,7 +183,7 @@ id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTa
 - (void) reset
 {
     state = PARSE_NORMAL;
-    start = -1;
+    partial = [NSMutableString string];
     depth = 0;
     parens = 0;
     quoting = 0;
@@ -162,7 +234,7 @@ id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTa
         quoting--;
         [self openList];
         quoteDepth[depth] = true;
-        [self addAtom:[symbolTable symbolWithCString:"quote"]];
+        [self addAtom:[symbolTable symbolWithString:@"quote"]];
         [self openList];
         return;
     }
@@ -202,7 +274,7 @@ id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTa
     if (quoting > 0) {
         quoting--;
         [self openList];
-        [self addAtom:[symbolTable symbolWithCString:"quote"]];
+        [self addAtom:[symbolTable symbolWithString:@"quote"]];
         [self addAtom:atom];
         [self closeList];
         return;
@@ -234,27 +306,130 @@ id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTa
     quoting++;
 }
 
-static char pattern[1000];
+static int nu_octal_digit_value(char c)
+{
+    int x = (c - '0');
+    if ((x >= 0) && (x <= 7))
+        return x;
+    [NSException raise:@"NuParseError" format:@"invalid octal character: %c", c];
+    return 0;
+}
+
+static int nu_hex_digit_value(char c)
+{
+    int x = (c - '0');
+    if ((x >= 0) && (x <= 9))
+        return x;
+    x = (c - 'A');
+    if ((x >= 0) && (x <= 5))
+        return x + 10;
+    x = (c - 'a');
+    if ((x >= 0) && (x <= 5))
+        return x + 10;
+    [NSException raise:@"NuParseError" format:@"invalid hex character: %c", c];
+    return 0;
+}
+
+static unichar nu_octal_digits_to_unichar(char c0, char c1, char c2)
+{
+    return nu_octal_digit_value(c0)*64 + nu_octal_digit_value(c1)*8 + nu_octal_digit_value(c2);
+}
+
+static unichar nu_hex_digits_to_unichar(char c1, char c2)
+{
+    return nu_hex_digit_value(c1)*16 + nu_hex_digit_value(c2);
+}
+
+static unichar nu_unicode_digits_to_unichar(char c1, char c2, char c3, char c4)
+{
+    return nu_hex_digit_value(c1)*4096 + nu_hex_digit_value(c2)*256 + nu_hex_digit_value(c3)*16 + nu_hex_digit_value(c4);
+}
+
+static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutableString *partial)
+{
+    i++;
+    unichar c = [string characterAtIndex:i];
+    switch(c) {
+        case 'n': [partial appendCharacter:0x0a]; break;
+        case 'r': [partial appendCharacter:0x0d]; break;
+        case 'f': [partial appendCharacter:0x0c]; break;
+        case 'b': [partial appendCharacter:0x08]; break;
+        case 'a': [partial appendCharacter:0x07]; break;
+        case 'e': [partial appendCharacter:0x1b]; break;
+        case 's': [partial appendCharacter:0x20]; break;
+        case '0': case '1': case '2': case '3': case '4':
+        case '5': case '6': case '7': case '8': case '9':
+        {
+            // octal. expect two more digits (\nnn).
+            if (imax < i+2) {
+                [NSException raise:@"NuParseError" format:@"not enough characters for octal constant"];
+            }
+            char c1 = [string characterAtIndex:++i];
+            char c2 = [string characterAtIndex:++i];
+            [partial appendCharacter:nu_octal_digits_to_unichar(c, c1, c2)];
+            break;
+        }
+        case 'x':
+        {
+            // hex. expect two more digits (\xnn).
+            if (imax < i+2) {
+                [NSException raise:@"NuParseError" format:@"not enough characters for hex constant"];
+            }
+            char c1 = [string characterAtIndex:++i];
+            char c2 = [string characterAtIndex:++i];
+            [partial appendCharacter:nu_hex_digits_to_unichar(c1, c2)];
+            break;
+        }
+        case 'u':
+        {
+            // unicode. expect four more digits (\unnnn)
+            if (imax < i+4) {
+                [NSException raise:@"NuParseError" format:@"not enough characters for unicode constant"];
+            }
+            char c1 = [string characterAtIndex:++i];
+            char c2 = [string characterAtIndex:++i];
+            char c3 = [string characterAtIndex:++i];
+            char c4 = [string characterAtIndex:++i];
+            [partial appendCharacter:nu_unicode_digits_to_unichar(c1, c2, c3, c4)];
+            break;
+        }
+        case 'c': case 'C':
+        {
+            // control character.  Unsupported, fall through to default.
+        }
+        case 'M':
+        {
+            // meta character. Unsupported, fall through to default.
+        }
+        default:
+            [partial appendCharacter:c];
+    }
+    return i;
+}
 
 -(id) parse:(NSString *)string
 {
     if (!string) return [NSNull null];            // don't crash, at least.
 
     column = 0;
-    const char *str = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    if (state != PARSE_REGEX)
+        partial = [NSMutableString string];
+    else
+        [partial autorelease];
 
     int i = 0;
-    int imax = strlen(str)+1;
+    int imax = [string length];
     for (i = 0; i < imax; i++) {
         column++;
+        unichar stri = [string characterAtIndex:i];
         switch (state) {
             case PARSE_NORMAL:
-                switch(str[i]) {
+                switch(stri) {
                     case '(':
                         //	NSLog(@"pushing %d on line %d", column, linenum);
                         [opens push:[NSNumber numberWithInt:column]];
                         parens++;
-                        if (start == -1) {
+                        if ([partial length] == 0) {
                             [self openList];
                         }
                         break;
@@ -263,65 +438,113 @@ static char pattern[1000];
                         [opens pop];
                         parens--;
                         if (parens < 0) parens = 0;
-                        if (start != -1) {
-                            [self addAtom:atomWithBytesAndLength(&str[start], i-start, symbolTable)];
-                            start = -1;
+                        if ([partial length] > 0) {
+                            [self addAtom:atomWithString(partial, symbolTable)];
+                            partial = [NSMutableString string];
                         }
                         if (depth > 0) {
                             [self closeList];
                         }
                         else {
                             [NSException raise:@"NuParseError" format:@"no open sexpr"];
-                            //[NSException raise:@"NuParseError" format:@"line %d, no open sexpr", linenum];
                         }
-
                         break;
                     case '"':
                         state = PARSE_STRING;
-                        if (start == -1)
-                            start = i;
+                        partial = [NSMutableString string];
                         break;
-                    case ':':
-                        if (start != -1) {
-                            [self addAtom:atomWithBytesAndLength(&str[start], i-start+1, symbolTable)];
-                            start = -1;
+                    case '/':
+                    {
+                        unichar nextc = [string characterAtIndex:i+1];
+                        if (nextc == ' ') {
+                            [partial appendCharacter:stri];
+                        }
+                        else {
+                            state = PARSE_REGEX;
+                            partial = [NSMutableString string];
+                            [partial appendCharacter:'/'];
                         }
                         break;
-                    case '\'':
-                        [self quoteNextElement];
+                    }
+                    case ':':
+                        [partial appendCharacter:':'];
+                        [self addAtom:atomWithString(partial, symbolTable)];
+                        partial = [NSMutableString string];
                         break;
+                    case '\'':
+                    {
+                        // try to parse a character literal.
+                        // if that doesn't work, then interpret the quote as the quote operator.
+                        bool isACharacterLiteral = false;
+                        unichar characterLiteralValue;
+                        if (i + 2 < imax) {
+                            if ([string characterAtIndex:i+1] != '\\') {
+                                if ([string characterAtIndex:i+2] == '\'') {
+                                    isACharacterLiteral = true;
+                                    characterLiteralValue = [string characterAtIndex:i+1];
+                                    i = i + 2;
+                                }
+                            }
+                            else {
+                                // look for an escaped character
+                                int newi = nu_parse_escape_sequences(string, i+1, imax, partial);
+                                if ([partial length] > 0) {
+                                    isACharacterLiteral = true;
+                                    characterLiteralValue = [partial characterAtIndex:0];
+                                    partial = [NSMutableString string];
+									i = newi;
+                                    // make sure that we have a closing single-quote
+                                    if ((i + 1 < imax) && ([string characterAtIndex:i+1] == '\'')) {
+                                        i = i + 1;// move past the closing single-quote
+                                    }
+                                    else {
+                                        [NSException raise:@"NuParseError" format:@"missing close quote from character literal"];
+                                    }
+                                }
+                            }
+                        }
+                        if (isACharacterLiteral) {
+                            [self addAtom:[NSNumber numberWithInt:characterLiteralValue]];
+                        }
+                        else {
+                            [self quoteNextElement];
+                        }
+                        break;
+                    }
                     case '\n':                    // end of line
                         column = 0;
                         linenum++;
                     case ' ':                     // end of token
                     case '\t':
                     case 0:                       // end of string
-                        if (start != -1) {
-                            [self addAtom:atomWithBytesAndLength(&str[start], i-start, symbolTable)];
-                            start = -1;
+                        if ([partial length] > 0) {
+                            [self addAtom:atomWithString(partial, symbolTable)];
+                            partial = [NSMutableString string];
                         }
                         break;
                     case ';':
                     case '#':
-                        if (start != -1) {
-                            NuSymbol *symbol = [symbolTable symbolWithBytes:&str[start] length:(i-start)];
+                        if ([partial length] > 0) {
+                            NuSymbol *symbol = [symbolTable symbolWithString:partial];
                             [self addAtom:symbol];
+                            partial = [NSMutableString string];
                         }
-                        start = i;
                         state = PARSE_COMMENT;
                         break;
                     case '<':
-                        if ((str[i+1] == '<') && (str[i+2] == '-')) {
+                        if (([string characterAtIndex:i+1] == '<') && ([string characterAtIndex:i+2] == '-')) {
                             // parse a here string
                             // get the tag to match
                             int j = i+3;
-                            while ((str[j] != '\n') && (j < imax)) j++;
-                            strncpy(pattern, &str[i+3], j-(i+3));
-                            pattern[j-(i+3)] = '\0';
+                            while ((j < imax) && ([string characterAtIndex:j] != '\n')) {
+                                j++;
+                            }
+                            pattern = [[string substringWithRange:NSMakeRange(i+3, j-(i+3))] retain];
+                            //NSLog(@"herestring pattern: %@", pattern);
+                            partial = [NSMutableString string];
                             // skip the newline
                             // j++;
                             i = j;
-                            start = i+1;
                             //printf("parsing herestring that ends with %s from %s", pattern, &str[start]);
                             state = PARSE_HERESTRING;
                             hereString = nil;
@@ -329,43 +552,52 @@ static char pattern[1000];
                         }
                         // if this is not a here string, fall through to the general handler
                     default:
-                        if (start == -1)
-                            start = i;
+                        [partial appendCharacter:stri];
                 }
                 break;
             case PARSE_HERESTRING:
-                if ((str[i] == pattern[0]) && !strncmp(&(str[i]), pattern, strlen(pattern))) {
+                //NSLog(@"pattern %@", pattern);
+                if ((stri == [pattern characterAtIndex:0]) &&
+                    (i + [pattern length] < imax) &&
+                ([pattern isEqual:[string substringWithRange:NSMakeRange(i, [pattern length])]])) {
                     // everything up to here is the string
-                    if (i-start > 0) {
-                        NSString *string = [[NSString alloc] initWithBytes:&str[start] length:(i-start) encoding:NSUTF8StringEncoding];
-                        if (!hereString)
-                            hereString = [[NSMutableString alloc] init];
-                        else
-                            [hereString appendString:[NSString carriageReturn]];
-                        [hereString appendString:string];
-                    }
+                    NSString *string = [[NSString alloc] initWithString:partial];
+                    if (!hereString)
+                        hereString = [[NSMutableString alloc] init];
+                    else
+                        [hereString appendString:[NSString carriageReturn]];
+                    [hereString appendString:string];
                     if (hereString == nil)
                         hereString = [NSMutableString string];
                     //NSLog(@"got herestring **%@**", hereString);
                     [self addAtom:hereString];
                     // to continue, set i to point to the next character after the tag
-                    i = i + strlen(pattern)-1;
+                    i = i + [pattern length] - 1;
                     //NSLog(@"continuing parsing with:%s", &str[i+1]);
                     //NSLog(@"ok------------");
                     state = PARSE_NORMAL;
                     start = -1;
                 }
+                else {
+                    if (nu_parse_escapes && (stri == '\\')) {
+                        // parse escape sequencs in here strings
+                        i = nu_parse_escape_sequences(string, i, imax, partial);
+                    }
+                    else {
+                        [partial appendCharacter:stri];
+                    }
+                }
                 break;
             case PARSE_STRING:
-                switch(str[i]) {
+                switch(stri) {
                     case '"':
                     {
-                        if (str[i-1] != '\\') {
+                        if ([string characterAtIndex:i-1] != '\\') {
                             state = PARSE_NORMAL;
-                            NSString *string = [[NSString alloc] initWithBytes:&str[start+1] length:(i-start-1) encoding:NSUTF8StringEncoding];
+                            NSString *string = [[NSString alloc] initWithString:partial];
                             //NSLog(@"parsed string: %@", string);
                             [self addAtom:string];
-                            start = -1;
+                            partial = [NSMutableString string];
                         }
                         break;
                     }
@@ -373,48 +605,111 @@ static char pattern[1000];
                     {
                         column = 0;
                         linenum++;
-                        NSString *string = [[NSString alloc] initWithBytes:&str[start] length:(i-start) encoding:NSUTF8StringEncoding];
+                        NSString *string = [[NSString alloc] initWithString:partial];
                         [NSException raise:@"NuParseError" format:@"partial string (terminated by newline): %@", string];
-                        start = 0;
+                        partial = [NSMutableString string];
                         break;
+                    }
+                    case '\\':
+                    {                             // parse escape sequences in strings
+                        if (nu_parse_escapes) {
+                            i = nu_parse_escape_sequences(string, i, imax, partial);
+                        }
+                        else {
+                            [partial appendCharacter:stri];
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                        [partial appendCharacter:stri];
+                    }
+                }
+                break;
+            case PARSE_REGEX:
+                switch(stri) {
+                    case '/':                     // that's the end of it
+                    {
+                        [partial appendCharacter:'/'];
+                        i++;
+                        // add any remaining option characters
+                        while (i < imax) {
+                            unichar nextc = [string characterAtIndex:i];
+                            if ((nextc >= 'a') && (nextc <= 'z')) {
+                                [partial appendCharacter:nextc];
+                                i++;
+                            }
+                            else {
+                                i--;              // back up to revisit this character
+                                break;
+                            }
+                        }
+                        [self addAtom:regexWithString(partial)];
+                        partial = [NSMutableString string];
+                        state = PARSE_NORMAL;
+                        break;
+                    }
+                    case '\\':
+                    {
+                        [partial appendCharacter:stri];
+                        i++;
+                        [partial appendCharacter:[string characterAtIndex:i]];
+                        break;
+                    }
+                    default:
+                    {
+                        [partial appendCharacter:stri];
                     }
                 }
                 break;
             case PARSE_COMMENT:
-                switch(str[i]) {
+                switch(stri) {
                     case '\n':
                     {
                         if (!comments) comments = [[NSMutableString alloc] init];
                         else [comments appendString: [NSString carriageReturn]];
-                        [comments appendString: [[NSString alloc] initWithBytes:&str[start] length:(i-start) encoding:NSUTF8StringEncoding]];
+                        [comments appendString: [[NSString alloc] initWithString:partial]];
+                        partial = [NSMutableString string];
                         column = 0;
                         linenum++;
                         state = PARSE_NORMAL;
-                        start = -1;
                         break;
+                    }
+                    default:
+                    {
+                        [partial appendCharacter:stri];
                     }
                 }
         }
     }
-    if (state == PARSE_COMMENT) {
+    // close off anything that is still being scanned.
+    if (state == PARSE_NORMAL) {
+        if ([partial length] > 0) {
+            [self addAtom:atomWithString(partial, symbolTable)];
+        }
+        partial = [NSMutableString string];
+    }
+    else if (state == PARSE_COMMENT) {
         if (!comments) comments = [[NSMutableString alloc] init];
-        [comments appendString: [[NSString alloc] initWithBytes:&str[start] length:(i-start) encoding:NSUTF8StringEncoding]];
+        [comments appendString: [[NSString alloc] initWithString:partial]];
+        partial = [NSMutableString string];
         column = 0;
         linenum++;
         state = PARSE_NORMAL;
-        start = -1;
     }
     else if (state == PARSE_HERESTRING) {
-        NSString *partial;
-        if (i - start - 1 > 0) {
-            partial = [[NSString alloc] initWithBytes:&str[start] length:(i - start) encoding:NSUTF8StringEncoding];
-            if (!hereString)
-                hereString = [[NSMutableString alloc] init];
-            else
-                [hereString appendString:[NSString carriageReturn]];
-            [hereString appendString:partial];
-        }
-        start = 0;
+        NSString *partial2 = [[NSString alloc] initWithString:partial];
+        partial = [NSMutableString string];
+        if (!hereString)
+            hereString = [[NSMutableString alloc] init];
+        else
+            [hereString appendString:[NSString carriageReturn]];
+        [hereString appendString:partial2];
+    }
+    else if (state == PARSE_REGEX) {
+        // we stay in this state and leave the regex open.
+        [partial appendCharacter:'\n'];
+        [partial retain];
     }
     if ([self incomplete]) {
         return [NSNull null];
@@ -471,12 +766,13 @@ static char pattern[1000];
                 printf("%s: %s\n",
                     [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
                     [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
+                [self reset];
             }
             if (progn && (progn != [NSNull null])) {
                 id cursor = [progn cdr];
                 while (cursor && (cursor != [NSNull null])) {
                     if ([cursor car] != [NSNull null]) {
-                        //id expression = [cursor car];
+                        id expression = [cursor car];
                         //printf("evaluating %s\n", [[expression stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
                         @try
                         {
@@ -501,9 +797,11 @@ static char pattern[1000];
 
 + (int) main
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NuParser *parser = [[NuParser alloc] init];
     int result = [parser interact];
     [parser release];
+    [pool release];
     return result;
 }
 
