@@ -6,11 +6,13 @@
 #import "parser.h"
 #import "symbol.h"
 #import "extensions.h"
+#import "regex.h"
 
 #define PARSE_NORMAL     0
 #define PARSE_COMMENT    1
 #define PARSE_STRING     2
 #define PARSE_HERESTRING 3
+#define PARSE_REGEX      4
 
 #include <readline/readline.h>
 
@@ -85,6 +87,42 @@ id atomWithString(NSString *string, NuSymbolTable *symbolTable)
     // Otherwise, it's a symbol.
     NuSymbol *symbol = [symbolTable symbolWithString:string];
     return symbol;
+}
+
+id regexWithString(NSString *string)
+{
+    NSLog(@"regexWithString(%@)", string);
+    // If the first character of the string is a forward slash, it's a regular expression literal.
+    if (([string characterAtIndex:0] == '/') && ([string length] > 1)) {
+        int lastSlash = [string length];
+        int i = lastSlash-1;
+        while (i > 0) {
+            if ([string characterAtIndex:i] == '/') {
+                lastSlash = i;
+                break;
+            }
+            i--;
+        }
+        // characters after the last slash specify options.
+        int options = 0;
+        int j;
+        for (j = lastSlash+1; j < [string length]; j++) {
+            unichar c = [string characterAtIndex:j];
+            switch (c) {
+                case 'i': options += 1; break;
+                case 's': options += 2; break;
+                case 'x': options += 4; break;
+                case 'l': options += 8; break;
+                case 'm': options += 16; break;
+                default:
+                    [NSException raise:@"NuParseError" format:@"unsupported regular expression option character: %C", c];
+            }
+        }
+        return [NuRegex regexWithPattern:[string substringWithRange:NSMakeRange(1, lastSlash-1)]];
+    }
+    else {
+        return nil;
+    }
 }
 
 @implementation NuParser
@@ -375,7 +413,8 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     if (!string) return [NSNull null];            // don't crash, at least.
 
     column = 0;
-    partial = [NSMutableString string];
+	if (state != PARSE_REGEX)
+    	partial = [NSMutableString string];
 
     int i = 0;
     int imax = [string length];
@@ -411,7 +450,21 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         break;
                     case '"':
                         state = PARSE_STRING;
+                        partial = [NSMutableString string];
                         break;
+                    case '/':
+                    {
+                        unichar nextc = [string characterAtIndex:i+1];
+                        if (nextc == ' ') {
+                            [partial appendCharacter:stri];
+                        }
+                        else {
+                            state = PARSE_REGEX;
+                            partial = [NSMutableString string];
+                            [partial appendCharacter:'/'];
+                        }
+                        break;
+                    }
                     case ':':
                         [partial appendCharacter:':'];
                         [self addAtom:atomWithString(partial, symbolTable)];
@@ -535,6 +588,42 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     }
                 }
                 break;
+            case PARSE_REGEX:
+                switch(stri) {
+                    case '/':                     // that's the end of it
+                    {
+                        [partial appendCharacter:'/'];
+                        i++;
+                        // add any remaining option characters
+                        while (i < imax) {
+                            unichar nextc = [string characterAtIndex:i];
+                            if ((nextc >= 'a') && (nextc <= 'z')) {
+                                [partial appendCharacter:nextc];
+                                i++;
+                            }
+                            else {
+                                i--;              // back up to revisit this character
+                                break;
+                            }
+                        }
+                        [self addAtom:regexWithString(partial)];
+                        partial = [NSMutableString string];
+                        state = PARSE_NORMAL;
+                        break;
+                    }
+                    case '\\':
+                    {
+                        [partial appendCharacter:stri];
+                        i++;
+                        [partial appendCharacter:[string characterAtIndex:i]];
+                        break;
+                    }
+                    default:
+                    {
+                        [partial appendCharacter:stri];
+                    }
+                }
+                break;
             case PARSE_COMMENT:
                 switch(stri) {
                     case '\n':
@@ -560,22 +649,30 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
         if ([partial length] > 0) {
             [self addAtom:atomWithString(partial, symbolTable)];
         }
+        partial = [NSMutableString string];
     }
     else if (state == PARSE_COMMENT) {
         if (!comments) comments = [[NSMutableString alloc] init];
         [comments appendString: [[NSString alloc] initWithString:partial]];
+        partial = [NSMutableString string];
         column = 0;
         linenum++;
         state = PARSE_NORMAL;
     }
     else if (state == PARSE_HERESTRING) {
         NSString *partial2 = [[NSString alloc] initWithString:partial];
+        partial = [NSMutableString string];
         if (!hereString)
             hereString = [[NSMutableString alloc] init];
         else
             [hereString appendString:[NSString carriageReturn]];
         [hereString appendString:partial2];
     }
+    else if (state == PARSE_REGEX) {
+        // we stay in this state and leave the regex open.
+        [partial appendCharacter:'\n'];
+    }
+    [partial retain];
     if ([self incomplete]) {
         return [NSNull null];
     }
