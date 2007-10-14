@@ -3,11 +3,11 @@
 ;;
 ;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
-(global LPAREN ("(" characterAtIndex:0))
-(global RPAREN (")" characterAtIndex:0))
-(global SPACE  (" " characterAtIndex:0))
-(global COLON  (":" characterAtIndex:0))
-(global TAB    9) 
+(global LPAREN '(')
+(global RPAREN ')')
+(global SPACE  ' ')
+(global COLON  ':')
+(global TAB    '\x09') 
 
 (class NSString
      ;; Create a copy of a string with leading whitespace removed.

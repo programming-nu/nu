@@ -348,7 +348,7 @@ static unichar nu_unicode_digits_to_unichar(char c1, char c2, char c3, char c4)
 static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutableString *partial)
 {
     i++;
-    char c = [string characterAtIndex:i];
+    unichar c = [string characterAtIndex:i];
     switch(c) {
         case 'n': [partial appendCharacter:0x0a]; break;
         case 'r': [partial appendCharacter:0x0d]; break;
@@ -472,8 +472,45 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         partial = [NSMutableString string];
                         break;
                     case '\'':
-                        [self quoteNextElement];
+                    {
+                        // try to parse a character literal.
+                        // if that doesn't work, then interpret the quote as the quote operator.
+                        bool isACharacterLiteral = false;
+                        unichar characterLiteralValue;
+                        if (i + 2 < imax) {
+                            if ([string characterAtIndex:i+1] != '\\') {
+                                if ([string characterAtIndex:i+2] == '\'') {
+                                    isACharacterLiteral = true;
+                                    characterLiteralValue = [string characterAtIndex:i+1];
+                                    i = i + 2;
+                                }
+                            }
+                            else {
+                                // look for an escaped character
+                                int newi = nu_parse_escape_sequences(string, i+1, imax, partial);
+                                if ([partial length] > 0) {
+                                    isACharacterLiteral = true;
+                                    characterLiteralValue = [partial characterAtIndex:0];
+                                    partial = [NSMutableString string];
+									i = newi;
+                                    // make sure that we have a closing single-quote
+                                    if ((i + 1 < imax) && ([string characterAtIndex:i+1] == '\'')) {
+                                        i = i + 1;// move past the closing single-quote
+                                    }
+                                    else {
+                                        [NSException raise:@"NuParseError" format:@"missing close quote from character literal"];
+                                    }
+                                }
+                            }
+                        }
+                        if (isACharacterLiteral) {
+                            [self addAtom:[NSNumber numberWithInt:characterLiteralValue]];
+                        }
+                        else {
+                            [self quoteNextElement];
+                        }
                         break;
+                    }
                     case '\n':                    // end of line
                         column = 0;
                         linenum++;

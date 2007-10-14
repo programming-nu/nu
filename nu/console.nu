@@ -3,8 +3,8 @@
 ;;
 ;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
-(global LPAREN 40)
-(global RPAREN 41)
+(global LPAREN '(')
+(global RPAREN ')')
 
 (load "nibtools")	;; dependency, needed to insert menu item
 
