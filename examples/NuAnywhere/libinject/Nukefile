@@ -1,27 +1,4 @@
 
-;; use this to create all the linking and assembly tasks to build a statically-linkable library
-(macro library-tasks
-     (unless (and @arch (@arch length))
-             (set @arch (list (NSString stringWithShellCommand:"arch"))))
-     
-     ;; library architecture-specific executable
-     (set @library_executables (NSMutableArray array))
-     (@arch each:
-            (do (architecture)
-                (set library_executable "build/#{architecture}/#{@library}.a")
-                (@library_executables addObject:library_executable)
-                (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "libtool -static #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} -o '#{(target name)}'")
-                      (SH command))))
-     
-     ;; library fat archive
-     (set @library_executable_name "#{@library}.a")
-     (file @library_executable_name => @library_executables is
-           (set command "lipo -create #{(@library_executables join)} -output #{@library_executable_name}")
-           (SH command))
-     
-     (task "library" => @library_executable_name))
-
 ;; source files
 (set @c_files     (filelist "^objc/.*\.c$"))
 (set @m_files     (filelist "^objc/.*\.m$"))
