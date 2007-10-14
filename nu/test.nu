@@ -65,7 +65,7 @@
      (imethod (id) run is
           (set @failures 0)
           (set @assertions 0)
-          (set pattern (regex "^test(.*)$"))
+          (set pattern /^test(.*)$/)
           (set testcases (((self instanceMethods) sort) select: (do (method) ((pattern findInString:(method name))))))
           (puts "")
           (puts "#{((self class) name)}: running")
@@ -88,6 +88,15 @@
      (unless (eq golden actual)
              (puts "failure: #{(car (cdr margs))} expected '#{golden}' got '#{actual}'")
              (set @failures (+ @failures 1)))
+     nil)
+
+(macro assert_not_equal
+     (set @assertions (+ @assertions 1))
+     (set ungolden (eval (car margs)))
+     (set actual (eval (car (cdr margs))))
+     (if (eq ungolden actual)
+         (puts "failure: #{(car (cdr margs))} did not want '#{actual} to be '#{ungolden}'")
+         (set @failures (+ @failures 1)))
      nil)
 
 (macro assert_in_delta 

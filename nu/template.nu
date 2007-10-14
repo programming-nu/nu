@@ -55,7 +55,7 @@
           
           ;; first, replace each embedded nu expression with code that
           ;; appends the value of the expression to the result
-          (set p-expression (regex "<%= ((?U).*) %>"))
+          (set p-expression /<%= ((?U).*) %>/)
           (while (set match (p-expression findInString:text))   
                  (text replaceCharactersInRange:(match range) 
                        withString:<<-END-TEMPLATE
@@ -65,13 +65,13 @@
 END-TEMPLATE))
           
           ;; next, replace all the nu code opens with string terminations 
-          (set p-open (regex "<%"))
+          (set p-open /<%/)
           (while (set match (p-open findInString:text))
                  (text replaceCharactersInRange:(match range) 
                        withString:"#{tagName})"))
           
           ;; the last transformation replaces all the nu code closes with code to capture strings
-          (set p-close (regex "%>"))
+          (set p-close /%>/)
           (while (set match (p-close findInString:text))
                  (text replaceCharactersInRange:(match range) 
                        withString:"(#{resultName} appendString:<<-#{tagName}#{(NSString carriageReturn)}"))

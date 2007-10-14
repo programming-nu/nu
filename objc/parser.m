@@ -91,7 +91,6 @@ id atomWithString(NSString *string, NuSymbolTable *symbolTable)
 
 id regexWithString(NSString *string)
 {
-    NSLog(@"regexWithString(%@)", string);
     // If the first character of the string is a forward slash, it's a regular expression literal.
     if (([string characterAtIndex:0] == '/') && ([string length] > 1)) {
         int lastSlash = [string length];
@@ -118,7 +117,7 @@ id regexWithString(NSString *string)
                     [NSException raise:@"NuParseError" format:@"unsupported regular expression option character: %C", c];
             }
         }
-        return [NuRegex regexWithPattern:[string substringWithRange:NSMakeRange(1, lastSlash-1)]];
+        return [NuRegex regexWithPattern:[string substringWithRange:NSMakeRange(1, lastSlash-1)] options:options];
     }
     else {
         return nil;
@@ -413,8 +412,10 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     if (!string) return [NSNull null];            // don't crash, at least.
 
     column = 0;
-	if (state != PARSE_REGEX)
-    	partial = [NSMutableString string];
+    if (state != PARSE_REGEX)
+        partial = [NSMutableString string];
+    else
+        [partial autorelease];
 
     int i = 0;
     int imax = [string length];
@@ -671,8 +672,8 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     else if (state == PARSE_REGEX) {
         // we stay in this state and leave the regex open.
         [partial appendCharacter:'\n'];
+        [partial retain];
     }
-    [partial retain];
     if ([self incomplete]) {
         return [NSNull null];
     }

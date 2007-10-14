@@ -41,39 +41,39 @@
           (self-start compare: other-start)))
 
 ;; Matches one part of a selector.
-(set selector-pattern (regex "(\w+:)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*"))
+(set selector-pattern /(\w+:)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*/)
 
 ;; Match selectors of arity 0.
 (set signature-pattern0
-     (regex "(\-|\+)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)"))
+     /(\-|\+)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)/)
 
 ;; Match selectors of arity 1 or more.
 (set signature-pattern1 
-     (regex "(\-|\+)\s*\(([\w<>]+\s*\*?)\)\s*(((\w+:)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*)+)"))
+     /(\-|\+)\s*\(([\w<>]+\s*\*?)\)\s*(((\w+:)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*)+)/)
 
 ;; Match all selectors. 
 (set signature-pattern 
-     (regex "(\-|\+)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)((:\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*)(\w+:\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*)*)?"))
+     /(\-|\+)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)((:\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*)(\w+:\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*)*)?/)
 
 ;; Match Objective-C class implementation declarations.
 (set implementation-pattern
-     (regex "@implementation\s+(\w*)"))
+     /@implementation\s+(\w*)/)
 
 ;; Match Objective-C class interface declarations.
 (set interface-pattern 
-     (regex "@interface\s+(\w*)\s*(:\s*(\w*))?"))
+     /@interface\s+(\w*)\s*(:\s*(\w*))?/)
 
 ;; Match Objective-C protocol declarations.
 (set protocol-pattern
-     (regex "@protocol\s+(\w*)"))
+     /@protocol\s+(\w*)/)
 
 ;; Match Objective-C documentation comments.
 (set objc-comment-pattern
-     (regex "(?U)/\*!((.|\n)+)\*/"))
+     /(?U)\/\*!((.|\n)+)\*\//)
 
 ;; Match Nu comments.
 (set nu-comment-pattern 
-     (regex "((;|\#)+)\s*(.*)"))
+     /((;|\#)+)\s*(.*)/)
 
 ;; @abstract NuDoc class for building file descriptions.
 ;; @discussion NuDoc creates one instance of this class for each source file that it reads.
