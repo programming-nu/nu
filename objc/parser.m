@@ -306,16 +306,16 @@ static BOOL nu_parse_escapes = NO;
     quoting++;
 }
 
-static int nu_octal_digit_value(char c)
+static int nu_octal_digit_value(unichar c)
 {
     int x = (c - '0');
     if ((x >= 0) && (x <= 7))
         return x;
-    [NSException raise:@"NuParseError" format:@"invalid octal character: %c", c];
+    [NSException raise:@"NuParseError" format:@"invalid octal character: %C", c];
     return 0;
 }
 
-static int nu_hex_digit_value(char c)
+static int nu_hex_digit_value(unichar c)
 {
     int x = (c - '0');
     if ((x >= 0) && (x <= 9))
@@ -326,21 +326,21 @@ static int nu_hex_digit_value(char c)
     x = (c - 'a');
     if ((x >= 0) && (x <= 5))
         return x + 10;
-    [NSException raise:@"NuParseError" format:@"invalid hex character: %c", c];
+    [NSException raise:@"NuParseError" format:@"invalid hex character: %C", c];
     return 0;
 }
 
-static unichar nu_octal_digits_to_unichar(char c0, char c1, char c2)
+static unichar nu_octal_digits_to_unichar(unichar c0, unichar c1, unichar c2)
 {
     return nu_octal_digit_value(c0)*64 + nu_octal_digit_value(c1)*8 + nu_octal_digit_value(c2);
 }
 
-static unichar nu_hex_digits_to_unichar(char c1, char c2)
+static unichar nu_hex_digits_to_unichar(unichar c1, unichar c2)
 {
     return nu_hex_digit_value(c1)*16 + nu_hex_digit_value(c2);
 }
 
-static unichar nu_unicode_digits_to_unichar(char c1, char c2, char c3, char c4)
+static unichar nu_unicode_digits_to_unichar(unichar c1, unichar c2, unichar c3, unichar c4)
 {
     return nu_hex_digit_value(c1)*4096 + nu_hex_digit_value(c2)*256 + nu_hex_digit_value(c3)*16 + nu_hex_digit_value(c4);
 }
@@ -492,7 +492,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                                     isACharacterLiteral = true;
                                     characterLiteralValue = [partial characterAtIndex:0];
                                     partial = [NSMutableString string];
-									i = newi;
+                                    i = newi;
                                     // make sure that we have a closing single-quote
                                     if ((i + 1 < imax) && ([string characterAtIndex:i+1] == '\'')) {
                                         i = i + 1;// move past the closing single-quote
@@ -562,6 +562,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                 ([pattern isEqual:[string substringWithRange:NSMakeRange(i, [pattern length])]])) {
                     // everything up to here is the string
                     NSString *string = [[NSString alloc] initWithString:partial];
+					partial = [NSMutableString string];
                     if (!hereString)
                         hereString = [[NSMutableString alloc] init];
                     else
@@ -592,12 +593,16 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                 switch(stri) {
                     case '"':
                     {
-                        if ([string characterAtIndex:i-1] != '\\') {
+                        if (nu_parse_escapes || ([string characterAtIndex:i-1] != '\\')) {
                             state = PARSE_NORMAL;
-                            NSString *string = [[NSString alloc] initWithString:partial];
-                            //NSLog(@"parsed string: %@", string);
+                            NSString *string = [NSString stringWithString:partial];
+                            //NSLog(@"parsed string:%@:", string);
                             [self addAtom:string];
                             partial = [NSMutableString string];
+                            break;
+                        }
+                        else {
+                            [partial appendCharacter:stri];
                         }
                         break;
                     }
@@ -696,6 +701,9 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
         column = 0;
         linenum++;
         state = PARSE_NORMAL;
+    }
+    else if (state == PARSE_STRING) {
+        [NSException raise:@"NuParseError" format:@"partial string (terminated by newline): %@", partial];
     }
     else if (state == PARSE_HERESTRING) {
         NSString *partial2 = [[NSString alloc] initWithString:partial];

@@ -27,7 +27,7 @@
                   (set c count)
                   (unless c (set c 0))
                   (while (> c 0)
-                         (set spaces " #{spaces}")
+                         (spaces appendString:" ")
                          (set c (- c 1))))
           spaces))
 
@@ -55,8 +55,8 @@
                      (if (or (eq (nube-parser state) 3) ;; parsing a herestring
                              (eq (nube-parser state) 4)) ;; parsing a regex
                          (then (set line input-line))
-                         (else (set line "#{(NSString spaces:(indentation_stack top))}#{(input-line strip)}")))
-                     
+                         (else (set line (NSString spaces:(indentation_stack top)))
+                               (line appendString:(input-line strip))))
                      (if (eq line-number (- (lines count) 1))
                          (then (result appendString: line))
                          (else (result appendString: line) (result appendString:(NSString carriageReturn))))
@@ -64,7 +64,10 @@
                      (try 
                           (nube-parser parse:line)
                           (catch (exception) 
-                                 (result appendString: ";; #{(exception name)}: #{(exception reason)}")
+                                 (result appendString: ";; ")
+                                 (result appendString: (exception name))
+                                 (result appendString: ": ")
+                                 (result appendString: (exception reason))
                                  (result appendString: (NSString carriageReturn))))
                      (nube-parser newline)
                      

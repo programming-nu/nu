@@ -327,16 +327,20 @@
                      (then
                           (@history addObject:(stringToEvaluate substringToIndex:(- (stringToEvaluate length) 1)))
                           (set @index (@history count))
-                          (set code (@parser parse: stringToEvaluate))
-                          (unless (@parser incomplete)
-                                  (try
+                          (try
+                              (set code (@parser parse: stringToEvaluate))
+                              (unless (@parser incomplete)
                                       (set @insertionPoint @startOfInput)
                                       (self write:(send (@parser eval: code) stringValue))
-                                      (self write:(NSString carriageReturn))
-                                      (catch (exception)
-                                             (self write:"#{(exception name)}: #{(exception reason)}")
-                                             (self write:(NSString carriageReturn))
-                                             (@parser reset)))))
+                                      (self write:(NSString carriageReturn)))
+                              (catch (exception)
+                                     ;; don't use string interpolation here, it calls the parser again
+                                     (self write:(exception name))
+                                     (self write:": ")
+                                     (self write:(exception reason))
+                                     (self write:(NSString carriageReturn))
+                                     (@parser reset)
+                                     (set @insertionPoint @startOfInput))))
                      (else      
                           (set @insertionPoint @startOfInput)))
                  (self prompt)
