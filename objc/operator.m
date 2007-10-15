@@ -53,10 +53,10 @@ static bool valueIsTrue(id value)
 - (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)context {return [self callWithArguments:cdr context:context];}
 @end
 
-@interface Nu_car : NuOperator {}
+@interface Nu_car_operator : NuOperator {}
 @end
 
-@implementation Nu_car
+@implementation Nu_car_operator
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -67,10 +67,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_cdr : NuOperator {}
+@interface Nu_cdr_operator : NuOperator {}
 @end
 
-@implementation Nu_cdr
+@implementation Nu_cdr_operator
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -81,10 +81,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_atom : NuOperator {}
+@interface Nu_atom_operator : NuOperator {}
 @end
 
-@implementation Nu_atom
+@implementation Nu_atom_operator
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -99,10 +99,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_eq : NuOperator {}
+@interface Nu_eq_operator : NuOperator {}
 @end
 
-@implementation Nu_eq
+@implementation Nu_eq_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id cadr = [cdr car];
@@ -123,10 +123,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_neq : NuOperator {}
+@interface Nu_neq_operator : NuOperator {}
 @end
 
-@implementation Nu_neq
+@implementation Nu_neq_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id cadr = [cdr car];
@@ -147,10 +147,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_cons : NuOperator {}
+@interface Nu_cons_operator : NuOperator {}
 @end
 
-@implementation Nu_cons
+@implementation Nu_cons_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id cadr = [cdr car];
@@ -165,10 +165,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_append : NuOperator {}
+@interface Nu_append_operator : NuOperator {}
 @end
 
-@implementation Nu_append
+@implementation Nu_append_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id newList = Nu__null;
@@ -196,10 +196,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_cond : NuOperator {}
+@interface Nu_cond_operator : NuOperator {}
 @end
 
-@implementation Nu_cond
+@implementation Nu_cond_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id pairs = cdr;
@@ -223,10 +223,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_case : NuOperator {}
+@interface Nu_case_operator : NuOperator {}
 @end
 
-@implementation Nu_case
+@implementation Nu_case_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id target = [[cdr car] evalWithContext:context];
@@ -257,10 +257,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_if : NuOperator {}
+@interface Nu_if_operator : NuOperator {}
 @end
 
-@implementation Nu_if
+@implementation Nu_if_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -296,10 +296,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_unless : NuOperator {}
+@interface Nu_unless_operator : NuOperator {}
 @end
 
-@implementation Nu_unless
+@implementation Nu_unless_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -335,10 +335,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_while : NuOperator {}
+@interface Nu_while_operator : NuOperator {}
 @end
 
-@implementation Nu_while
+@implementation Nu_while_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id result = Nu__null;
@@ -368,10 +368,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_until : NuOperator {}
+@interface Nu_until_operator : NuOperator {}
 @end
 
-@implementation Nu_until
+@implementation Nu_until_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id result = Nu__null;
@@ -401,10 +401,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_for : NuOperator {}
+@interface Nu_for_operator : NuOperator {}
 @end
 
-@implementation Nu_for
+@implementation Nu_for_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id result = Nu__null;
@@ -444,10 +444,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_try : NuOperator {}
+@interface Nu_try_operator : NuOperator {}
 @end
 
-@implementation Nu_try
+@implementation Nu_try_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -520,10 +520,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_throw : NuOperator {}
+@interface Nu_throw_operator : NuOperator {}
 @end
 
-@implementation Nu_throw
+@implementation Nu_throw_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id exception = [[cdr car] evalWithContext:context];
@@ -533,10 +533,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_synchronized : NuOperator {}
+@interface Nu_synchronized_operator : NuOperator {}
 @end
 
-@implementation Nu_synchronized
+@implementation Nu_synchronized_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     //  NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -558,10 +558,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_quote : NuOperator {}
+@interface Nu_quote_operator : NuOperator {}
 @end
 
-@implementation Nu_quote
+@implementation Nu_quote_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id cadr = [cdr car];
@@ -570,10 +570,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_context : NuOperator {}
+@interface Nu_context_operator : NuOperator {}
 @end
 
-@implementation Nu_context
+@implementation Nu_context_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     return context;
@@ -581,10 +581,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_set : NuOperator {}
+@interface Nu_set_operator : NuOperator {}
 @end
 
-@implementation Nu_set
+@implementation Nu_set_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
 
@@ -611,10 +611,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_global : NuOperator {}
+@interface Nu_global_operator : NuOperator {}
 @end
 
-@implementation Nu_global
+@implementation Nu_global_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
 
@@ -627,10 +627,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_regex : NuOperator {}
+@interface Nu_regex_operator : NuOperator {}
 @end
 
-@implementation Nu_regex
+@implementation Nu_regex_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id value = [cdr car];
@@ -640,10 +640,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_do : NuOperator {}
+@interface Nu_do_operator : NuOperator {}
 @end
 
-@implementation Nu_do
+@implementation Nu_do_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id args = [cdr car];
@@ -654,10 +654,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_function : NuOperator {}
+@interface Nu_function_operator : NuOperator {}
 @end
 
-@implementation Nu_function
+@implementation Nu_function_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id symbol = [cdr car];
@@ -672,10 +672,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_label : NuOperator {}
+@interface Nu_label_operator : NuOperator {}
 @end
 
-@implementation Nu_label
+@implementation Nu_label_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id symbol = [cdr car];
@@ -690,10 +690,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_macro : NuOperator {}
+@interface Nu_macro_operator : NuOperator {}
 @end
 
-@implementation Nu_macro
+@implementation Nu_macro_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id name = [cdr car];
@@ -706,10 +706,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_list : NuOperator {}
+@interface Nu_list_operator : NuOperator {}
 @end
 
-@implementation Nu_list
+@implementation Nu_list_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id result = Nu__null;
@@ -733,10 +733,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_add : NuOperator {}
+@interface Nu_add_operator : NuOperator {}
 @end
 
-@implementation Nu_add
+@implementation Nu_add_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -758,10 +758,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_multiply : NuOperator {}
+@interface Nu_multiply_operator : NuOperator {}
 @end
 
-@implementation Nu_multiply
+@implementation Nu_multiply_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     double product = 1;
@@ -775,10 +775,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_subtract : NuOperator {}
+@interface Nu_subtract_operator : NuOperator {}
 @end
 
-@implementation Nu_subtract
+@implementation Nu_subtract_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -801,10 +801,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_divide : NuOperator {}
+@interface Nu_divide_operator : NuOperator {}
 @end
 
-@implementation Nu_divide
+@implementation Nu_divide_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id cursor = cdr;
@@ -819,10 +819,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_bitwiseand : NuOperator {}
+@interface Nu_bitwiseand_operator : NuOperator {}
 @end
 
-@implementation Nu_bitwiseand
+@implementation Nu_bitwiseand_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id cursor = cdr;
@@ -837,10 +837,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_bitwiseor : NuOperator {}
+@interface Nu_bitwiseor_operator : NuOperator {}
 @end
 
-@implementation Nu_bitwiseor
+@implementation Nu_bitwiseor_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id cursor = cdr;
@@ -855,10 +855,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_greaterthan : NuOperator {}
+@interface Nu_greaterthan_operator : NuOperator {}
 @end
 
-@implementation Nu_greaterthan
+@implementation Nu_greaterthan_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -869,10 +869,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_lessthan : NuOperator {}
+@interface Nu_lessthan_operator : NuOperator {}
 @end
 
-@implementation Nu_lessthan
+@implementation Nu_lessthan_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -883,10 +883,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_gte : NuOperator {}
+@interface Nu_gte_operator : NuOperator {}
 @end
 
-@implementation Nu_gte
+@implementation Nu_gte_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -897,10 +897,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_lte : NuOperator {}
+@interface Nu_lte_operator : NuOperator {}
 @end
 
-@implementation Nu_lte
+@implementation Nu_lte_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -911,10 +911,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_leftshift : NuOperator {}
+@interface Nu_leftshift_operator : NuOperator {}
 @end
 
-@implementation Nu_leftshift
+@implementation Nu_leftshift_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     long result = [[[cdr car] evalWithContext:context] longValue];
@@ -924,10 +924,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_rightshift : NuOperator {}
+@interface Nu_rightshift_operator : NuOperator {}
 @end
 
-@implementation Nu_rightshift
+@implementation Nu_rightshift_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     long result = [[[cdr car] evalWithContext:context] longValue];
@@ -937,10 +937,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_and : NuOperator {}
+@interface Nu_and_operator : NuOperator {}
 @end
 
-@implementation Nu_and
+@implementation Nu_and_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id cursor = cdr;
@@ -956,10 +956,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_or : NuOperator {}
+@interface Nu_or_operator : NuOperator {}
 @end
 
-@implementation Nu_or
+@implementation Nu_or_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id cursor = cdr;
@@ -974,10 +974,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_not : NuOperator {}
+@interface Nu_not_operator : NuOperator {}
 @end
 
-@implementation Nu_not
+@implementation Nu_not_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -991,10 +991,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_puts : NuOperator {}
+@interface Nu_puts_operator : NuOperator {}
 @end
 
-@implementation Nu_puts
+@implementation Nu_puts_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -1018,10 +1018,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_print : NuOperator {}
+@interface Nu_print_operator : NuOperator {}
 @end
 
-@implementation Nu_print
+@implementation Nu_print_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -1044,10 +1044,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_call : NuOperator {}
+@interface Nu_call_operator : NuOperator {}
 @end
 
-@implementation Nu_call
+@implementation Nu_call_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id function = [[cdr car] evalWithContext:context];
@@ -1058,10 +1058,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_send : NuOperator {}
+@interface Nu_send_operator : NuOperator {}
 @end
 
-@implementation Nu_send
+@implementation Nu_send_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id target = [[cdr car] evalWithContext:context];
@@ -1072,10 +1072,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_progn : NuOperator {}
+@interface Nu_progn_operator : NuOperator {}
 @end
 
-@implementation Nu_progn
+@implementation Nu_progn_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id value = Nu__null;
@@ -1089,10 +1089,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_eval : NuOperator {}
+@interface Nu_eval_operator : NuOperator {}
 @end
 
-@implementation Nu_eval
+@implementation Nu_eval_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id value = [[[cdr car] evalWithContext:context] evalWithContext:context];
@@ -1101,10 +1101,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_load : NuOperator {}
+@interface Nu_load_operator : NuOperator {}
 @end
 
-@implementation Nu_load
+@implementation Nu_load_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -1165,10 +1165,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_let : NuOperator {}
+@interface Nu_let_operator : NuOperator {}
 @end
 
-@implementation Nu_let
+@implementation Nu_let_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id arg_names = [[NuCell alloc] init];
@@ -1206,10 +1206,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_class : NuOperator {}
+@interface Nu_class_operator : NuOperator {}
 @end
 
-@implementation Nu_class
+@implementation Nu_class_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -1248,10 +1248,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_cmethod : NuOperator {}
+@interface Nu_cmethod_operator : NuOperator {}
 @end
 
-@implementation Nu_cmethod
+@implementation Nu_cmethod_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -1264,10 +1264,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_imethod : NuOperator {}
+@interface Nu_imethod_operator : NuOperator {}
 @end
 
-@implementation Nu_imethod
+@implementation Nu_imethod_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -1279,10 +1279,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_ivar : NuOperator {}
+@interface Nu_ivar_operator : NuOperator {}
 @end
 
-@implementation Nu_ivar
+@implementation Nu_ivar_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -1304,10 +1304,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_ivars : NuOperator {}
+@interface Nu_ivars_operator : NuOperator {}
 @end
 
-@implementation Nu_ivars
+@implementation Nu_ivars_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -1320,10 +1320,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_beep : NuOperator {}
+@interface Nu_beep_operator : NuOperator {}
 @end
 
-@implementation Nu_beep
+@implementation Nu_beep_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NSBeep();
@@ -1332,10 +1332,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_system : NuOperator {}
+@interface Nu_system_operator : NuOperator {}
 @end
 
-@implementation Nu_system
+@implementation Nu_system_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id command = [[cdr car] evalWithContext:context];
@@ -1345,10 +1345,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_help : NuOperator {}
+@interface Nu_help_operator : NuOperator {}
 @end
 
-@implementation Nu_help
+@implementation Nu_help_operator
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -1358,10 +1358,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_break : NuOperator {}
+@interface Nu_break_operator : NuOperator {}
 @end
 
-@implementation Nu_break
+@implementation Nu_break_operator
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -1371,10 +1371,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_continue : NuOperator {}
+@interface Nu_continue_operator : NuOperator {}
 @end
 
-@implementation Nu_continue
+@implementation Nu_continue_operator
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -1384,10 +1384,10 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_version : NuOperator {}
+@interface Nu_version_operator : NuOperator {}
 @end
 
-@implementation Nu_version
+@implementation Nu_version_operator
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -1407,89 +1407,89 @@ void load_builtins(NuSymbolTable *symbolTable)
     [[[symbolTable symbolWithCString:"NULL"] retain] setValue:[NuZero zero]];
     [[[symbolTable symbolWithCString:"ZERO"] retain] setValue:[NuZero zero]];
 
-    install("car",      Nu_car);
-    install("cdr",      Nu_cdr);
-    install("head",     Nu_car);
-    install("tail",     Nu_cdr);
-    install("atom",     Nu_atom);
+    install("car",      Nu_car_operator);
+    install("cdr",      Nu_cdr_operator);
+    install("head",     Nu_car_operator);
+    install("tail",     Nu_cdr_operator);
+    install("atom",     Nu_atom_operator);
 
-    install("eq",       Nu_eq);
-    install("==",       Nu_eq);
-    install("!=",       Nu_neq);
+    install("eq",       Nu_eq_operator);
+    install("==",       Nu_eq_operator);
+    install("!=",       Nu_neq_operator);
 
-    install("cons",     Nu_cons);
-    install("append",   Nu_append);
+    install("cons",     Nu_cons_operator);
+    install("append",   Nu_append_operator);
 
-    install("cond",     Nu_cond);
-    install("case",     Nu_case);
-    install("if",       Nu_if);
-    install("unless",   Nu_unless);
-    install("while",    Nu_while);
-    install("until",    Nu_until);
-    install("for",      Nu_for);
-    install("break",    Nu_break);
-    install("continue", Nu_continue);
+    install("cond",     Nu_cond_operator);
+    install("case",     Nu_case_operator);
+    install("if",       Nu_if_operator);
+    install("unless",   Nu_unless_operator);
+    install("while",    Nu_while_operator);
+    install("until",    Nu_until_operator);
+    install("for",      Nu_for_operator);
+    install("break",    Nu_break_operator);
+    install("continue", Nu_continue_operator);
 
-    install("try",      Nu_try);
-    install("throw",    Nu_throw);
-    install("synchronized", Nu_synchronized);
+    install("try",      Nu_try_operator);
+    install("throw",    Nu_throw_operator);
+    install("synchronized", Nu_synchronized_operator);
 
-    install("quote",    Nu_quote);
-    install("eval",     Nu_eval);
+    install("quote",    Nu_quote_operator);
+    install("eval",     Nu_eval_operator);
 
-    install("context",  Nu_context);
-    install("set",      Nu_set);
-    install("global",   Nu_global);
+    install("context",  Nu_context_operator);
+    install("set",      Nu_set_operator);
+    install("global",   Nu_global_operator);
 
-    install("regex",    Nu_regex);
+    install("regex",    Nu_regex_operator);
 
-    install("def",      Nu_function);
-    install("function", Nu_function);
-    install("macro",    Nu_macro);
-    install("progn",    Nu_progn);
-    install("then",     Nu_progn);
-    install("else",     Nu_progn);
+    install("def",      Nu_function_operator);
+    install("function", Nu_function_operator);
+    install("macro",    Nu_macro_operator);
+    install("progn",    Nu_progn_operator);
+    install("then",     Nu_progn_operator);
+    install("else",     Nu_progn_operator);
 
-    install("+",        Nu_add);
-    install("-",        Nu_subtract);
-    install("*",        Nu_multiply);
-    install("/",        Nu_divide);
-    install("&",        Nu_bitwiseand);
-    install("|",        Nu_bitwiseor);
-    install(">",        Nu_greaterthan);
-    install("<",        Nu_lessthan);
-    install(">=",       Nu_gte);
-    install("<=",       Nu_lte);
-    install("<<",       Nu_leftshift);
-    install(">>",       Nu_rightshift);
-    install("and",      Nu_and);
-    install("or",       Nu_or);
-    install("not",      Nu_not);
+    install("+",        Nu_add_operator);
+    install("-",        Nu_subtract_operator);
+    install("*",        Nu_multiply_operator);
+    install("/",        Nu_divide_operator);
+    install("&",        Nu_bitwiseand_operator);
+    install("|",        Nu_bitwiseor_operator);
+    install(">",        Nu_greaterthan_operator);
+    install("<",        Nu_lessthan_operator);
+    install(">=",       Nu_gte_operator);
+    install("<=",       Nu_lte_operator);
+    install("<<",       Nu_leftshift_operator);
+    install(">>",       Nu_rightshift_operator);
+    install("and",      Nu_and_operator);
+    install("or",       Nu_or_operator);
+    install("not",      Nu_not_operator);
 
-    install("list",     Nu_list);
+    install("list",     Nu_list_operator);
 
-    install("do",       Nu_do);
+    install("do",       Nu_do_operator);
 
-    install("puts",     Nu_puts);
-    install("print",    Nu_print);
+    install("puts",     Nu_puts_operator);
+    install("print",    Nu_print_operator);
 
-    //  install("label",    Nu_label);
-    install("let",      Nu_let);
+    //  install("label",    Nu_label_operator);
+    install("let",      Nu_let_operator);
 
-    install("load",     Nu_load);
-    install("beep",     Nu_beep);
-    install("system",   Nu_system);
+    install("load",     Nu_load_operator);
+    install("beep",     Nu_beep_operator);
+    install("system",   Nu_system_operator);
 
-    install("class",    Nu_class);
-    install("imethod",  Nu_imethod);
-    install("cmethod",  Nu_cmethod);
-    install("ivar",     Nu_ivar);
-    install("ivars",    Nu_ivars);
+    install("class",    Nu_class_operator);
+    install("imethod",  Nu_imethod_operator);
+    install("cmethod",  Nu_cmethod_operator);
+    install("ivar",     Nu_ivar_operator);
+    install("ivars",    Nu_ivars_operator);
 
-    install("call",     Nu_call);
-    install("send",     Nu_send);
+    install("call",     Nu_call_operator);
+    install("send",     Nu_send_operator);
 
-    install("help",     Nu_help);
-    install("?",        Nu_help);
-    install("version",  Nu_version);
+    install("help",     Nu_help_operator);
+    install("?",        Nu_help_operator);
+    install("version",  Nu_version_operator);
 }
