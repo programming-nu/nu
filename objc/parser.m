@@ -450,9 +450,26 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         }
                         break;
                     case '"':
+                    {
                         state = PARSE_STRING;
+                        parseEscapes = nu_parse_escapes;
                         partial = [NSMutableString string];
                         break;
+                    }
+                    case '-':
+                    case '+':
+                    {
+                        if ((i+1 < imax) && ([string characterAtIndex:i+1] == '"')) {
+                            state = PARSE_STRING;
+                            parseEscapes = (stri == '+');
+                            partial = [NSMutableString string];
+                            i++;
+                        }
+                        else {
+                            [partial appendCharacter:stri];
+                        }
+                        break;
+                    }
                     case '/':
                     {
                         unichar nextc = [string characterAtIndex:i+1];
@@ -532,8 +549,11 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         state = PARSE_COMMENT;
                         break;
                     case '<':
-                        if (([string characterAtIndex:i+1] == '<') && ([string characterAtIndex:i+2] == '-')) {
+                        if ((i+3 < imax) && ([string characterAtIndex:i+1] == '<')
+                        && (([string characterAtIndex:i+2] == '-') || ([string characterAtIndex:i+2] == '+'))) {
                             // parse a here string
+                            state = PARSE_HERESTRING;
+                            parseEscapes = ([string characterAtIndex:i+2] == '+');
                             // get the tag to match
                             int j = i+3;
                             while ((j < imax) && ([string characterAtIndex:j] != '\n')) {
@@ -546,7 +566,6 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                             // j++;
                             i = j;
                             //printf("parsing herestring that ends with %s from %s", pattern, &str[start]);
-                            state = PARSE_HERESTRING;
                             hereString = nil;
                             break;
                         }
@@ -562,7 +581,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                 ([pattern isEqual:[string substringWithRange:NSMakeRange(i, [pattern length])]])) {
                     // everything up to here is the string
                     NSString *string = [[NSString alloc] initWithString:partial];
-					partial = [NSMutableString string];
+                    partial = [NSMutableString string];
                     if (!hereString)
                         hereString = [[NSMutableString alloc] init];
                     else
@@ -580,7 +599,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     start = -1;
                 }
                 else {
-                    if (nu_parse_escapes && (stri == '\\')) {
+                    if (parseEscapes && (stri == '\\')) {
                         // parse escape sequencs in here strings
                         i = nu_parse_escape_sequences(string, i, imax, partial);
                     }
@@ -593,7 +612,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                 switch(stri) {
                     case '"':
                     {
-                        if (nu_parse_escapes || ([string characterAtIndex:i-1] != '\\')) {
+                        if (parseEscapes || ([string characterAtIndex:i-1] != '\\')) {
                             state = PARSE_NORMAL;
                             NSString *string = [NSString stringWithString:partial];
                             //NSLog(@"parsed string:%@:", string);
@@ -617,7 +636,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     }
                     case '\\':
                     {                             // parse escape sequences in strings
-                        if (nu_parse_escapes) {
+                        if (parseEscapes) {
                             i = nu_parse_escape_sequences(string, i, imax, partial);
                         }
                         else {

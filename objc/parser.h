@@ -26,6 +26,7 @@
     int column;
     int quoting;
     int linenum;
+	int parseEscapes;
     bool quoteDepth[MAXDEPTH];
     NuCell *root;
     NuCell *current;
