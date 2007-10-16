@@ -52,6 +52,18 @@ extern id Nu__null;
 
 @end
 
+@implementation NSMutableDictionary(Nu)
+- (id) lookupObjectForKey:(id)key
+{
+    id object = [self objectForKey:key];
+    if (object) return object;
+    id parent = [self objectForKey:@"__parent"];
+    if (!parent) return nil;
+    return [parent lookupObjectForKey:key];
+}
+
+@end
+
 @implementation NSString(Nu)
 - (id) stringValue
 {
@@ -68,7 +80,7 @@ extern id Nu__null;
     }
     else {
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-        id parser = [context objectForKey:[symbolTable symbolWithString:@"_parser"]];
+        id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
         result = [NSMutableString stringWithString:[components objectAtIndex:0]];
         int i;
         for (i = 1; i < [components count]; i++) {
@@ -283,7 +295,7 @@ extern id Nu__null;
         id value = Nu__null;
         if (string) {
             NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-            id parser = [context objectForKey:[symbolTable symbolWithString:@"_parser"]];
+            id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
             id body = [parser parse: string];
             value = [body evalWithContext:context];
             return [symbolTable symbolWithCString:"t"];

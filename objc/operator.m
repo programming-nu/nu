@@ -598,12 +598,22 @@ static bool valueIsTrue(id value)
     }
     else if (c == '@') {
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-        id object = [context objectForKey:[symbolTable symbolWithCString:"self"]];
+        id object = [context lookupObjectForKey:[symbolTable symbolWithCString:"self"]];
         id ivar = [[symbol stringValue] substringFromIndex:1];
         //NSLog(@"setting value for ivar %@ to %@", ivar, value);
         [object setValue:value forIvar:ivar];
     }
     else {
+        #ifndef CLOSE_ON_VALUES
+        id searchContext = context;
+        while (searchContext) {
+            if ([searchContext objectForKey:symbol]) {
+                [searchContext setObject:value forKey:symbol];
+                return value;
+            }
+            searchContext = [searchContext objectForKey:@"__parent"];
+        }
+        #endif
         [context setObject:value forKey:symbol];
     }
     return value;
@@ -1108,7 +1118,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    id parser = [context objectForKey:[symbolTable symbolWithString:@"_parser"]];
+    id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
     id resourceName = [[cdr car] evalWithContext:context];
 
     // does the resourceName contain a colon? if so, it's a framework:nu-source-file pair.
@@ -1255,7 +1265,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
     if (classToExtend) classToExtend = classToExtend->isa;
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"class method declaration with no enclosing class declaration"];
@@ -1271,7 +1281,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"instance method declaration with no enclosing class declaration"];
     return help_add_method_to_class(classToExtend, cdr, context);
@@ -1286,7 +1296,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    Class classToExtend = [[context lookupObjectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"instance variable declaration with no enclosing class declaration"];
     id cursor = cdr;
@@ -1311,7 +1321,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    Class classToExtend = [[context lookupObjectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"dynamic instance variables declaration with no enclosing class declaration"];
     [classToExtend addInstanceVariable:@"__nuivars" signature:@"@"];

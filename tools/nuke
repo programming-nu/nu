@@ -557,19 +557,19 @@
      
      ;; Get a task by its name.
      (imethod (id) taskNamed:(id) taskName is
-          (set task (@tasks objectForKey:taskName))
-          (if (eq task nil)
-              (set task ((NukeTask alloc) initWithName:taskName))
-              (@tasks setObject:task forKey:taskName))
-          task)
+          (set mytask (@tasks objectForKey:taskName))
+          (if (eq mytask nil)
+              (set mytask ((NukeTask alloc) initWithName:taskName))
+              (@tasks setObject:mytask forKey:taskName))
+          mytask)
      
      ;; Add a new task by to a project. 
      ;; The new task is specified by its name.
      ;; The task action should be specified as a block.
      (imethod (id) addTask:(id) taskName action:(id) action is
-          (set task (self taskNamed:taskName))
-          (task setAction:action)
-          task)
+          (set mytask (self taskNamed:taskName))
+          (mytask setAction:action)
+          mytask)
      
      ;; Add a dependency between named tasks.
      (imethod (void) addDependency:(id) taskName on:(id) dependency is
@@ -624,8 +624,8 @@
 (if $verbose
     (((project tasks) allKeys) each:
      (do (key)
-         (set task ((project tasks) objectForKey:key))
-         (if (eq (task isFile) 0) (puts "#{key}")))))
+         (set mytask ((project tasks) objectForKey:key))
+         (if (eq (mytask isFile) 0) (puts "#{key}")))))
 
 (project nuke:target)
 

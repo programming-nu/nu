@@ -7,6 +7,7 @@
 #import "st.h"
 #import "class.h"
 #import "object.h"
+#import "extensions.h"
 
 static NuSymbolTable *sharedSymbolTable = 0;
 
@@ -150,7 +151,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
     // If the symbol is a class instance variable, find "self" and ask it for the ivar value.
     if (c == '@') {
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-        id object = [context objectForKey:[symbolTable symbolWithCString:"self"]];
+        id object = [context lookupObjectForKey:[symbolTable symbolWithCString:"self"]];
         if (!object) return [NSNull null];
         id ivarName = [[self stringValue] substringFromIndex:1];
         id result = [object valueForIvar:ivarName];
@@ -158,10 +159,11 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
     }
 
     // Next, try to find the symbol in the local evaluation context.
-    id valueInContext = [context objectForKey:self];
+    id valueInContext = [context lookupObjectForKey:self];
     if (valueInContext)
         return valueInContext;
 
+#if false
     // if it's not there, try the next context up
     id parentContext = [context objectForKey:@"context"];
     if (parentContext) {
@@ -169,6 +171,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
         if (valueInContext)
             return valueInContext;
     }
+#endif
 
     // Next, return the global value assigned to the value.
     if (value)

@@ -28,7 +28,13 @@ extern id Nu__null;
     [super init];
     parameters = [p retain];
     body = [b retain];
+    #ifdef CLOSE_ON_VALUES
     context = [c mutableCopy];
+    #else
+    context = [[NSMutableDictionary alloc] init];
+    [context setObject:c forKey:@"__parent"];
+    [context setObject:[c objectForKey:SYMBOLS_KEY] forKey:SYMBOLS_KEY];
+    #endif
     return self;
 }
 
