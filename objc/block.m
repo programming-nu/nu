@@ -3,6 +3,7 @@
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
+#import "nuinternals.h"
 #import "block.h"
 #import "cell.h"
 #import "symbol.h"
@@ -32,7 +33,7 @@ extern id Nu__null;
     context = [c mutableCopy];
     #else
     context = [[NSMutableDictionary alloc] init];
-    [context setObject:c forKey:@"__parent"];
+    [context setObject:c forKey:@"PARENT_KEY"];
     [context setObject:[c objectForKey:SYMBOLS_KEY] forKey:SYMBOLS_KEY];
     #endif
     return self;
@@ -107,7 +108,7 @@ extern id Nu__null;
     //    NSLog(@"after copying, evaluation context %@ retain count %d", evaluation_context, [evaluation_context retainCount]);
     if (object) {
         NuSymbolTable *symbolTable = [evaluation_context objectForKey:SYMBOLS_KEY];
-        NuClass *c = [context objectForKey:[symbolTable symbolWithString:@"__class"]];
+        NuClass *c = [context objectForKey:[symbolTable symbolWithString:@"_class"]];
         [evaluation_context setObject:object forKey:[symbolTable symbolWithCString:"self"]];
         [evaluation_context setObject:[NuSuper superWithObject:object ofClass:[c wrappedClass]] forKey:[symbolTable symbolWithCString:"super"]];
     }

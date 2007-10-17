@@ -4,7 +4,6 @@
 # The Nu testing tool.
 #
 # @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
-(NuParser setParseEscapes:YES)
 
 (load "test")
 

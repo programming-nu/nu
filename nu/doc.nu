@@ -500,8 +500,8 @@ END))
 <% 
 ((($classes allKeys) sort) each:
  (do (className)
-   (set classInfo ($classes objectForKey:className))
-   (if (classInfo superClassName)
+   (set classInfo2 ($classes objectForKey:className))
+   (if (classInfo2 superClassName)
 %>
 <li><a href="classes/<%= className %>.html"><%= className %></a></li>
 <% ))) %>
@@ -513,8 +513,8 @@ END))
 <% 
 ((($classes allKeys) sort) each:
  (do (className)
-   (set classInfo ($classes objectForKey:className))
-   (unless (classInfo superClassName)
+   (set classInfo2 ($classes objectForKey:className))
+   (unless (classInfo2 superClassName)
 %>
 <li><a href="classes/<%= className %>.html"><%= className %></a></li>
 <% ))) %>
@@ -527,9 +527,9 @@ END))
 <% 
 ((($files allKeys) sort) each:
  (do (fileName)
-   (set fileInfo ($files objectForKey:fileName))
+   (set fileInfo2 ($files objectForKey:fileName))
 %>
-<li><a href="files/<%= (fileInfo niceName) %>.html"><%= fileName %></a></li>
+<li><a href="files/<%= (fileInfo2 niceName) %>.html"><%= fileName %></a></li>
 <% )) %>
 </ul>	
 </div>
@@ -694,8 +694,8 @@ END))
 <% 
 ((($classes allKeys) sort) each:
  (do (className)
-   (set classInfo ($classes objectForKey:className))
-   (if (classInfo superClassName)
+   (set classInfo2 ($classes objectForKey:className))
+   (if (classInfo2 superClassName)
 %>
 <li><a href="<%= className %>.html"><%= className %></a></li>
 <% ))) %>
@@ -705,8 +705,8 @@ END))
 <% 
 ((($classes allKeys) sort) each:
  (do (className)
-   (set classInfo ($classes objectForKey:className))
-   (unless (classInfo superClassName)
+   (set classInfo2 ($classes objectForKey:className))
+   (unless (classInfo2 superClassName)
 %>
 <li><a href="<%= className %>.html"><%= className %></a></li>
 <% ))) %>
@@ -757,9 +757,9 @@ END))
 <% 
 ((($files allKeys) sort) each:
  (do (fileName)
-   (set fileInfo ($files objectForKey:fileName))
+   (set fileInfo2 ($files objectForKey:fileName))
 %>
-<li><a href="../files/<%= (fileInfo niceName) %>.html"><%= fileName %></a></li>
+<li><a href="../files/<%= (fileInfo2 niceName) %>.html"><%= fileName %></a></li>
 <% )) %>
 </ul>	
 </div>
@@ -810,7 +810,8 @@ This documentation was automatically extracted from the Nu source code.
      ((eval index-template) writeToFile:"doc/index.html")
      
      (($classes allValues) each:
-      (do (classInfo) ((eval classinfo-template) writeToFile:"doc/classes/#{(classInfo name)}.html")))
+      (do (classInfo) 
+           ((eval classinfo-template) writeToFile:"doc/classes/#{(classInfo name)}.html")))
      
      (($files allValues) each:
       (do (fileInfo) ((eval fileinfo-template) writeToFile:"doc/files/#{(fileInfo niceName)}.html"))))

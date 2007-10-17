@@ -1,6 +1,6 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(global VERSION '(0 1 4)) #(major minor tweak)
+(global VERSION '(0 2 0)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
@@ -114,8 +114,9 @@ END)
 (task "doc" is
       (SH "nudoc"))
 
-(task "publish" => "doc" is
-      (SH "scp -r doc/* blog.neontology.com:blog/site/public/nudoc-preview"))
+(task "publish-doc" is
+      (SH "nudoc -site programming.nu")
+      (SH "scp -r doc programming.nu:/Sites/programming.nu/public/"))
 
 (task "default" => "nush")
 
@@ -157,5 +158,7 @@ END)
       (SH "sudo chgrp -R admin package")
       (SH "/Developer/Tools/packagemaker -build -f package -p Nu.pkg -d pkg/Description.plist -i pkg/Info.plist")
       (SH "mkdir dmg; mv Nu.pkg dmg")
-      (SH "hdiutil create -srcdir dmg Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}.dmg -volname Nu")
+      (set imagefile "Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}.dmg")
+      (SH "sudo rm -f #{imagefile}")
+      (SH "hdiutil create -srcdir dmg #{imagefile} -volname Nu")
       (SH "sudo rm -rf dmg package"))

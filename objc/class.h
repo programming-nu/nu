@@ -43,6 +43,8 @@ Beware, some of these classes may be deprecated, undocumented, or otherwise unsa
 - (NuMethod *) classMethodWithName:(NSString *) methodName;
 /*! Get an instance method by name. */
 - (NuMethod *) instanceMethodWithName:(NSString *) methodName;
+/*! Compare two classes for equality. */
+- (BOOL) isEqual:(NuClass *) anotherClass;
 @end
 
 @class NuBlock;

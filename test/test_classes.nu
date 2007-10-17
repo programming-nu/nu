@@ -5,6 +5,10 @@
 
 (class TestClasses is NuTestCase
      
+     (imethod (id) testMetaVariables is
+          (assert_equal TestClasses _class)
+          (assert_equal "testMetaVariables" _method))
+        
      (imethod (id) testAutomaticClassCreationFromNu is
           (class NuLittleCatZ is NSObject (imethod (id) takeOffYourHat is ("Voom!")))        
           (set Alphabet "ZYXWVUTSRQPONMLKJIHGFEDCBA")

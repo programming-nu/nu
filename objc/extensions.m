@@ -3,6 +3,7 @@
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
+#import "nuinternals.h"
 #import "extensions.h"
 #import "symbol.h"
 #import "cell.h"
@@ -57,7 +58,7 @@ extern id Nu__null;
 {
     id object = [self objectForKey:key];
     if (object) return object;
-    id parent = [self objectForKey:@"__parent"];
+    id parent = [self objectForKey:@"PARENT_KEY"];
     if (!parent) return nil;
     return [parent lookupObjectForKey:key];
 }

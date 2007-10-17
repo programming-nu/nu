@@ -3,6 +3,7 @@
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
+#import "nuinternals.h"
 #import "operator.h"
 #import "extensions.h"
 #import "cell.h"
@@ -611,7 +612,7 @@ static bool valueIsTrue(id value)
                 [searchContext setObject:value forKey:symbol];
                 return value;
             }
-            searchContext = [searchContext objectForKey:@"__parent"];
+            searchContext = [searchContext objectForKey:@"PARENT_KEY"];
         }
         #endif
         [context setObject:value forKey:symbol];
@@ -750,10 +751,10 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    if ([context objectForKey:[symbolTable symbolWithCString:"__class"]] && ![context objectForKey:[symbolTable symbolWithCString:"__method"]]) {
+    if ([context objectForKey:[symbolTable symbolWithCString:"_class"]] && ![context objectForKey:[symbolTable symbolWithCString:"_method"]]) {
         // we are inside a class declaration and outside a method declaration.
         // treat this as a "cmethod" call
-        Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass]->isa;
+        Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass]->isa;
         return help_add_method_to_class(classToExtend, cdr, context);
     }
     // otherwise, it's an addition
@@ -792,10 +793,10 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    if ([context objectForKey:[symbolTable symbolWithCString:"__class"]] && ![context objectForKey:[symbolTable symbolWithCString:"__method"]]) {
+    if ([context objectForKey:[symbolTable symbolWithCString:"_class"]] && ![context objectForKey:[symbolTable symbolWithCString:"_method"]]) {
         // we are inside a class declaration and outside a method declaration.
         // treat this as an "imethod" call
-        Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+        Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
         return help_add_method_to_class(classToExtend, cdr, context);
     }
     // otherwise, it's a subtraction
@@ -1249,7 +1250,7 @@ static bool valueIsTrue(id value)
         NuBlock *block = [[NuBlock alloc] initWithParameters:Nu__null body:body context:context];
         [[block context]
             setObject:childClass
-            forKey:[symbolTable symbolWithCString:"__class"]];
+            forKey:[symbolTable symbolWithCString:"_class"]];
         result = [block evalWithArguments:Nu__null context:Nu__null];
         [block release];
     }
@@ -1265,7 +1266,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
     if (classToExtend) classToExtend = classToExtend->isa;
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"class method declaration with no enclosing class declaration"];
@@ -1281,7 +1282,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"instance method declaration with no enclosing class declaration"];
     return help_add_method_to_class(classToExtend, cdr, context);
@@ -1296,7 +1297,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context lookupObjectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    Class classToExtend = [[context lookupObjectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"instance variable declaration with no enclosing class declaration"];
     id cursor = cdr;
@@ -1321,7 +1322,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context lookupObjectForKey:[symbolTable symbolWithCString:"__class"]] wrappedClass];
+    Class classToExtend = [[context lookupObjectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"dynamic instance variables declaration with no enclosing class declaration"];
     [classToExtend addInstanceVariable:@"__nuivars" signature:@"@"];

@@ -41,7 +41,7 @@
 @interface NSMutableDictionary(Nu)
 /*! Looks up the value associated with a key in the current context.
     If no value is found, looks in the context's parent, continuing
-    upward until no more parent contexts may be found. */
+    upward until no more parent contexts are found. */
 - (id) lookupObjectForKey:(id)key;
 @end
 

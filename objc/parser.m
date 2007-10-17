@@ -126,10 +126,6 @@ id regexWithString(NSString *string)
 
 @implementation NuParser
 
-static BOOL nu_parse_escapes = NO;
-+ (BOOL) parseEscapes {return nu_parse_escapes;}
-+ (void) setParseEscapes:(BOOL) v {nu_parse_escapes = v;}
-
 - (BOOL) incomplete
 {
     return depth > 0;
@@ -452,7 +448,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     case '"':
                     {
                         state = PARSE_STRING;
-                        parseEscapes = nu_parse_escapes;
+                        parseEscapes = YES;
                         partial = [NSMutableString string];
                         break;
                     }

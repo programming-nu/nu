@@ -6,8 +6,8 @@
 */
 
 #import <Foundation/Foundation.h>
+#import "nuinternals.h"
 
-#define SYMBOLS_KEY @"__symbols"
 
 /*!
 	@class NuSymbolTable

@@ -119,7 +119,7 @@
 
 - (NuMethod *) classMethodWithName:(NSString *) methodName
 {
-	const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     NuMethod *method = Nu__null;
     unsigned int method_count;
     Method *method_list = class_copyMethodList(object_getClass([self wrappedClass]), &method_count);
@@ -130,12 +130,12 @@
         }
     }
     free(method_list);
-	return method;
+    return method;
 }
 
 - (NuMethod *) instanceMethodWithName:(NSString *) methodName
 {
-	const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     NuMethod *method = Nu__null;
     unsigned int method_count;
     Method *method_list = class_copyMethodList([self wrappedClass], &method_count);
@@ -146,7 +146,12 @@
         }
     }
     free(method_list);
-	return method;
+    return method;
+}
+
+- (BOOL) isEqual:(NuClass *) anotherClass
+{
+    return c == anotherClass->c;
 }
 
 @end
