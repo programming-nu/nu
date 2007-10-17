@@ -1,0 +1,15 @@
+
+(task "default" is
+      (SH "cd libinject; nuke")
+      (SH "cd NuConsole; nuke")
+      (SH "cd NuInject; nuke"))
+
+(task "clobber" is
+      (SH "cd libinject; nuke clobber")
+      (SH "cd NuConsole; nuke clobber")
+      (SH "cd NuInject; nuke clobber"))
+
+(task "clean" is
+      (SH "cd libinject; nuke clean")
+      (SH "cd NuConsole; nuke clean")
+      (SH "cd NuInject; nuke clean"))
