@@ -810,7 +810,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         //printf("evaluating %s\n", [[expression stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
                         @try
                         {
-                            id result = [[cursor car] evalWithContext:context];
+                            id result = [expression evalWithContext:context];
                             printf("%s\n", [[result stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
                         }
                         @catch (id exception) {

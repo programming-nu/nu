@@ -16,6 +16,15 @@
 END)
       (version writeToFile:"objc/version.h" atomically:NO encoding:NSUTF8StringEncoding error:(set error (NuReference new))))
 
+;; read environment for prefix and destroot
+(let ((env ((NSProcessInfo processInfo) environment)))
+     (if (env objectForKey:"PREFIX")
+         (then (set @prefix (env objectForKey:"PREFIX")))
+         (else (set @prefix "/usr/local")))
+     (if (env objectForKey:"DESTDIR")
+         (then (set @destdir (env objectForKey:"DESTDIR")))
+         (else (set @destdir ""))))
+
 ;; source files
 (set @c_files     (filelist "^objc/.*\.c$"))
 (set @m_files     (filelist "^objc/.*\.m$"))
@@ -28,13 +37,11 @@ END)
 (set @libs 	      '("edit" "ffi" ))
 
 (set @lib_dirs	  (NSMutableArray arrayWithObject:"/usr/lib"))
-(if (NSFileManager directoryExistsNamed:"/usr/local/lib") (@lib_dirs addObject:"/usr/local/lib"))
-(if (NSFileManager directoryExistsNamed:"/opt/local/lib") (@lib_dirs addObject:"/opt/local/lib"))
+(if (NSFileManager directoryExistsNamed:"#{@prefix}/lib") (@lib_dirs addObject:"#{@prefix}/lib"))
 
 ;; includes
 (set @includes "")
-(if (NSFileManager directoryExistsNamed:"/usr/local/include") (@includes appendString:" -I /usr/local/include"))
-(if (NSFileManager directoryExistsNamed:"/opt/local/include") (@includes appendString:" -I /opt/local/include"))
+(if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@includes appendString:" -I #{@prefix}/include"))
 
 (if (NSFileManager fileExistsNamed:"/usr/lib/libffi.dylib")
     (then ;; Use the libffi that ships with OS X.
@@ -67,8 +74,7 @@ END)
 (set @ldflags
      ((list
            (cond  ;; statically link in pcre since most people won't have it..
-                  ((NSFileManager fileExistsNamed:"/usr/local/lib/libpcre.a") ("/usr/local/lib/libpcre.a"))
-                  ((NSFileManager fileExistsNamed:"/opt/local/lib/libpcre.a") ("/opt/local/lib/libpcre.a")) 
+                  ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") ("#{@prefix}/lib/libpcre.a"))
                   (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
            ((@frameworks map: (do (framework) " -framework #{framework}")) join)
            ((@libs map: (do (lib) " -l#{lib}")) join)
@@ -121,20 +127,21 @@ END)
 (task "default" => "nush")
 
 ;; Except for the Nu.framework (installed in /Library/Frameworks), 
-;; all scripts and binaries are installed to /usr/local/bin
-(set @prefix "/usr/local")
+;; all scripts and binaries are installed to #{@prefix}/bin
+
+(set @installprefix "#{@destdir}#{@prefix}")
 
 (task "install" => "nush" is
       ('("nuke" "nubile" "enu" "nutest" "nudoc") each: 
         (do (program)
-            (SH "sudo cp tools/#{program} #{@prefix}/bin")))
-      (SH "sudo cp nush #{@prefix}/bin")
-      (SH "sudo rm -rf /Library/Frameworks/#{@framework}.framework")
-      (SH "cp -pRfv #{@framework}.framework /Library/Frameworks/#{@framework}.framework")
-      (SH "sudo mkdir -p #{@prefix}/share")
-      (SH "sudo rm -rf #{@prefix}/share/nu")
-      (SH "sudo cp -pRfv share/nu #{@prefix}/share/nu")
-      (SH "sudo cp -pRfv examples #{@prefix}/share/nu/examples"))
+            (SH "sudo ditto tools/#{program} #{@installprefix}/bin")))
+      (SH "sudo ditto nush #{@installprefix}/bin")
+      (SH "sudo rm -rf #{@destdir}/Library/Frameworks/#{@framework}.framework")
+      (SH "ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework")
+      (SH "sudo mkdir -p #{@installprefix}/share")
+      (SH "sudo rm -rf #{@installprefix}/share/nu")
+      (SH "sudo ditto share/nu #{@installprefix}/share/nu")
+      (SH "sudo ditto examples #{@installprefix}/share/nu/examples"))
 
 ;; Build a disk image for distributing the framework.
 (task "framework_image" => "framework" is

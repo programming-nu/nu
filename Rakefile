@@ -6,6 +6,8 @@
 require 'rake'
 require 'rake/clean'
 
+PREFIX = ENV["PREFIX"] ? ENV["PREFIX"] : "/usr/local" 
+
 if File.exist? "/usr/lib/libffi.dylib"
   # Use the libffi that ships with OS X.
   FFI_LIB = "-L/usr/lib -lffi"
@@ -17,14 +19,12 @@ else
 end
 
 @includes = FFI_INCLUDE
-@includes += " -I /usr/local/include" if File.exist? "/usr/local/include"
-@includes += " -I /opt/local/include" if File.exist? "/opt/local/include" 
+@includes += " -I #{PREFIX}/include" if File.exist? "#{PREFIX}/include"
 
 @frameworks = %w{Cocoa}
 @libs = %w{objc pcre readline}
 @lib_dirs = []
-@lib_dirs << "/usr/local/lib" if File.exist? "/usr/local/lib"
-@lib_dirs << "/opt/local/lib" if File.exist? "/opt/local/lib"
+@lib_dirs << "#{PREFIX}/lib" if File.exist? "#{PREFIX}/lib"
 
 CLEAN.include("*/*.o")
 CLOBBER.include("mininush")
