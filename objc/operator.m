@@ -612,7 +612,7 @@ static bool valueIsTrue(id value)
                 [searchContext setObject:value forKey:symbol];
                 return value;
             }
-            searchContext = [searchContext objectForKey:@"PARENT_KEY"];
+            searchContext = [searchContext objectForKey:PARENT_KEY];
         }
         #endif
         [context setObject:value forKey:symbol];

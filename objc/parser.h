@@ -26,19 +26,20 @@
     int column;
     int quoting;
     int linenum;
-	int parseEscapes;
+    int parseEscapes;
     bool quoteDepth[MAXDEPTH];
     NuCell *root;
     NuCell *current;
     bool addToCar;
     NSMutableString *hereString;
+    bool hereStringOpened;
     NuStack *stack;
     NuStack *opens;
     NuSymbolTable *symbolTable;
     NSMutableDictionary *context;
     NSMutableString *partial;
     NSMutableString *comments;
-    NSString *pattern; // used for herestrings
+    NSString *pattern;                            // used for herestrings
 }
 
 /*! Get the symbol table used by a parser. */

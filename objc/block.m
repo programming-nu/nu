@@ -33,7 +33,7 @@ extern id Nu__null;
     context = [c mutableCopy];
     #else
     context = [[NSMutableDictionary alloc] init];
-    [context setObject:c forKey:@"PARENT_KEY"];
+    [context setObject:c forKey:PARENT_KEY];
     [context setObject:[c objectForKey:SYMBOLS_KEY] forKey:SYMBOLS_KEY];
     #endif
     return self;

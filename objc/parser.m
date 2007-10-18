@@ -128,7 +128,7 @@ id regexWithString(NSString *string)
 
 - (BOOL) incomplete
 {
-    return depth > 0;
+    return (depth > 0) || (state == PARSE_REGEX) || (state == PARSE_HERESTRING);
 }
 
 - (int) depth
@@ -468,14 +468,19 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     }
                     case '/':
                     {
-                        unichar nextc = [string characterAtIndex:i+1];
-                        if (nextc == ' ') {
-                            [partial appendCharacter:stri];
+                        if (i+1 < imax) {
+                            unichar nextc = [string characterAtIndex:i+1];
+                            if (nextc == ' ') {
+                                [partial appendCharacter:stri];
+                            }
+                            else {
+                                state = PARSE_REGEX;
+                                partial = [NSMutableString string];
+                                [partial appendCharacter:'/'];
+                            }
                         }
                         else {
-                            state = PARSE_REGEX;
-                            partial = [NSMutableString string];
-                            [partial appendCharacter:'/'];
+                            [partial appendCharacter:stri];
                         }
                         break;
                     }
@@ -559,10 +564,10 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                             //NSLog(@"herestring pattern: %@", pattern);
                             partial = [NSMutableString string];
                             // skip the newline
-                            // j++;
                             i = j;
-                            //printf("parsing herestring that ends with %s from %s", pattern, &str[start]);
+                            //NSLog(@"parsing herestring that ends with %@ from %@", pattern, [string substringFromIndex:i]);
                             hereString = nil;
+                            hereStringOpened = true;
                             break;
                         }
                         // if this is not a here string, fall through to the general handler
@@ -581,7 +586,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     if (!hereString)
                         hereString = [[NSMutableString alloc] init];
                     else
-                        [hereString appendString:[NSString carriageReturn]];
+                        [hereString appendString:@"\n"];
                     [hereString appendString:string];
                     if (hereString == nil)
                         hereString = [NSMutableString string];
@@ -687,7 +692,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     case '\n':
                     {
                         if (!comments) comments = [[NSMutableString alloc] init];
-                        else [comments appendString: [NSString carriageReturn]];
+                        else [comments appendString:@"\n"];
                         [comments appendString: [[NSString alloc] initWithString:partial]];
                         partial = [NSMutableString string];
                         column = 0;
@@ -721,13 +726,19 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
         [NSException raise:@"NuParseError" format:@"partial string (terminated by newline): %@", partial];
     }
     else if (state == PARSE_HERESTRING) {
-        NSString *partial2 = [[NSString alloc] initWithString:partial];
-        partial = [NSMutableString string];
-        if (!hereString)
-            hereString = [[NSMutableString alloc] init];
-        else
-            [hereString appendString:[NSString carriageReturn]];
-        [hereString appendString:partial2];
+        if (hereStringOpened) {
+            hereStringOpened = false;
+        }
+        else {
+            if (hereString) {
+                [hereString appendString:@"\n"];
+            }
+            else {
+                hereString = [[NSMutableString alloc] init];
+            }
+            [hereString appendString:partial];
+            partial = [NSMutableString string];
+        }
     }
     else if (state == PARSE_REGEX) {
         // we stay in this state and leave the regex open.

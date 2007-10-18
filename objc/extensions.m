@@ -58,7 +58,7 @@ extern id Nu__null;
 {
     id object = [self objectForKey:key];
     if (object) return object;
-    id parent = [self objectForKey:@"PARENT_KEY"];
+    id parent = [self objectForKey:PARENT_KEY];
     if (!parent) return nil;
     return [parent lookupObjectForKey:key];
 }
