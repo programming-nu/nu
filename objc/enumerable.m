@@ -136,9 +136,9 @@
                 [[args cdr] setCar:bestObject];
                 id result = [block evalWithArguments:args context:Nu__null];
                 if (result && (result != Nu__null)) {
-					if ([result intValue] > 0) {
-						bestObject = object;
-					}
+                    if ([result intValue] > 0) {
+                        bestObject = object;
+                    }
                 }
             }
         }
@@ -167,6 +167,26 @@
     }
     [args release];
     return result;
+}
+
+static int sortedArrayUsingBlockHelper(id a, id b, void *context)
+{
+    id args = [[NuCell alloc] init];
+    [args setCdr:[[[NuCell alloc] init] autorelease]];
+    [args setCar:a];
+    [[args cdr] setCar:b];
+
+    // cast context as a block
+    NuBlock *block = (NuBlock *)context;
+    id result = [block evalWithArguments:args context:nil];
+
+    [args release];
+    return [result intValue];
+}
+
+- (id) sortedArrayUsingBlock:(NuBlock *) block
+{
+    return [self sortedArrayUsingFunction:sortedArrayUsingBlockHelper context:block];
 }
 
 @end
