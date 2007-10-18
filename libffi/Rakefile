@@ -3,6 +3,7 @@ require 'rake/clean'
 require 'rake/tasklib'
 
 CLEAN.include("**/*.o")                             # all object files
+CLOBBER.include("libffi.a")
 
 # source files must be in appropriate subdirectories ('objc', 'ruby', or 'resources')
 #@c_files      = FileList['src/*.c'] + FileList['src/*/*.c']

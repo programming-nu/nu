@@ -16,6 +16,7 @@
 #import "parser.h"
 #import "regex.h"
 #import "version.h"
+#include <stdlib.h>
 
 @interface NuBreakException : NSException {}
 @end
@@ -1351,7 +1352,8 @@ static bool valueIsTrue(id value)
 {
     id command = [[cdr car] evalWithContext:context];
     const char *commandString = [[command stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
-    return [NSNumber numberWithInt:system(commandString)];
+    int result = system(commandString) >> 8; // this needs an explanation
+    return [NSNumber numberWithInt:result];
 }
 
 @end

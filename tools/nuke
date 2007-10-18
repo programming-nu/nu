@@ -10,10 +10,14 @@
 (global YES 1)
 (NSArray include: NuEnumerable)
 (NSSet include: NuEnumerable)
+(set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
 
 (function SH (command)
      (puts "nuke: #{command}")
-     (system command))
+     (set result (system command))
+     (if result
+         (puts "nuke: terminating on command error (return code #{result})")
+         (exit result)))
 
 (class NSString
      ;; Change the extension at the end of a file name to a new specified value.
