@@ -66,6 +66,12 @@
           (assert_equal before "this should always be set")
           (assert_equal after nil)
           (assert_equal object 99) 
-          (assert_equal z 99)))		
+          (assert_equal z 99))
+     
+     (imethod (id) testAssertThrown is
+          (assert_throws "UserException"
+               (do () (throw ((NSException alloc) initWithName:"UserException" reason:"" userInfo:NULL))))))
+
+
 
 

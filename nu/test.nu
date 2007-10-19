@@ -27,7 +27,7 @@
 ;; <code>% nutest test/test_*.nu</code>
 ;; 
 (class NuTestCase is NSObject
-     (ivar (id) failures (id) assertions)
+     (ivar (id) failures (id) assertions (id) errors)
      
      ;; By overriding this method, we detect each time a class is defined in Nu that inherits from this class.
      (cmethod (id) inheritedByClass:(id) testClass is 
@@ -45,6 +45,7 @@
      ;; Loop over all subclasses of NuTestCase and run all test cases defined in each class.
      (cmethod (id) runAllTests is
           ;; class variables would be nice here
+          (set $errors 0)
           (set $assertions 0)
           (set $failures 0)
           (set $tests 0)
@@ -54,16 +55,17 @@
                    (((testClass alloc) init) run))))
           
           (puts "")
-          (puts "All: completed #{$tests} tests/#{$assertions} assertions/#{$failures} failures")
+          (puts "All: completed #{$tests} tests/#{$assertions} assertions/#{$failures} failures/#{$errors} errors")
           (puts "")
-          (if $failures 
-              (then (puts "FAILURE (#{$failures} failures)")) 
-              (else (puts "SUCCESS (0 failures)")))
-          $failures)
+          (if (or $failures $errors)
+              (then (puts "FAILURE (#{$failures} failures, #{$errors} errors)")) 
+              (else (puts "SUCCESS (0 failures, 0 errors)")))
+          (+ $failures $errors))
      
      ;; Run all the test cases for a particular instance of NuTestCase.
      (imethod (id) run is
           (set @failures 0)
+          (set @errors 0)
           (set @assertions 0)
           (set pattern /^test(.*)$/)
           (set testcases (((self instanceMethods) sort) select: (do (method) ((pattern findInString:(method name))))))
@@ -72,14 +74,20 @@
           (testcases each: 
                (do (test)
                    (set $tests (+ $tests 1))
-                   (puts "--- #{(test name)}")
+                   (print "--- #{(test name)}")
                    (self setup)
                    (set command (list self (((NuSymbolTable sharedSymbolTable) symbolWithString:(test name)))))
-                   (eval command)
-                   (self teardown)))     
+                   (try
+                       (eval command)
+                       (catch (exception)
+                              (print " FAILED: Unhandled #{(exception name)} exception caught in #{(test name)}: #{(exception reason)}")
+                              (set @errors (+ @errors 1))))
+                   (self teardown)
+                   (puts "")))     
+          (set $errors (+ $errors @errors))
           (set $failures (+ $failures @failures))
           (set $assertions (+ $assertions @assertions))  
-          (puts "#{((self class) name)}: completed #{(testcases count)} tests/#{@assertions} assertions/#{@failures} failures")))          
+          (puts "#{((self class) name)}: completed #{(testcases count)} tests/#{@assertions} assertions/#{@failures} failures/#{$errors} errors")))          
 
 (macro assert_equal
      (set @assertions (+ @assertions 1))
@@ -97,6 +105,24 @@
      (if (eq __ungolden __actual)
          (puts "failure: #{(car (cdr margs))} did not want '#{__actual} to be '#{__ungolden}'")
          (set @failures (+ @failures 1)))
+     nil)
+
+(macro assert_throws 
+     (set @assertions (+ @assertions 1))
+     (set __desired (eval (car margs)))
+     (set __block (cdr margs))
+     (set __exception nil)
+     (try
+         (eval __block)
+         (catch (exception) (set __exception exception)))
+     (if __exception 
+         (then
+              (unless (eq (__exception name) __desired)
+                      (puts "failure: expected exception #{__desired} to be thrown, got #{(__exception name)}")
+                      (set @failures (+ @failures 1))))
+         (else
+              (puts "failure: exception #{__desired} was not thrown")
+              (set @failures (+ @failures 1))))
      nil)
 
 (macro assert_in_delta 
