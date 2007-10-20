@@ -75,7 +75,10 @@ extern id Nu__null;
 {
     NuCell *newBody = [[[NuCell alloc] init] autorelease];
     id car = [oldBody car];
-    if ([car atom]) {
+    if (car == Nu__null) {
+		[newBody setCar:car];
+    }
+    else if ([car atom]) {
         if ([car isKindOfClass:[NuSymbol class]] && [car isGensym]) {
             [newBody setCar:[symbolTable symbolWithString:[NSString stringWithFormat:@"%@%@", prefix, [car stringValue]]]];
         }
@@ -124,8 +127,8 @@ extern id Nu__null;
 - (id) expandUnquotes:(id) oldBody withContext:(NSMutableDictionary *) context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-	if (oldBody == [NSNull null])
-		return oldBody;
+    if (oldBody == [NSNull null])
+        return oldBody;
     id unquote = [symbolTable symbolWithString:@"unquote"];
     id car = [oldBody car];
     id cdr = [oldBody cdr];
