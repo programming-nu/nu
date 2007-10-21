@@ -69,7 +69,6 @@ extern id Nu__null;
 - (id) stringValue
 {
     return self;
-    //...    return [NSString stringWithFormat:@"\"%@\"", self];
 }
 
 - (id) evalWithContext:(NSMutableDictionary *) context
@@ -92,9 +91,9 @@ extern id Nu__null;
             if (expression) {
                 id body = [parser parse: expression];
                 value = [body evalWithContext:context];
+                id stringValue = [value stringValue];
+                [result appendString:stringValue];
             }
-            value = [value stringValue];
-            [result appendString:value];
             [result appendString:[parts objectAtIndex:1]];
             int j = 2;
             while (j < [parts count]) {
@@ -104,7 +103,6 @@ extern id Nu__null;
             }
         }
     }
-    [result replaceOccurrencesOfString:@"\\\"" withString:@"\"" options:0 range:NSMakeRange(0, [result length])];
     return result;
 }
 

@@ -592,33 +592,33 @@ static bool valueIsTrue(id value)
 
     id symbol = [cdr car];
     id value = [[cdr cdr] car];
-    value = [value evalWithContext:context];
+    id result = [value evalWithContext:context];
 
     char c = (char) [[symbol stringValue] characterAtIndex:0];
     if (c == '$') {
-        [symbol setValue:value];
+        [symbol setValue:result];
     }
     else if (c == '@') {
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
         id object = [context lookupObjectForKey:[symbolTable symbolWithCString:"self"]];
         id ivar = [[symbol stringValue] substringFromIndex:1];
-        //NSLog(@"setting value for ivar %@ to %@", ivar, value);
-        [object setValue:value forIvar:ivar];
+        //NSLog(@"setting value for ivar %@ to %@", ivar, result);
+        [object setValue:result forIvar:ivar];
     }
     else {
         #ifndef CLOSE_ON_VALUES
         id searchContext = context;
         while (searchContext) {
             if ([searchContext objectForKey:symbol]) {
-                [searchContext setObject:value forKey:symbol];
-                return value;
+                [searchContext setObject:result forKey:symbol];
+                return result;
             }
             searchContext = [searchContext objectForKey:PARENT_KEY];
         }
         #endif
-        [context setObject:value forKey:symbol];
+        [context setObject:result forKey:symbol];
     }
-    return value;
+    return result;
 }
 
 @end
@@ -632,9 +632,9 @@ static bool valueIsTrue(id value)
 
     id symbol = [cdr car];
     id value = [[cdr cdr] car];
-    value = [value evalWithContext:context];
-    [symbol setValue:value];
-    return value;
+    id result = [value evalWithContext:context];
+    [symbol setValue:result];
+    return result;
 }
 
 @end

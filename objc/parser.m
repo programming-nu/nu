@@ -613,17 +613,11 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                 switch(stri) {
                     case '"':
                     {
-                        if (parseEscapes || ([string characterAtIndex:i-1] != '\\')) {
-                            state = PARSE_NORMAL;
-                            NSString *string = [NSString stringWithString:partial];
-                            //NSLog(@"parsed string:%@:", string);
-                            [self addAtom:string];
-                            partial = [NSMutableString string];
-                            break;
-                        }
-                        else {
-                            [partial appendCharacter:stri];
-                        }
+                        state = PARSE_NORMAL;
+                        NSString *string = [NSString stringWithString:partial];
+                        //NSLog(@"parsed string:%@:", string);
+                        [self addAtom:string];
+                        partial = [NSMutableString string];
                         break;
                     }
                     case '\n':

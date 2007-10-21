@@ -79,7 +79,10 @@ extern id Nu__null;
         value = [[cursor car] evalWithContext:evaluation_context];
         cursor = [cursor cdr];
     }
-    //	NSLog(@"before releasing, evaluation context %@ retain count %d", evaluation_context, [evaluation_context retainCount]);
+    //    NSLog(@"before releasing, evaluation context %@ retain count %d", evaluation_context, [evaluation_context retainCount]);
+    //    NSLog(@"before releasing, value %@ retain count %d", value, [value retainCount]);
+    [value retain];
+    [value autorelease];
     [evaluation_context release];
     return value;
 }
@@ -129,6 +132,8 @@ extern id Nu__null;
         value = [[cursor car] evalWithContext:evaluation_context];
         cursor = [cursor cdr];
     }
+    [value retain];
+    [value autorelease];
     [evaluation_context release];
     return value;
 }
