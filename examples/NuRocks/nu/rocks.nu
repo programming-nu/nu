@@ -20,6 +20,7 @@
 (global KEY_P           35)
 (global KEY_N           45)
 (global KEY_R           15)
+(global KEY_S			1)
 
 (class NSMutableArray
      (- removeObjectsIf:block is
@@ -68,7 +69,9 @@
      (- acceptsFirstResponder is YES)
      
      (- keyDown:event is
-        (@game keyDown:(event keyCode)))
+        (case (event keyCode)
+              (KEY_S (self saveScreenShot:self))
+              (else  (@game keyDown:(event keyCode)))))
      
      (- keyUp:event is
         (@game keyUp:(event keyCode)))
@@ -92,7 +95,27 @@
      
      (- windowWillClose:notification is
         (@timer invalidate)
-        (set @timer nil)))
+        (set @timer nil))
+     
+     ;; Open a save panel to save a screenshot to a file.
+     (- saveScreenShot:sender is
+        (set panel (NSSavePanel savePanel))
+        (panel setRequiredFileType:"jpg")
+        (panel beginSheetForDirectory:NULL
+               file:NULL
+               modalForWindow:(self window)
+               modalDelegate:self
+               didEndSelector:"didEnd:returnCode:contextInfo:"
+               contextInfo:NULL))     
+     
+     ;; This callback method is called when the saveScreenShot: panel is closed.
+     (- (void) didEnd:(id) sheet returnCode:(int) code contextInfo:(void *) info is
+        (if (eq code NSOKButton)
+            (self lockFocus)
+            (set representation ((NSBitmapImageRep alloc) initWithFocusedViewRect:(self bounds)))
+            (self unlockFocus)
+            ((representation representationUsingType:NSJPEGFileType properties:NULL)
+             writeToFile:(sheet filename) atomically:NO))))
 
 (class NuRocksGame is NSObject
      (ivars)

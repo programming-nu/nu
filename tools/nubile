@@ -1,4 +1,4 @@
-#!/usr/bin/env nush
+#!/usr/local/bin/nush
 #
 # @file nubile 
 # The Nu code beautification tool.
