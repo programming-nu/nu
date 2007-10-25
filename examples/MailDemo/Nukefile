@@ -1,0 +1,15 @@
+;; Nukefile for Nu framework and demo application
+
+;; source files
+(set @nu_files 	  (filelist "^nu/.*nu$"))
+(set @icon_files (filelist "^resources/.*icns$"))
+(set @nib_files (filelist "^resources/English\.lproj/.*\.nib$"))
+
+;; application description
+(set @application "MailDemo")
+(set @application_identifier   "nu.programming.maildemo")
+
+(application-tasks)
+
+(task "default" => "application")
+

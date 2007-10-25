@@ -1,0 +1,22 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = MailController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                addEmailButton = NSButton; 
+                addMailboxButton = NSButton; 
+                deleteEmailButton = NSButton; 
+                deleteMailboxButton = NSButton; 
+                emailStatusLine = NSTextField; 
+                emailTable = NSTableView; 
+                mailboxStatusLine = NSTextField; 
+                mailboxTable = NSTableView; 
+                previewPane = NSTextView; 
+            }; 
+            SUPERCLASS = NSWindowController; 
+        }
+    ); 
+    IBVersion = 1; 
+}
