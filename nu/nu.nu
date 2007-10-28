@@ -42,6 +42,12 @@
         (do (string)
             ((NuParser new) parse:string)))
 
+;; create an array from a list of values
+(global array (do (*args) (NSArray arrayWithList:*args)))
+
+;; create a dictionary from a list of key-value pairs
+(global dict (do (*args) (NSDictionary dictionaryWithList:*args)))
+
 ;; add enumeration to collection classes
 (NSArray include: NuEnumerable)
 (NSSet include: NuEnumerable)
@@ -108,11 +114,11 @@
      ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
      (imethod (void) << (id) object is (self addObject:object)))
 
-(class NSMutableDictionary
+(class NSDictionary
      
      ;; Convert a list of key-value pairs into a dictionary.
      (cmethod (id) dictionaryWithList: (id) list is
-          (let (d (self dictionary))
+          (let (d (NSMutableDictionary dictionary))
                (list eachPair:
                      (do (key value)                        
                          (if (and (key isKindOfClass:NuSymbol)

@@ -34,6 +34,8 @@
 - (void) setCar:(id) c;
 /*! Set the cdr of a NuCell. */
 - (void) setCdr:(id) c;
+/*! Get the last object in a list by traversing the list. Use this carefully. */
+- (id) lastObject;
 /*! Get a string representation of a list. In many cases, this can be parsed to produce the original list. */
 - (NSMutableString *) stringValue;
 /*! Treat the NuCell as the head of a list of Nu expressions and evaluate those expressions. */

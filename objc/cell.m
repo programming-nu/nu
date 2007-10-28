@@ -82,6 +82,15 @@
     return [cursor car];
 }
 
+- (id) lastObject
+{
+	id cursor = self;
+	while ([cursor cdr] != Nu__null) {
+		cursor = [cursor cdr];
+	}
+	return [cursor car];
+}
+
 - (NSMutableString *) stringValue
 {
     NuCell *cell = self;
