@@ -125,7 +125,16 @@
                                   (key isLabel))
                              (then (d setValue:value forKey:(key labelName)))
                              (else (d setValue:value forKey:key)))))
-               d)))
+               d))
+     
+     ;; When an unknown message is received by a dictionary, 
+     ;; treat it as a call to objectForKey:.
+     (imethod (id) handleUnknownMessage:(id) method withContext:(id) context is
+          (if (eq (method length) 1)
+              (then (set m ((method car) evalWithContext: context))
+                    (self objectForKey:m))              
+              (else (super handleUnknownMessage:method withContext:context)))))
+
 
 (class NSString
      

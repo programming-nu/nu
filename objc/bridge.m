@@ -3,10 +3,6 @@
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
-#import <objc/objc.h>
-#import <objc/objc-runtime.h>
-#import <objc/objc-class.h>
-#import <objc/Protocol.h>
 #import <Cocoa/Cocoa.h>
 #import "objc_runtime.h"
 #import "class.h"
@@ -468,7 +464,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                     return NO;
                 }
                 else {
-                    NSLog(@"can't convert value of type %@ to a pointer to strings", [[nu_value class] name]);
+                    NSLog(@"can't convert value of type %s to a pointer to strings", [nu_value class]->name);
                     *((char ***) objc_value) = NULL;
                     return NO;
                 }
@@ -481,7 +477,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             }
             else {
                 // we could probably handle NSString and NSData objects
-                NSLog(@"can't convert value of type %@ to a pointer of type %s", [[nu_value class] name], typeString);
+                NSLog(@"can't convert value of type %s to a pointer of type %s", [nu_value class]->name, typeString);
                 return NO;
             }
         }
@@ -499,7 +495,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 return NO;
             }
             else {
-                NSLog(@"can't convert value of type %@ to CLASS", [[nu_value class] name]);
+                NSLog(@"can't convert value of type %s to CLASS", [nu_value class]->name);
                 *((id *) objc_value) = 0;
                 return NO;
             }

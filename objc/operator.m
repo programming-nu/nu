@@ -44,7 +44,7 @@ static bool valueIsTrue(id value)
 {
     bool result = value && (value != Nu__null);
     if (result && [value isKindOfClass:[NSNumber class]]) {
-        if ([value intValue] == 0)
+        if ([value doubleValue] == 0.0)
             result = false;
     }
     return result;
