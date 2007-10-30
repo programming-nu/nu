@@ -722,6 +722,7 @@ static Class placeholderClass[MAXPLACEHOLDERS];
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableSet");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableString");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSManagedObjectModel");
+    placeholderClass[placeholderCount++] = NSClassFromString(@"NSXMLDocument");
 }
 
 @end
@@ -753,7 +754,7 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
         return (!strcmp(return_type_buffer, "v")) ? [NSNull null] : result;
     }
 
-	// if we get here, we're going through the ObjC runtime to make the call.
+    // if we get here, we're going through the ObjC runtime to make the call.
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     SEL s = method_getName(m);

@@ -25,14 +25,3 @@
 
 @end
 
-@interface PTest :NSObject
-{}
-@end
-
-@implementation PTest
-+ (void) setNumber:(NSNumber **) number
-{
-    *number = [NSNumber numberWithInt:22];
-}
-
-@end
