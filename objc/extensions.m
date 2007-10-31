@@ -46,6 +46,11 @@ extern id Nu__null;
     return @"()";
 }
 
+- (BOOL) isEqual:(id) other
+{
+	return (self == other) ? 1l : 0l;
+}
+
 - (const char *) cStringUsingEncoding:(unsigned int) encoding
 {
     return [[self stringValue] cStringUsingEncoding:encoding];

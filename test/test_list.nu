@@ -14,5 +14,8 @@
           (assert_equal nil (eq '(1 2 3) 2))     
           (assert_equal nil (eq 2 '(1 2 3)))              
           (assert_equal nil (eq nil '(1 2 3)))   
-          ;; go on, I'm sure we can think of more...
-          ))           
+          (assert_equal t (eq '(a b c) '(a b c)))
+          (assert_equal nil (eq '(a b c) '(a b d))) 
+          (assert_equal nil (eq '(i) '(j)))
+          (assert_equal t (eq 'i 'i))
+          (assert_equal nil (eq 'i 'j))))           

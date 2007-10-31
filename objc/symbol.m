@@ -94,6 +94,11 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
     [super dealloc];
 }
 
+- (BOOL) isEqual: (NuSymbol *)other
+{
+    return (self == other) ? 1l : 0l;
+}
+
 - (id) value
 {
     return value;
@@ -163,7 +168,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
     if (valueInContext)
         return valueInContext;
 
-#if false
+    #if false
     // if it's not there, try the next context up
     id parentContext = [context objectForKey:@"context"];
     if (parentContext) {
@@ -171,7 +176,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
         if (valueInContext)
             return valueInContext;
     }
-#endif
+    #endif
 
     // Next, return the global value assigned to the value.
     if (value)
@@ -183,7 +188,8 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 
     // If the symbol is still unknown, try to find a class with this name.
     id className = [self stringValue];
-    value = [[NuClass classWithName:className] retain]; // the symbol should retain its value.
+                                                  // the symbol should retain its value.
+    value = [[NuClass classWithName:className] retain];
     if (value)
         return value;
 
@@ -199,7 +205,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 
 - (NSComparisonResult) compare:(NuSymbol *) anotherSymbol
 {
-	return strcmp(string, anotherSymbol->string);
+    return strcmp(string, anotherSymbol->string);
 }
 
 - (id) copyWithZone:(NSZone *) zone
