@@ -200,7 +200,7 @@ extern id Nu__null;
 + (id) _timestampForFileNamed:(NSString *) filename
 {
     if (filename == Nu__null) return nil;
-    NSDictionary *attributes = [[NSFileManager defaultManager] fileAttributesAtPath:filename traverseLink:YES];
+    NSDictionary *attributes = [[NSFileManager defaultManager] fileAttributesAtPath:[filename stringByExpandingTildeInPath] traverseLink:YES];
     return [attributes valueForKey:NSFileModificationDate];
 }
 
@@ -208,7 +208,7 @@ extern id Nu__null;
 {
     if (!filename)
         return nil;
-    const char *path = [filename cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *path = [[filename stringByExpandingTildeInPath] cStringUsingEncoding:NSUTF8StringEncoding];
     struct stat sb;
     int result = stat(path, &sb);
     if (result == -1) {
@@ -221,7 +221,7 @@ extern id Nu__null;
 {
     if (!filename)
         return nil;
-    const char *path = [filename cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *path = [[filename stringByExpandingTildeInPath] cStringUsingEncoding:NSUTF8StringEncoding];
     struct stat sb;
     int result = stat(path, &sb);
     if (result == -1) {
@@ -234,7 +234,7 @@ extern id Nu__null;
 {
     if (!filename)
         return NO;
-    const char *path = [filename cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *path = [[filename stringByExpandingTildeInPath] cStringUsingEncoding:NSUTF8StringEncoding];
     struct stat sb;
     int result = stat(path, &sb);
     if (result == -1) {
@@ -247,7 +247,7 @@ extern id Nu__null;
 {
     if (!filename)
         return NO;
-    const char *path = [filename cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *path = [[filename stringByExpandingTildeInPath] cStringUsingEncoding:NSUTF8StringEncoding];
     struct stat sb;
     int result = stat(path, &sb);
     if (result == -1) {

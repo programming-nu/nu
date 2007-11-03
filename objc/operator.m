@@ -1138,11 +1138,16 @@ static bool valueIsTrue(id value)
         }
     }
     else {
-        // begin by looking for a Nu_ source file in the current directory, first with and then without the ".nu" suffix
-        id fileName = [NSString stringWithFormat:@"./%@.nu", resourceName];
-        if (![NSFileManager fileExistsNamed: fileName]) {
-            fileName = [NSString stringWithFormat:@"./%@", resourceName];
-            if (![NSFileManager fileExistsNamed: fileName]) fileName = nil;
+        // first try to find a file at the specified path
+        id fileName = [resourceName stringByExpandingTildeInPath];
+        if (![NSFileManager fileExistsNamed:fileName]) {
+            // if that failed, try looking for a Nu_ source file in the current directory,
+            // first with and then without the ".nu" suffix
+            fileName = [NSString stringWithFormat:@"./%@.nu", resourceName];
+            if (![NSFileManager fileExistsNamed: fileName]) {
+                fileName = [NSString stringWithFormat:@"./%@", resourceName];
+                if (![NSFileManager fileExistsNamed: fileName]) fileName = nil;
+            }
         }
         if (fileName) {
             NSString *string = [NSString stringWithContentsOfFile: fileName];
@@ -1352,7 +1357,7 @@ static bool valueIsTrue(id value)
 {
     id command = [[cdr car] evalWithContext:context];
     const char *commandString = [[command stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
-    int result = system(commandString) >> 8; // this needs an explanation
+    int result = system(commandString) >> 8;      // this needs an explanation
     return [NSNumber numberWithInt:result];
 }
 
