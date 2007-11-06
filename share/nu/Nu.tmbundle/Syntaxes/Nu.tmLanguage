@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>comment</key>
@@ -7,7 +7,10 @@
 	<key>fileTypes</key>
 	<array>
 		<string>nu</string>
+		<string>Nukefile</string>
 	</array>
+	<key>firstLineMatch</key>
+	<string>^#!/.*\bnush\b</string>
 	<key>foldingStartMarker</key>
 	<string>\(</string>
 	<key>foldingStopMarker</key>
@@ -18,6 +21,32 @@
 	<string>Nu</string>
 	<key>patterns</key>
 	<array>
+		<dict>
+			<key>match</key>
+			<string>\b(?i:nil|self|super)\b</string>
+			<key>name</key>
+			<string>constant.language.nu</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\b((0(x|X)[0-9a-fA-F]*)|-?(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\b</string>
+			<key>name</key>
+			<string>constant.numeric.nu</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.constant.nu</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>'(.|(\\.*))'</string>
+			<key>name</key>
+			<string>constant.character.nu</string>
+		</dict>
 		<dict>
 			<key>captures</key>
 			<dict>
@@ -35,66 +64,16 @@
 		<dict>
 			<key>captures</key>
 			<dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>storage.type.function-type.nu</string>
-				</dict>
-				<key>4</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.function.nu</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>(\b(?i:(def|function|class|macro|imethod|cmethod|is|ivar|ivars))\b)(\s+)((\w|\-|\!|\?)*)</string>
-			<key>name</key>
-			<string>meta.function.nu</string>
-		</dict>
-		<dict>
-			<key>captures</key>
-			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>punctuation.definition.constant.nu</string>
+					<string>punctuation.definition.comment.nu</string>
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>(#)(\w|[\\+-=&lt;&gt;'"&amp;#])+</string>
+			<string>(#).*$\n?</string>
 			<key>name</key>
-			<string>constant.character.nu</string>
-		</dict>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.variable.nu</string>
-				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.variable.nu</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>(\*)(\S*)(\*)</string>
-			<key>name</key>
-			<string>variable.other.global.nu</string>
-		</dict>
-		<dict>
-			<key>match</key>
-			<string>\b(?i:nil|self|super)\b</string>
-			<key>name</key>
-			<string>constant.language.nu</string>
-		</dict>
-		<dict>
-			<key>match</key>
-			<string>\b((0(x|X)[0-9a-fA-F]*)|(([0-9]+\.?[0-9]*)|(\.[0-9]+))((e|E)(\+|-)?[0-9]+)?)(L|l|UL|ul|u|U|F|f|ll|LL|ull|ULL)?\b</string>
-			<key>name</key>
-			<string>constant.numeric.nu</string>
+			<string>comment.line.hash.nu</string>
 		</dict>
 		<dict>
 			<key>begin</key>
@@ -131,23 +110,31 @@
 		</dict>
 		<dict>
 			<key>begin</key>
-			<string>/</string>
+			<string>&lt;&lt;[+-](.*)</string>
+			<key>end</key>
+			<string>\1</string>
+			<key>name</key>
+			<string>string.unquoted.heredoc.nu</string>
+		</dict>
+		<dict>
+			<key>begin</key>
+			<string>(/)[^ ]</string>
 			<key>beginCaptures</key>
 			<dict>
-				<key>0</key>
+				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>punctuation.definition.string.begin.nu</string>
+					<string>punctuation.definition.regex.begin.nu</string>
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>/</string>
+			<string>/[a-z]*</string>
 			<key>endCaptures</key>
 			<dict>
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>punctuation.definition.string.end.nu</string>
+					<string>punctuation.definition.regex.end.nu</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -156,11 +143,88 @@
 			<array>
 				<dict>
 					<key>match</key>
-					<string>\\.</string>
+					<string>\\/</string>
 					<key>name</key>
 					<string>constant.character.escape.nu</string>
 				</dict>
 			</array>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>storage.type.class.nu</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.function.nu</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>storage.type.class.nu</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.function.nu</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>\b(class)\s+((\w|\-|\!|\?)*)(\s+(is)\s+((\w|\-|\!|\?)*))?</string>
+			<key>name</key>
+			<string>meta.class.nu</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>storage.type.class.nu</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.function.nu</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>storage.type.class.nu</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.function.nu</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>\b([ic]?method)\s+((\w|\-|\!|\?)*)(\s+(is)\s+((\w|\-|\!|\?)*))?</string>
+			<key>name</key>
+			<string>meta.method.nu</string>
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>storage.type.function-type.nu</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.function.nu</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>\b(function|macro)\s+((\w|\-|\!|\?)*)</string>
+			<key>name</key>
+			<string>meta.function.nu</string>
 		</dict>
 	</array>
 	<key>scopeName</key>

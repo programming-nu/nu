@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>deleted</key>
+	<array>
+		<string>8D961A28-439E-449D-8F67-65969846C8D5</string>
+	</array>
 	<key>name</key>
 	<string>Nu</string>
 	<key>ordering</key>
 	<array>
-		<string>8D961A28-439E-449D-8F67-65969846C8D5</string>
 		<string>D3B3174B-C30D-499A-95E1-62B1C541AD72</string>
 		<string>61BF925A-71FD-499A-9A1B-D4B407116062</string>
 		<string>F8A96494-C89A-4CA4-A2D3-6A5A4ED56FD7</string>
