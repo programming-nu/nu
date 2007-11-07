@@ -169,6 +169,22 @@
     return result;
 }
 
+- (id) eachInReverse:(NuBlock *) block
+{
+    id args = [[NuCell alloc] init];
+    if ([block isKindOfClass:[NuBlock class]]) {
+        NSEnumerator *enumerator = [self reverseObjectEnumerator];
+        id object;
+        while ((object = [enumerator nextObject])) {
+            [args setCar:object];
+            [block evalWithArguments:args context:Nu__null];
+        }
+    }
+    [args release];
+    return self;
+}
+
+
 static int sortedArrayUsingBlockHelper(id a, id b, void *context)
 {
     id args = [[NuCell alloc] init];

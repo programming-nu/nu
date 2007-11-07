@@ -12,6 +12,22 @@
           (assert_equal 2 (a 1))
           (assert_equal "three" (a 2)))
      
+     (imethod (id) testEach is
+          (set i 0)
+          (set a (array 0 1 2))
+          (a each:
+             (do (x)
+                 (assert_equal i x)
+                 (set i (+ i 1)))))
+     
+     (imethod (id) testEachInReverse is
+          (set i 0)
+          (set a (array 2 1 0))
+          (a eachInReverse:
+             (do (x)
+                 (assert_equal i x)
+                 (set i (+ i 1)))))
+     
      (imethod (id) testSortedArrayUsingBlock is        
           (set array (NSArray arrayWithList:(list 9 42 37 1 17 30 11 28)))
           (set sorted (array sortedArrayUsingBlock:(do (a b) (b compare:a))))
