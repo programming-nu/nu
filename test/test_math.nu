@@ -56,6 +56,7 @@
           (assert_equal 15 	(- 20 5))
           (assert_equal 20 	(* 2 2 5))
           (assert_equal 13 	(/ 26 2))
+          (assert_equal 7	(% 47 8))
           (assert_equal 4 	(& 7 12))
           (assert_equal 15 	(| 7 12)))
      
@@ -75,7 +76,7 @@
           (assert_equal t   (<= 10 20))
           (assert_equal t   (<= 20 20))
           (assert_equal nil (<= 30 20))
-
+          
           (assert_equal t   (eq 20 20))
           (assert_equal nil (eq 30 20))
           

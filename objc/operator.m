@@ -831,6 +831,24 @@ static bool valueIsTrue(id value)
 
 @end
 
+@interface Nu_modulus_operator : NuOperator {}
+@end
+
+@implementation Nu_modulus_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    id cursor = cdr;
+    int product = [[[cursor car] evalWithContext:context] intValue];
+    cursor = [cursor cdr];
+    while (cursor && (cursor != Nu__null)) {
+        product %= [[[cursor car] evalWithContext:context] intValue];
+        cursor = [cursor cdr];
+    }
+    return [NSNumber numberWithInt:product];
+}
+
+@end
+
 @interface Nu_bitwiseand_operator : NuOperator {}
 @end
 
@@ -1472,6 +1490,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("-",        Nu_subtract_operator);
     install("*",        Nu_multiply_operator);
     install("/",        Nu_divide_operator);
+    install("%",        Nu_modulus_operator);
     install("&",        Nu_bitwiseand_operator);
     install("|",        Nu_bitwiseor_operator);
     install(">",        Nu_greaterthan_operator);
