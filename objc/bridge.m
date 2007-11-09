@@ -913,7 +913,7 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
 + (id) signatureWithObjCTypes:(const char*)types;
 @end
 
-static void obj_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void** args, void* userdata)
+static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void** args, void* userdata)
 {
     int argc = cif->nargs - 2;
     id rcv = *((id*)args[0]);                     // this is the object getting the message
@@ -936,7 +936,11 @@ static void obj_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void*
     }
     id result = [block evalWithArguments:[arguments cdr] context:nil self:rcv];
     //NSLog(@"in nu method handler, putting result %@ in %x with type %s", [result stringValue], (int) returnvalue, ((char **)userdata)[0]);
-    set_objc_value_from_nu_value(returnvalue, result, ((char **)userdata)[0]);
+    char *resultType = (((char **)userdata)[0])+1;// skip the first character, it's a flag
+    set_objc_value_from_nu_value(returnvalue, result, resultType);
+    if (((char **)userdata)[0][0] == '!')
+        [*((id *)returnvalue) retain];
+
     [arguments release];
 
     [pool release];
@@ -950,7 +954,20 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     int argument_count = [methodSignature numberOfArguments];
     char **userdata = (char **) malloc ((argument_count+2) * sizeof(char*));
     ffi_type **argument_types = (ffi_type **) malloc (argument_count * sizeof(ffi_type *));
-    userdata[0] = strdup(return_type_string);
+    userdata[0] = (char *) malloc (2 + strlen(return_type_string));
+    char *methodName = sel_getName(sel);
+    BOOL returnsRetainedResult = NO;
+    if ((strlen(methodName) >= 4)                 // retain the result of any method
+        && !strncmp("init", methodName, 4)        // whose name begins with "init"
+        && strcmp("initialize", methodName)       // unless it is named "initialize"
+        )
+        returnsRetainedResult = YES;
+    if (returnsRetainedResult)
+        sprintf(userdata[0], "!%s", return_type_string);
+    else
+        sprintf(userdata[0], " %s", return_type_string);
+    //NSLog(@"constructing handler for method %s with returnType %s", methodName, userdata[0]);
+
     userdata[1] = (char *) block;
     [block retain];
     int i;
@@ -973,7 +990,7 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     if (closure == NULL) {
         return NULL;
     }
-    if (ffi_prep_closure(closure, cif, obj_calling_nu_method_handler, userdata) != FFI_OK) {
+    if (ffi_prep_closure(closure, cif, objc_calling_nu_method_handler, userdata) != FFI_OK) {
         return NULL;
     }
     return (IMP) closure;
