@@ -185,6 +185,18 @@
 (macro task
      ((self taskNamed: (eval (cons (quote task-helper) margs))) setIsFile:0))
 
+;; helper that finds momc, the datamodel compiler
+(function momc-path ()
+     (set momc nil)
+     ('( "/Library/Application Support/Apple/Developer Tools/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc"
+         "/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc")
+       each: 
+       (do (momc-path)
+           (if (NSFileManager fileExistsNamed:momc-path)
+               (set momc (momc-path replaceString:" " withString:-"\ ")))))
+     (unless momc (NSException raise:@"NukeError" format:@"Can't find momc (data model compiler)."))
+     momc)
+
 ;; use this to create all the compilation tasks for the files in the @c_files and @m_files collections
 (macro compilation-tasks
      (unless @cc (set @cc "gcc"))
@@ -226,6 +238,13 @@
      
      ;(puts (@c_objects description))
      ;(puts (@m_objects description))
+     
+     ;; compile datamodels
+     (@datamodels each:
+          (do (model)
+              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))         
+              (file "#{modelName}.mom" => "#{modelName}.xcdatamodel" is
+                    (SH "#{(momc-path)} #{modelName}.xcdatamodel #{modelName}.mom"))))
      
      ;; cleanup
      (task "clean" is
@@ -310,6 +329,14 @@
                        (SH "cp -R '#{f}' '#{(target name)}'")
                        0)
                  (task "application_resources" => "#{@application_resource_localized_dir}/#{g}")))))
+     
+     ;; copy datamodels into the application
+     (@datamodels each:
+          (do (model)
+              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0)) 
+              (task "application_#{modelName}" => "#{modelName}.mom" @application_resource_dir is
+                    (SH "cp #{modelName}.mom #{@application_resource_dir}/#{(modelName lastPathComponent)}.mom"))
+              (task "application" => "application_#{modelName}")))
      
      ;; create the application_infoplist
      (set application_infoplist "#{@application_contents_dir}/Info.plist")
@@ -422,6 +449,13 @@
                     0)
               (task "framework_resources" => "#{@framework_resource_localized_dir}/#{g}")))
      
+     ;; copy datamodels into the framework
+     (@datamodels each:
+          (do (model)
+              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0)) 
+              (task "framework_#{modelName}" => "#{modelName}.mom" @framework_resource_dir is
+                    (SH "cp #{modelName}.mom #{@framework_resource_dir}/#{(modelName lastPathComponent)}.mom"))
+              (task "framework" => "framework_#{modelName}")))
      
      ;; framework_infoplist
      (set framework_infoplist "#{@framework_resource_dir}/Info.plist")
@@ -632,6 +666,3 @@
          (if (eq (mytask isFile) 0) (puts "#{key}")))))
 
 (project nuke:target)
-
-
-

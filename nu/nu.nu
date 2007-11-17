@@ -146,7 +146,13 @@
           (set array (self componentsSeparatedByString:(NSString carriageReturn)))
           (if (eq (array lastObject) "")
               (then (array subarrayWithRange:(list 0 (- (array count) 1))))
-              (else array))))
+              (else array)))
+     
+     ;; Replace a substring with another.
+     (imethod (id) replaceString:(id) target withString:(id) replacement is   
+          (set s (NSMutableString stringWithString:self))
+          (s replaceOccurrencesOfString:target withString:replacement options:nil range:(list 0 (self length)))
+          s))
 
 (class NuCell
      ;; Test another list for equality.
