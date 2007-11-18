@@ -326,7 +326,7 @@
              (do (f)
                  (set g ((f componentsSeparatedByString:"/") lastObject))
                  (file "#{@application_resource_localized_dir}/#{g}" => f @application_resource_localized_dir is
-                       (SH "cp -R '#{f}' '#{(target name)}'")
+                       (SH "cp -R '#{f}' '#{((target name) dirName)}'")
                        0)
                  (task "application_resources" => "#{@application_resource_localized_dir}/#{g}")))))
      
