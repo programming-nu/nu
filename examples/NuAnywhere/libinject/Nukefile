@@ -5,6 +5,8 @@
 (set @nu_files 	  (filelist "^nu/.*\.nu$"))
 (set @frameworks  '("Cocoa" "Nu" "Carbon"))
 
+(set @cflags "-isysroot /Developer/SDKs/MacOSX10.4u.sdk ")
+
 (set @arch '("i386" "ppc"))
 
 ;; library description

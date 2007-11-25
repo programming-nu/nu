@@ -12,7 +12,7 @@
 - (id) run:(id) object
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"nu.programming.console"];
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *main_path = [bundle pathForResource:@"main" ofType:@"nu"];
     if (main_path) {
         NSString *main = [NSString stringWithContentsOfFile:main_path];
