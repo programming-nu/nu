@@ -56,7 +56,8 @@
         ;; tickle her.
         (u beginUndoGrouping)
         (u prepareWithInvocationTarget:shannon)
-        (u tickle:3)
+        (set one 1)
+        (u tickle:(+ one one one))
         (u endUndoGrouping)
         
         ;; first, tie Shannon's shoes.

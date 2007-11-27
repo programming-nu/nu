@@ -214,7 +214,7 @@
             for (i = 0; i < imax; i++) {
                 const char *argument_type = [methodSignature getArgumentTypeAtIndex:i+2];
                 char *buffer = value_buffer_for_objc_type(argument_type);
-                set_objc_value_from_nu_value(buffer, [args objectAtIndex:i], argument_type);
+                set_objc_value_from_nu_value(buffer, [[args objectAtIndex:i] evalWithContext:context], argument_type);
                 [invocation setArgument:buffer atIndex:i+2];
                 free(buffer);
             }
