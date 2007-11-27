@@ -226,6 +226,30 @@
 			<key>name</key>
 			<string>meta.function.nu</string>
 		</dict>
+		<dict>
+			<key>match</key>
+			<string>\b(?i:let|set|global|cond|case|do|loop|until|while|for|break|continue|if|else|then|unless|try|throw|catch)\b</string>
+			<key>name</key>
+			<string>keyword.control.nu</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\b(?i:eq|neq|and|or|synchronized)\b</string>
+			<key>name</key>
+			<string>keyword.operator.nu</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\b(?i:append|atom|cons|car|cdr|context|eval|head|quote|parse|progn|send|tail|load|system|puts|help|version|beep)\b</string>
+			<key>name</key>
+			<string>support.function.nu</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>\b(?i:assert_equal|assert_not_equal|assert_throws|assert_in_delta)\b</string>
+			<key>name</key>
+			<string>support.function.testing.nu</string>
+		</dict>
 	</array>
 	<key>scopeName</key>
 	<string>source.nu</string>
