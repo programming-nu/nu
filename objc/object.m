@@ -201,10 +201,37 @@
         [argValues release];
     }
     else {
-        // There is no method that matches the selector.
-        if ([self isKindOfClass: [NuSymbol class]] && [((NuSymbol *)self) isLabel]) {
-            // If the head of the list is a label, we treat the list as a property list.
-            // We just evaluate the elements of the list and return the result.
+        // If the object responds to methodSignatureForSelector:, we should create and forward an invocation to it.
+        NSMethodSignature *methodSignature = [self methodSignatureForSelector:sel];
+        if (methodSignature) {
+            // Create an invocation to forward.
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+            [invocation setTarget:self];
+            [invocation setSelector:sel];
+            // Set any arguments to the invocation.
+            int i;
+            int imax = [args count];
+            for (i = 0; i < imax; i++) {
+                const char *argument_type = [methodSignature getArgumentTypeAtIndex:i+2];
+                char *buffer = value_buffer_for_objc_type(argument_type);
+                set_objc_value_from_nu_value(buffer, [args objectAtIndex:i], argument_type);
+                [invocation setArgument:buffer atIndex:i+2];
+                free(buffer);
+            }
+            // Forward the invocation.
+            [self forwardInvocation:invocation];
+            // Get the return value from the invocation.
+            unsigned int length = [[invocation methodSignature] methodReturnLength];
+            if (length > 0) {
+                char *buffer = (void *)malloc(length);
+                [invocation getReturnValue:buffer];
+                result = get_nu_value_from_objc_value(buffer, [methodSignature methodReturnType]);
+                free(buffer);
+            }
+        }
+        // If the head of the list is a label, we treat the list as a property list.
+        // We just evaluate the elements of the list and return the result.
+        else if ([self isKindOfClass: [NuSymbol class]] && [((NuSymbol *)self) isLabel]) {
             NuCell *cell = [[NuCell alloc] init];
             [cell setCar: self];
             id cursor = cdr;
@@ -218,9 +245,10 @@
             }
             result = cell;
         }
+        // Messaging null is ok.
         else if (self == Nu__null) {
-            // Messaging null is ok.
         }
+        // Otherwise, call the overridable handler for unknown messages.
         else {
             result = [self handleUnknownMessage:cdr withContext:context];
         }
