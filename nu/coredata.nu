@@ -4,7 +4,13 @@
 ;; @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
 ;; @class NuCoreDataSession
-;; Core Data session manager
+;; @discussion Instances of this class can be used to manage CoreData sessions.
+;; They encapsulate the three major elements of a CoreData session: the managed
+;; object model, the persistent store coordinator, and the managed object context.
+;; While at times it may be useful to treat these three elements separately, in
+;; many situations, that needlessly complicates the use of CoreData.  With the
+;; methods of this class and the accompanying extensions to NSManagedObject, it
+;; is very easy to use CoreData from Nu.
 (class NuCoreDataSession is NSObject
      (ivars)
      
