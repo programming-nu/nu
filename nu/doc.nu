@@ -261,7 +261,7 @@
 <tr>
 <td><%= @methodType %></td>
 <td><%= @returnType %></td>
-<% (if @selectors (then %>
+<% (if (and @selectors (> (@selectors count) 0)) (then %>
 <td align="right"><%= (@selectors objectAtIndex:0) %></td>
 <td><%= (@types objectAtIndex:0) %> <%= (@names objectAtIndex:0) %></td>	
 <% ) (else  %>
@@ -793,12 +793,7 @@ END))
      
      (set $project (((((NSString stringWithShellCommand:"pwd") lines) 0) componentsSeparatedByString:"/") lastObject))
      
-     (if (eq $project "Nu")
-         (then (set $introduction <<-END
-<p>
-This documentation was automatically extracted from the Nu source code.
-</p>END))
-         (else (set $introduction "")))
+     (set $introduction "<p>Here are descriptions of the classes and methods used to implement #{$project}. These descriptions were automatically extracted from the #{$project} source code using nudoc.</p>")
      
      (set $footer (eval footer-template))
      
