@@ -201,37 +201,9 @@
         [argValues release];
     }
     else {
-        // If the object responds to methodSignatureForSelector:, we should create and forward an invocation to it.
-        NSMethodSignature *methodSignature = [self methodSignatureForSelector:sel];
-        if (methodSignature) {
-            // Create an invocation to forward.
-            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
-            [invocation setTarget:self];
-            [invocation setSelector:sel];
-            // Set any arguments to the invocation.
-            int i;
-            int imax = [args count];
-            for (i = 0; i < imax; i++) {
-                const char *argument_type = [methodSignature getArgumentTypeAtIndex:i+2];
-                char *buffer = value_buffer_for_objc_type(argument_type);
-                set_objc_value_from_nu_value(buffer, [[args objectAtIndex:i] evalWithContext:context], argument_type);
-                [invocation setArgument:buffer atIndex:i+2];
-                free(buffer);
-            }
-            // Forward the invocation.
-            [self forwardInvocation:invocation];
-            // Get the return value from the invocation.
-            unsigned int length = [[invocation methodSignature] methodReturnLength];
-            if (length > 0) {
-                char *buffer = (void *)malloc(length);
-                [invocation getReturnValue:buffer];
-                result = get_nu_value_from_objc_value(buffer, [methodSignature methodReturnType]);
-                free(buffer);
-            }
-        }
         // If the head of the list is a label, we treat the list as a property list.
         // We just evaluate the elements of the list and return the result.
-        else if ([self isKindOfClass: [NuSymbol class]] && [((NuSymbol *)self) isLabel]) {
+        if ([self isKindOfClass: [NuSymbol class]] && [((NuSymbol *)self) isLabel]) {
             NuCell *cell = [[NuCell alloc] init];
             [cell setCar: self];
             id cursor = cdr;
@@ -268,6 +240,70 @@
 
 - (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
 {
+    // Collect the method selector and arguments.
+    // This seems like a bottleneck, and it also lacks flexibility.
+    // Replacing explicit string building with the selector cache reduced runtimes by around 20%.
+    // Methods with variadic arguments (NSArray arrayWithObjects:...) are not supported.
+    NSMutableArray *args = [[NSMutableArray alloc] init];
+    id cursor = cdr;
+    SEL sel = 0;
+    id nextSymbol = [cursor car];
+    if ([nextSymbol isKindOfClass:[NuSymbol class]]) {
+        // The commented out code below was the original approach.
+        // methods were identified by concatenating symbols and looking up the resulting method -- on every method call
+        // that was slow but simple
+        // NSMutableString *selectorString = [NSMutableString stringWithString:[nextSymbol stringValue]];
+        NuSelectorCache *selectorCache = [[NuSelectorCache sharedSelectorCache] lookupSymbol:nextSymbol];
+        cursor = [cursor cdr];
+        while (cursor && (cursor != Nu__null)) {
+            [args addObject:[cursor car]];
+            cursor = [cursor cdr];
+            if (cursor && (cursor != Nu__null)) {
+                id nextSymbol = [cursor car];
+                if ([nextSymbol isKindOfClass:[NuSymbol class]] && [nextSymbol isLabel]) {
+                    // [selectorString appendString:[nextSymbol stringValue]];
+                    selectorCache = [selectorCache lookupSymbol:nextSymbol];
+                }
+                cursor = [cursor cdr];
+            }
+        }
+        // sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
+        sel = [selectorCache selector];
+    }
+
+    id target = self;
+
+    // If the object responds to methodSignatureForSelector:, we should create and forward an invocation to it.
+    NSMethodSignature *methodSignature = sel ? [self methodSignatureForSelector:sel] : 0;
+    if (methodSignature) {
+        id result = [NSNull null];
+        // Create an invocation to forward.
+        NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+        [invocation setTarget:self];
+        [invocation setSelector:sel];
+        // Set any arguments to the invocation.
+        int i;
+        int imax = [args count];
+        for (i = 0; i < imax; i++) {
+            const char *argument_type = [methodSignature getArgumentTypeAtIndex:i+2];
+            char *buffer = value_buffer_for_objc_type(argument_type);
+            set_objc_value_from_nu_value(buffer, [[args objectAtIndex:i] evalWithContext:context], argument_type);
+            [invocation setArgument:buffer atIndex:i+2];
+            free(buffer);
+        }
+        // Forward the invocation.
+        [self forwardInvocation:invocation];
+        // Get the return value from the invocation.
+        unsigned int length = [[invocation methodSignature] methodReturnLength];
+        if (length > 0) {
+            char *buffer = (void *)malloc(length);
+            [invocation getReturnValue:buffer];
+            result = get_nu_value_from_objc_value(buffer, [methodSignature methodReturnType]);
+            free(buffer);
+        }
+        return result;
+    }
+
     NuCell *cell = [[[NuCell alloc] init] autorelease];
     [cell setCar: self];
     [cell setCdr: cdr];
