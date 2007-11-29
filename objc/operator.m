@@ -42,7 +42,7 @@
 
 static bool valueIsTrue(id value)
 {
-    bool result = value && (value != Nu__null);
+    bool result = value && (value != Nu__null) && (value != Nu__zero);
     if (result && [value isKindOfClass:[NSNumber class]]) {
         if ([value doubleValue] == 0.0)
             result = false;
