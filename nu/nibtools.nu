@@ -15,12 +15,10 @@
      ;;    <code>(myView allMatchingChildren: (do (v) (v isKindOfClass: NSButton)))</code>
      (imethod (id) allMatchingChildren: (id) block is
           (set matches ((NSMutableArray alloc) init))
-          (cond ((block self)
-                 (matches addObject:self))
-                (t nil))
-          (cond ((self children)
-                 ((self children) each: (do (child) (matches addObjectsFromArray: (child allMatchingChildren: block)))))
-                (t nil))
+          (if (block self)
+              (matches addObject:self))
+          (if (self children)
+              ((self children) each: (do (child) (matches addObjectsFromArray: (child allMatchingChildren: block)))))
           matches)
      
      ;; Return one object from the object child-hierarchy rooted at the current object.
@@ -65,5 +63,6 @@
 (class NSMenuItem
      ;; The children of a menu item are its submenus.
      (imethod (id) children is
-          (cond ((self submenu) (append (super children) (list (self submenu))))
-                (t (super children)))))
+          (if (self submenu) 
+              (then (append (super children) (list (self submenu))))
+              (else (super children)))))

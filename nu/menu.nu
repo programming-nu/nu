@@ -12,7 +12,7 @@
            (cond ((eq (menu title) "Main")     ((NSApplication sharedApplication) setMainMenu:menu))
                  ((eq (menu title) "Window")   ((NSApplication sharedApplication) setWindowsMenu:menu))
                  ((eq (menu title) "Services") ((NSApplication sharedApplication) setServicesMenu:menu))
-                 (t nil))
+                 (else nil))
            (set rest (cdr (cdr menu-description)))
            (if rest (rest each:(do (item) (menu addItem:(build-menu item appname)))))
            (set item ((NSMenuItem alloc) initWithTitle:(eval (car (cdr menu-description))) action:nil keyEquivalent:""))

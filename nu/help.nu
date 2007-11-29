@@ -8,8 +8,8 @@
          (cond ((eq tree old) new)
                ((not tree) tree)
                ((atom tree) tree)
-               (t (cons (subst new old (car tree)) 
-                        (subst new old (cdr tree))))))
+               (else (cons (subst new old (car tree)) 
+                           (subst new old (cdr tree))))))
     
     (function meval (pairs code)
          (if pairs 

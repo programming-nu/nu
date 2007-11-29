@@ -199,4 +199,4 @@
                                (self setValue:((message second) evalWithContext:context) forIvar: variableName)
                                (catch (error)
                                       (super handleUnknownMessage:message withContext:context))))
-                        (t (super handleUnknownMessage:message withContext:context))))))
+                        (else (super handleUnknownMessage:message withContext:context))))))

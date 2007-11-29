@@ -83,7 +83,7 @@
      (- computeTransform:frame is
         (set xscale (* 0.95 (/ (frame third) (@gameRect third))))
         (set yscale (* 0.95 (/ (frame fourth) (@gameRect fourth))))
-        (set scale (cond ((< xscale yscale) xscale) (t yscale)))
+        (set scale (if (< xscale yscale) (then xscale) (else yscale)))
         (set $scale scale)
         (set dx (* 0.5 (- (frame third) (* scale (@gameRect third)))))
         (set dy (* 0.5 (- (frame fourth) (* scale (@gameRect fourth)))))
@@ -230,11 +230,11 @@
                              (do (missile)
                                  (if (missile collidesWith:rock)
                                      (missile setTtl:0)
-                                     (cond ((> (rock radius) @maximum)
-                                            (rock setTtl:0)
-                                            (set @score (+ @score 100))
-                                            (set @maximum (+ @maximum 30)))
-                                           (t (rock setRadius:(+ (rock radius) 10))))
+                                     (if (> (rock radius) @maximum)
+                                         (then (rock setTtl:0)
+                                               (set @score (+ @score 100))
+                                               (set @maximum (+ @maximum 30)))
+                                         (else (rock setRadius:(+ (rock radius) 10))))
                                      ((@sounds objectForKey:"rockDestroyed") play))))
                         (if (and @ship (@ship collidesWith:rock))
                             (@ship setTtl:0)
@@ -258,7 +258,7 @@
               (KEY_P             (set @paused (- 1 @paused)))
               (KEY_N             (unless @ship (self addShipRandomly)))
               (KEY_R             (if (eq (@rocks count) 0) (self addRocks)))
-              (t                 (puts "key pressed: #{code}"))))
+              (else              (puts "key pressed: #{code}"))))
      
      (- keyUp:code is
         (case code
@@ -266,7 +266,7 @@
               (KEY_RIGHT_ARROW   (if @ship (@ship setAngle:0)))
               (KEY_UP_ARROW      (if @ship (@ship setAcceleration:0)))
               (KEY_DOWN_ARROW    (if @ship (@ship setAcceleration:0)))
-              (t nil))))
+              (else              nil))))
 
 (class Sprite is NSObject
      (ivars)
@@ -290,23 +290,23 @@
         (set px (+ (first @position) (first @velocity)))
         (set py (+ (second @position) (second @velocity)))
         
-        (cond (($wrap)
-               (cond ((< px 0) (set px (third bounds)))
-                     ((> px (third bounds)) (set px 0))
-                     (t nil))
-               (cond ((< py 0) (set py (fourth bounds)))
-                     ((> py (fourth bounds)) (set py 0))
-                     (t nil)))
-              (t ;; bouncing
-                 (set vx (@velocity first))
-                 (set vy (@velocity second))
-                 (cond ((< px @radius) (set vx (* vx -1)))
-                       ((> px (- (third bounds) @radius)) (set vx (* vx -1)))
-                       (t nil))
-                 (cond ((< py @radius) (set vy (* vy -1)))
-                       ((> py (- (fourth bounds) @radius)) (set vy (* vy -1)))
-                       (t nil))
-                 (set @velocity (list vx vy))))
+        (if $wrap
+            (then (cond ((< px 0) (set px (third bounds)))
+                        ((> px (third bounds)) (set px 0))
+                        (else nil))
+                  (cond ((< py 0) (set py (fourth bounds)))
+                        ((> py (fourth bounds)) (set py 0))
+                        (else nil)))
+            (else ;; bouncing
+                  (set vx (@velocity first))
+                  (set vy (@velocity second))
+                  (cond ((< px @radius) (set vx (* vx -1)))
+                        ((> px (- (third bounds) @radius)) (set vx (* vx -1)))
+                        (else nil))
+                  (cond ((< py @radius) (set vy (* vy -1)))
+                        ((> py (- (fourth bounds) @radius)) (set vy (* vy -1)))
+                        (else nil))
+                  (set @velocity (list vx vy))))
         (set @position (list px py)))
      
      (- collidesWith:sprite is
@@ -319,7 +319,7 @@
               ((> dy r) nil)
               ((> (- 0 dy) r) nil)
               ((> (+ (* dx dx) (* dy dy)) (* r r)) nil)
-              (t YES))))
+              (else YES))))
 
 (class Rock is Sprite
      (- initWithPosition:position is
@@ -362,21 +362,18 @@
      
      (- moveWithBounds:bounds is
         (super moveWithBounds:bounds)
-        (cond ((!= @angle 0)
-               (set cosA (NuMath cos:@angle))
-               (set sinA (NuMath sin:@angle))
-               (set x (- (* cosA (first @direction)) (* sinA (second @direction))))
-               (set y (+ (* cosA (second @direction)) (* sinA (first @direction))))
-               (set @direction (list x y)))
-              (t nil))
-        (cond ((!= @acceleration 0)
-               (set speed (NuMath sqrt:(+ (NuMath square:(+ (first @velocity) (* @acceleration (first @direction))))
-                                          (NuMath square:(+ (second @velocity) (* @acceleration (second @direction)))))))
-               (cond ((< speed SPEED_LIMIT)
-                      (set @velocity (list (+ (first @velocity) (* @acceleration (first @direction)))
-                                           (+ (second @velocity) (* @acceleration (second @direction))))))
-                     (t nil)))
-              (t nil)))
+        (if (!= @angle 0)
+            (then (set cosA (NuMath cos:@angle))
+                  (set sinA (NuMath sin:@angle))
+                  (set x (- (* cosA (first @direction)) (* sinA (second @direction))))
+                  (set y (+ (* cosA (second @direction)) (* sinA (first @direction))))
+                  (set @direction (list x y))))
+        (if (!= @acceleration 0)
+            (then (set speed (NuMath sqrt:(+ (NuMath square:(+ (first @velocity) (* @acceleration (first @direction))))
+                                             (NuMath square:(+ (second @velocity) (* @acceleration (second @direction)))))))
+                  (if (< speed SPEED_LIMIT)
+                      (then (set @velocity (list (+ (first @velocity) (* @acceleration (first @direction)))
+                                                 (+ (second @velocity) (* @acceleration (second @direction))))))))))
      
      (- draw is
         (@color set)

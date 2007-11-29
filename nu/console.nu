@@ -160,7 +160,7 @@
           (cond ((eq 0  (& (event modifierFlags) NSControlKeyMask)) nil)       ;; do nothing if control key is not pressed
                 ((eq 0  (event keyCode)) ((self delegate) moveToStartOfInput)) ;; ctrl-a
                 ((eq 14 (event keyCode)) ((self delegate) moveToEndOfInput))   ;; ctrl-e
-                (t nil))
+                (else nil))
           (super keyDown: event)))
 
 ;; @abstract A controller for a text view containing a Nu console.

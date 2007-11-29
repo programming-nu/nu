@@ -161,7 +161,7 @@
                                          vy
                                          ((self bounds) size.width)
                                          vh)))
-               (t (image drawInRect:(self bounds)))))
+               (else (image drawInRect:(self bounds)))))
      
      ;; Override the default and accept the first mouse click in the view.
      (imethod (BOOL) acceptsFirstMouse:(id) event is YES)
@@ -344,7 +344,7 @@ View origin is #{(self originString)} and size is #{(self sizeString)}.END)
                                    ry
                                    (@region size.width)
                                    rh)))
-               (t nil))
+               (else nil))
           
           (self updateTitle)
           ;; The image may be a few pixels shorter than the view.

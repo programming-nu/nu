@@ -65,8 +65,8 @@ class TestNu < Test::Unit::TestCase
   
   def test_cond
     @patterns = <<-END
-    (cond (t '1) (t '2))    === 1
-    (cond (() '1) (t '2))   === 2
+    (cond (1 '1) (else '2))  === 1
+    (cond (0 '1) (else '2))  === 2
     END
   end
   
@@ -122,7 +122,7 @@ class TestNu < Test::Unit::TestCase
     @patterns = <<-END
     (def factorial (x)
       (cond ((eq x 0) 1)
-             (t (* x (factorial (- x 1))))))
+             (else (* x (factorial (- x 1))))))
     (factorial 0)                === 1
     (factorial 1)                === 1
     (factorial 2)                === 2
@@ -135,7 +135,7 @@ class TestNu < Test::Unit::TestCase
     (def fib (x)
       (cond ((eq x 0) 1)
             ((eq x 1) 1)
-            (t (+ (fib (- x 1)) (fib (- x 2))))))
+            (else (+ (fib (- x 1)) (fib (- x 2))))))
     (fib 0) === 1
     (fib 1) === 1
     (fib 2) === 2
@@ -226,7 +226,7 @@ class TestNu < Test::Unit::TestCase
       (do ()  
         (set x (self intValue))
         (cond ((eq x 0) 1)
-              (t (* x ((- x 1) factorial))))))
+              (else (* x ((- x 1) factorial))))))
      (5 factorial) === #{5*4*3*2}
     END
   end
@@ -277,7 +277,7 @@ class TestNu < Test::Unit::TestCase
         (ivars)
         (imethod (id) incr is
             (cond (@y (set @y (+ @y 1)))
-                  (t  (set @y 1)))))
+                  (else (set @y 1)))))
     (set f ((Foo alloc) init))
     (f setValue:2 forIvar:"x")
     (f valueForIvar:"x")            === 2
@@ -324,7 +324,7 @@ class TestNu < Test::Unit::TestCase
        (imethod (id) "!" is 
          (set n (self intValue))
          (cond ((eq n 0) 1)
-               (t        (* n ((- n 1)!))))))
+               (else     (* n ((- n 1)!))))))
     (3 !) === 6
     (4 !) === 24
     (5 !) === 120
@@ -430,7 +430,7 @@ class TestNu < Test::Unit::TestCase
     @patterns = <<-END
     (def reverse (n)
         (cond ((eq n nil) nil)
-              (t (append (reverse (cdr n)) (list (car n))))))
+              (else (append (reverse (cdr n)) (list (car n))))))
     (class Structs is NSObject
       (cmethod (NSPoint) makePointX:(double)x y:(double)y is (list x y))
       (cmethod (NSSize) makeSizeW:(double)w h:(double)h is (list w h))
