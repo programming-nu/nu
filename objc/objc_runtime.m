@@ -245,7 +245,8 @@ void method_exchangeImplementations(Method method1, Method method2)
     method2->method_imp = temp_imp;
 }
 
-Ivar class_getInstanceVariable(Class c, const char *name)
+// this seems to be unnecessary now.
+Ivar myclass_getInstanceVariable(Class c, const char *name)
 {
     if (c->ivars) {
         int i;
@@ -258,7 +259,7 @@ Ivar class_getInstanceVariable(Class c, const char *name)
     }
     // not found?  Try the superclass
     Class superclass = c->super_class;
-    return superclass ? class_findInstanceVariable(superclass, name) : 0;
+    return superclass ? myclass_getInstanceVariable(superclass, name) : (Ivar) 0;
 }
 #endif
 
