@@ -501,7 +501,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                     return NO;
                 }
                 else {
-                    NSLog(@"can't convert value of type %s to a pointer to strings", [nu_value class]->name);
+                    NSLog(@"can't convert value of type %s to a pointer to strings", class_getName([nu_value class]));
                     *((char ***) objc_value) = NULL;
                     return NO;
                 }
@@ -514,7 +514,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             }
             else {
                 // we could probably handle NSString and NSData objects
-                NSLog(@"can't convert value of type %s to a pointer of type %s", [nu_value class]->name, typeString);
+                NSLog(@"can't convert value of type %s to a pointer of type %s", class_getName([nu_value class]), typeString);
                 return NO;
             }
         }
@@ -532,7 +532,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 return NO;
             }
             else {
-                NSLog(@"can't convert value of type %s to CLASS", [nu_value class]->name);
+                NSLog(@"can't convert value of type %s to CLASS", class_getName([nu_value class]));
                 *((id *) objc_value) = 0;
                 return NO;
             }
@@ -955,7 +955,7 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     char **userdata = (char **) malloc ((argument_count+2) * sizeof(char*));
     ffi_type **argument_types = (ffi_type **) malloc (argument_count * sizeof(ffi_type *));
     userdata[0] = (char *) malloc (2 + strlen(return_type_string));
-    char *methodName = sel_getName(sel);
+    const char *methodName = sel_getName(sel);
     BOOL returnsRetainedResult = NO;
     if ((strlen(methodName) >= 4)                 // retain the result of any method
         && !strncmp("init", methodName, 4)        // whose name begins with "init"
@@ -1064,14 +1064,14 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     char *return_type_identifier = strdup(signature);
-    mark_end_of_type_string(return_type_identifier, strlen(return_type_identifier));
+    objc_markEndOfTypeString(return_type_identifier, strlen(return_type_identifier));
 
     int argument_count = 0;
     char *argument_type_identifiers[100];
     char *cursor = &signature[strlen(return_type_identifier)];
     while (*cursor != 0) {
         argument_type_identifiers[argument_count] = strdup(cursor);
-        mark_end_of_type_string(argument_type_identifiers[argument_count], strlen(cursor));
+        objc_markEndOfTypeString(argument_type_identifiers[argument_count], strlen(cursor));
         cursor = &cursor[strlen(argument_type_identifiers[argument_count])];
         argument_count++;
     }

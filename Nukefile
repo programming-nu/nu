@@ -59,11 +59,15 @@ END)
 
 ;; build configuration
 (set @cc "gcc")
+(set @leopard "")
 (set @sdk 
-     (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk") (" -isysroot /Developer/SDKs/MacOSX10.5.sdk"))
-           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk") (" -isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
+     (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk")
+            ("-isysroot /Developer/SDKs/MacOSX10.5.sdk")
+            (set @leopard "-DLEOPARD_OBJC2"))
+           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk") 
+            (" -isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
            (else "")))
-(set @cflags "-g -DMACOSX #{@sdk}")
+(set @cflags "-g -DMACOSX #{@sdk} #{@leopard}")
 (set @mflags "-fobjc-exceptions") ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
 
 ;; use this to build a universal binary

@@ -7,6 +7,7 @@
 #import "operator.h"
 #import "extensions.h"
 #import "cell.h"
+#import "bridge.h"
 #import "symbol.h"
 #import "block.h"
 #import "macro.h"

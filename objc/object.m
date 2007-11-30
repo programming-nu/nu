@@ -108,7 +108,7 @@
 
 - (id) stringValue
 {
-    return [NSString stringWithFormat:@"<%s:%x>", [self class]->name, (long) self];
+    return [NSString stringWithFormat:@"<%s:%x>", class_getName([self class]), (long) self];
 }
 
 - (id) car
@@ -315,10 +315,10 @@
 
 - (id) valueForIvar:(NSString *) name
 {
-    Ivar v = object_findInstanceVariable(self, [name cStringUsingEncoding:NSUTF8StringEncoding]);
+    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
     if (!v) {
         // look for sparse ivar storage
-        Ivar __ivars = object_findInstanceVariable(self, "__nuivars");
+        Ivar __ivars = class_getInstanceVariable([self class], "__nuivars");
         if (__ivars) {
             NSMutableDictionary *sparseIvars = [self valueForIvar:@"__nuivars"];
             if (sparseIvars && (sparseIvars != Nu__null)) {
@@ -332,17 +332,17 @@
 
         return Nu__null;
     }
-    void *location = (void *)&(((char *)self)[v->ivar_offset]);
-    id result = get_nu_value_from_objc_value(location, v->ivar_type);
+    void *location = (void *)&(((char *)self)[ivar_getOffset(v)]);
+    id result = get_nu_value_from_objc_value(location, ivar_getTypeEncoding(v));
     return result;
 }
 
 - (void) setValue:(id) value forIvar:(NSString *)name
 {
-    Ivar v = object_findInstanceVariable(self, [name cStringUsingEncoding:NSUTF8StringEncoding]);
+    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
     if (!v) {
         // look for sparse ivar storage
-        Ivar __ivars = object_findInstanceVariable(self, "__nuivars");
+        Ivar __ivars = class_getInstanceVariable([self class], "__nuivars");
         if (__ivars) {
             NSMutableDictionary *sparseIvars = [self valueForIvar:@"__nuivars"];
             //NSLog(@"get sparse ivars dictionary: %@", sparseIvars);
@@ -360,12 +360,12 @@
             name, self];
         return;
     }
-    void *location = (void *)&(((char *)self)[v->ivar_offset]);
-    if (!strcmp(v->ivar_type, "@")) {
+    void *location = (void *)&(((char *)self)[ivar_getOffset(v)]);
+    if (!strcmp(ivar_getTypeEncoding(v), "@")) {
         [value retain];
         [*((id *)location) release];
     }
-    set_objc_value_from_nu_value(location, value, v->ivar_type);
+    set_objc_value_from_nu_value(location, value, ivar_getTypeEncoding(v));
 }
 
 + (NSArray *) classMethods
@@ -403,7 +403,7 @@
     Ivar *ivar_list = class_copyIvarList([self class], &ivar_count);
     int i;
     for (i = 0; i < ivar_count; i++) {
-        [array addObject:[NSString stringWithCString:ivar_list[i]->ivar_name  encoding:NSUTF8StringEncoding]];
+        [array addObject:[NSString stringWithCString:ivar_getName(ivar_list[i]) encoding:NSUTF8StringEncoding]];
     }
     free(ivar_list);
     [array sortUsingSelector:@selector(compare:)];
@@ -425,7 +425,7 @@
     if (s) {
         // the subclass's superclass must be the current class!
         if (c != [s superclass]) {
-            NSLog(@"Warning: Class %s already exists and is not a subclass of %s", name, c->name);
+            NSLog(@"Warning: Class %s already exists and is not a subclass of %s", name, class_getName(c));
         }
     }
     else {
@@ -487,52 +487,20 @@
     Class thisClass = [self class];
     size_t size_of_objc_type(const char *typeString);
 
-    struct objc_ivar_list *ivars = thisClass->ivars;
-    if (ivars) {
-        int i = 0;
-        //for (i = 0; i < ivars->ivar_count; i++) {
-        //struct objc_ivar *ivar = &(ivars->ivar_list[i]);
-        //NSLog(@"ivar %d: %s %s %d", i, ivar->ivar_name, ivar->ivar_type, ivar->ivar_offset);
-        //}
-        struct objc_ivar *last_ivar = &(ivars->ivar_list[ivars->ivar_count-1]);
-        int offset = last_ivar->ivar_offset  + size_of_objc_type(last_ivar->ivar_type);
-        //NSLog(@"the next ivar goes here: %d", offset);
-        struct objc_ivar *new_ivar = (struct objc_ivar *) malloc (sizeof (struct objc_ivar));
-        new_ivar->ivar_name = strdup([variableName cStringUsingEncoding:NSUTF8StringEncoding]);
-        new_ivar->ivar_type = strdup([signature cStringUsingEncoding:NSUTF8StringEncoding]);
-        new_ivar->ivar_offset = offset;
-        struct objc_ivar_list *new_ivar_list = (struct objc_ivar_list *) malloc (sizeof (struct objc_ivar_list) + (ivars->ivar_count) * sizeof(struct objc_ivar));
-        new_ivar_list->ivar_count = ivars->ivar_count + 1;
-        for (i = 0; i < ivars->ivar_count; i++)
-            new_ivar_list->ivar_list[i] = ivars->ivar_list[i];
-        new_ivar_list->ivar_list[ivars->ivar_count] = *new_ivar;
-        thisClass->ivars = new_ivar_list;
-        thisClass->instance_size += size_of_objc_type(new_ivar->ivar_type);
-    }
-    else {
-        int offset = thisClass->instance_size;
-        //NSLog(@"the next ivar goes here: %d", offset);
-        struct objc_ivar *new_ivar = (struct objc_ivar *) malloc (sizeof (struct objc_ivar));
-        new_ivar->ivar_name = strdup([variableName cStringUsingEncoding:NSUTF8StringEncoding]);
-        new_ivar->ivar_type = strdup([signature cStringUsingEncoding:NSUTF8StringEncoding]);
-        new_ivar->ivar_offset = offset;
-        struct objc_ivar_list *new_ivar_list = (struct objc_ivar_list *) malloc (sizeof (struct objc_ivar_list));
-        new_ivar_list->ivar_count = 1;
-        new_ivar_list->ivar_list[0] = *new_ivar;
-        thisClass->ivars = new_ivar_list;
-        thisClass->instance_size += size_of_objc_type(new_ivar->ivar_type);
-    }
+	class_addInstanceVariable_withSignature(thisClass, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+
+
     return Nu__null;
 }
 
 + (NSString *) help
 {
-    return [NSString stringWithFormat:@"This is a class named %s.", [self class]->name];
+    return [NSString stringWithFormat:@"This is a class named %s.", class_getName([self class])];
 }
 
 - (NSString *) help
 {
-    return [NSString stringWithFormat:@"This is an instance of %s.", [self class]->name];
+    return [NSString stringWithFormat:@"This is an instance of %s.", class_getName([self class])];
 }
 
 // adapted from the CocoaDev MethodSwizzling page
@@ -549,13 +517,7 @@
 
     // If both are found, swizzle them
     if ((method1 != nil) && (method2 != nil)) {
-        char *temp_types = method1->method_types;
-        method1->method_types = method2->method_types;
-        method2->method_types = temp_types;
-
-        IMP temp_imp = method1->method_imp;
-        method1->method_imp = method2->method_imp;
-        method2->method_imp = temp_imp;
+        method_exchangeImplementations(method1, method2);
         return true;
     }
     else {
@@ -579,13 +541,7 @@
 
     // If both are found, swizzle them
     if ((method1 != nil) && (method2 != nil)) {
-        char *temp_types = method1->method_types;
-        method1->method_types = method2->method_types;
-        method2->method_types = temp_types;
-
-        IMP temp_imp = method1->method_imp;
-        method1->method_imp = method2->method_imp;
-        method2->method_imp = temp_imp;
+        method_exchangeImplementations(method1, method2);
         return true;
     }
     else {

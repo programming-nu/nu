@@ -3,7 +3,9 @@
   	@copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
   	@discussion Nu extensions to the Objective-C runtime.  
 	Includes replacements for Objective-C 2.0 enhancements 
-	that are only available in Apple's OS X 10.5 (Leopard).
+	that are only available in Apple's OS X 10.5 (Leopard)
+	plus a few things that aren't in the Objective-C runtime 
+	but should be.
 */
 
 #import <objc/objc.h>
@@ -14,6 +16,8 @@
 #import "ffi/ffi.h"
 
 #ifndef LEOPARD_OBJC2
+// These methods are in Leopard but not earlier versions of Mac OS X.
+// They aren't rocket science, so I wrote equivalent versions.
 #import <stddef.h>
 IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types);
 Ivar *class_copyIvarList(Class cls, unsigned int *outCount);
@@ -32,16 +36,13 @@ const char *method_getTypeEncoding(Method m);
 Class objc_allocateClassPair(Class superclass, const char *name, size_t extraBytes);
 void objc_registerClassPair(Class cls);
 Class object_getClass(id obj);
+const char *class_getName(Class c);
+void method_exchangeImplementations(Method method1, Method method2);
+Ivar class_getInstanceVariable(Class c, const char *name);
 #endif
 
-#import "cell.h"
-#import "symbol.h"
+// We'd like for this to be in the ObjC2 API, but it isn't.  Apple thinks it's too dangerous.  It is dangerous.
+void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature);
 
-// helpers
-void mark_end_of_type_string(char *type, size_t len);
-
-NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable);
-id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *context);
-
-Ivar class_findInstanceVariable(Class c, const char *name);
-Ivar object_findInstanceVariable(id object, const char *name);
+// This is just handy.
+void objc_markEndOfTypeString(char *type, size_t len);

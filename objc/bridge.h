@@ -4,11 +4,17 @@
   	@discussion The Nu bridge to Objective-C.  
 */
 #import "operator.h"
+#import "objc_runtime.h"
+#import "cell.h"
+#import "symbol.h"
 
 id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlock *block);
 id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args);
 id get_nu_value_from_objc_value(void *objc_value, const char *typeString);
 int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *typeString);
+void *value_buffer_for_objc_type(const char *typeString);
+NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable);
+id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *context);
 
 /*!
 	@class NuBridgedFunction

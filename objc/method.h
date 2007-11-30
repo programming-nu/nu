@@ -1,11 +1,13 @@
 /*!
     @header method.h
-  	@copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
-  	@discussion Declarations for the NuMethod class, 
-	which represents methods in the Objective-C runtime.
+    @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+    @discussion Declarations for the NuMethod class,
+    which represents methods in the Objective-C runtime.
 */
 #import <Foundation/Foundation.h>
 #import "objc_runtime.h"
+
+@class NuBlock;
 
 /*!
    @class NuMethod

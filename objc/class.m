@@ -7,6 +7,7 @@
 #import "class.h"
 #import "method.h"
 #import "block.h"
+#import "cell.h"
 
 // getting a specific method...
 // (set x (((Convert classMethods) select: (do (m) (eq (m name) "passRect:"))) objectAtIndex:0))
@@ -60,7 +61,7 @@
 - (NSString *) name
 {
     //	NSLog(@"calling NuClass name for object %@", self);
-    return [NSString stringWithCString:c->name encoding:NSUTF8StringEncoding];
+    return [NSString stringWithCString:class_getName(c) encoding:NSUTF8StringEncoding];
 }
 
 - (NSString *) stringValue

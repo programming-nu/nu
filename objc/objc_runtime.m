@@ -4,10 +4,11 @@
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
-#include "objc/objc-class.h"
+#include <stdlib.h>
+#include <string.h>
+#include <objc/objc-class.h>
 
 #ifndef LEOPARD_OBJC2
-
 #include "objc_runtime.h"
 
 BOOL class_hasMethod(Class cls, SEL name)
@@ -41,7 +42,7 @@ IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
             int i;
             for (i = 0; i < count; i++) {
                 if (mlist->method_list[i].method_name == name) {
-					IMP original = mlist->method_list[i].method_imp;
+                    IMP original = mlist->method_list[i].method_imp;
                     mlist->method_list[i].method_types = strdup(types);
                     mlist->method_list[i].method_imp = imp;
                     return original;
@@ -122,7 +123,7 @@ char *method_copyArgumentType(Method m, unsigned int index)
     const char *type;
     method_getArgumentInfo(m, index, &type, &offset);
     char *copy = strdup(type);
-    mark_end_of_type_string(copy, strlen(copy));
+    objc_markEndOfTypeString(copy, strlen(copy));
     return copy;
 }
 
@@ -132,20 +133,20 @@ void method_getArgumentType(Method m, unsigned int index, char *dst, size_t dst_
     const char *type;
     method_getArgumentInfo(m, index, &type, &offset);
     strncpy(dst, type, dst_len);
-    mark_end_of_type_string(dst, dst_len);
+    objc_markEndOfTypeString(dst, dst_len);
 }
 
 char *method_copyReturnType(Method m)
 {
     char *type = strdup(m->method_types);
-    mark_end_of_type_string(type, strlen(type));
+    objc_markEndOfTypeString(type, strlen(type));
     return type;
 }
 
 void method_getReturnType(Method m, char *dst, size_t dst_len)
 {
     strncpy(dst, m->method_types, dst_len);
-    mark_end_of_type_string(dst, dst_len);
+    objc_markEndOfTypeString(dst, dst_len);
 }
 
 IMP method_getImplementation(Method m)
@@ -223,9 +224,24 @@ Class object_getClass(id obj)
 {
     return obj->isa;
 }
-#endif
 
-Ivar class_findInstanceVariable(Class c, const char *name)
+const char *class_getName(Class c)
+{
+    return c->name;
+}
+
+void method_exchangeImplementations(Method method1, Method method2)
+{
+    char *temp_types = method1->method_types;
+    method1->method_types = method2->method_types;
+    method2->method_types = temp_types;
+
+    IMP temp_imp = method1->method_imp;
+    method1->method_imp = method2->method_imp;
+    method2->method_imp = temp_imp;
+}
+
+Ivar class_getInstanceVariable(Class c, const char *name)
 {
     if (c->ivars) {
         int i;
@@ -240,17 +256,51 @@ Ivar class_findInstanceVariable(Class c, const char *name)
     Class superclass = c->super_class;
     return superclass ? class_findInstanceVariable(superclass, name) : 0;
 }
+#endif
 
-Ivar object_findInstanceVariable(id object, const char *name)
+void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature)
 {
-    Class c = [object class];
-    return class_findInstanceVariable(c, name);
+    struct objc_ivar_list *ivars = thisClass->ivars;
+    if (ivars) {
+        int i = 0;
+        //for (i = 0; i < ivars->ivar_count; i++) {
+        //struct objc_ivar *ivar = &(ivars->ivar_list[i]);
+        //NSLog(@"ivar %d: %s %s %d", i, ivar->ivar_name, ivar->ivar_type, ivar->ivar_offset);
+        //}
+        struct objc_ivar *last_ivar = &(ivars->ivar_list[ivars->ivar_count-1]);
+        int offset = last_ivar->ivar_offset  + size_of_objc_type(ivar_getTypeEncoding(last_ivar));
+        //NSLog(@"the next ivar goes here: %d", offset);
+        struct objc_ivar *new_ivar = (struct objc_ivar *) malloc (sizeof (struct objc_ivar));
+        new_ivar->ivar_name = strdup(variableName);
+        new_ivar->ivar_type = strdup(signature);
+        new_ivar->ivar_offset = offset;
+        struct objc_ivar_list *new_ivar_list = (struct objc_ivar_list *) malloc (sizeof (struct objc_ivar_list) + (ivars->ivar_count) * sizeof(struct objc_ivar));
+        new_ivar_list->ivar_count = ivars->ivar_count + 1;
+        for (i = 0; i < ivars->ivar_count; i++)
+            new_ivar_list->ivar_list[i] = ivars->ivar_list[i];
+        new_ivar_list->ivar_list[ivars->ivar_count] = *new_ivar;
+        thisClass->ivars = new_ivar_list;
+        thisClass->instance_size += size_of_objc_type(new_ivar->ivar_type);
+    }
+    else {
+        int offset = thisClass->instance_size;
+        //NSLog(@"the next ivar goes here: %d", offset);
+        struct objc_ivar *new_ivar = (struct objc_ivar *) malloc (sizeof (struct objc_ivar));
+        new_ivar->ivar_name = strdup(variableName);
+        new_ivar->ivar_type = strdup(signature);
+        new_ivar->ivar_offset = offset;
+        struct objc_ivar_list *new_ivar_list = (struct objc_ivar_list *) malloc (sizeof (struct objc_ivar_list));
+        new_ivar_list->ivar_count = 1;
+        new_ivar_list->ivar_list[0] = *new_ivar;
+        thisClass->ivars = new_ivar_list;
+        thisClass->instance_size += size_of_objc_type(new_ivar->ivar_type);
+    }
 }
 
 // This function attempts to recognize the return type from a method signature.
 // It scans across the signature until it finds a complete return type string,
 // then it inserts a null to mark the end of the string.
-void mark_end_of_type_string(char *type, size_t len)
+void objc_markEndOfTypeString(char *type, size_t len)
 {
     size_t i;
     char final_char = 0;
