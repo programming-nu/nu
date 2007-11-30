@@ -62,7 +62,7 @@ END)
 (set @leopard "")
 (set @sdk 
      (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk")
-            (set @leopard "-DLEOPARD_OBJC2")
+            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__")
             ("-isysroot /Developer/SDKs/MacOSX10.5.sdk"))
            ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk") 
             (" -isysroot /Developer/SDKs/MacOSX10.4u.sdk"))

@@ -4,6 +4,10 @@
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
+// Undefine __OBJC2__ to get access to data structures in the ObjC runtime.
+// This triggers deprecation warnings on Leopard.
+#undef __OBJC2__
+
 #include <stdlib.h>
 #include <string.h>
 #include <objc/objc-class.h>
