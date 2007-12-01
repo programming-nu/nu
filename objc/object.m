@@ -455,7 +455,7 @@
 
 + (BOOL) copyInstanceMethod:(NSString *) methodName fromClass:(NuClass *)prototypeClass
 {
-    Class thisClass = [self class]->isa;
+    Class thisClass = [self class];
     Class otherClass = [prototypeClass wrappedClass];
 
     const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
