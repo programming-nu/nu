@@ -45,4 +45,7 @@ Ivar class_getInstanceVariable(Class c, const char *name);
 void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature);
 
 // This is just handy.
-void objc_markEndOfTypeString(char *type, size_t len);
+void nu_markEndOfObjCTypeString(char *type, size_t len);
+
+// This makes it safe to insert nil into container classes
+void nu_swizzleContainerClasses();

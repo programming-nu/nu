@@ -305,7 +305,7 @@ void class_addInstanceVariable_withSignature(Class thisClass, const char *variab
 // This function attempts to recognize the return type from a method signature.
 // It scans across the signature until it finds a complete return type string,
 // then it inserts a null to mark the end of the string.
-void objc_markEndOfTypeString(char *type, size_t len)
+void nu_markEndOfObjCTypeString(char *type, size_t len)
 {
     size_t i;
     char final_char = 0;

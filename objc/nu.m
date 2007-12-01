@@ -8,6 +8,7 @@
 #import "Nu.h"
 #import "extensions.h"
 #import "object.h"
+#import "objc_runtime.h"
 #import <unistd.h>
 
 id Nu__zero = 0;
@@ -42,7 +43,7 @@ static NuApplication *_sharedApplication = 0;
 {
     arguments = [[NSMutableArray alloc] init];
     int i;
-	// skip the first two.  They are usually "nush" and the script name.
+    // skip the first two.  They are usually "nush" and the script name.
     for (i = 2; i < argc; i++) {
         [arguments addObject:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
     }
@@ -74,9 +75,9 @@ int NuMain(int argc, const char *argv[])
     // collect the command-line arguments
     [[NuApplication sharedApplication] setArgc:argc argv:argv];
 
-	// perform a dirty hack
-	[NSView exchangeInstanceMethod:@selector(retain)  withMethod:@selector(nuRetain)];
-	[NSView exchangeInstanceMethod:@selector(release) withMethod:@selector(nuRelease)];
+    // perform a dirty hack
+    [NSView exchangeInstanceMethod:@selector(retain)  withMethod:@selector(nuRetain)];
+    [NSView exchangeInstanceMethod:@selector(release) withMethod:@selector(nuRelease)];
 
     // first we try to load main.nu from the application bundle.
     NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
@@ -179,6 +180,12 @@ void NuInit()
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
+
+        // Apply swizzles to container classes to make them tolerant of nil insertions.
+        extern void nu_swizzleContainerClasses();
+        nu_swizzleContainerClasses();
+
+        // Load some standard files
         load_nu_files(@"nu.programming.framework", @"nu");
         load_nu_files(@"nu.programming.framework", @"cocoa");
         load_nu_files(@"nu.programming.framework", @"help");
