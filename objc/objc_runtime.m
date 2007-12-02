@@ -245,7 +245,8 @@ void method_exchangeImplementations(Method method1, Method method2)
     method2->method_imp = temp_imp;
 }
 
-Ivar class_getInstanceVariable(Class c, const char *name)
+// this seems to be unnecessary now.
+Ivar myclass_getInstanceVariable(Class c, const char *name)
 {
     if (c->ivars) {
         int i;
@@ -258,7 +259,7 @@ Ivar class_getInstanceVariable(Class c, const char *name)
     }
     // not found?  Try the superclass
     Class superclass = c->super_class;
-    return superclass ? class_findInstanceVariable(superclass, name) : 0;
+    return superclass ? myclass_getInstanceVariable(superclass, name) : (Ivar) 0;
 }
 #endif
 
@@ -304,7 +305,7 @@ void class_addInstanceVariable_withSignature(Class thisClass, const char *variab
 // This function attempts to recognize the return type from a method signature.
 // It scans across the signature until it finds a complete return type string,
 // then it inserts a null to mark the end of the string.
-void objc_markEndOfTypeString(char *type, size_t len)
+void nu_markEndOfObjCTypeString(char *type, size_t len)
 {
     size_t i;
     char final_char = 0;

@@ -333,7 +333,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
     switch (typeChar) {
         case '@':
         {
-            if (nu_value == Nu__zero) {
+            if ((nu_value == Nu__zero) || (nu_value == Nu__null)) {
                 *((unsigned int *) objc_value) = 0;
                 return NO;
             }
@@ -1064,14 +1064,14 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     char *return_type_identifier = strdup(signature);
-    objc_markEndOfTypeString(return_type_identifier, strlen(return_type_identifier));
+    nu_markEndOfObjCTypeString(return_type_identifier, strlen(return_type_identifier));
 
     int argument_count = 0;
     char *argument_type_identifiers[100];
     char *cursor = &signature[strlen(return_type_identifier)];
     while (*cursor != 0) {
         argument_type_identifiers[argument_count] = strdup(cursor);
-        objc_markEndOfTypeString(argument_type_identifiers[argument_count], strlen(cursor));
+        nu_markEndOfObjCTypeString(argument_type_identifiers[argument_count], strlen(cursor));
         cursor = &cursor[strlen(argument_type_identifiers[argument_count])];
         argument_count++;
     }
