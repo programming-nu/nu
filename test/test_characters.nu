@@ -43,5 +43,10 @@
           (assert_equal 0 '\u0000')
           (assert_equal 1 '\u0001')
           (assert_equal 255 '\u00ff')
-          (assert_equal 65535 '\uFfFf')))
+          (assert_equal 65535 '\uFfFf'))
+     
+     (imethod (id) testFourCharacterIntegers is
+          (assert_equal 1886604404 'psLt')
+          (assert_equal 1886601524 'psA4')))
+
 

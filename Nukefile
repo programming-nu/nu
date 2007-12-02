@@ -154,6 +154,10 @@ END)
       (SH "hdiutil create -srcdir dmg '#{@framework}.dmg' -volname '#{@framework}'")
       (SH "rm -rf dmg"))
 
+(if (NSFileManager fileExistsNamed:"/Developer/usr/bin/packagemaker")
+    (then (set PACKAGEMAKER "/Developer/usr/bin/packagemaker"))
+    (else (set PACKAGEMAKER "/Developer/Tools/packagemaker")))
+
 ;; Build an installer and wrap it in a disk image.
 (task "installer" => "framework" "nush" is
       (SH "sudo rm -rf package dmg Nu.dmg")
@@ -167,7 +171,7 @@ END)
       (SH "cp tools/* package/usr/local/bin")
       (SH "sudo chown -R root package")
       (SH "sudo chgrp -R admin package")
-      (SH "/Developer/Tools/packagemaker -build -f package -p Nu.pkg -d pkg/Description.plist -i pkg/Info.plist")
+      (SH "#{PACKAGEMAKER} -build -f package -p Nu.pkg -d pkg/Description.plist -i pkg/Info.plist")
       (SH "mkdir dmg; mv Nu.pkg dmg")
       (set imagefile "Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}.dmg")
       (SH "sudo rm -f #{imagefile}")

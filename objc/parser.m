@@ -494,13 +494,27 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         // try to parse a character literal.
                         // if that doesn't work, then interpret the quote as the quote operator.
                         bool isACharacterLiteral = false;
-                        unichar characterLiteralValue;
+                        int characterLiteralValue;
                         if (i + 2 < imax) {
                             if ([string characterAtIndex:i+1] != '\\') {
                                 if ([string characterAtIndex:i+2] == '\'') {
                                     isACharacterLiteral = true;
                                     characterLiteralValue = [string characterAtIndex:i+1];
                                     i = i + 2;
+                                }
+                                else if ((i + 5 < imax) &&
+                                    isalnum([string characterAtIndex:i+1]) &&
+                                    isalnum([string characterAtIndex:i+2]) &&
+                                    isalnum([string characterAtIndex:i+3]) &&
+                                    isalnum([string characterAtIndex:i+4]) &&
+                                ([string characterAtIndex:i+5] == '\'')) {
+                                    characterLiteralValue =
+                                        ((([string characterAtIndex:i+1]*256
+                                        + [string characterAtIndex:i+2])*256
+                                        + [string characterAtIndex:i+3])*256
+                                        + [string characterAtIndex:i+4]);
+                                    isACharacterLiteral = true;
+                                    i = i + 5;
                                 }
                             }
                             else {
