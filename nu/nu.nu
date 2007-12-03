@@ -63,7 +63,11 @@
                                           (else (set label key)))
                                       (cond ((eq label "action") (self setAction:value))
                                             (else                (self setValue:value forKey:label)))))
-          self))
+          self)
+     
+     ;; A C-style ternary operator.
+     (imethod (id) ? (id) a : (id) b is 
+          (if self (then a) (else b))))
 
 (class NSArray
      
