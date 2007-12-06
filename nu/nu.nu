@@ -135,8 +135,7 @@
      ;; treat it as a call to objectForKey:.
      (imethod (id) handleUnknownMessage:(id) method withContext:(id) context is
           (if (eq (method length) 1)
-              (then (set m ((method car) evalWithContext: context))
-                    (self objectForKey:m))              
+              (then (self objectForKey:((method car) evalWithContext: context)))              
               (else (super handleUnknownMessage:method withContext:context)))))
 
 
