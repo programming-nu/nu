@@ -127,7 +127,7 @@ char *method_copyArgumentType(Method m, unsigned int index)
     const char *type;
     method_getArgumentInfo(m, index, &type, &offset);
     char *copy = strdup(type);
-    objc_markEndOfTypeString(copy, strlen(copy));
+    nu_markEndOfObjCTypeString(copy, strlen(copy));
     return copy;
 }
 
@@ -137,20 +137,20 @@ void method_getArgumentType(Method m, unsigned int index, char *dst, size_t dst_
     const char *type;
     method_getArgumentInfo(m, index, &type, &offset);
     strncpy(dst, type, dst_len);
-    objc_markEndOfTypeString(dst, dst_len);
+    nu_markEndOfObjCTypeString(dst, dst_len);
 }
 
 char *method_copyReturnType(Method m)
 {
     char *type = strdup(m->method_types);
-    objc_markEndOfTypeString(type, strlen(type));
+    nu_markEndOfObjCTypeString(type, strlen(type));
     return type;
 }
 
 void method_getReturnType(Method m, char *dst, size_t dst_len)
 {
     strncpy(dst, m->method_types, dst_len);
-    objc_markEndOfTypeString(dst, dst_len);
+    nu_markEndOfObjCTypeString(dst, dst_len);
 }
 
 IMP method_getImplementation(Method m)
