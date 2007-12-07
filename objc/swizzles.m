@@ -33,12 +33,12 @@
     [self nuAddObject:((anObject == nil) ? [NSNull null] : anObject)];
 }
 
-- (void)nuInsertObject:(id)anObject atIndex:(NSUInteger)index
+- (void)nuInsertObject:(id)anObject atIndex:(int)index
 {
     [self nuInsertObject:((anObject == nil) ? [NSNull null] : anObject) atIndex:index];
 }
 
-- (void)nuReplaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject
+- (void)nuReplaceObjectAtIndex:(int)index withObject:(id)anObject
 {
     [self nuReplaceObjectAtIndex:index withObject:((anObject == nil) ? [NSNull null] : anObject)];
 }
