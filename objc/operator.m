@@ -1433,7 +1433,51 @@ static bool valueIsTrue(id value)
 
 @end
 
-#import "class.h"
+@interface Nu_min_operator : NuOperator {}
+@end
+
+@implementation Nu_min_operator
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    if (cdr == Nu__null)
+        [NSException raise: @"NuArityError" format:@"min expects at least 1 argument, got 0"];
+    id smallest = [[cdr car] evalWithContext:context];
+    id cursor = [cdr cdr];
+    while (cursor && (cursor != Nu__null)) {
+        id nextValue = [[cursor car] evalWithContext:context];
+        if([smallest compare:nextValue] == 1) {
+            smallest = nextValue;
+        }
+        cursor = [cursor cdr];
+    }
+    return smallest;
+}
+
+@end
+
+@interface Nu_max_operator : NuOperator {}
+@end
+
+@implementation Nu_max_operator
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    if (cdr == Nu__null)
+        [NSException raise: @"NuArityError" format:@"max expects at least 1 argument, got 0"];
+    id biggest = [[cdr car] evalWithContext:context];
+    id cursor = [cdr cdr];
+    while (cursor && (cursor != Nu__null)) {
+        id nextValue = [[cursor car] evalWithContext:context];
+        if([biggest compare:nextValue] == -1) {
+            biggest = nextValue;
+        }
+        cursor = [cursor cdr];
+    }
+    return biggest;
+}
+
+@end
 
 #define install(name, class) [[[symbolTable symbolWithCString:name] retain] setValue:[[class alloc] init]]
 
@@ -1503,6 +1547,9 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("and",      Nu_and_operator);
     install("or",       Nu_or_operator);
     install("not",      Nu_not_operator);
+
+    install("min",      Nu_min_operator);
+    install("max",      Nu_max_operator);
 
     install("list",     Nu_list_operator);
 
