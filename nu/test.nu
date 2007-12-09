@@ -87,7 +87,7 @@
           (set $errors (+ $errors @errors))
           (set $failures (+ $failures @failures))
           (set $assertions (+ $assertions @assertions))  
-          (puts "#{((self class) name)}: completed #{(testcases count)} tests/#{@assertions} assertions/#{@failures} failures/#{$errors} errors")))          
+          (puts "#{((self class) name)}: completed #{(testcases count)} tests/#{@assertions} assertions/#{@failures} failures/#{@errors} errors")))          
 
 (macro assert_equal
      (set @assertions (+ @assertions 1))

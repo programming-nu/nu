@@ -16,8 +16,8 @@
 
 (global rand
         (do (maximum)
-            (set r (NuMath random))
-            (* maximum (- (/ r maximum) ((/ r maximum) intValue)))))
+            (let ((r (NuMath random)))
+                 (* maximum (- (/ r maximum) ((/ r maximum) intValue))))))
 
 (global reverse 
         (do (my-list)
@@ -29,13 +29,14 @@
 ;; the pattern is a string that is converted into a regular expression.
 (global filelist 
         (do (pattern)
-            (set r (regex pattern))
-            (set results ((NSMutableSet alloc) init))
-            (let (enumerator ((NSFileManager defaultManager) enumeratorAtPath:"."))
+            (let ((r (regex pattern))
+                  (results ((NSMutableSet alloc) init))
+                  (enumerator ((NSFileManager defaultManager) enumeratorAtPath:"."))
+                  (filename nil))
                  (while (set filename (enumerator nextObject))
                         (if (r findInString:(filename stringValue))
-                            (results addObject:filename))))
-            ((results allObjects) sortedArrayUsingSelector:"compare:")))
+                            (results addObject:filename)))
+                 ((results allObjects) sortedArrayUsingSelector:"compare:"))))
 
 ;; parse operator; parses a string into Nu code objects
 (global parse 
@@ -57,12 +58,12 @@
      ;; Concisely set key-value pairs from a property list.
      (imethod (id) set: (id) propertyList is
           (propertyList eachPair: (do (key value)
-                                      (if (and (key isKindOfClass:NuSymbol)
-                                               (key isLabel))
-                                          (then (set label (key labelName)))
-                                          (else (set label key)))
-                                      (cond ((eq label "action") (self setAction:value))
-                                            (else                (self setValue:value forKey:label)))))
+                                      (let ((label (if (and (key isKindOfClass:NuSymbol) (key isLabel))
+                                                       (then (key labelName)) 
+                                                       (else key))))
+                                           (if (eq label "action") 
+                                               (then (self setAction:value))
+                                               (else (self setValue:value forKey:label))))))
           self)
      
      ;; A C-style ternary operator.
@@ -82,21 +83,18 @@
      ;; When an unknown message is received by an array, 
      ;; if it is an integer, treat it as a call to objectAtIndex:.
      (imethod (id) handleUnknownMessage:(id) method withContext:(id) context is
-          (set m (method car))
-          (set m (m evalWithContext: context))
-          (if (m isKindOfClass:NSNumber)
-              (then (if (and (< m (self count)) (>= m 0)) 
-                        (then (self objectAtIndex:m))
-                        (else nil)))
-              (else (super handleUnknownMessage:method withContext:context))))
+          (let ((m ((method car) evalWithContext:context)))
+               (if (m isKindOfClass:NSNumber)
+                   (then (if (and (< m (self count)) (>= m 0)) 
+                             (then (self objectAtIndex:m))
+                             (else nil)))
+                   (else (super handleUnknownMessage:method withContext:context)))))
      
      ;; Convert a list into an array.
      (cmethod (id) arrayWithList: (id) list is
-          (set a (NSMutableArray array))
-          (list each:
-                (do (object)
-                    (a addObject:object)))
-          a))
+          (let ((a (NSMutableArray array)))
+               (list each:(do (object) (a addObject:object)))
+               a)))
 
 (class NSMutableArray
      
@@ -107,11 +105,9 @@
      
      ;; Convert a list into a set.
      (cmethod (id) setWithList:(id) list is
-          (set s (NSMutableSet set))
-          (list each: 
-                (do (object)
-                    (s addObject:object)))
-          s))
+          (let ((s (NSMutableSet set)))
+               (list each:(do (object) (s addObject:object)))
+               s)))
 
 (class NSMutableSet
      
@@ -146,16 +142,16 @@
      
      ;; Split a string into lines.
      (imethod (id) lines is
-          (set array (self componentsSeparatedByString:(NSString carriageReturn)))
-          (if (eq (array lastObject) "")
-              (then (array subarrayWithRange:(list 0 (- (array count) 1))))
-              (else array)))
+          (let ((a (self componentsSeparatedByString:(NSString carriageReturn))))
+               (if (eq (a lastObject) "")
+                   (then (a subarrayWithRange:(list 0 (- (a count) 1))))
+                   (else a))))
      
      ;; Replace a substring with another.
      (imethod (id) replaceString:(id) target withString:(id) replacement is   
-          (set s (NSMutableString stringWithString:self))
-          (s replaceOccurrencesOfString:target withString:replacement options:nil range:(list 0 (self length)))
-          s))
+          (let ((s (NSMutableString stringWithString:self)))
+               (s replaceOccurrencesOfString:target withString:replacement options:nil range:(list 0 (self length)))
+               s)))
 
 (class NuCell
      ;; Test another list for equality.
@@ -188,18 +184,17 @@
                         (1 
                            ;; try to automatically get an ivar  
                            (try 
-                                (set variableName ((message first) stringValue))               
-                                (self valueForIvar: variableName)
+                                ;; ivar name is the first (only) token of the message
+                                (self valueForIvar:((message first) stringValue))
                                 (catch (error)
                                        (super handleUnknownMessage:message withContext:context))))
                         (2
                           ;; try to automatically set an ivar  
                           (try 
-                               (set firstArgument ((message first) stringValue))
-                               (set variableName0 ((firstArgument substringWithRange:'(3 1)) lowercaseString))
-                               (set variableName1 ((firstArgument substringWithRange:(list 4 (- (firstArgument length) 5)))))
-                               (set variableName "#{variableName0}#{variableName1}")
-                               (self setValue:((message second) evalWithContext:context) forIvar: variableName)
+                               (let ((firstArgument ((message first) stringValue)))
+                                    (let ((variableName0 ((firstArgument substringWithRange:'(3 1)) lowercaseString))
+                                          (variableName1 ((firstArgument substringWithRange:(list 4 (- (firstArgument length) 5))))))
+                                         (self setValue:((message second) evalWithContext:context) forIvar: "#{variableName0}#{variableName1}")))
                                (catch (error)
                                       (super handleUnknownMessage:message withContext:context))))
                         (else (super handleUnknownMessage:message withContext:context))))))
