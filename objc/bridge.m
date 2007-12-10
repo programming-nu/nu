@@ -873,14 +873,14 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
                 }
                 if (!found) {
                     // NSLog(@"autoreleasing object of class %@", resultClass);
-                    if (((s == @selector(alloc)) || (s == @selector(allocWithZone:))) && [result isKindOfClass:[NSView class]]) {
+                    //if (((s == @selector(alloc)) || (s == @selector(allocWithZone:))) && [result isKindOfClass:[NSView class]]) {
                         //NSLog(@"fake initialization of NSView object");
                         // Sleazy trick. To avoid bogus warnings about views being incorrectly initialized,
                         // call NSView init on freshly allocated NSViews.
                         // Suggestion to Apple: remove those warnings.
                         //IMP initIMP = [NSView instanceMethodForSelector:@selector(init)];
                         //initIMP(result, @selector(init));
-                    }
+                    //}
                     [result autorelease];
                 }
             }

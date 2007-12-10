@@ -1,7 +1,5 @@
-Nu contains at least one scary hack, described here.  
-Apple says "don't do it", but I've been using it for a while and it seems to be fine.
-If it bothers you, you can turn it off.  Read on for details.
-
+Nu contains a few interesting hacks, some of which are described here.
+  
 NSVIEW: STOP COMPLAINING; I MEANT TO DO THAT.
 =============================================
 
@@ -22,54 +20,18 @@ Apple's recommendation is "don't do that", but I have found that in Nu there are
 
 In my past work (on RubyCocoa and RubyObjC), I asked people at Apple about this warning and was told that in cases like this, it is benign and can be ignored.  Unfortunately, though, it scares people and is a regular source of questions.  Both of those bridges do special things to avoid generating the message, but because Nu uses Objective-C classes throughout, a more direct approach is needed.
 
-My first preference would be for Apple to change NSView to stop generating these messages, or at least provide a programmatic way to turn them off. But in lieu of that, I dug around and seem to have found a way to turn them off for Nu. 
+My first preference would be for Apple to change NSView to stop generating these messages, or at least provide a programmatic way to turn them off. But in lieu of that, I dug around found a way to turn them off for Nu. 
 
-"otx":http://otx.osxninja.com/ is a tool that extracts annotated assembly language from Objective-C executable files.  It can also be run on frameworks, including the AppKit.  I used otx to take a close look at [NSView retain].  Here is the dump for x86:
+mach_override is a package by Jonathan Rentzsch (http://rentzsch.com) that allows us to modify C functions at runtime. Quoting Jonathan:
 
--(id)[NSView retain]
-	+0	0000fa91  55					  pushl		  %ebp
-	+1	0000fa92  89e5					  movl		  %esp,%ebp
-	+3	0000fa94  83ec28				  subl		  $0x28,%esp
-	+6	0000fa97  895df4				  movl		  %ebx,0xf4(%ebp)
-	+9	0000fa9a  e800000000			  calll		  0x0000fa9f
-  +14	0000fa9f  5b					  popl		  %ebx
-  +15	0000faa0  8975f8				  movl		  %esi,0xf8(%ebp)
-  +18	0000faa3  8b7508				  movl		  0x08(%ebp),%esi
-  +21	0000faa6  897dfc				  movl		  %edi,0xfc(%ebp)
-  +24	0000faa9  8bbb1d4e8a00			  movl		  0x008a4e1d(%ebx),%edi
-  +30	0000faaf  893c24				  movl		  %edi,(%esp)
-  +33	0000fab2  e82f788a00			  calll		  0x008b72e6				    _OSSpinLockLock
-  +38	0000fab7  8b4644				  movl		  0x44(%esi),%eax			    (_NSViewAuxiliary)_viewAuxiliary
-  +41	0000faba  85c0					  testl		  %eax,%eax
-  +43	0000fabc  751d					  jne		  0x0000fadb
-  +45	0000fabe  8b83e9d98100			  movl		  0x0081d9e9(%ebx),%eax
-  +51	0000fac4  c744240800000000		  movl		  $0x00000000,0x08(%esp)
-  +59	0000facc  893424				  movl		  %esi,(%esp)
-  +62	0000facf  89442404				  movl		  %eax,0x04(%esp)
-  +66	0000fad3  e872828a00			  calll		  0x008b7d4a				    -[(%esp,1) _allocAuxiliary:]
-  +71	0000fad8  8b4644				  movl		  0x44(%esi),%eax			    (_NSViewAuxiliary)_viewAuxiliary
-  +74	0000fadb  ff4004				  incl		  0x04(%eax)
-  +77	0000fade  893c24				  movl		  %edi,(%esp)
-  +80	0000fae1  e805788a00			  calll		  0x008b72eb				    _OSSpinLockUnlock
-  +85	0000fae6  8b83214e8a00			  movl		  0x008a4e21(%ebx),%eax
-  +91	0000faec  803800				  cmpb		  $0x00,(%eax)
-  +94	0000faef  7410					  je		  0x0000fb01
-  +96	0000faf1  89742404				  movl		  %esi,0x04(%esp)
- +100	0000faf5  c7042406000000		  movl		  $0x00000006,(%esp)
- +107	0000fafc  e805768a00			  calll		  0x008b7106				    _NSRecordAllocationEvent
- +112	0000fb01  89f0					  movl		  %esi,%eax
- +114	0000fb03  8b5df4				  movl		  0xf4(%ebp),%ebx
- +117	0000fb06  8b75f8				  movl		  0xf8(%ebp),%esi
- +120	0000fb09  8b7dfc				  movl		  0xfc(%ebp),%edi
- +123	0000fb0c  c9					  leave
- +124	0000fb0d  c3					  ret
- +125	0000fb0e  90					  nop
+> This package, coded in C to the Mach API, allows you to override ("patch")
+> program- and system-supplied functions at runtime. You can fully replace
+> functions with your implementations, or merely head- or tail-patch the
+> original implementations.
 
-It appears that [NSView retain] is testing the _viewAuxiliary variable and if it's null, it calls the _allocAuxiliary method, which (after more otx snooping) seems to be the one that is making the NSLog call.
+We can use mach_override to replace NSLog with a custom version that we can switch on and off through an API. See objc/overrides.m for the details.
 
-Through experimentation, I discovered that _viewAuxiliary for an alloc-ed but uninitialized NSView is zero and becomes nonzero when the view is initialized.
-
-That's half of the trick I used to get rid of the message.  The other half is method swizzling, the programmatic exchange of methods in Objective-C class descriptions.
+That's half of the trick I used to get rid of the message.  The other half is "method swizzling", the programmatic exchange of methods in Objective-C class descriptions.
 
 Here's the code, first some Objective-C:
 
@@ -77,39 +39,24 @@ Here's the code, first some Objective-C:
 
 - (id) nuRetain
 {
-   if (!self->_viewAuxiliary) {
-       return [super retain];
-   }
-   else {
-       return [self nuRetain];
-   }
-}
+    extern void nu_disableNSLog();
+    extern void nu_enableNSLog();
 
-- (void) nuRelease
-{
-   if (!self->_viewAuxiliary) {
-       return [super release];
-   }
-   else {
-       return [self nuRelease];
-   }
+    nu_disableNSLog();
+    id result = [self nuRetain];
+    nu_enableNSLog();
+    return result;
 }
 
 @end
 
 The rest can be done in Nu:
 
-(NSView exchangeInstanceMethod:"retain"  withMethod:"nuRetain")
-(NSView exchangeInstanceMethod:"release" withMethod:"nuRelease")
+(NSView exchangeInstanceMethod:"retain" withMethod:"nuRetain")
 
-Here I'm calling a method-swizzling method that I added to NSObject as part of Nu. The first call causes my "nuRetain" method to be called whenever a "retain" message is sent and vice versa.  The second does the same thing for "nuRelease" and "release".
+Here I'm calling a method-swizzling method that I added to NSObject as part of Nu.  
 
-To summarize, when _viewAuxiliary is zero, retains and releases are done as if the view is an instance of its parent. Otherwise, the regular retain and release methods are used.
-
-Since Apple hides the source to AppKit, I suspect this still might break, but so far I've used it successfully on 10.5 and 10.4 Intel and 10.4 PPC.
-
-If you want to turn this off, the exchangeInstanceMethod method sends are now in the NuMain() function in nu.m.  
+If you want to turn this off, the exchangeInstanceMethod method send are now in the NuMain() function in nu.m.  
 	[NSView exchangeInstanceMethod:@selector(retain)  withMethod:@selector(nuRetain)];
-	[NSView exchangeInstanceMethod:@selector(release) withMethod:@selector(nuRelease)];
 	
-Just comment them out and your AppKit warranty will be valid again :-).
+Just comment it out and your AppKit warranty will be valid again :-).

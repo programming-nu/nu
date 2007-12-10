@@ -75,9 +75,8 @@ int NuMain(int argc, const char *argv[])
     // collect the command-line arguments
     [[NuApplication sharedApplication] setArgc:argc argv:argv];
 
-    // perform a dirty hack
-    [NSView exchangeInstanceMethod:@selector(retain)  withMethod:@selector(nuRetain)];
-    [NSView exchangeInstanceMethod:@selector(release) withMethod:@selector(nuRelease)];
+    // stop NSView from complaining when we retain alloc-ed views.
+    [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
 
     // first we try to load main.nu from the application bundle.
     NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];

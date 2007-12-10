@@ -48,7 +48,7 @@ extern id Nu__null;
 
 - (BOOL) isEqual:(id) other
 {
-	return ((self == other) || (other == 0)) ? 1l : 0l;
+    return ((self == other) || (other == 0)) ? 1l : 0l;
 }
 
 - (const char *) cStringUsingEncoding:(unsigned int) encoding
@@ -317,22 +317,15 @@ extern id Nu__null;
 
 - (id) nuRetain
 {
-    if (!self->_viewAuxiliary) {
-        return [super retain];
-    }
-    else {
-        return [self nuRetain];
-    }
-}
-
-- (void) nuRelease
-{
-    if (!self->_viewAuxiliary) {
-        return [super release];
-    }
-    else {
-        return [self nuRelease];
-    }
+    extern void nu_disableNSLog();
+    extern void nu_enableNSLog();
+    // Send 
+    //    "NSView not correctly initialized. Did you forget to call super?”
+    // into a black hole.
+    nu_disableNSLog();
+    id result = [self nuRetain];
+    nu_enableNSLog();
+    return result;
 }
 
 @end
