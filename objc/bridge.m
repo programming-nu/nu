@@ -874,12 +874,12 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
                 if (!found) {
                     // NSLog(@"autoreleasing object of class %@", resultClass);
                     //if (((s == @selector(alloc)) || (s == @selector(allocWithZone:))) && [result isKindOfClass:[NSView class]]) {
-                        //NSLog(@"fake initialization of NSView object");
-                        // Sleazy trick. To avoid bogus warnings about views being incorrectly initialized,
-                        // call NSView init on freshly allocated NSViews.
-                        // Suggestion to Apple: remove those warnings.
-                        //IMP initIMP = [NSView instanceMethodForSelector:@selector(init)];
-                        //initIMP(result, @selector(init));
+                    //NSLog(@"fake initialization of NSView object");
+                    // Sleazy trick. To avoid bogus warnings about views being incorrectly initialized,
+                    // call NSView init on freshly allocated NSViews.
+                    // Suggestion to Apple: remove those warnings.
+                    //IMP initIMP = [NSView instanceMethodForSelector:@selector(init)];
+                    //initIMP(result, @selector(init));
                     //}
                     [result autorelease];
                 }
@@ -1123,6 +1123,23 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     [pool release];
     [result autorelease];
     return result;
+}
+
+@end
+
+@implementation NuBridgedConstant
+
++ (id) constantWithName:(NSString *) name signature:(NSString *) signature
+{
+    const char *constant_name = [name cStringUsingEncoding:NSUTF8StringEncoding];
+    void *constant = dlsym(RTLD_DEFAULT, constant_name);
+    if (!constant) {
+        NSLog(@"%s", dlerror());
+        NSLog(@"If you are using a release build, try rebuilding with the KEEP_PRIVATE_EXTERNS variable set.");
+        NSLog(@"In Xcode, check the 'Preserve Private External Symbols' checkbox.");
+        return nil;
+    }
+    return get_nu_value_from_objc_value(constant, [signature cStringUsingEncoding:NSUTF8StringEncoding]);
 }
 
 @end

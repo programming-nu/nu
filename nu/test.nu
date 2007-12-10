@@ -91,20 +91,38 @@
 
 (macro assert_equal
      (set @assertions (+ @assertions 1))
-     (set __golden (eval (car margs)))
+     (set __reference (eval (car margs)))
      (set __actual (eval (car (cdr margs))))
-     (unless (eq __golden __actual)
-             (puts "failure: #{(car (cdr margs))} expected '#{__golden}' got '#{__actual}'")
+     (unless (eq __reference __actual)
+             (puts "failure: #{(car (cdr margs))} expected '#{__reference}' got '#{__actual}'")
              (set @failures (+ @failures 1)))
      nil)
 
 (macro assert_not_equal
      (set @assertions (+ @assertions 1))
-     (set __ungolden (eval (car margs)))
+     (set __reference (eval (car margs)))
      (set __actual (eval (car (cdr margs))))
-     (if (eq __ungolden __actual)
-         (puts "failure: #{(car (cdr margs))} did not want '#{__actual} to be '#{__ungolden}'")
-         (set @failures (+ @failures 1)))
+     (unless (!= __reference __actual)
+             (puts "failure: #{(car (cdr margs))} expected '#{__actual} != '#{__reference}'")
+             (set @failures (+ @failures 1)))
+     nil)
+
+(macro assert_greater_than
+     (set @assertions (+ @assertions 1))
+     (set __reference (eval (car margs)))
+     (set __actual (eval (car (cdr margs))))
+     (unless (> __actual __reference)
+             (puts "failure: #{(car (cdr margs))} expected '#{__actual} > '#{__reference}'")
+             (set @failures (+ @failures 1)))
+     nil)
+
+(macro assert_less_than
+     (set @assertions (+ @assertions 1))
+     (set __reference (eval (car margs)))
+     (set __actual (eval (car (cdr margs))))
+     (unless (< __actual __reference)
+             (puts "failure: #{(car (cdr margs))} expected '#{__actual} < '#{__reference}'")
+             (set @failures (+ @failures 1)))
      nil)
 
 (macro assert_throws 
@@ -127,12 +145,12 @@
 
 (macro assert_in_delta 
      (set @assertions (+ @assertions 1))
-     (set __golden (eval (car margs)))
+     (set __reference (eval (car margs)))
      (set __actual (eval (car (cdr (margs)))))
      (set __delta (eval (car (cdr (cdr (margs))))))
-     (set __difference (NuMath abs:(- __golden __actual)))
+     (set __difference (NuMath abs:(- __reference __actual)))
      (if (> __difference __delta)
-         (puts "failure: #{(car (cdr margs))} expected #{__golden} got #{__actual} which is outside margin #{__delta}")
+         (puts "failure: #{(car (cdr margs))} expected #{__reference} got #{__actual} which is outside margin #{__delta}")
          (set @failures (+ @failures 1)))
      nil)
 
