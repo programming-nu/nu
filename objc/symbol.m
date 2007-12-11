@@ -8,6 +8,7 @@
 #import "class.h"
 #import "object.h"
 #import "extensions.h"
+#import "bridge.h"
 
 static NuSymbolTable *sharedSymbolTable = 0;
 
@@ -196,6 +197,31 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
     // Undefined globals evaluate to null.
     if (c == '$')
         return [NSNull null];
+
+    // Now we try looking in the bridge support dictionaries.
+    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+    NuSymbol *bridgeSupportSymbol = [symbolTable symbolWithString:@"BridgeSupport"];
+    NSDictionary *bridgeSupport = bridgeSupportSymbol ? [bridgeSupportSymbol value] : nil;
+    if (bridgeSupport) {
+        // is it an enum?
+        id enumValue = [[bridgeSupport valueForKey:@"enums"] valueForKey:[self stringValue]];
+        if (enumValue) {
+            value = enumValue;
+            return value;
+        }
+        // is it a constant?
+        id constantSignature = [[bridgeSupport valueForKey:@"constants"] valueForKey:[self stringValue]];
+        if (constantSignature) {
+            value = [NuBridgedConstant constantWithName:[self stringValue] signature:constantSignature];
+            return value;
+        }
+        // is it a function?
+        id functionSignature = [[bridgeSupport valueForKey:@"functions"] valueForKey:[self stringValue]];
+        if (functionSignature) {
+            value = [NuBridgedFunction functionWithName:[self stringValue] signature:functionSignature];
+            return value;
+        }
+    }
 
     // Still-undefined symbols evaluate to null... maybe this should throw an exception.
     [NSException raise:@"NuUndefinedSymbol" format:@"undefined symbol: %@", [self stringValue]];

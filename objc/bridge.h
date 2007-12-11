@@ -74,7 +74,7 @@ But in practice, this has not been much of a problem.
 @end
 
 /*!
-    @class NuBridgedConstants
+    @class NuBridgedConstant
     @abstract The Nu wrapper for imported C constants.
     @discussion This class can be used to import constants defined in C code.
     The signature string used to import a constant must be a valid Objective-C type signature.
