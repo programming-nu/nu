@@ -17,6 +17,10 @@
           (assert_equal "e" (max "a" "b" "c" "d" "e"))
           (assert_equal 'z' (max 'x' 'y' 'z')))
      
+     (imethod (id) testAddOperator is
+          (assert_equal 3 (+ 1 1 -5 6))
+          (assert_equal "hello, world" (+ "hello" "," " " "world")))
+     
      ;; Our "ternary operator" is really a method and not an operator, but I think it belongs here anyway.
      (imethod (id) testTernaryOperator is
           (assert_equal "no" (nil ? "yes" : "no"))

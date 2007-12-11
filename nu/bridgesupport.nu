@@ -15,20 +15,23 @@
              ((BridgeSupport valueForKey:"frameworks") setValue:(load-bridge-support __framework __path) forKey:__framework))
      t)
 
+(macro import-system
+     (((NSString stringWithShellCommand:"ls /System/Library/Frameworks") lines) each: 
+      (do (line)
+          (set name ((line componentsSeparatedByString:".") 0))
+          (eval (cons 'import (list name))))))
+
 (function load-bridge-support (framework path)
      (if path 
          (then (set path "#{path}/Resources/BridgeSupport/#{framework}.bridgesupport"))
          (else (set path "/System/Library/Frameworks/#{framework}.framework/Resources/BridgeSupport/#{framework}.bridgesupport")))
      
-     (NSLog "importing #{framework} from #{path}")
-     
+     (NSLog "importing #{framework} from #{path}")     
      (set constants (BridgeSupport valueForKey:"constants"))
      (set enums     (BridgeSupport valueForKey:"enums"))
-     (set functions (BridgeSupport valueForKey:"functions"))
-     
-     (set xmlFile (NSString stringWithContentsOfFile:path))
-     (if xmlFile 
-         (then (set xmlDocument ((NSXMLDocument alloc) initWithXMLString:xmlFile options:0 error:nil))          
+     (set functions (BridgeSupport valueForKey:"functions"))     
+     (if (set xmlDocument ((NSXMLDocument alloc) initWithContentsOfURL:(NSURL fileURLWithPath:path) options:0 error:nil))          
+         (then 
                (((xmlDocument rootElement) children) each:
                 (do (node)
                     (case (node name)

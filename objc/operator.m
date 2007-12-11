@@ -760,13 +760,25 @@ static bool valueIsTrue(id value)
         return help_add_method_to_class(classToExtend, cdr, context);
     }
     // otherwise, it's an addition
-    double sum = 0;
-    id cursor = cdr;
-    while (cursor && (cursor != Nu__null)) {
-        sum += [[[cursor car] evalWithContext:context] doubleValue];
-        cursor = [cursor cdr];
+    id firstArgument = [[cdr car] evalWithContext:context];
+    if ([firstArgument isKindOfClass:[NSValue class]]) {
+        double sum = [firstArgument doubleValue];
+        id cursor = [cdr cdr];
+        while (cursor && (cursor != Nu__null)) {
+            sum += [[[cursor car] evalWithContext:context] doubleValue];
+            cursor = [cursor cdr];
+        }
+        return [NSNumber numberWithDouble:sum];
     }
-    return [NSNumber numberWithDouble:sum];
+    else {
+        NSMutableString *result = [NSMutableString stringWithString:[firstArgument stringValue]];
+        id cursor = [cdr cdr];
+        while (cursor && (cursor != Nu__null)) {
+            [result appendString:[[[cursor car] evalWithContext:context] stringValue]];
+            cursor = [cursor cdr];
+        }
+        return result;
+    }
 }
 
 @end
