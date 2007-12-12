@@ -61,5 +61,6 @@
                                           (else (NSLog "unrecognized type #{(child XMLString)}")))))
                                (set signature "#{returnType}#{argumentTypes}")
                                (functions setValue:signature forKey:name))
-                          (else nil))))))
+                          (else nil)))))
+         (else ((NSException exceptionWithName:"NuBridgeSupportMissing" reason:"unable to find BridgeSupport file for #{framework}" userInfo:nil) raise)))
      t)

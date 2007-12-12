@@ -1,6 +1,6 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(global VERSION '(0 2 3)) #(major minor tweak)
+(global VERSION '(0 2 4)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
@@ -177,3 +177,6 @@ END)
       (SH "sudo rm -f #{imagefile}")
       (SH "hdiutil create -srcdir dmg #{imagefile} -volname Nu")
       (SH "sudo rm -rf dmg package"))
+
+;; alias for installer task
+(task "dmg" => "installer")
