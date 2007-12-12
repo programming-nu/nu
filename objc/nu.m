@@ -67,16 +67,13 @@ void write_arguments(int argc, char *argv[])
 
 int NuMain(int argc, const char *argv[])
 {
-    Nu__zero = [NuZero zero];
-    Nu__null = [NSNull null];
+	void NuInit();
+    NuInit();
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     // collect the command-line arguments
     [[NuApplication sharedApplication] setArgc:argc argv:argv];
-
-    // stop NSView from complaining when we retain alloc-ed views.
-    [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
 
     // first we try to load main.nu from the application bundle.
     NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
@@ -174,11 +171,15 @@ static int load_nu_files(NSString *bundleIdentifier, NSString *mainFile)
 
 void NuInit()
 {
-    Nu__null = [NSNull null];
-    Nu__zero = [NuZero zero];
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
+
+        Nu__null = [NSNull null];
+        Nu__zero = [NuZero zero];
+
+        // Stop NSView from complaining when we retain alloc-ed views.
+        [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
 
         // Apply swizzles to container classes to make them tolerant of nil insertions.
         extern void nu_swizzleContainerClasses();

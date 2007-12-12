@@ -26,7 +26,7 @@
          (then (set path "#{path}/Resources/BridgeSupport/#{framework}.bridgesupport"))
          (else (set path "/System/Library/Frameworks/#{framework}.framework/Resources/BridgeSupport/#{framework}.bridgesupport")))
      
-     (NSLog "importing #{framework} from #{path}")     
+     ;;(NSLog "importing #{framework} from #{path}")     
      (set constants (BridgeSupport valueForKey:"constants"))
      (set enums     (BridgeSupport valueForKey:"enums"))
      (set functions (BridgeSupport valueForKey:"functions"))     
