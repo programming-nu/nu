@@ -719,11 +719,15 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         }
         case '^':
         {
-            // pointers require some work.. and cleanup. This LEAKS.
             if (!strcmp(typeString, "^v")) {
                 if (*((unsigned int *)objc_value) != 0)
                     NSLog(@"WARNING: unable to wrap nonzero void * pointer");
                 return [NSNull null];
+            }
+            else if (!strcmp(typeString, "^@")) {
+                id reference = [[[NuReference alloc] init] autorelease];
+                [reference setPointer:*((id**)objc_value)];
+                return reference;
             }
             else {
                 NSLog(@"UNIMPLEMENTED: can't wrap pointer of type %s", typeString);
@@ -1152,10 +1156,12 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
             return @"v";
         else if ([cell car] == [symbolTable symbolWithCString:"id"])
             return @"@";
+        else if ([cell car] == [symbolTable symbolWithCString:"id*"])
+            return @"^@";
         else if ([cell car] == [symbolTable symbolWithCString:"int"])
             return @"i";
         else if ([cell car] == [symbolTable symbolWithCString:"BOOL"])
-            return @"i";
+            return @"c";
         else if ([cell car] == [symbolTable symbolWithCString:"double"])
             return @"d";
         else if ([cell car] == [symbolTable symbolWithCString:"float"])
@@ -1172,11 +1178,12 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
             return @":";
         else if ([cell car] == [symbolTable symbolWithCString:"Class"])
             return @"#";
-
     }
-    else if ([[cell cdr] car] == [symbolTable symbolWithCString:"*"]) {
+    else if (([[cell cdr] car] == [symbolTable symbolWithCString:"*"]) && ([[cell cdr] cdr] == [NSNull null])) {
         if ([cell car] == [symbolTable symbolWithCString:"void"])
             return @"^v";
+        else if ([cell car] == [symbolTable symbolWithCString:"id"])
+            return @"^@";
     }
 
     NSLog(@"I can't bridge this return type yet: %@", [cell stringValue]);

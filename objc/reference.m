@@ -7,21 +7,57 @@
 
 @implementation NuReference
 
-- (id) value {return value;}
+- (id) init
+{
+    [super init];
+    pointer = 0;
+    thePointerIsMine = false;
+    return self;
+}
+
+- (id) value {return pointer ? *pointer : nil;}
 
 - (void) setValue:(id) v
 {
+    if (!pointer) {
+        pointer = (id *) malloc (sizeof (id));
+        *pointer = nil;
+        thePointerIsMine = true;
+    }
     [v retain];
-    [value release];
-    value = v;
+    [(*pointer) release];
+    (*pointer)  = v;
 }
 
-- (id *) pointerToReferencedObject {return &value;}
+- (void) setPointer:(id *) p
+{
+    if (thePointerIsMine) {
+        free(pointer);
+        thePointerIsMine = false;
+    }
+    pointer = p;
+}
+
+- (id *) pointerToReferencedObject
+{
+    if (!pointer) {
+        pointer = (id *) malloc (sizeof (id));
+        *pointer = nil;
+        thePointerIsMine = true;
+    }
+    return pointer;
+}
 
 - (void) retainReferencedObject
 {
-    [value retain];
+    [(*pointer) retain];
+}
+
+- (void) dealloc
+{
+    if (thePointerIsMine)
+        free(pointer);
+    [super dealloc];
 }
 
 @end
-

@@ -1,8 +1,8 @@
 /*!
     @header reference.h
-  	@copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
-  	@discussion Declarations for the NuReference class, 
-	which represents pointers to Objective-C objects.
+    @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+    @discussion Declarations for the NuReference class,
+    which represents pointers to Objective-C objects.
 */
 #import <Foundation/Foundation.h>
 
@@ -23,18 +23,21 @@
 &nbsp;&nbsp;result)
 </code>
 </div>
- */
+*/
 @interface NuReference : NSObject
 {
-    id value;
+    id *pointer;
+    bool thePointerIsMine;
 }
 
 /*! Get the value of the referenced object. */
 - (id) value;
 /*! Set the value of the referenced object. */
 - (void) setValue:(id) value;
-/*! Get a pointer to the referenced object. Used by the bridge to Objective-C to convert NuReference objects to pointers. 
-    Don't call this from Nu. 
+/*! Set the pointer for a reference.  Used by the bridge to create NuReference objects from pointers.  Don't call this from Nu. */
+- (void) setPointer:(id *) pointer;
+/*! Get a pointer to the referenced object. Used by the bridge to Objective-C to convert NuReference objects to pointers.
+    Don't call this from Nu.
 */
 - (id *) pointerToReferencedObject;
 /*! Retain the referenced object. Used by the bridge to Objective-C to retain values returned by reference. */
