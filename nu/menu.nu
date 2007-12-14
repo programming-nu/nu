@@ -30,6 +30,7 @@
                                      ((eq key 'key:)         (item setKeyEquivalent:(eval value)))
                                      ((eq key 'modifier:)    (item setKeyEquivalentModifierMask:(eval value)))
                                      ((eq key 'target:)      (item setTarget:(eval value)))
+                                     ((eq key 'tag:)         (item setTag:(eval value)))
                                      (else                   nil)))))
                  
                  item))))
