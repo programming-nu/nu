@@ -26,6 +26,8 @@
     id cdr;
 }
 
+/*! Create a new cell with a specifed car and cdr. */
++ (id) cellWithCar:(id)car cdr:(id)cdr;
 /*! Get the car of a NuCell. */
 - (id) car;
 /*! Get the cdr of a NuCell. */

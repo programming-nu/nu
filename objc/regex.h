@@ -1,7 +1,7 @@
 /*!
     @header regex.h
-  	@copyright Copyright (c) 2002 Aram Greenman. All rights reserved.
-  	@discussion Declarations for an Objective-C regular expression library.
+    @copyright Copyright (c) 2002 Aram Greenman. All rights reserved.
+    @discussion Declarations for an Objective-C regular expression library.
 */
 
 //
@@ -19,7 +19,7 @@
 @class NuRegex, NSArray, NSString;
 
 /*!
-@enum Options 
+@enum Options
 Options defined for -initWithPattern:options:. Two or more options can be combined with the bitwise OR operator.
 @constant NuRegexCaseInsensitive Matching is case insensitive. Equivalent to /i in Perl.
 @constant NuRegexDotAll Dot metacharacter matches any character including newline. Equivalent to /s in Perl.
@@ -27,29 +27,31 @@ Options defined for -initWithPattern:options:. Two or more options can be combin
 @constant NuRegexLazy Makes greedy quantifiers lazy and lazy quantifiers greedy. No equivalent in Perl.
 @constant NuRegexMultiline Caret and dollar anchors match at newline. Equivalent to /m in Perl.
 */
-enum {
-	NuRegexCaseInsensitive = 1,
-	NuRegexDotAll = 2,
-	NuRegexExtended = 4,
-	NuRegexLazy = 8,
-	NuRegexMultiline = 16
+enum
+{
+    NuRegexCaseInsensitive = 1,
+    NuRegexDotAll = 2,
+    NuRegexExtended = 4,
+    NuRegexLazy = 8,
+    NuRegexMultiline = 16
 };
 
 /*!
 @class NuRegexMatch
 @abstract A single occurence of a regular expression.
-@discussion A NuRegexMatch represents a single occurence of a regular expression within the target string. 
-The range of each subpattern within the target string is returned by -range, -rangeAtIndex:, or -rangeNamed:. 
+@discussion A NuRegexMatch represents a single occurence of a regular expression within the target string.
+The range of each subpattern within the target string is returned by -range, -rangeAtIndex:, or -rangeNamed:.
 The part of the target string that matched each subpattern is returned by -group, -groupAtIndex:, or -groupNamed:.
 NuRegexMatch is a slight modification of Aram Greenman's AGRegexMatch, so far only changed to allow direct access
 to the NuRegex that was used to make the match.
 The NuRegexMatch documentation is from the AGRegex distribution and contains only minor modifications for Nu.
 */
-@interface NuRegexMatch : NSObject {
-	NuRegex *regex;
-	NSString *string;
-	int *matchv;
-	int count;
+@interface NuRegexMatch : NSObject
+{
+    NuRegex *regex;
+    NSString *string;
+    int *matchv;
+    int count;
 }
 
 /*!
@@ -102,16 +104,16 @@ Returns the target string. */
 /*!
 @class NuRegex
 @abstract A Perl-compatible regular expression class.
-@discussion NuRegex is a slight modification of Aram Greenman's AGRegex, 
+@discussion NuRegex is a slight modification of Aram Greenman's AGRegex,
 updated to use the latest PCRE and to use UTF-8 character encodings by default.
 The NuRegex documentation is from the AGRegex distribution and contains only minor modifications for Nu.
 
 In Nu source code, a NuRegex may be created using the <b>regex</b> operator.
-A NuRegex may also be created with 
-<nobr>-initWithPattern:</nobr> or 
-<nobr>-initWithPattern:options:</nobr> or the corresponding class methods 
-<nobr>+regexWithPattern:</nobr> or 
-<nobr>+regexWithPattern:options:</nobr>. 
+A NuRegex may also be created with
+<nobr>-initWithPattern:</nobr> or
+<nobr>-initWithPattern:options:</nobr> or the corresponding class methods
+<nobr>+regexWithPattern:</nobr> or
+<nobr>+regexWithPattern:options:</nobr>.
 These take a regular expression pattern string and the bitwise OR of zero or more option flags. For example:
 
 <code>&nbsp;&nbsp;&nbsp;&nbsp;NuRegex *regex = [[NuRegex alloc] initWithPattern:&#64;"(paran|andr)oid" options:NuRegexCaseInsensitive];</code>
@@ -119,7 +121,7 @@ These take a regular expression pattern string and the bitwise OR of zero or mor
 Matching is done with -findInString: or -findInString:range: which look for the first occurrence of the pattern in the target string and return an NuRegexMatch or nil if the pattern was not found.
 
 <code>&nbsp;&nbsp;&nbsp;&nbsp;NuRegexMatch *match = [regex findInString:&#64;"paranoid android"];</code>
-    
+
 A match object returns a captured subpattern by -group, -groupAtIndex:, or -groupNamed:, or the range of a captured subpattern by -range, -rangeAtIndex:, or -rangeNamed:. The subpatterns are indexed in order of their opening parentheses, 0 is the entire pattern, 1 is the first capturing subpattern, and so on. -count returns the total number of subpatterns, including the pattern itself. The following prints the result of our last match case:
 
 <code>&nbsp;&nbsp;&nbsp;&nbsp;for (i = 0; i &lt; [match count]; i++)<br />
@@ -150,9 +152,9 @@ Captured subpatterns can be interpolated into the replacement string using the s
 <code>&nbsp;&nbsp;&nbsp;&nbsp;NuRegex *regex = [NuRegex regexWithPattern:&#64;"[usr]"];<br />
 &nbsp;&nbsp;&nbsp;&nbsp;NSString *result = [regex replaceWithString:&#64;"\\u$&amp;." inString:&#64;"Back in the ussr"]; // result is "Back in the U.S.S.R."</code>
 
-Note that you have to escape a backslash to get it into an NSString literal. 
+Note that you have to escape a backslash to get it into an NSString literal.
 
-Named subpatterns may also be used in the pattern and replacement strings, like in Python. 
+Named subpatterns may also be used in the pattern and replacement strings, like in Python.
 
 <code>&nbsp;&nbsp;&nbsp;&nbsp;NuRegex *regex = [NuRegex regexWithPattern:&#64;"(?P&lt;who&gt;\\w+) is a (?P&lt;what&gt;\\w+)"];<br />
 &nbsp;&nbsp;&nbsp;&nbsp;NSString *result = [regex replaceWithString:&#64;"Jackie is a $what, $who is a runt" inString:&#64;"Judy is a punk"]); // result is "Jackie is a punk, Judy is a runt"</code>
@@ -162,17 +164,20 @@ Finally, NuRegex provides -splitString: and -splitString:limit: which return an 
 <code>&nbsp;&nbsp;&nbsp;&nbsp;NuRegex *regex = [NuRegex regexWithPattern:&#64;"ea?"];<br />
 &nbsp;&nbsp;&nbsp;&nbsp;NSArray *result = [regex splitString:&#64;"Repeater"]; // result is "R", "p", "t", "r"</code>
 
-If there are captured subpatterns, they are returned in the array. 
+If there are captured subpatterns, they are returned in the array.
 
 <code>&nbsp;&nbsp;&nbsp;&nbsp;NuRegex *regex = [NuRegex regexWithPattern:&#64;"e(a)?"];<br />
 &nbsp;&nbsp;&nbsp;&nbsp;NSArray *result = [regex splitString:&#64;"Repeater"]; // result is "R", "p", "a", "t", "r"</code>
 
 In Perl, this would return "R", undef, "p", "a", "t", undef, "r". Unfortunately, there is no convenient way to represent this in an NSArray. (NSNull could be used in place of undef, but then all members of the array couldn't be expected to be NSStrings.)
 */
-@interface NuRegex : NSObject {
-	void *regex;
-	void *extra;
-	int groupCount;
+@interface NuRegex : NSObject
+{
+    NSString *pattern;
+    int options;
+    void *regex;
+    void *extra;
+    int groupCount;
 }
 
 /*!
@@ -185,7 +190,6 @@ Creates a new regex using the given pattern string. Returns nil if the pattern s
 Creates a new regex using the given pattern string and option flags. Returns nil if the pattern string is invalid. */
 + (id)regexWithPattern:(NSString *)pat options:(int)opts;
 
-
 /*!
 @method initWithPattern:
 Initializes the regex using the given pattern string. Returns nil if the pattern string is invalid. */
@@ -195,6 +199,16 @@ Initializes the regex using the given pattern string. Returns nil if the pattern
 @method initWithPattern:options:
 Initializes the regex using the given pattern string and option flags. Returns nil if the pattern string is invalid. */
 - (id)initWithPattern:(NSString *)pat options:(int)opts;
+
+/*!
+@method pattern
+Returns the pattern used to create the regex. */
+- (NSString *) pattern;
+
+/*!
+@method options
+Returns the options used to create the regex. */
+- (int) options;
 
 /*!
 @method findInString:

@@ -107,6 +107,8 @@ static NuRegex *backrefPattern;
 - (id)initWithPattern:(NSString *)pat options:(int)opts
 {
     if ((self = [super init])) {
+        pattern = [pat retain];
+        options = opts;
         const char *emsg;
         int eloc, copts = 0;
         if (opts & NuRegexCaseInsensitive)  copts |= PCRE_CASELESS;
@@ -136,8 +138,13 @@ static NuRegex *backrefPattern;
     return self;
 }
 
+- (NSString *) pattern {return pattern;}
+
+- (int) options {return options;}
+
 - (void)dealloc
 {
+    [pattern release];
     pcre_free(regex);
     pcre_free(extra);
     [super dealloc];
@@ -150,7 +157,7 @@ static NuRegex *backrefPattern;
 
 - (NuRegexMatch *)findInString:(NSString *)str range:(NSRange)range
 {
-	//NSLog(@"NuRegex findInString:%d range:(%d %d)", [str length], range.location, range.length);
+    //NSLog(@"NuRegex findInString:%d range:(%d %d)", [str length], range.location, range.length);
     int error, length, options, *matchv;
     length = [str length];
     options = 0;

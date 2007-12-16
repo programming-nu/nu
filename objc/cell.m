@@ -11,6 +11,14 @@
 
 @implementation NuCell
 
++ (id) cellWithCar:(id)car cdr:(id)cdr
+{
+    NuCell *cell = [[self alloc] init];
+    [cell setCar:car];
+    [cell setCdr:cdr];
+    return [cell autorelease];
+}
+
 - (id) init
 {
     [super init];
@@ -84,11 +92,11 @@
 
 - (id) lastObject
 {
-	id cursor = self;
-	while ([cursor cdr] != Nu__null) {
-		cursor = [cursor cdr];
-	}
-	return [cursor car];
+    id cursor = self;
+    while ([cursor cdr] != Nu__null) {
+        cursor = [cursor cdr];
+    }
+    return [cursor car];
 }
 
 - (NSMutableString *) stringValue
@@ -176,30 +184,31 @@
     return result;
 }
 
-- (int) length {
-	int count = 0;
-	id cursor = self;
-	while (cursor && (cursor != Nu__null)) {
-		cursor = [cursor cdr];
-		count++;
-	}
-	return count;
+- (int) length
+{
+    int count = 0;
+    id cursor = self;
+    while (cursor && (cursor != Nu__null)) {
+        cursor = [cursor cdr];
+        count++;
+    }
+    return count;
 }
 
 - (id) comments {return nil;}
 
 - (void)encodeWithCoder:(NSCoder *)coder
 {
-  [coder encodeObject:car];
-  [coder encodeObject:cdr];
+    [coder encodeObject:car];
+    [coder encodeObject:cdr];
 }
 
 - (id) initWithCoder:(NSCoder *)coder
 {
-  [super init];
-  car = [[coder decodeObject] retain];
-  cdr = [[coder decodeObject] retain];
-  return self;
+    [super init];
+    car = [[coder decodeObject] retain];
+    cdr = [[coder decodeObject] retain];
+    return self;
 }
 
 @end
