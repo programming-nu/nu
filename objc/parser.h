@@ -54,6 +54,10 @@
 - (id) eval: (id) code;
 /*! Parse Nu source text and evaluate it in the parser's evalation context. */
 - (NSString *) parseEval:(NSString *)string;
+/*! Get the value of a name or expression in the parser's context. */
+- (id) valueForKey:(NSString *)string;
+/*! Set the value of a name in the parser's context. */
+- (void) setValue:(id)value forKey:(NSString *)string;
 /*! Returns true if the parser is currently parsing an incomplete Nu expression.
     Presumably the rest of the expression will be passed in with a future
     invocation of the parse: method.

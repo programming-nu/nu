@@ -775,6 +775,16 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     return [code evalWithContext:context];
 }
 
+- (id) valueForKey:(NSString *)string
+{
+    return [self eval:[self parse:string]];
+}
+
+- (void) setValue:(id)value forKey:(NSString *)string
+{
+    [context setValue:value forKey:[symbolTable symbolWithString:string]];
+}
+
 - (NSString *) parseEval:(NSString *)string
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];

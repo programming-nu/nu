@@ -656,8 +656,8 @@
     (catch (exception) 
            (puts "nuke error: #{(exception reason)}")
            ;; bridge and call a standard C function
-           (set exit (NuBridgedFunction functionWithName:"exit" signature:"i"))
-           (exit)))
+           (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
+           (exit -1)))
 
 (if $verbose
     (((project tasks) allKeys) each:

@@ -9,6 +9,7 @@
 #import "extensions.h"
 #import "object.h"
 #import "objc_runtime.h"
+#import "regex.h"
 #import <unistd.h>
 
 id Nu__zero = 0;
@@ -67,7 +68,7 @@ void write_arguments(int argc, char *argv[])
 
 int NuMain(int argc, const char *argv[])
 {
-	void NuInit();
+    void NuInit();
     NuInit();
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -190,4 +191,36 @@ void NuInit()
         load_nu_files(@"nu.programming.framework", @"cocoa");
         load_nu_files(@"nu.programming.framework", @"help");
     }
+}
+
+// Helpers for programmatic construction of Nu code.
+
+id _nunull()
+{
+    return [NSNull null];
+}
+
+id _nustring(const char *string)
+{
+    return [NSString stringWithCString:string encoding:NSUTF8StringEncoding];
+}
+
+id _nusymbol(const char *string)
+{
+    return [[NuSymbolTable sharedSymbolTable] symbolWithCString:string];
+}
+
+id _nunumberd(double d)
+{
+    return [NSNumber numberWithDouble:d];
+}
+
+id _nucell(id car, id cdr)
+{
+    return [NuCell cellWithCar:car cdr:cdr];
+}
+
+id _nuregex(const char *pattern, int options)
+{
+    return [NuRegex regexWithPattern:_nustring(pattern) options:options];
 }

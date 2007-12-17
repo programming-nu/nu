@@ -158,9 +158,9 @@ static NuRegex *backrefPattern;
 - (NuRegexMatch *)findInString:(NSString *)str range:(NSRange)range
 {
     //NSLog(@"NuRegex findInString:%d range:(%d %d)", [str length], range.location, range.length);
-    int error, length, options, *matchv;
+    int error, length, opts, *matchv;
     length = [str length];
-    options = 0;
+    opts = 0;
     #ifndef SUPPORT_UTF8
     // check for valid ASCII string
     if (![str canBeConvertedToEncoding:NSUTF8StringEncoding])
@@ -171,14 +171,14 @@ static NuRegex *backrefPattern;
         [NSException raise:NSRangeException format:@"range %@ out of bounds", NSStringFromRange(range)];
     // don't match $ anchor if range is before end of string
     if (range.location + range.length < length)
-        options |= PCRE_NOTEOL;
+        opts |= PCRE_NOTEOL;
     // allocate match vector
     NSAssert1(matchv = malloc(sizeof(int) * groupCount * 3), @"couldn't allocate match vector for %d items", groupCount * 3);
     // convert character range to byte range
     range.length = strlen([[str substringWithRange:range] UTF8String]);
     range.location = strlen([[str substringToIndex:range.location] UTF8String]);
     // try match
-    if ((error = pcre_exec(regex, extra, [str UTF8String], range.location + range.length, range.location, options, matchv, groupCount * 3)) == PCRE_ERROR_NOMATCH) {
+    if ((error = pcre_exec(regex, extra, [str UTF8String], range.location + range.length, range.location, opts, matchv, groupCount * 3)) == PCRE_ERROR_NOMATCH) {
         free(matchv);
         return nil;
     }
