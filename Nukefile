@@ -136,7 +136,7 @@ END)
 (set @installprefix "#{@destdir}#{@prefix}")
 
 (task "install" => "nush" is
-      ('("nuke" "nubile" "enu" "nutest" "nudoc") each: 
+      ('("nuke" "nubile" "nutemplate" "nutest" "nudoc" "nubake") each: 
         (do (program)
             (SH "sudo ditto tools/#{program} #{@installprefix}/bin")))
       (SH "sudo ditto nush #{@installprefix}/bin")

@@ -1,7 +1,7 @@
 #!/usr/bin/env nush
 #
-# @file enu
-# Embedded Nu, the standalone Nu template processor.
+# @file nutemplate
+# The standalone Nu template processor.
 #
 # @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
