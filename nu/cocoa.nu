@@ -5,9 +5,27 @@
 ;;
 ;; @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
-(global NSLog 							(NuBridgedFunction functionWithName:"NSLog" signature:"v@"))
-(global NSApplicationMain 				(NuBridgedFunction functionWithName:"NSApplicationMain" signature:"ii^*"))
-(global NSRectFill						(NuBridgedFunction functionWithName:"NSRectFill" signature:"v{_NSRect={_NSPoint=ff}{_NSSize=ff}}"))
+(macro bridge 
+     (set __kind (margs first))
+     (set __name (margs second))
+     (set __signature (margs third))
+     (case __kind
+           ('constant (eval (list 'global __name (NuBridgedConstant constantWithName:(__name stringValue) signature:__signature))))
+           ('function (eval (list 'global __name (NuBridgedFunction functionWithName:(__name stringValue) signature:__signature))))
+           (else (NSLog "invalid argument to bridge: '#{__kind}'"))))
+
+(bridge function NSLog "v@")
+(bridge function NSApplicationMain "ii^*")
+(bridge function NSRectFill "v{_NSRect={_NSPoint=ff}{_NSSize=ff}}")
+
+(bridge constant NSDefaultRunLoopMode "@")
+(bridge constant NSForegroundColorAttributeName "@")
+(bridge constant NSFontAttributeName "@")
+(bridge constant NSSQLiteStoreType "@")
+(bridge constant NSXMLStoreType "@")
+(bridge constant NSBinaryStoreType "@")
+(bridge constant NSInMemoryStoreType "@")
+
 (global NSBorderlessWindowMask          0)
 (global NSTitledWindowMask            	1)
 (global NSClosableWindowMask          	2)
@@ -17,21 +35,16 @@
 (global NSBackingStoreBuffered        	2)
 (global NSRoundedBezelStyle           	1)
 (global NSCenterTextAlignment         	2)
-
 (global NSMappedRead 					1)
 (global NSUncachedRead 					2)
-
 (global NSOKButton 						1)
 (global NSCancelButton 					0)
-
 (global NSTableViewLastColumnOnlyAutoresizingStyle 4)
 (global NSTableColumnAutoresizingMask 	(<< 1 0))
 (global NSTableColumnUserResizingMask 	(<< 1 1))
-
 (global NSControlKeyMask              	(<< 1 18))
 (global NSAlternateKeyMask            	(<< 1 19))
 (global NSCommandKeyMask              	(<< 1 20))
-(global NSDefaultRunLoopMode          	"NSDefaultRunLoopMode")
 (global NSASCIIStringEncoding			1)
 (global NSUTF8StringEncoding			4)
 (global NSKeyDown                     	10)
@@ -46,39 +59,20 @@
 (global NSViewMinYMargin     			8)
 (global NSViewHeightSizable  			16)
 (global NSViewMaxYMargin     			32)
-
 (global NSLeftTextAlignment      		0)
 (global NSRightTextAlignment     		1)
 (global NSCenterTextAlignment    		2)
 (global NSJustifiedTextAlignment 		3)
 (global NSNaturalTextAlignment   		4)
-
 (global NSNumberFormatterScientificStyle 4)
-(global NSNoBorder 0)
-(global NSTIFFFileType 0)
-(global NSBMPFileType 1)
-(global NSGIFFileType 2)
-(global NSJPEGFileType 3)
-(global NSPNGFileType 4)
-
-(global NSForegroundColorAttributeName 	"NSColor")
-(global NSFontAttributeName				"NSFont")
-
+(global NSNoBorder 						0)
+(global NSTIFFFileType 					0)
+(global NSBMPFileType 					1)
+(global NSGIFFileType 					2)
+(global NSJPEGFileType 					3)
+(global NSPNGFileType 					4)
 (global NSOrderedAscending 				-1)
 (global NSOrderedSame       			0)
 (global NSOrderedDescending 			1)
-
-(global NSSQLiteStoreType 				"SQLite")
-(global NSXMLStoreType 					"XML")
-(global NSBinaryStoreType 				"Binary")
-(global NSInMemoryStoreType 			"InMemory")
-
 (global NO                            	0)
 (global YES								1)
-
-;; here is an alternate syntax (unimplemented)
-'(import-functions
-                  ((int) NSApplicationMain (int) (char *))
-                  ((void) NSRectFill (NSRect)))
-'(import-constants ((NSRect) NSZeroRect))
-
