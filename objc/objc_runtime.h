@@ -1,11 +1,11 @@
 /*!
     @header objc_runtime.h
-  	@copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
-  	@discussion Nu extensions to the Objective-C runtime.  
-	Includes replacements for Objective-C 2.0 enhancements 
-	that are only available in Apple's OS X 10.5 (Leopard)
-	plus a few things that aren't in the Objective-C runtime 
-	but should be.
+    @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+    @discussion Nu extensions to the Objective-C runtime.
+    Includes replacements for Objective-C 2.0 enhancements
+    that are only available in Apple's OS X 10.5 (Leopard)
+    plus a few things that aren't in the Objective-C runtime
+    but should be.
 */
 
 #import <objc/objc.h>
@@ -44,7 +44,8 @@ Ivar class_getInstanceVariable(Class c, const char *name);
 // We'd like for this to be in the ObjC2 API, but it isn't.  Apple thinks it's too dangerous.  It is dangerous.
 void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature);
 
-// This is just handy.
+// These are just handy.
+BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector);
 void nu_markEndOfObjCTypeString(char *type, size_t len);
 
 // This makes it safe to insert nil into container classes

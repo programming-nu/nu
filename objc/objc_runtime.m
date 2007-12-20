@@ -302,6 +302,18 @@ void class_addInstanceVariable_withSignature(Class thisClass, const char *variab
     }
 }
 
+BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector)
+{
+    Method m = class_getInstanceMethod(sourceClass, selector);
+    if (!m) return NO;
+    IMP imp = method_getImplementation(m);
+    if (!imp) return NO;
+    const char *signature = method_getTypeEncoding(m);
+    if (!signature) return NO;
+    BOOL result = (class_replaceMethod(destinationClass, selector, imp, signature) != 0);
+    return result;
+}
+
 // This function attempts to recognize the return type from a method signature.
 // It scans across the signature until it finds a complete return type string,
 // then it inserts a null to mark the end of the string.

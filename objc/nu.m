@@ -179,6 +179,17 @@ void NuInit()
         Nu__null = [NSNull null];
         Nu__zero = [NuZero zero];
 
+        // Copy some useful methods from NSObject to NSProxy.
+        // Their implementations are identical; this avoids code duplication.
+        BOOL result = nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(evalWithArguments:context:));
+        if (!result) NSLog(@"copy failed");
+        result = nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(sendMessage:withContext:));
+        if (!result) NSLog(@"copy failed");
+        result = nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(stringValue));
+        if (!result) NSLog(@"copy failed");
+        result = nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(evalWithContext:));
+        if (!result) NSLog(@"copy failed");
+
         // Stop NSView from complaining when we retain alloc-ed views.
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
 

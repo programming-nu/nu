@@ -108,7 +108,7 @@
 
 - (id) stringValue
 {
-    return [NSString stringWithFormat:@"<%s:%x>", class_getName([self class]), (long) self];
+    return [NSString stringWithFormat:@"<%s:%x>", class_getName(object_getClass(self)), (long) self];
 }
 
 - (id) car
@@ -180,11 +180,11 @@
         if (m)
             target = wrappedClass;
         else
-            m = class_getInstanceMethod([self class], sel);
+            m = class_getInstanceMethod(object_getClass(self), sel);
     }
     else {
-        m = class_getInstanceMethod([self class], sel);
-        if (!m) m = class_getClassMethod([self class], sel);
+        m = class_getInstanceMethod(object_getClass(self), sel);
+        if (!m) m = class_getClassMethod(object_getClass(self), sel);
     }
     id result = Nu__null;
     if (m) {
@@ -197,6 +197,9 @@
             [argValues addObject:[[args objectAtIndex:i] evalWithContext:context]];
         }
         // Then call the method.
+        if (sel == @selector(animator)) {
+            imax = 0;                             // break here
+        }
         result = nu_calling_objc_method_handler(target, m, argValues);
         [argValues release];
     }
@@ -457,16 +460,9 @@
 {
     Class thisClass = [self class];
     Class otherClass = [prototypeClass wrappedClass];
-
     const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     SEL selector = sel_registerName(method_name_str);
-    Method m = class_getInstanceMethod(otherClass, selector);
-    if (!m) return false;
-    IMP imp = method_getImplementation(m);
-    if (!imp) return false;
-    const char *signature = method_getTypeEncoding(m);
-    if (!signature) return false;
-    BOOL result = (class_replaceMethod(thisClass, selector, imp, signature) != 0);
+    BOOL result = nu_copyInstanceMethod(thisClass, otherClass, selector);
     return result;
 }
 
@@ -487,8 +483,7 @@
     Class thisClass = [self class];
     size_t size_of_objc_type(const char *typeString);
 
-	class_addInstanceVariable_withSignature(thisClass, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
-
+    class_addInstanceVariable_withSignature(thisClass, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
 
     return Nu__null;
 }
@@ -551,6 +546,34 @@
     }
 
     return YES;
+}
+
+@end
+
+@implementation NSProxy(Nu)
+
+// these placeholder methods are replaced at runtime with the
+// implementations of the equivalent methods of NSObject(Nu).
+// (I hate duplicating code.)
+
+- (id) evalWithContext:(NSMutableDictionary *) context
+{
+    return nil;
+}
+
+- (id) stringValue
+{
+    return nil;
+}
+
+- (id) sendMessage:(id)cdr withContext:(NSMutableDictionary *)context
+{
+    return nil;
+}
+
+- (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    return nil;
 }
 
 @end
