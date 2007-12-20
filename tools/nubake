@@ -67,7 +67,6 @@ END))
 ;; main program
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; succumbing to temptation, get the arguments with a Leopard-only API.
 (set argv ((NSProcessInfo processInfo) arguments))
 (set argi 0)
 

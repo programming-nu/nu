@@ -188,6 +188,7 @@ void NuInit()
 
         // Load some standard files
         load_nu_files(@"nu.programming.framework", @"nu");
+        load_nu_files(@"nu.programming.framework", @"bridgesupport");
         load_nu_files(@"nu.programming.framework", @"cocoa");
         load_nu_files(@"nu.programming.framework", @"help");
     }
