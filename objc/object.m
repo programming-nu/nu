@@ -552,9 +552,8 @@
 
 @implementation NSProxy(Nu)
 
-// these placeholder methods are replaced at runtime with the
-// implementations of the equivalent methods of NSObject(Nu).
-// (I hate duplicating code.)
+// To avoid code duplication, these placeholder methods are replaced at runtime
+// with the implementations of the corresponding methods of NSObject(Nu).
 
 - (id) evalWithContext:(NSMutableDictionary *) context
 {
@@ -572,6 +571,11 @@
 }
 
 - (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    return nil;
+}
+
+- (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
 {
     return nil;
 }

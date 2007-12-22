@@ -181,14 +181,16 @@ void NuInit()
 
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
-        BOOL result = nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(evalWithArguments:context:));
-        if (!result) NSLog(@"copy failed");
-        result = nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(sendMessage:withContext:));
-        if (!result) NSLog(@"copy failed");
-        result = nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(stringValue));
-        if (!result) NSLog(@"copy failed");
-        result = nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(evalWithContext:));
-        if (!result) NSLog(@"copy failed");
+        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(evalWithArguments:context:)))
+            NSLog(@"method copy failed");
+        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(sendMessage:withContext:)))
+            NSLog(@"method copy failed");
+        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(stringValue)))
+            NSLog(@"method copy failed");
+        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(evalWithContext:)))
+            NSLog(@"method copy failed");
+        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(handleUnknownMessage:withContext:)))
+            NSLog(@"method copy failed");
 
         // Stop NSView from complaining when we retain alloc-ed views.
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
