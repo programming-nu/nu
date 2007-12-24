@@ -240,7 +240,7 @@ void nu_initProtocols()
         // We wish that Protocal inherited from NSObject instead of Object, so we make it so.
         // This makes it easier to manipulate Protocols from Nu.
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-        // [[NuClass classWithClass:[Protocol class]] setSuperclass:[NuClass classWithClass:[NSObject class]]];
+        [[NuClass classWithClass:[Protocol class]] setSuperclass:[NuClass classWithClass:[NSObject class]]];
         [pool release];
         // Since Apple doesn't have an API to add new protocols, we make our own.
         // We replace these functions with our own versions to include the protocols we create at runtime.

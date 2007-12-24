@@ -170,6 +170,20 @@ static int load_nu_files(NSString *bundleIdentifier, NSString *mainFile)
     return 0;
 }
 
+static void transplant_nu_methods(Class destination, Class source)
+{
+    if (!nu_copyInstanceMethod(destination, source, @selector(evalWithArguments:context:)))
+        NSLog(@"method copy failed");
+    if (!nu_copyInstanceMethod(destination, source, @selector(sendMessage:withContext:)))
+        NSLog(@"method copy failed");
+    if (!nu_copyInstanceMethod(destination, source, @selector(stringValue)))
+        NSLog(@"method copy failed");
+    if (!nu_copyInstanceMethod(destination, source, @selector(evalWithContext:)))
+        NSLog(@"method copy failed");
+    if (!nu_copyInstanceMethod(destination, source, @selector(handleUnknownMessage:withContext:)))
+        NSLog(@"method copy failed");
+}
+
 void NuInit()
 {
     static int initialized = 0;
@@ -181,27 +195,7 @@ void NuInit()
 
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
-        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(evalWithArguments:context:)))
-            NSLog(@"method copy failed");
-        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(sendMessage:withContext:)))
-            NSLog(@"method copy failed");
-        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(stringValue)))
-            NSLog(@"method copy failed");
-        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(evalWithContext:)))
-            NSLog(@"method copy failed");
-        if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(handleUnknownMessage:withContext:)))
-            NSLog(@"method copy failed");
-
-        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(evalWithArguments:context:)))
-            NSLog(@"method copy failed");
-        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(sendMessage:withContext:)))
-            NSLog(@"method copy failed");
-        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(stringValue)))
-            NSLog(@"method copy failed");
-        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(evalWithContext:)))
-            NSLog(@"method copy failed");
-        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(handleUnknownMessage:withContext:)))
-            NSLog(@"method copy failed");
+        transplant_nu_methods([NSProxy class], [NSObject class]);
 
         // Stop NSView from complaining when we retain alloc-ed views.
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
@@ -210,10 +204,12 @@ void NuInit()
         extern void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();
 
-        // Enable support for protocols in Nu.  If you've read the code, this is scary stuff.
-        // Take this out if it's too much for you.
+        // Enable support for protocols in Nu.  Apple doesn't have an API for this, so we use our own.
         extern void nu_initProtocols();
         nu_initProtocols();
+
+        // if you don't like making Protocol a subclass of NSObject (see nu_initProtocols), you can do this instead.
+        // transplant_nu_methods([Protocol class], [NSObject class]);
 
         // Load some standard files
         load_nu_files(@"nu.programming.framework", @"nu");

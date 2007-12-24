@@ -203,9 +203,8 @@
 ;; use this to create and extend protocols
 (global protocol 
         (macro _
-             ;; clean this up!
              (set __signatureForIdentifier (NuBridgedFunction functionWithName:"signature_for_identifier" signature:"@@@"))
-             (function signature (typeSpecifier)
+             (function __parse_signature (typeSpecifier)
                   (__signatureForIdentifier typeSpecifier (NuSymbolTable sharedSymbolTable)))
              
              (set __name ((margs car) stringValue))
@@ -215,13 +214,13 @@
              (set __rest (margs cdr))
              (while __rest
                     (set __method (__rest car))
-                    (set __returnType (signature ((__method cdr) car)))
+                    (set __returnType (__parse_signature ((__method cdr) car)))
                     (set __signature __returnType)
                     (__signature appendString:"@:")
                     (set __name "#{(((__method cdr) cdr) car)}")
                     (set __argumentCursor (((__method cdr) cdr) cdr))
                     (while __argumentCursor ;; argument type
-                           (__signature appendString:(signature (__argumentCursor car)))
+                           (__signature appendString:(__parse_signature (__argumentCursor car)))
                            (set __argumentCursor (__argumentCursor cdr))
                            (if __argumentCursor ;; variable name
                                (set __argumentCursor (__argumentCursor cdr)))
