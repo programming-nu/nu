@@ -19,7 +19,6 @@
 // These methods are in Leopard but not earlier versions of Mac OS X.
 // They aren't rocket science, so I wrote equivalent versions.
 #import <stddef.h>
-IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types);
 Ivar *class_copyIvarList(Class cls, unsigned int *outCount);
 Method *class_copyMethodList(Class cls, unsigned int *outCount);
 Class class_getSuperclass(Class cls);
@@ -45,6 +44,7 @@ Ivar class_getInstanceVariable(Class c, const char *name);
 void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature);
 
 // These are just handy.
+IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types);
 BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector);
 void nu_markEndOfObjCTypeString(char *type, size_t len);
 

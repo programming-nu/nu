@@ -35,7 +35,7 @@ BOOL class_hasMethod(Class cls, SEL name)
     return FALSE;
 }
 
-IMP class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
+IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
 {
     // replace the method if one with the same name is already present
     if (class_hasMethod(cls, name)) {
@@ -263,6 +263,17 @@ Ivar myclass_getInstanceVariable(Class c, const char *name)
 }
 #endif
 
+#ifdef LEOPARD_OBJC2
+IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
+{
+    if (class_addMethod( cls,  name,  imp, types))
+        return imp;
+    else {
+        return class_replaceMethod(cls, name, imp, types);
+    }
+}
+#endif
+
 void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature)
 {
     struct objc_ivar_list *ivars = thisClass->ivars;
@@ -310,7 +321,7 @@ BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL select
     if (!imp) return NO;
     const char *signature = method_getTypeEncoding(m);
     if (!signature) return NO;
-    BOOL result = (class_replaceMethod(destinationClass, selector, imp, signature) != 0);
+    BOOL result = (nu_class_replaceMethod(destinationClass, selector, imp, signature) != 0);
     return result;
 }
 

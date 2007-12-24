@@ -513,7 +513,6 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 }
             }
             else {
-                // we could probably handle NSString and NSData objects
                 NSLog(@"can't convert value of type %s to a pointer of type %s", class_getName([nu_value class]), typeString);
                 return NO;
             }
@@ -762,7 +761,9 @@ static Class placeholderClass[MAXPLACEHOLDERS];
 
 + (void) initialize
 {
-    // I don't like this. How can I automatically recognize placeholders? Or convince Apple to make placeholders ignore releases?
+    // I don't like this. How can I automatically recognize placeholders?
+    // Or convince Apple to make placeholders ignore releases?
+    // I could also disable those releases myself by adding dummy release methods.
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableArray");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderArray");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableDictionary");
@@ -1021,8 +1022,12 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     st_insert(nu_block_table, (long) imp, (long) block);
 
     // insert the method handler in the class method table
-    IMP oldMethod = class_replaceMethod(c, selector, imp, signature_str);
-    if (oldMethod) {
+	IMP oldMethod = nu_class_replaceMethod(
+c, 
+selector, 
+imp, 
+signature_str);
+    if (oldMethod != 0) {
         // NSLog(@"replacing handler for %s(%s) in class %s", method_name_str, signature_str, c->name);
         return [NSNull null];
     }
@@ -1148,46 +1153,150 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 
 @end
 
+static NuSymbol *oneway_symbol, *in_symbol, *out_symbol, *inout_symbol, *bycopy_symbol, *byref_symbol, *const_symbol, *void_symbol, *star_symbol, *id_symbol, *voidstar_symbol, *idstar_symbol, *int_symbol, *BOOL_symbol, *double_symbol, *float_symbol, *NSRect_symbol, *NSPoint_symbol, *NSSize_symbol, *NSRange_symbol, *SEL_symbol, *Class_symbol;
+
+static void prepare_symbols(NuSymbolTable *symbolTable)
+{
+    oneway_symbol = [symbolTable symbolWithCString:"oneway"];
+    in_symbol = [symbolTable symbolWithCString:"in"];
+    out_symbol = [symbolTable symbolWithCString:"out"];
+    inout_symbol = [symbolTable symbolWithCString:"inout"];
+    bycopy_symbol = [symbolTable symbolWithCString:"bycopy"];
+    byref_symbol = [symbolTable symbolWithCString:"byref"];
+    const_symbol = [symbolTable symbolWithCString:"const"];
+    void_symbol = [symbolTable symbolWithCString:"void"];
+    star_symbol = [symbolTable symbolWithCString:"*"];
+    id_symbol = [symbolTable symbolWithCString:"id"];
+    voidstar_symbol = [symbolTable symbolWithCString:"void*"];
+    idstar_symbol = [symbolTable symbolWithCString:"id*"];
+    int_symbol = [symbolTable symbolWithCString:"int"];
+    BOOL_symbol = [symbolTable symbolWithCString:"BOOL"];
+    double_symbol = [symbolTable symbolWithCString:"double"];
+    float_symbol = [symbolTable symbolWithCString:"float"];
+    NSRect_symbol = [symbolTable symbolWithCString:"NSRect"];
+    NSPoint_symbol = [symbolTable symbolWithCString:"NSPoint"];
+    NSSize_symbol = [symbolTable symbolWithCString:"NSSize"];
+    NSRange_symbol = [symbolTable symbolWithCString:"NSRange"];
+    SEL_symbol = [symbolTable symbolWithCString:"SEL"];
+    Class_symbol = [symbolTable symbolWithCString:"Class"];
+}
+
 NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
 {
-    //NSLog(@"getting signature for type identifier %@", [cell stringValue]);
-    if ([cell cdr] == [NSNull null]) {
-        if ([cell car] == [symbolTable symbolWithCString:"void"])
-            return @"v";
-        else if ([cell car] == [symbolTable symbolWithCString:"id"])
-            return @"@";
-        else if ([cell car] == [symbolTable symbolWithCString:"id*"])
-            return @"^@";
-        else if ([cell car] == [symbolTable symbolWithCString:"int"])
-            return @"i";
-        else if ([cell car] == [symbolTable symbolWithCString:"BOOL"])
-            return @"c";
-        else if ([cell car] == [symbolTable symbolWithCString:"double"])
-            return @"d";
-        else if ([cell car] == [symbolTable symbolWithCString:"float"])
-            return @"f";
-        else if ([cell car] == [symbolTable symbolWithCString:"NSRect"])
-            return @NSRECT_SIGNATURE0;
-        else if ([cell car] == [symbolTable symbolWithCString:"NSPoint"])
-            return @NSPOINT_SIGNATURE0;
-        else if ([cell car] == [symbolTable symbolWithCString:"NSSize"])
-            return @NSSIZE_SIGNATURE0;
-        else if ([cell car] == [symbolTable symbolWithCString:"NSRange"])
-            return @NSRANGE_SIGNATURE;
-        else if ([cell car] == [symbolTable symbolWithCString:"SEL"])
-            return @":";
-        else if ([cell car] == [symbolTable symbolWithCString:"Class"])
-            return @"#";
+    static NuSymbolTable *currentSymbolTable = nil;
+    if (currentSymbolTable != symbolTable) {
+        prepare_symbols(symbolTable);
+        currentSymbolTable = symbolTable;
     }
-    else if (([[cell cdr] car] == [symbolTable symbolWithCString:"*"]) && ([[cell cdr] cdr] == [NSNull null])) {
-        if ([cell car] == [symbolTable symbolWithCString:"void"])
-            return @"^v";
-        else if ([cell car] == [symbolTable symbolWithCString:"id"])
-            return @"^@";
+    NSMutableString *signature = [NSMutableString string];
+    id cursor = cell;
+    BOOL finished = NO;
+    while (cursor && cursor != Nu__null) {
+        if (finished) {
+            // ERROR!
+            NSLog(@"I can't bridge this return type yet: %@ (%@)", [cell stringValue], signature);
+            return @"?";
+        }
+        id cursor_car = [cursor car];
+        if (cursor_car == oneway_symbol) {
+            [signature appendString:@"V"];
+        }
+        else if (cursor_car == in_symbol) {
+            [signature appendString:@"n"];
+        }
+        else if (cursor_car == out_symbol) {
+            [signature appendString:@"o"];
+        }
+        else if (cursor_car == inout_symbol) {
+            [signature appendString:@"N"];
+        }
+        else if (cursor_car == bycopy_symbol) {
+            [signature appendString:@"O"];
+        }
+        else if (cursor_car == byref_symbol) {
+            [signature appendString:@"R"];
+        }
+        else if (cursor_car == const_symbol) {
+            [signature appendString:@"r"];
+        }
+        else if (cursor_car == void_symbol) {
+            if (![cursor cdr] || ([cursor cdr] == [NSNull null])) {
+                [signature appendString:@"v"];
+                finished = YES;
+            }
+            else if ([[cursor cdr] car] == star_symbol) {
+                [signature appendString:@"^v"];
+                cursor = [cursor cdr];
+                finished = YES;
+            }
+        }
+        else if (cursor_car == id_symbol) {
+            if (![cursor cdr] || ([cursor cdr] == [NSNull null])) {
+                [signature appendString:@"@"];
+                finished = YES;
+            }
+            else if ([[cursor cdr] car] == star_symbol) {
+                [signature appendString:@"^@"];
+                cursor = [cursor cdr];
+                finished = YES;
+            }
+        }
+        else if ([cursor car] == voidstar_symbol) {
+            [signature appendString:@"^v"];
+            finished = YES;
+        }
+        else if ([cursor car] == idstar_symbol) {
+            [signature appendString:@"^@"];
+            finished = YES;
+        }
+        else if ([cursor car] == int_symbol) {
+            [signature appendString:@"i"];
+            finished = YES;
+        }
+        else if ([cursor car] == BOOL_symbol) {
+            [signature appendString:@"c"];
+            finished = YES;
+        }
+        else if ([cursor car] == double_symbol) {
+            [signature appendString:@"d"];
+            finished = YES;
+        }
+        else if ([cursor car] == float_symbol) {
+            [signature appendString:@"f"];
+            finished = YES;
+        }
+        else if ([cursor car] == NSRect_symbol) {
+            [signature appendString:@NSRECT_SIGNATURE0];
+            finished = YES;
+        }
+        else if ([cursor car] == NSPoint_symbol) {
+            [signature appendString:@NSPOINT_SIGNATURE0];
+            finished = YES;
+        }
+        else if ([cursor car] == NSSize_symbol) {
+            [signature appendString:@NSSIZE_SIGNATURE0];
+            finished = YES;
+        }
+        else if ([cursor car] == NSRange_symbol) {
+            [signature appendString:@NSRANGE_SIGNATURE];
+            finished = YES;
+        }
+        else if ([cursor car] == SEL_symbol) {
+            [signature appendString:@":"];
+            finished = YES;
+        }
+        else if ([cursor car] == Class_symbol) {
+            [signature appendString:@"#"];
+            finished = YES;
+        }
+        cursor = [cursor cdr];
     }
-
-    NSLog(@"I can't bridge this return type yet: %@", [cell stringValue]);
-    return @"?";
+    if (finished)
+        return signature;
+    else {
+        NSLog(@"I can't bridge this return type yet: %@ (%@)", [cell stringValue], signature);
+        return @"?";
+    }
 }
 
 id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *context)

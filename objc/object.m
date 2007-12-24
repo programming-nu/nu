@@ -550,34 +550,3 @@
 
 @end
 
-@implementation NSProxy(Nu)
-
-// To avoid code duplication, these placeholder methods are replaced at runtime
-// with the implementations of the corresponding methods of NSObject(Nu).
-
-- (id) evalWithContext:(NSMutableDictionary *) context
-{
-    return nil;
-}
-
-- (id) stringValue
-{
-    return nil;
-}
-
-- (id) sendMessage:(id)cdr withContext:(NSMutableDictionary *)context
-{
-    return nil;
-}
-
-- (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)context
-{
-    return nil;
-}
-
-- (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
-{
-    return nil;
-}
-
-@end
