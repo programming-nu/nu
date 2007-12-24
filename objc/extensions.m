@@ -139,7 +139,7 @@ extern id Nu__null;
 - (id) times:(id) block
 {
     id args = [[NuCell alloc] init];
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         int x = [self intValue];
         int i;
         for (i = 0; i < x; i++) {
@@ -319,7 +319,7 @@ extern id Nu__null;
 {
     extern void nu_disableNSLog();
     extern void nu_enableNSLog();
-    // Send 
+    // Send
     //    "NSView not correctly initialized. Did you forget to call super?”
     // into a black hole.
     nu_disableNSLog();

@@ -198,3 +198,39 @@
                                (catch (error)
                                       (super handleUnknownMessage:message withContext:context))))
                         (else (super handleUnknownMessage:message withContext:context))))))
+
+
+;; use this to create and extend protocols
+(global protocol 
+        (macro _
+             ;; clean this up!
+             (set __signatureForIdentifier (NuBridgedFunction functionWithName:"signature_for_identifier" signature:"@@@"))
+             (function signature (typeSpecifier)
+                  (__signatureForIdentifier typeSpecifier (NuSymbolTable sharedSymbolTable)))
+             
+             (set __name ((margs car) stringValue))
+             (unless (set __protocol (Protocol protocolNamed: __name))
+                     (set __protocol ((Protocol alloc) initWithName: __name)))     
+             (eval (list 'set (margs car) __protocol))
+             (set __rest (margs cdr))
+             (while __rest
+                    (set __method (__rest car))
+                    (set __returnType (signature ((__method cdr) car)))
+                    (set __signature __returnType)
+                    (__signature appendString:"@:")
+                    (set __name "#{(((__method cdr) cdr) car)}")
+                    (set __argumentCursor (((__method cdr) cdr) cdr))
+                    (while __argumentCursor ;; argument type
+                           (__signature appendString:(signature (__argumentCursor car)))
+                           (set __argumentCursor (__argumentCursor cdr))
+                           (if __argumentCursor ;; variable name
+                               (set __argumentCursor (__argumentCursor cdr)))
+                           (if __argumentCursor ;; selector
+                               (__name appendString:((__argumentCursor car) stringValue))
+                               (set __argumentCursor (__argumentCursor cdr))))
+                    (cond ((or (eq (__method car) '-) (eq (__method car) 'imethod))
+                           (__protocol addInstanceMethod:__name withSignature:__signature))
+                          ((or (eq (__method car) '+) (eq (__method car) 'cmethod))
+                           (__protocol addClassMethod:__name withSignature:__signature))
+                          (else nil))        
+                    (set __rest (__rest cdr)))))

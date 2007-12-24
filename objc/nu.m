@@ -192,12 +192,28 @@ void NuInit()
         if (!nu_copyInstanceMethod([NSProxy class], [NSObject class], @selector(handleUnknownMessage:withContext:)))
             NSLog(@"method copy failed");
 
+        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(evalWithArguments:context:)))
+            NSLog(@"method copy failed");
+        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(sendMessage:withContext:)))
+            NSLog(@"method copy failed");
+        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(stringValue)))
+            NSLog(@"method copy failed");
+        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(evalWithContext:)))
+            NSLog(@"method copy failed");
+        if (!nu_copyInstanceMethod([Protocol class], [NSObject class], @selector(handleUnknownMessage:withContext:)))
+            NSLog(@"method copy failed");
+
         // Stop NSView from complaining when we retain alloc-ed views.
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
 
         // Apply swizzles to container classes to make them tolerant of nil insertions.
         extern void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();
+
+        // Enable support for protocols in Nu.  If you've read the code, this is scary stuff.
+        // Take this out if it's too much for you.
+        extern void nu_initProtocols();
+        nu_initProtocols();
 
         // Load some standard files
         load_nu_files(@"nu.programming.framework", @"nu");

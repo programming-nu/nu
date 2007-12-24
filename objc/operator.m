@@ -44,7 +44,7 @@
 static bool valueIsTrue(id value)
 {
     bool result = value && (value != Nu__null) && (value != Nu__zero);
-    if (result && [value isKindOfClass:[NSNumber class]]) {
+    if (result && nu_objectIsKindOfClass(value, [NSNumber class])) {
         if ([value doubleValue] == 0.0)
             result = false;
     }
@@ -278,7 +278,7 @@ static bool valueIsTrue(id value)
     id expressions = [cdr cdr];
     while (expressions && (expressions != Nu__null)) {
         id nextExpression = [expressions car];
-        if ([nextExpression isKindOfClass:[NuCell class]]) {
+        if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
             if ([nextExpression car] == elseSymbol) {
                 if (!testIsTrue)
                     result = [nextExpression evalWithContext:context];
@@ -317,7 +317,7 @@ static bool valueIsTrue(id value)
     id expressions = [cdr cdr];
     while (expressions && (expressions != Nu__null)) {
         id nextExpression = [expressions car];
-        if ([nextExpression isKindOfClass:[NuCell class]]) {
+        if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
             if ([nextExpression car] == elseSymbol) {
                 if (testIsTrue)
                     result = [nextExpression evalWithContext:context];
@@ -463,7 +463,7 @@ static bool valueIsTrue(id value)
         id expressions = cdr;
         while (expressions && (expressions != Nu__null)) {
             id nextExpression = [expressions car];
-            if ([nextExpression isKindOfClass:[NuCell class]]) {
+            if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
                 if (([nextExpression car] != catchSymbol) && ([nextExpression car] != finallySymbol)) {
                     result = [nextExpression evalWithContext:context];
                 }
@@ -479,7 +479,7 @@ static bool valueIsTrue(id value)
         id expressions = cdr;
         while (expressions && (expressions != Nu__null)) {
             id nextExpression = [expressions car];
-            if ([nextExpression isKindOfClass:[NuCell class]]) {
+            if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
                 if (([nextExpression car] == catchSymbol)) {
                     // this is a catch block.
                     // the first expression should be a list with a single symbol
@@ -504,7 +504,7 @@ static bool valueIsTrue(id value)
         id expressions = cdr;
         while (expressions && (expressions != Nu__null)) {
             id nextExpression = [expressions car];
-            if ([nextExpression isKindOfClass:[NuCell class]]) {
+            if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
                 if (([nextExpression car] == finallySymbol)) {
                     // this is a finally block
                     // loop over the rest of the expressions and evaluate them one by one
@@ -694,7 +694,7 @@ static bool valueIsTrue(id value)
     id symbol = [cdr car];
     id value = [[cdr cdr] car];
     value = [value evalWithContext:context];
-    if ([value isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(value, [NuBlock class])) {
         //NSLog(@"setting context[%@] = %@", symbol, value);
         [((NSMutableDictionary *)[value context]) setObject:value forKey:symbol];
     }
@@ -761,7 +761,7 @@ static bool valueIsTrue(id value)
     }
     // otherwise, it's an addition
     id firstArgument = [[cdr car] evalWithContext:context];
-    if ([firstArgument isKindOfClass:[NSValue class]]) {
+    if (nu_objectIsKindOfClass(firstArgument, [NSValue class])) {
         double sum = [firstArgument doubleValue];
         id cursor = [cdr cdr];
         while (cursor && (cursor != Nu__null)) {

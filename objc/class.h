@@ -1,23 +1,26 @@
 /*!
     @header class.h
-  	@copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
-  	@discussion Declarations for the NuClass class,
- 	which represents classes in the Objective-C runtime.
+    @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+    @discussion Declarations for the NuClass class,
+    which represents classes in the Objective-C runtime.
 */
 #import <Foundation/Foundation.h>
 
 @class NuMethod;
 
 /*!
-	@class NuClass
+    @class NuClass
     @abstract A Nu wrapper for class representations in the Objective-C runtime.
     @discussion NuClass provides an object wrapper for classes that are represented in the Objective-C runtime.
     NuClass objects are used in the Nu language to manipulate and extend Objective-C classes.
  */
 @interface NuClass : NSObject
 {
-	Class c;
+    Class c;
 }
+
+/*! Create a class wrapper for the specified class (used from Objective-C). */
++ (NuClass *) classWithClass:(Class) class;
 /*! Create a class wrapper for the named Objective-C class. */
 + (NuClass *) classWithName:(NSString *)string;
 /*! Initialize a class wrapper for the specified class (used from Objective-C). */
@@ -26,7 +29,7 @@
 - (id) initWithClassNamed:(NSString *) name;
 /*! Get the class corresponding to the NuClass wrapper (used from Objective-C). */
 - (Class) wrappedClass;
-/*! Get an array of all classes known to the Objective-C runtime. 
+/*! Get an array of all classes known to the Objective-C runtime.
 Beware, some of these classes may be deprecated, undocumented, or otherwise unsafe to use. */
 + (NSArray *) all;
 /*! Get the name of a class. */
@@ -45,6 +48,8 @@ Beware, some of these classes may be deprecated, undocumented, or otherwise unsa
 - (NuMethod *) instanceMethodWithName:(NSString *) methodName;
 /*! Compare two classes for equality. */
 - (BOOL) isEqual:(NuClass *) anotherClass;
+/*! Change the superclass of a class. Be careful with this. */
+- (void) setSuperclass:(NuClass *) newSuperclass;
 @end
 
 @class NuBlock;

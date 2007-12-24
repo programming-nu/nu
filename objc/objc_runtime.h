@@ -46,6 +46,7 @@ void class_addInstanceVariable_withSignature(Class thisClass, const char *variab
 // These are just handy.
 IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types);
 BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector);
+BOOL nu_objectIsKindOfClass(id object, Class class);
 void nu_markEndOfObjCTypeString(char *type, size_t len);
 
 // This makes it safe to insert nil into container classes

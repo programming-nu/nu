@@ -19,7 +19,17 @@
     const char *name = [string cStringUsingEncoding:NSUTF8StringEncoding];
     Class class = objc_getClass(name);
     if (class) {
-        return [[self alloc] initWithClass:class];
+        return [[[self alloc] initWithClass:class] autorelease];
+    }
+    else {
+        return nil;
+    }
+}
+
++ (NuClass *) classWithClass:(Class) class
+{
+    if (class) {
+        return [[[self alloc] initWithClass:class] autorelease];
     }
     else {
         return nil;
@@ -109,7 +119,7 @@
         return true;
     Class superclass = [myclass superclass];
     if (superclass)
-        return [superclass isKindOfClass:parent];
+		return nu_objectIsKindOfClass(superclass, parent);
     return false;
 }
 
@@ -155,4 +165,14 @@
     return c == anotherClass->c;
 }
 
+- (void) setSuperclass:(NuClass *) newSuperclass
+{
+	struct nu_objc_class
+	{
+	    Class isa;
+	    Class super_class;
+	    // other stuff...
+	};
+    ((struct nu_objc_class *) self->c)->super_class = newSuperclass->c;
+}
 @end

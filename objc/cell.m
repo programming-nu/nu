@@ -110,7 +110,7 @@
         else
             [result appendString:@" "];
         id mycar = [cell car];
-        if ([mycar isKindOfClass:[NuCell class]]) {
+        if (nu_objectIsKindOfClass(mycar, [NuCell class])) {
             [result appendString:[mycar stringValue]];
         }
         else if (mycar && (mycar != Nu__null)) {
@@ -121,7 +121,7 @@
         }
         cell = [cell cdr];
         // check for dotted pairs
-        if (IS_NOT_NULL(cell) && ![cell isKindOfClass:[NuCell class]]) {
+        if (IS_NOT_NULL(cell) && !nu_objectIsKindOfClass(cell, [NuCell class])) {
             [result appendString:@" . "];
             [result appendString:[cell description]];
             break;
@@ -140,7 +140,7 @@
 
 - (id) each:(NuBlock *) block
 {
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
         id cursor = self;
         while (cursor && (cursor != Nu__null)) {
@@ -155,7 +155,7 @@
 
 - (id) eachPair:(NuBlock *) block
 {
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
         [args setCdr:[[[NuCell alloc] init] autorelease]];
         id cursor = self;
@@ -173,7 +173,7 @@
 - (id) map:(NuBlock *) block
 {
     NuCell *result = [[[NuCell alloc] init] autorelease];
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
         [args setCar:[self car]];
         [result setCar: [block evalWithArguments:args context:Nu__null]];

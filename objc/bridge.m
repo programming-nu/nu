@@ -490,7 +490,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             // pointers require some work.. and cleanup. This LEAKS.
             if (!strcmp(typeString, "^*")) {
                 // array of strings, which requires an NSArray or NSNull (handled above)
-                if ([nu_value isKindOfClass:[NSArray class]]) {
+                if (nu_objectIsKindOfClass(nu_value, [NSArray class])) {
                     int array_size = [nu_value count];
                     char **array = (char **) malloc (array_size * sizeof(char *));
                     int i;
@@ -507,7 +507,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 }
             }
             else if (!strcmp(typeString, "^@")) {
-                if ([nu_value isKindOfClass:[NuReference class]]) {
+                if (nu_objectIsKindOfClass(nu_value, [NuReference class])) {
                     *((id **) objc_value) = [nu_value pointerToReferencedObject];
                     return YES;
                 }
@@ -526,7 +526,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
 
         case '#':
         {
-            if ([nu_value isKindOfClass:[NuClass class]]) {
+            if (nu_objectIsKindOfClass(nu_value, [NuClass class])) {
                 *((Class *)objc_value) = [nu_value wrappedClass];
                 return NO;
             }
@@ -877,15 +877,6 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
                     }
                 }
                 if (!found) {
-                    // NSLog(@"autoreleasing object of class %@", resultClass);
-                    //if (((s == @selector(alloc)) || (s == @selector(allocWithZone:))) && [result isKindOfClass:[NSView class]]) {
-                    //NSLog(@"fake initialization of NSView object");
-                    // Sleazy trick. To avoid bogus warnings about views being incorrectly initialized,
-                    // call NSView init on freshly allocated NSViews.
-                    // Suggestion to Apple: remove those warnings.
-                    //IMP initIMP = [NSView instanceMethodForSelector:@selector(init)];
-                    //initIMP(result, @selector(init));
-                    //}
                     [result autorelease];
                 }
             }
@@ -1022,11 +1013,11 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     st_insert(nu_block_table, (long) imp, (long) block);
 
     // insert the method handler in the class method table
-	IMP oldMethod = nu_class_replaceMethod(
-c, 
-selector, 
-imp, 
-signature_str);
+    IMP oldMethod = nu_class_replaceMethod(
+        c,
+        selector,
+        imp,
+        signature_str);
     if (oldMethod != 0) {
         // NSLog(@"replacing handler for %s(%s) in class %s", method_name_str, signature_str, c->name);
         return [NSNull null];
@@ -1188,6 +1179,7 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
         prepare_symbols(symbolTable);
         currentSymbolTable = symbolTable;
     }
+    NSMutableArray *modifiers = nil;
     NSMutableString *signature = [NSMutableString string];
     id cursor = cell;
     BOOL finished = NO;
@@ -1199,28 +1191,37 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
         }
         id cursor_car = [cursor car];
         if (cursor_car == oneway_symbol) {
-            [signature appendString:@"V"];
+            if (!modifiers) modifiers = [NSMutableArray array];
+            [modifiers addObject:@"V"];
         }
         else if (cursor_car == in_symbol) {
-            [signature appendString:@"n"];
+            if (!modifiers) modifiers = [NSMutableArray array];
+            [modifiers addObject:@"n"];
         }
         else if (cursor_car == out_symbol) {
-            [signature appendString:@"o"];
+            if (!modifiers) modifiers = [NSMutableArray array];
+            [modifiers addObject:@"o"];
         }
         else if (cursor_car == inout_symbol) {
-            [signature appendString:@"N"];
+            if (!modifiers) modifiers = [NSMutableArray array];
+            [modifiers addObject:@"N"];
         }
         else if (cursor_car == bycopy_symbol) {
-            [signature appendString:@"O"];
+            if (!modifiers) modifiers = [NSMutableArray array];
+            [modifiers addObject:@"O"];
         }
         else if (cursor_car == byref_symbol) {
-            [signature appendString:@"R"];
+            if (!modifiers) modifiers = [NSMutableArray array];
+            [modifiers addObject:@"R"];
         }
         else if (cursor_car == const_symbol) {
-            [signature appendString:@"r"];
+            if (!modifiers) modifiers = [NSMutableArray array];
+            [modifiers addObject:@"r"];
         }
         else if (cursor_car == void_symbol) {
             if (![cursor cdr] || ([cursor cdr] == [NSNull null])) {
+                if (modifiers)
+                    [signature appendString:[[modifiers sortedArrayUsingSelector:@selector(compare:)] componentsJoinedByString:@""]];
                 [signature appendString:@"v"];
                 finished = YES;
             }
@@ -1232,6 +1233,8 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
         }
         else if (cursor_car == id_symbol) {
             if (![cursor cdr] || ([cursor cdr] == [NSNull null])) {
+                if (modifiers)
+                    [signature appendString:[[modifiers sortedArrayUsingSelector:@selector(compare:)] componentsJoinedByString:@""]];
                 [signature appendString:@"@"];
                 finished = YES;
             }

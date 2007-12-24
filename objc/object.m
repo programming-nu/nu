@@ -144,7 +144,7 @@
     id cursor = cdr;
     SEL sel = 0;
     id nextSymbol = [cursor car];
-    if ([nextSymbol isKindOfClass:[NuSymbol class]]) {
+    if (nu_objectIsKindOfClass(nextSymbol, [NuSymbol class])) {
         // The commented out code below was the original approach.
         // methods were identified by concatenating symbols and looking up the resulting method -- on every method call
         // that was slow but simple
@@ -156,7 +156,7 @@
             cursor = [cursor cdr];
             if (cursor && (cursor != Nu__null)) {
                 id nextSymbol = [cursor car];
-                if ([nextSymbol isKindOfClass:[NuSymbol class]] && [nextSymbol isLabel]) {
+                if (nu_objectIsKindOfClass(nextSymbol, [NuSymbol class]) && [nextSymbol isLabel]) {
                     // [selectorString appendString:[nextSymbol stringValue]];
                     selectorCache = [selectorCache lookupSymbol:nextSymbol];
                 }
@@ -171,7 +171,8 @@
 
     // Look up the appropriate method to call for the specified selector.
     Method m;
-    if ([self isMemberOfClass:[NuClass class]]) {
+    BOOL isAClass = (self->isa == [NuClass class]) ? YES : NO; // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
+    if (isAClass) {
         // Class wrappers (objects of type NuClass) get special treatment. Instance methods are sent directly to the class wrapper object.
         // But when a class method is sent to a class wrapper, the method is instead sent as a class method to the wrapped class.
         // This makes it possible to call class methods from Nu, but there is no way to directly call class methods of NuClass from Nu.
@@ -206,7 +207,7 @@
     else {
         // If the head of the list is a label, we treat the list as a property list.
         // We just evaluate the elements of the list and return the result.
-        if ([self isKindOfClass: [NuSymbol class]] && [((NuSymbol *)self) isLabel]) {
+        if (nu_objectIsKindOfClass(self, [NuSymbol class]) && [((NuSymbol *)self) isLabel]) {
             NuCell *cell = [[NuCell alloc] init];
             [cell setCar: self];
             id cursor = cdr;
@@ -251,7 +252,7 @@
     id cursor = cdr;
     SEL sel = 0;
     id nextSymbol = [cursor car];
-    if ([nextSymbol isKindOfClass:[NuSymbol class]]) {
+    if (nu_objectIsKindOfClass(nextSymbol, [NuSymbol class])) {
         // The commented out code below was the original approach.
         // methods were identified by concatenating symbols and looking up the resulting method -- on every method call
         // that was slow but simple
@@ -263,7 +264,7 @@
             cursor = [cursor cdr];
             if (cursor && (cursor != Nu__null)) {
                 id nextSymbol = [cursor car];
-                if ([nextSymbol isKindOfClass:[NuSymbol class]] && [nextSymbol isLabel]) {
+                if (nu_objectIsKindOfClass(nextSymbol, [NuSymbol class]) && [nextSymbol isLabel]) {
                     // [selectorString appendString:[nextSymbol stringValue]];
                     selectorCache = [selectorCache lookupSymbol:nextSymbol];
                 }
@@ -549,4 +550,3 @@
 }
 
 @end
-

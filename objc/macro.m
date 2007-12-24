@@ -43,7 +43,7 @@ extern id Nu__null;
 {
     id car = [cell car];
     if ([car atom]) {
-        if ([car isKindOfClass:[NuSymbol class]] && [car isGensym]) {
+        if (nu_objectIsKindOfClass(car, [NuSymbol class]) && [car isGensym]) {
             [gensyms addObject:car];
         }
     }
@@ -79,10 +79,10 @@ extern id Nu__null;
 		[newBody setCar:car];
     }
     else if ([car atom]) {
-        if ([car isKindOfClass:[NuSymbol class]] && [car isGensym]) {
+        if (nu_objectIsKindOfClass(car, [NuSymbol class]) && [car isGensym]) {
             [newBody setCar:[symbolTable symbolWithString:[NSString stringWithFormat:@"%@%@", prefix, [car stringValue]]]];
         }
-        else if ([car isKindOfClass:[NSString class]]) {
+        else if (nu_objectIsKindOfClass(car, [NSString class])) {
             // Here we replace gensyms in interpolated strings.
             // The current solution is workable but fragile;
             // we just blindly replace the gensym names with their expanded names.

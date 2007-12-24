@@ -15,7 +15,7 @@
 - (id) each:(NuBlock *) block
 {
     id args = [[NuCell alloc] init];
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
@@ -31,7 +31,7 @@
 {
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         int i = 0;
@@ -50,7 +50,7 @@
 {
     NSMutableArray *selected = [[NSMutableArray alloc] init];
     id args = [[NuCell alloc] init];
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
@@ -68,7 +68,7 @@
 - (id) find:(NuBlock *) block
 {
     id args = [[NuCell alloc] init];
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
@@ -87,7 +87,7 @@
 {
     NSMutableArray *results = [[NSMutableArray alloc] init];
     id args = [[NuCell alloc] init];
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
@@ -104,7 +104,7 @@
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
     id result = initial;
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
@@ -124,7 +124,7 @@
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
 
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
@@ -156,7 +156,7 @@
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
     id result = initial;
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         int i;
         for (i = [self count] - 1; i >= 0; i--) {
             id object = [self objectAtIndex:i];
@@ -172,7 +172,7 @@
 - (id) eachInReverse:(NuBlock *) block
 {
     id args = [[NuCell alloc] init];
-    if ([block isKindOfClass:[NuBlock class]]) {
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self reverseObjectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {

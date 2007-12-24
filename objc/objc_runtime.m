@@ -325,6 +325,15 @@ BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL select
     return result;
 }
 
+BOOL nu_objectIsKindOfClass(id object, Class class) {
+	Class classCursor = object->isa;
+	while (classCursor) {
+		if (classCursor == class) return YES;
+		classCursor = class_getSuperclass(classCursor);
+	}
+	return NO;
+}
+
 // This function attempts to recognize the return type from a method signature.
 // It scans across the signature until it finds a complete return type string,
 // then it inserts a null to mark the end of the string.
