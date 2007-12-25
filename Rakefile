@@ -12,10 +12,12 @@ if File.exist? "/usr/lib/libffi.dylib"
   # Use the libffi that ships with OS X.
   FFI_LIB = "-L/usr/lib -lffi"
   FFI_INCLUDE = "-I /usr/include/ffi"
+  LEOPARD_CFLAGS = "-DLEOPARD_OBJC2"
 else 
   # Use the libffi that is distributed with Nu.
   FFI_LIB = "-L./libffi -lffi"
   FFI_INCLUDE = "-I ./libffi/include"
+  LEOPARD_CFLAGS = ""
 end
 
 @includes = FFI_INCLUDE
@@ -35,7 +37,7 @@ CLOBBER.include("mininush")
 @gcc_objects = @gcc_files.sub(/\.c$/, '.o').sub(/\.m$/, '.o')
 
 @cc = "gcc"
-@cflags = "-g -O2 -Wall -DMACOSX"
+@cflags = "-g -O2 -Wall -DMACOSX -std=gnu99 #{LEOPARD_CFLAGS}"
 @mflags = "-fobjc-exceptions"
 
 @ldflags = @frameworks.map {|framework| " -framework #{framework}"}.join
