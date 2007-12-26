@@ -276,6 +276,11 @@
                           (puts "key: #{(event keyCode)}")
                           nil))))
      
+     (imethod recenter is
+          (self setRegion:INITIAL)
+          (self refreshImage:self))
+     
+     
      ;; Get the currently selected rectangle, valid while a user is dragging a rectangle.
      (imethod (NSRect) selectedRect is
           (set downPoint @downPoint)
