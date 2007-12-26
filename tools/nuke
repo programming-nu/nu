@@ -303,7 +303,7 @@
                                (SH command))))
               ;; application fat executable
               (file @application_executable_name => @application_executable_dir @application_executables is
-                    (set command "lipo -create #{(@application_executables join)} -output #{@application_executable_name}")
+                    (set command "lipo -create '#{(@application_executables join)}' -output '#{@application_executable_name}'")
                     (SH command)))
          (else
               (file @application_executable_name => @application_executable_dir is 
@@ -427,7 +427,7 @@
      ;; framework fat executable
      (set @framework_executable_name "#{@framework_contents_dir}/#{@framework}")
      (file @framework_executable_name => @framework_contents_dir @framework_executables is
-           (set command "lipo -create #{(@framework_executables join)} -output #{@framework_executable_name}")
+           (set command "lipo -create '#{(@framework_executables join)}' -output '#{@framework_executable_name}'")
            (SH command))
      
      ;; framework_resources
@@ -519,7 +519,7 @@
      ;; bundle fat executable
      (set @bundle_executable_name "#{@bundle_executable_dir}/#{@bundle}")
      (file @bundle_executable_name => @bundle_executable_dir @bundle_executables is
-           (set command "lipo -create #{(@bundle_executables join)} -output #{@bundle_executable_name}")
+           (set command "lipo -create '#{(@bundle_executables join)}' -output '#{@bundle_executable_name}'")
            (SH command))
      
      ;; bundle_resources
@@ -576,7 +576,7 @@
      ;; library fat archive
      (set @library_executable_name "#{@library}.a")
      (file @library_executable_name => @library_executables is
-           (set command "lipo -create #{(@library_executables join)} -output #{@library_executable_name}")
+           (set command "lipo -create '#{(@library_executables join)}' -output '#{@library_executable_name}'")
            (SH command))
      
      (task "library" => @library_executable_name))
