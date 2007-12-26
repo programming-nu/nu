@@ -7,6 +7,7 @@
 #import <dlfcn.h>
 #import "bridgesupport.h"
 #import "extensions.h"
+#import "symbol.h"
 
 @implementation NuBridgeSupport
 
@@ -92,6 +93,70 @@
         //NSString *reason = [NSString stringWithFormat:@"unable to find BridgeSupport file for %@", framework];
         //[[NSException exceptionWithName:@"NuBridgeSupportMissing" reason:reason userInfo:nil] raise];
     }
+}
+
++ (void) prune
+{
+    NuSymbolTable *symbolTable = [NuSymbolTable sharedSymbolTable];
+    id BridgeSupport = [[symbolTable symbolWithString:@"BridgeSupport"] value];
+    [[BridgeSupport objectForKey:@"frameworks"] removeAllObjects];
+
+    id key;
+    for (int i = 0; i < 3; i++) {
+        id dictionary = [BridgeSupport objectForKey:(i == 0) ? @"constants" : (i == 1) ? @"enums" : @"functions"];
+        id keyEnumerator = [[dictionary allKeys] objectEnumerator];
+        while (key = [keyEnumerator nextObject]) {
+            if (![symbolTable lookup:[key cStringUsingEncoding:NSUTF8StringEncoding]])
+                [dictionary removeObjectForKey:key];
+        }
+    }
+}
+
++ (NSString *) stringValue
+{
+    NuSymbolTable *symbolTable = [NuSymbolTable sharedSymbolTable];
+    id BridgeSupport = [[symbolTable symbolWithString:@"BridgeSupport"] value];
+
+    id result = [NSMutableString stringWithString:@"(global BridgeSupport\n"];
+    id d, keyEnumerator, key;
+
+    [result appendString:@"        (dict\n"];
+    d = [BridgeSupport objectForKey:@"constants"];
+    [result appendString:@"             constants:\n"];
+    [result appendString:@"             (dict"];
+    keyEnumerator = [[[d allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
+    while (key = [keyEnumerator nextObject]) {
+        [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" \"%@\"", key, [d objectForKey:key]]];
+    }
+    [result appendString:@")\n"];
+
+    d = [BridgeSupport objectForKey:@"enums"];
+    [result appendString:@"             enums:\n"];
+    [result appendString:@"             (dict"];
+    keyEnumerator = [[[d allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
+    while (key = [keyEnumerator nextObject]) {
+        [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" %@", key, [d objectForKey:key]]];
+    }
+    [result appendString:@")\n"];
+
+    d = [BridgeSupport objectForKey:@"functions"];
+    [result appendString:@"             functions:\n"];
+    [result appendString:@"             (dict"];
+    keyEnumerator = [[[d allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
+    while (key = [keyEnumerator nextObject]) {
+        [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" \"%@\"", key, [d objectForKey:key]]];
+    }
+    [result appendString:@")\n"];
+
+    d = [BridgeSupport objectForKey:@"frameworks"];
+    [result appendString:@"             frameworks:\n"];
+    [result appendString:@"             (dict"];
+    keyEnumerator = [[[d allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
+    while (key = [keyEnumerator nextObject]) {
+        [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" \"%@\"", key, [d objectForKey:key]]];
+    }
+    [result appendString:@")))\n"];
+    return result;
 }
 
 @end
