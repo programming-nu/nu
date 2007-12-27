@@ -28,8 +28,9 @@
                   (unless c (set c 0))
                   (while (> c 0)
                          (spaces appendString:" ")
-                         (set c (- c 1))))
-          spaces))
+                         (set c (- c 1)))
+                  ($spaces setObject:spaces forKey:count))      
+          (NSMutableString stringWithString:spaces)))
 
 ;; @abstract A Nu code beautifier.
 ;; @discussion This class is used by nubile, the standalone Nu code beautifier, to automatically indent Nu code. 
