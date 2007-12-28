@@ -7,17 +7,12 @@
 (global RPAREN ')')
 (global SPACE  ' ')
 (global COLON  ':')
-(global TAB    '\x09') 
+(global TAB    '\x09')
 
 (class NSString
-     ;; Create a copy of a string with leading whitespace removed.
+     ;; Create a copy of a string with leading and trailing whitespace removed.
      (imethod (id) strip is
-          (set i 0)
-          (while (and (< i (self length))
-                      (or (eq (self characterAtIndex:i) SPACE) 
-                          (eq (self characterAtIndex:i) TAB)))
-                 (set i (+ i 1)))
-          (self substringFromIndex:i))
+          (self stringByTrimmingCharactersInSet:(NSCharacterSet whitespaceCharacterSet)))
      
      ;; Create a string consisting of the specified number of spaces.
      (cmethod (id) spaces: (id) count is
@@ -29,17 +24,17 @@
                   (while (> c 0)
                          (spaces appendString:" ")
                          (set c (- c 1)))
-                  ($spaces setObject:spaces forKey:count))      
+                  ($spaces setObject:spaces forKey:count))
           (NSMutableString stringWithString:spaces)))
 
 ;; @abstract A Nu code beautifier.
-;; @discussion This class is used by nubile, the standalone Nu code beautifier, to automatically indent Nu code. 
+;; @discussion This class is used by nubile, the standalone Nu code beautifier, to automatically indent Nu code.
 (class NuBeautifier is NSObject
      (ivars)
      
      ;; Beautify a string containing Nu source code.  The method returns a string containing the beautified code.
-     (imethod (id) beautify:(id) text is 
-          (set result ((NSMutableString alloc) init))
+     (imethod (id) beautify:(id) text is
+          (set result "")
           
           (set indentation_stack ((NuStack alloc) init))
           (indentation_stack push:0)
@@ -49,7 +44,7 @@
           (set nube-parser ((NuParser alloc) init))
           (set @olddepth 0)
           
-          (set lines (text componentsSeparatedByString:(NSString carriageReturn)))
+          (set lines (text componentsSeparatedByString:"\n"))
           (lines eachWithIndex:
                  (do (input-line line-number)
                      ;; indent line to current level of indentation
@@ -60,29 +55,29 @@
                                (line appendString:(input-line strip))))
                      (if (eq line-number (- (lines count) 1))
                          (then (result appendString: line))
-                         (else (result appendString: line) (result appendString:(NSString carriageReturn))))
+                         (else (result appendString: line) (result appendString:"\n")))
                      
-                     (try 
-                          (nube-parser parse:line)
-                          (catch (exception) 
-                                 (result appendString: ";; ")
-                                 (result appendString: (exception name))
-                                 (result appendString: ": ")
-                                 (result appendString: (exception reason))
-                                 (result appendString: (NSString carriageReturn))))
+                     (try
+                         (nube-parser parse:line)
+                         (catch (exception)
+                                (result appendString: ";; ")
+                                (result appendString: (exception name))
+                                (result appendString: ": ")
+                                (result appendString: (exception reason))
+                                (result appendString: "\n")))
                      (nube-parser newline)
                      
                      ;; account for any changes in indentation
                      (set indentation_change (- (nube-parser parens) @olddepth))
                      (set @olddepth (nube-parser parens))
                      (cond ((> indentation_change 0)
-                            ;; Going down, compute new levels of indentation, beginning with each unmatched paren. 
+                            ;; Going down, compute new levels of indentation, beginning with each unmatched paren.
                             (set positions ((NSMutableArray alloc) init))
                             (set i (- ((nube-parser opens) depth) indentation_change))
                             (while (< i ((nube-parser opens) depth))
                                    (positions addObject:((nube-parser opens) objectAtIndex:i))
                                    (set i (+ i 1)))
-                            ;; For each unmatched paren, find a good place to indent with respect to it. 
+                            ;; For each unmatched paren, find a good place to indent with respect to it.
                             ;; Push that on the indentation stack.
                             (positions each:
                                  (do (p)
@@ -110,8 +105,7 @@
                                                   (indentation_stack push:j)))))))
                            ((< indentation_change 0)
                             ;; Going up, pop indentation positions off the stack.
-                            (set x indentation_change)
-                            ((- 0 x) times:
+                            ((- 0 indentation_change) times:
                              (do (i) (indentation_stack pop))))
                            (else nil))))
           result))
