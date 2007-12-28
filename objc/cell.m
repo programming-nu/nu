@@ -85,8 +85,24 @@
         return car;
     id cursor = cdr;
     int i;
-    for (i = 2; i < n; i++)
+    for (i = 2; i < n; i++) {
         cursor = [cursor cdr];
+        if (cursor == Nu__null) return nil;
+    }
+    return [cursor car];
+}
+
+- (id) objectAtIndex:(int) n
+{
+    if (n < 0)
+        return nil;
+    else if (n == 0)
+        return car;
+    id cursor = cdr;
+    for (int i = 1; i < n; i++) {
+        cursor = [cursor cdr];
+        if (cursor == Nu__null) return nil;
+    }
     return [cursor car];
 }
 

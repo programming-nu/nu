@@ -18,4 +18,10 @@
           (assert_equal nil (eq '(a b c) '(a b d))) 
           (assert_equal nil (eq '(i) '(j)))
           (assert_equal t (eq 'i 'i))
-          (assert_equal nil (eq 'i 'j))))           
+          (assert_equal nil (eq 'i 'j)))
+     
+     (imethod (id) testObjectAtIndex is
+          (assert_equal 1 ('(1 2 3) objectAtIndex:0))
+          (assert_equal 2 ('(1 2 3) objectAtIndex:1))
+          (assert_equal 3 ('(1 2 3) objectAtIndex:2))
+          (assert_equal nil ('(1 2 3) objectAtIndex:3))))
