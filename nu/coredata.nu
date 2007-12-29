@@ -44,7 +44,7 @@
      
      ;; Get the managed object model, initializing it if necessary.
      (imethod (id) managedObjectModel is
-          (unless (@mom)             
+          (unless (@mom)
                   (set @mom ((NSManagedObjectModel alloc) initWithContentsOfURL:@momURL)))
           @mom)
      
@@ -52,9 +52,9 @@
      (imethod (id) persistentStoreCoordinator is
           (unless @psc
                   (set @psc ((NSPersistentStoreCoordinator alloc) initWithManagedObjectModel:(self managedObjectModel)))
-                  (unless (@psc addPersistentStoreWithType:@storeType  
-                                configuration:NULL 
-                                URL:@storeURL 
+                  (unless (@psc addPersistentStoreWithType:@storeType
+                                configuration:NULL
+                                URL:@storeURL
                                 options:(NSDictionary dictionary)
                                 error:(set perror ((NuReference alloc) init)))
                           (NSLog "error opening persistent store: #{((perror value) localizedDescription)}")))
@@ -62,7 +62,7 @@
      
      ;; Get the managed object context, initializing it if necessary.
      (imethod (id) managedObjectContext is
-          (unless @moc            
+          (unless @moc
                   (set coordinator (self persistentStoreCoordinator))
                   (if coordinator
                       (set @moc ((NSManagedObjectContext alloc) init))
@@ -71,15 +71,15 @@
      
      ;; Create an object for a specified entity.
      (imethod (id) createObjectWithEntity:(id) entityName is
-          (NSEntityDescription 
-               insertNewObjectForEntityForName:entityName 
-               inManagedObjectContext:(self managedObjectContext)))
+          (NSEntityDescription
+                              insertNewObjectForEntityForName:entityName
+                              inManagedObjectContext:(self managedObjectContext)))
      
      ;; Find or create an object with the property values in a specified list.
      (imethod (id) findOrCreateObjectWithEntity:(id) entityName propertyValues:(id)pairs is
           (set matches (self objectsWithEntity:entityName propertyValues:pairs))
-          (if (matches count) 
-              (then (matches 0)) 
+          (if (matches count)
+              (then (matches 0))
               (else (set object (self createObjectWithEntity:entityName))
                     (object set:pairs))))
      
@@ -87,7 +87,7 @@
      (imethod (id) objects is
           (set objects (NSMutableSet set))
           (((self managedObjectModel) entities) each:
-           (do (entity) 
+           (do (entity)
                (set fetch ((NSFetchRequest alloc) init))
                (fetch setEntity:entity)
                (set result ((self managedObjectContext) executeFetchRequest:fetch error:nil))
@@ -122,7 +122,7 @@
           (set predicates (NSMutableArray array))
           (pairs eachPair:
                  (do (property value)
-                     (predicates addObject: 
+                     (predicates addObject:
                           (NSPredicate predicateWithFormat:"#{(property labelName)} = '#{value}'"))))
           (f setPredicate: (NSCompoundPredicate andPredicateWithSubpredicates:predicates))
           ((self managedObjectContext) executeFetchRequest:f error:nil))
@@ -134,7 +134,7 @@
           (set predicates (NSMutableArray array))
           (pairs eachPair:
                  (do (property value)
-                     (predicates addObject: 
+                     (predicates addObject:
                           (NSPredicate predicateWithFormat:"#{(property labelName)} = '#{value}'"))))
           (f setPredicate: (NSCompoundPredicate andPredicateWithSubpredicates:predicates))
           (f setSortDescriptors: sortDescriptors)
@@ -153,13 +153,15 @@
      ;; Identifiers are represented as NSStrings.
      ;; It works by extracting the identifier from the object's URIRepresentation.
      ;; If the implementation of URIRepresentation changes, this will break.
-     (imethod (id) objectWithEntity:(id) entityName identifier:(id) identifier is 
+     (imethod (id) objectWithEntity:(id) entityName identifier:(id) identifier is
           (set prefixParts
                (((((self anyObjectWithEntity:entityName) objectID) URIRepresentation) absoluteString) componentsSeparatedByString:"/"))
-          (set prefix ((prefixParts subarrayWithRange:(list 0 (- (prefixParts count) 2))) componentsJoinedByString:"/"))	
+          (set prefix ((prefixParts subarrayWithRange:(list 0 (- (prefixParts count) 2))) componentsJoinedByString:"/"))
           (set uri (NSURL URLWithString:"#{prefix}/#{entityName}/p#{identifier}"))
           (set objectID (@psc managedObjectIDForURIRepresentation:uri))
-          (@moc objectWithID:objectID)))
+          (if (@moc objectRegisteredForID:objectID)
+              (then (@moc objectWithID:objectID))
+              (else nil))))
 
 ;; ActiveRecord-style extensions to NSManagedObject.
 ;; These are most useful for entity-specific subclasses of NSManagedObject.
@@ -173,10 +175,10 @@
      ;; Attempt to use the name of an unknown message as a key.
      (imethod (id) handleUnknownMessage:(id) method withContext:(id) context is
           (set methodName ((method car) stringValue))
-          (try 
-               (self valueForKey:methodName)
-               (catch (exception) ;; if anything went wrong, pass the message up
-                      (super handleUnknownMessage:method withContext:context))))
+          (try
+              (self valueForKey:methodName)
+              (catch (exception) ;; if anything went wrong, pass the message up
+                     (super handleUnknownMessage:method withContext:context))))
      
      ;; Delete an object.
      (imethod (id) delete is
@@ -184,17 +186,17 @@
      
      ;; Create an object for the entity with the same name as this class.
      (cmethod (id) createObject is
-          (self createObjectWithEntity:((self class) name)))     
+          (self createObjectWithEntity:((self class) name)))
      
      ;; Create an object for a named entity.
      (cmethod (id) createObjectWithEntity:(id) entityName is
-          (NSEntityDescription 
-               insertNewObjectForEntityForName:entityName 
-               inManagedObjectContext:(((NSApplication sharedApplication) delegate) managedObjectContext)))
+          (NSEntityDescription
+                              insertNewObjectForEntityForName:entityName
+                              inManagedObjectContext:(((NSApplication sharedApplication) delegate) managedObjectContext)))
      
      ;; Find objects using the class name as the entity name.
      (cmethod (id) objects is
-          (self objectsWithEntity:((self class) name)))     
+          (self objectsWithEntity:((self class) name)))
      
      ;; Find objects with a specified property value using the class name as the entity name.
      (cmethod (id) objectWithProperty:(id) property value:(id) value is
@@ -232,7 +234,7 @@
           (f setEntity:(((((NSApplication sharedApplication) delegate) managedObjectModel) entitiesByName) objectForKey:entityName))
           (set predicates (NSMutableArray array))
           (pairs eachPair:(do (property value)
-                              (predicates addObject: 
+                              (predicates addObject:
                                    (NSPredicate predicateWithFormat:"#{(property labelName)} = #{value}"))))
           (f setPredicate: (NSCompoundPredicate andPredicateWithSubpredicates:predicates))
           (f setSortDescriptors: sortDescriptors)
@@ -254,5 +256,5 @@
      ;; If the implementation of URIRepresentation changes, this will break.
      (imethod (id) identifier is ;; DANGER! This assumes the syntax of URI representations is reliable.
           (if ((self objectID) isTemporaryID) ($session save))
-          ((((((self objectID) URIRepresentation) resourceSpecifier)          
+          ((((((self objectID) URIRepresentation) resourceSpecifier)
              componentsSeparatedByString:"/") 4) substringFromIndex:1)))
