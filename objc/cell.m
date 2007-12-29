@@ -8,6 +8,7 @@
 #import "extensions.h"
 #import "operator.h"
 #import "block.h"
+#import "dtrace.h"
 
 @implementation NuCell
 
@@ -24,6 +25,8 @@
     [super init];
     car = Nu__null;
     cdr = Nu__null;
+    file = -1;
+    line = -1;
     return self;
 }
 
@@ -147,10 +150,30 @@
     return result;
 }
 
+extern const char *nu_parsedFilename(int i);
+
 - (id) evalWithContext:(NSMutableDictionary *)context
 {
     id value = [car evalWithContext:context];
+
+    if (NU_LIST_EVAL_BEGIN_ENABLED()) {
+        if ((self->line != -1) && (self->file != -1)) {
+            NU_LIST_EVAL_BEGIN(nu_parsedFilename(self->file), self->line);
+        }
+        else {
+            NU_LIST_EVAL_BEGIN("", 0);
+        }
+    }
     id result = [value evalWithArguments:cdr context:context];
+
+    if (NU_LIST_EVAL_END_ENABLED()) {
+        if ((self->line != -1) && (self->file != -1)) {
+            NU_LIST_EVAL_END(nu_parsedFilename(self->file), self->line);
+        }
+        else {
+            NU_LIST_EVAL_END("", 0);
+        }
+    }
     return result;
 }
 
@@ -226,6 +249,15 @@
     cdr = [[coder decodeObject] retain];
     return self;
 }
+
+- (void) setFile:(int) f line:(int) l
+{
+    file = f;
+    line = l;
+}
+
+- (int) file {return file;}
+- (int) line {return line;}
 
 @end
 

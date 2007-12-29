@@ -300,7 +300,9 @@ extern id Nu__null;
         if (string) {
             NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
             id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
+            [parser setFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
             id body = [parser parse: string];
+            [parser setFilename:nil];
             value = [body evalWithContext:context];
             return [symbolTable symbolWithCString:"t"];
         }

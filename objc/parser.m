@@ -14,6 +14,15 @@
 #define PARSE_HERESTRING 3
 #define PARSE_REGEX      4
 
+#define MAX_FILES 1024
+static char *filenames[MAX_FILES];
+static int filecount = 0;
+
+extern const char *nu_parsedFilename(int i)
+{
+    return filenames[i];
+}
+
 #include <readline/readline.h>
 
 @interface NuParser(Internal)
@@ -126,6 +135,34 @@ id regexWithString(NSString *string)
 
 @implementation NuParser
 
++ (const char *) filename:(int)i
+{
+    if ((i < 0) || (i >= filecount))
+        return "";
+    else
+        return filenames[i];
+}
+
+- (void) setFilename:(const char *) name
+{
+    if (name == nil)
+        filenum = -1;
+    else {
+        filenames[filecount] = strdup(name);
+        filenum = filecount;
+        filecount++;
+    }
+    linenum = 1;
+}
+
+- (const char *) filename
+{
+    if (filenum == -1)
+        return nil;
+    else
+        return filenames[filenum];
+}
+
 - (BOOL) incomplete
 {
     return (depth > 0) || (state == PARSE_REGEX) || (state == PARSE_HERESTRING);
@@ -188,6 +225,7 @@ id regexWithString(NSString *string)
         quoteDepth[i] = false;
     }
     root = current = [[NuCell alloc] init];
+    [root setFile:filenum line:linenum];
     [root setCar:[symbolTable symbolWithCString:"progn"]];
     addToCar = false;
     [stack release];
@@ -200,6 +238,7 @@ id regexWithString(NSString *string)
     if (Nu__null == 0) Nu__null = [NSNull null];
     [super init];
 
+    filenum = -1;
     linenum = 1;
     column = 0;
     opens = [[NuStack alloc] init];
@@ -236,6 +275,7 @@ id regexWithString(NSString *string)
     }
     depth++;
     NuCell *newCell = [[[NuCell alloc] init] autorelease];
+    [newCell setFile:filenum line:linenum];
     if (addToCar) {
         [current setCar:newCell];
         [stack push:current];
@@ -284,6 +324,7 @@ id regexWithString(NSString *string)
     }
     else {
         newCell = [[[NuCell alloc] init] autorelease];
+        [newCell setFile:filenum line:linenum];
     }
     if (addToCar) {
         [current setCar:newCell];
@@ -403,7 +444,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     return i;
 }
 
--(id) parse:(NSString *)string
+-(id) parse:(NSString*)string
 {
     if (!string) return [NSNull null];            // don't crash, at least.
 

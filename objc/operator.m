@@ -1184,7 +1184,9 @@ static bool valueIsTrue(id value)
             NSString *string = [NSString stringWithContentsOfFile: fileName];
             id value = Nu__null;
             if (string) {
+                [parser setFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
                 id body = [parser parse: string];
+                [parser setFilename:nil];
                 value = [body evalWithContext:context];
                 return [symbolTable symbolWithCString:"t"];
             }

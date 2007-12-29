@@ -82,7 +82,9 @@ int NuMain(int argc, const char *argv[])
         NSString *main_nu = [NSString stringWithContentsOfFile:main_path];
         if (main_nu) {
             NuParser *parser = [[NuParser alloc] init];
+            [parser setFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
             id script = [parser parse: main_nu];
+            [parser setFilename:nil];
             [parser eval:script];
             [parser release];
             [pool release];
@@ -105,7 +107,9 @@ int NuMain(int argc, const char *argv[])
             }
             else if (!strcmp(argv[i], "-f")) {
                 i++;
+                [parser setFilename:argv[i]];
                 script = [parser parse:[NSString stringWithFormat:@"(load \"%s\")", argv[i]]];
+                [parser setFilename:nil];
                 result = [parser eval:script];
             }
             else if (!strcmp(argv[i], "-i")) {
@@ -116,7 +120,9 @@ int NuMain(int argc, const char *argv[])
                 if (!fileEvaluated) {
                     id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
                     if (string) {
+                        [parser setFilename:argv[i]];
                         id script = [parser parse:string];
+                        [parser setFilename:nil];
                         [parser eval:script];
                         fileEvaluated = true;
                     }
@@ -140,7 +146,9 @@ int NuMain(int argc, const char *argv[])
         if (!isatty(stdin->_file)) {
             NuParser *parser = [[NuParser alloc] init];
             id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+			[parser setFilename:"stdin"];
             id script = [parser parse:string];
+			[parser setFilename:nil];
             [parser eval:script];
             [parser release];
             [pool release];
@@ -162,7 +170,9 @@ static int load_nu_files(NSString *bundleIdentifier, NSString *mainFile)
         NSString *main_nu = [NSString stringWithContentsOfFile:main_path];
         if (main_nu) {
             id parser = [Nu parser];
+            [parser setFilename:[main_path cStringUsingEncoding:NSUTF8StringEncoding]];
             id script = [parser parse: main_nu];
+            [parser setFilename:nil];
             [parser eval:script];
         }
     }

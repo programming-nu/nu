@@ -25,6 +25,7 @@
     int parens;
     int column;
     int quoting;
+	int filenum;
     int linenum;
     int parseEscapes;
     bool quoteDepth[MAXDEPTH];
