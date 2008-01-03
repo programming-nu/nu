@@ -72,7 +72,7 @@
 ;; you could do this in the nib file too, but look how clearly our menu is specified here:
 (set maildemo-application-menu
      '(menu "Main"
-            (menu "#{appname}"
+            (menu "Application"
                   ("About #{appname}" action:"orderFrontStandardAboutPanel:")
                   (separator)
                   (menu "Services")
