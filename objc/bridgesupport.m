@@ -48,7 +48,7 @@
     if (xmlDocument) {
         id node;
         NSEnumerator *childEnumerator = [[[xmlDocument rootElement] children] objectEnumerator];
-        while (node = [childEnumerator nextObject]) {
+        while ((node = [childEnumerator nextObject])) {
             if ([[node name] isEqual:@"depends_on"]) {
                 id fileName = [[node attributeForName:@"path"] stringValue];
                 id frameworkName = [[[fileName lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0];
@@ -68,7 +68,7 @@
                 id returnType = @"v";
                 id child;
                 NSEnumerator *nodeChildEnumerator = [[node children] objectEnumerator];
-                while (child = [nodeChildEnumerator nextObject]) {
+                while ((child = [nodeChildEnumerator nextObject])) {
                     if ([[child name] isEqual:@"arg"]) {
                         id typeModifier = [child attributeForName:@"type_modifier"];
                         if (typeModifier) {
@@ -105,7 +105,7 @@
     for (int i = 0; i < 3; i++) {
         id dictionary = [BridgeSupport objectForKey:(i == 0) ? @"constants" : (i == 1) ? @"enums" : @"functions"];
         id keyEnumerator = [[dictionary allKeys] objectEnumerator];
-        while (key = [keyEnumerator nextObject]) {
+        while ((key = [keyEnumerator nextObject])) {
             if (![symbolTable lookup:[key cStringUsingEncoding:NSUTF8StringEncoding]])
                 [dictionary removeObjectForKey:key];
         }
@@ -125,7 +125,7 @@
     [result appendString:@"             constants:\n"];
     [result appendString:@"             (dict"];
     keyEnumerator = [[[d allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
-    while (key = [keyEnumerator nextObject]) {
+    while ((key = [keyEnumerator nextObject])) {
         [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" \"%@\"", key, [d objectForKey:key]]];
     }
     [result appendString:@")\n"];
@@ -134,7 +134,7 @@
     [result appendString:@"             enums:\n"];
     [result appendString:@"             (dict"];
     keyEnumerator = [[[d allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
-    while (key = [keyEnumerator nextObject]) {
+    while ((key = [keyEnumerator nextObject])) {
         [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" %@", key, [d objectForKey:key]]];
     }
     [result appendString:@")\n"];
@@ -143,7 +143,7 @@
     [result appendString:@"             functions:\n"];
     [result appendString:@"             (dict"];
     keyEnumerator = [[[d allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
-    while (key = [keyEnumerator nextObject]) {
+    while ((key = [keyEnumerator nextObject])) {
         [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" \"%@\"", key, [d objectForKey:key]]];
     }
     [result appendString:@")\n"];
@@ -152,7 +152,7 @@
     [result appendString:@"             frameworks:\n"];
     [result appendString:@"             (dict"];
     keyEnumerator = [[[d allKeys] sortedArrayUsingSelector:@selector(compare:)] objectEnumerator];
-    while (key = [keyEnumerator nextObject]) {
+    while ((key = [keyEnumerator nextObject])) {
         [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" \"%@\"", key, [d objectForKey:key]]];
     }
     [result appendString:@")))\n"];

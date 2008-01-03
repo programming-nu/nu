@@ -7,9 +7,14 @@
 #import "class.h"
 #import "object.h"
 
-@class NSCFDictionary;
-@class NSCFArray;
-@class NSCFSet;
+@interface NSCFDictionary : NSDictionary {}
+@end
+
+@interface NSCFArray : NSDictionary {}
+@end
+
+@interface NSCFSet: NSDictionary {}
+@end
 
 @interface NSCFDictionarySwizzles : NSObject {}
 @end

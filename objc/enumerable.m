@@ -5,6 +5,7 @@
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
 #import "enumerable.h"
+#import "objc_runtime.h"
 
 @interface NuEnumerable(Unimplemented)
 - (id) objectEnumerator;

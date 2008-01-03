@@ -518,7 +518,7 @@ eatKnownInstructions(
 		// See if instruction matches one  we know
 		AsmInstructionMatch* curInstr = possibleInstructions;
 		do {
-			if (curInstructionKnown = codeMatchesInstruction(ptr, curInstr)) break;
+			if ((curInstructionKnown = codeMatchesInstruction(ptr, curInstr))) break;
 			curInstr++;
 		} while (curInstr->length > 0);
 		

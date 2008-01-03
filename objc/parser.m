@@ -806,6 +806,14 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     }
 }
 
+- (id) parse:(NSString *)string asIfFromFilename:(const char *) filename;
+{
+    [self setFilename:filename];
+    id result = [self parse:string];
+    [self setFilename:NULL];
+    return result;
+}
+
 - (void) newline
 {
     linenum++;

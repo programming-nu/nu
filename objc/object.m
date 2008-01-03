@@ -275,8 +275,6 @@
         sel = [selectorCache selector];
     }
 
-    id target = self;
-
     // If the object responds to methodSignatureForSelector:, we should create and forward an invocation to it.
     NSMethodSignature *methodSignature = sel ? [self methodSignatureForSelector:sel] : 0;
     if (methodSignature) {

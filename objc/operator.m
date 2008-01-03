@@ -1034,6 +1034,10 @@ static bool valueIsTrue(id value)
 
 @end
 
+@interface NuConsoleViewController : NSObject {}
+- (void) write:(id) string;
+@end
+
 @interface Nu_puts_operator : NuOperator {}
 @end
 
@@ -1041,7 +1045,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    id console = [[symbolTable symbolWithCString:"$$console"] value];
+    NuConsoleViewController *console = [[symbolTable symbolWithCString:"$$console"] value];
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
@@ -1068,7 +1072,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    id console = [[symbolTable symbolWithCString:"$$console"] value];
+    NuConsoleViewController *console = [[symbolTable symbolWithCString:"$$console"] value];
 
     NSString *string;
     id cursor = cdr;
@@ -1184,9 +1188,7 @@ static bool valueIsTrue(id value)
             NSString *string = [NSString stringWithContentsOfFile: fileName];
             id value = Nu__null;
             if (string) {
-                [parser setFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
-                id body = [parser parse: string];
-                [parser setFilename:nil];
+                id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
                 value = [body evalWithContext:context];
                 return [symbolTable symbolWithCString:"t"];
             }

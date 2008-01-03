@@ -25,7 +25,7 @@
     int parens;
     int column;
     int quoting;
-	int filenum;
+    int filenum;
     int linenum;
     int parseEscapes;
     bool quoteDepth[MAXDEPTH];
@@ -51,6 +51,8 @@
     Since parsing may produce multiple expressions, the top-level NuCell is a Nu <b>progn</b> operator.
 */
 - (id) parse:(NSString *)string;
+/*! Call -parse: while specifying the name of the source file for the string to be parsed. */
+- (id) parse:(NSString *)string asIfFromFilename:(const char *) filename;
 /*! Evaluate a parsed Nu expression in the parser's evaluation context. */
 - (id) eval: (id) code;
 /*! Parse Nu source text and evaluate it in the parser's evalation context. */

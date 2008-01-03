@@ -16,7 +16,7 @@
     struct objc_method_description_list *instance_methods;
     struct objc_method_description_list *class_methods;
 }
-
+- (const char *) name;
 @end
 
 // When we create protocols at runtime, we put them here.
@@ -74,7 +74,7 @@ static void addMethodDescriptionsToArray(Protocol *protocol, BOOL isRequiredMeth
             signature, @"signature",
             [NSNumber numberWithInt:(isRequiredMethod ? 1 : 0)], @"required",
             [NSNumber numberWithInt:(isInstanceMethod ? 1 : 0)], @"instance",
-            0];
+            nil];
         [array addObject:dictionary];
     }
     free(method_descriptions);
@@ -92,7 +92,7 @@ static void addMethodDescriptionsToArray(Protocol *protocol, BOOL isRequiredMeth
 
 - (NSComparisonResult) compare:(Protocol *) other
 {
-    return [[self name] compare:[other name]];
+    return strcmp([self name], [other name]);
 }
 
 - (NSArray *) protocols

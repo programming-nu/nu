@@ -10,9 +10,7 @@
 #import "block.h"
 #import "class.h"
 #import "parser.h"
-#import <objc/objc.h>
-#import <objc/objc-runtime.h>
-#import <objc/objc-class.h>
+#import "objc_runtime.h"
 #import <stdlib.h>
 #import <math.h>
 #import <time.h>
@@ -94,7 +92,7 @@ extern id Nu__null;
             // evaluate each expression
             id value = Nu__null;
             if (expression) {
-                id body = [parser parse: expression];
+                id body = [parser parse:expression];
                 value = [body evalWithContext:context];
                 id stringValue = [value stringValue];
                 [result appendString:stringValue];
@@ -300,9 +298,7 @@ extern id Nu__null;
         if (string) {
             NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
             id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
-            [parser setFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
-            id body = [parser parse: string];
-            [parser setFilename:nil];
+            id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
             value = [body evalWithContext:context];
             return [symbolTable symbolWithCString:"t"];
         }

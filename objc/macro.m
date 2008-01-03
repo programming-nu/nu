@@ -8,6 +8,7 @@
 #import "symbol.h"
 #import "class.h"
 #import "extensions.h"
+#import "objc_runtime.h"
 
 extern id Nu__null;
 

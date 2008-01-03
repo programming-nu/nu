@@ -9,6 +9,7 @@
 #import "operator.h"
 #import "block.h"
 #import "dtrace.h"
+#import "objc_runtime.h"
 
 @implementation NuCell
 
@@ -150,7 +151,7 @@
     return result;
 }
 
-extern const char *nu_parsedFilename(int i);
+extern char *nu_parsedFilename(int i);
 
 - (id) evalWithContext:(NSMutableDictionary *)context
 {
