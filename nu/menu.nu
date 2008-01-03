@@ -12,6 +12,9 @@
            (cond ((eq (menu title) "Main")     ((NSApplication sharedApplication) setMainMenu:menu))
                  ((eq (menu title) "Window")   ((NSApplication sharedApplication) setWindowsMenu:menu))
                  ((eq (menu title) "Services") ((NSApplication sharedApplication) setServicesMenu:menu))
+                 ((eq (menu title) "Application") (menu setTitle:"\uf8ff"))
+                 ;; The above value is an Apple-specific constant that marks the Application Menu
+                 ;; http://lists.apple.com/archives/cocoa-dev/2006/Sep/msg00011.html
                  (else nil))
            (set rest (cdr (cdr menu-description)))
            (if rest (rest each:(do (item) (menu addItem:(build-menu item appname)))))
@@ -38,7 +41,7 @@
 ;; default menu description
 (set default-application-menu
      '(menu "Main"
-            (menu "#{appname}"
+            (menu "Application"
                   ("About #{appname}" action:"orderFrontStandardAboutPanel:")
                   ("Preferences..." key:",")
                   (separator)
