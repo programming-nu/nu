@@ -501,7 +501,7 @@ View origin is #{(self originString)} and size is #{(self sizeString)}.END)
 ;; could also load your menu from a nib file, but IB is so slow... :-)
 (set benwanu-application-menu
      '(menu "Main"
-            (menu "#{appname}"
+            (menu "Application"
                   ("About #{appname}" action:"orderFrontStandardAboutPanel:")
                   (separator)
                   (menu "Services")
