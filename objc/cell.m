@@ -58,6 +58,17 @@
     cdr = c;
 }
 
+- (BOOL) isEqual:(id) other
+{
+    if (nu_objectIsKindOfClass(other, [NuCell class])
+    && [[self car] isEqual:[other car]] && [[self cdr] isEqual:[other cdr]]) {
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
+
 - (id) first
 {
     return car;

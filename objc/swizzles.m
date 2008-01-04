@@ -7,15 +7,6 @@
 #import "class.h"
 #import "object.h"
 
-@interface NSCFDictionary : NSDictionary {}
-@end
-
-@interface NSCFArray : NSDictionary {}
-@end
-
-@interface NSCFSet: NSDictionary {}
-@end
-
 @interface NSCFDictionarySwizzles : NSObject {}
 @end
 
@@ -65,6 +56,9 @@
 void nu_swizzleContainerClasses()
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	Class NSCFDictionary = NSClassFromString(@"NSCFDictionary");
+    Class NSCFArray = NSClassFromString(@"NSCFArray");
+    Class NSCFSet = NSClassFromString(@"NSCFSet");
     [NSCFDictionary include:[NuClass classWithName:@"NSCFDictionarySwizzles"]];
     [NSCFArray include:[NuClass classWithName:@"NSCFArraySwizzles"]];
     [NSCFSet include:[NuClass classWithName:@"NSCFSetSwizzles"]];

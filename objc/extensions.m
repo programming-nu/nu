@@ -49,7 +49,7 @@ extern id Nu__null;
     return ((self == other) || (other == 0)) ? 1l : 0l;
 }
 
-- (const char *) cStringUsingEncoding:(unsigned int) encoding
+- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
 {
     return [[self stringValue] cStringUsingEncoding:encoding];
 }

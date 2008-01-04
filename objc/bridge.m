@@ -13,6 +13,7 @@
 #import "extensions.h"
 #import "st.h"
 #import "reference.h"
+#import <sys/mman.h>
 
 /* 
  * types:
@@ -143,15 +144,20 @@ ffi_type *ffi_type_for_objc_type(const char *typeString)
         case 'f': return &ffi_type_float;
         case 'd': return &ffi_type_double;
         case 'v': return &ffi_type_void;
-        case 'B': return &ffi_type_uint32;
-        case 'C': return &ffi_type_uint32;
-        case 'c': return &ffi_type_sint32;
-        case 'S': return &ffi_type_uint32;
-        case 's': return &ffi_type_sint32;
-        case 'I': return &ffi_type_uint32;
-        case 'i': return &ffi_type_sint32;
-        case 'L': return &ffi_type_uint32;
-        case 'l': return &ffi_type_sint32;
+        case 'B': return &ffi_type_uchar;
+        case 'C': return &ffi_type_uchar;
+        case 'c': return &ffi_type_schar;
+        case 'S': return &ffi_type_ushort;
+        case 's': return &ffi_type_sshort;
+        case 'I': return &ffi_type_uint;
+        case 'i': return &ffi_type_sint;
+        #ifdef __x86_64__
+        case 'L': return &ffi_type_ulong;
+        case 'l': return &ffi_type_slong;
+        #else
+        case 'L': return &ffi_type_uint;
+        case 'l': return &ffi_type_sint;
+        #endif
         case 'Q': return &ffi_type_uint64;
         case 'q': return &ffi_type_sint64;
         case '@': return &ffi_type_pointer;
@@ -334,7 +340,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
         case '@':
         {
             if ((nu_value == Nu__zero) || (nu_value == Nu__null)) {
-                *((unsigned int *) objc_value) = 0;
+                *((id *) objc_value) = nil;
                 return NO;
             }
             *((id *) objc_value) = nu_value;
@@ -846,7 +852,6 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
             NSLog (@"failed to prepare cif structure");
         }
         else {
-            //NSLog(@"calling..");
             ffi_call(&cif2, FFI_FN(imp), result_value, argument_values);
             success = true;
         }
@@ -949,7 +954,7 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     ffi_type *result_type = ffi_type_for_objc_type(return_type_string);
     int argument_count = [methodSignature numberOfArguments];
     char **userdata = (char **) malloc ((argument_count+2) * sizeof(char*));
-    ffi_type **argument_types = (ffi_type **) malloc (argument_count * sizeof(ffi_type *));
+    ffi_type **argument_types = (ffi_type **) malloc ((argument_count+1) * sizeof(ffi_type *));
     userdata[0] = (char *) malloc (2 + strlen(return_type_string));
     const char *methodName = sel_getName(sel);
     BOOL returnsRetainedResult = NO;
@@ -962,7 +967,7 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
         sprintf(userdata[0], "!%s", return_type_string);
     else
         sprintf(userdata[0], " %s", return_type_string);
-    //NSLog(@"constructing handler for method %s with returnType %s", methodName, userdata[0]);
+    //NSLog(@"constructing handler for method %s with %d arguments and returnType %s", methodName, argument_count, userdata[0]);
 
     userdata[1] = (char *) block;
     [block retain];
@@ -972,6 +977,7 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
         if (i > 1) userdata[i] = strdup(argument_type_string);
         argument_types[i] = ffi_type_for_objc_type(argument_type_string);
     }
+    argument_types[argument_count] = NULL;
     ffi_cif *cif = (ffi_cif *)malloc(sizeof(ffi_cif));
     if (cif == NULL) {
         NSLog(@"failed to allocate cif structure");
@@ -982,11 +988,21 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
         NSLog (@"failed to prepare cif structure");
         return NULL;
     }
-    ffi_closure *closure = (ffi_closure *)malloc(sizeof(ffi_closure));
+    ffi_closure *closure = (ffi_closure *)mmap(NULL, sizeof(ffi_closure), PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+    if (closure == -1) {
+        NSLog(@"error setting up closure");
+        return NULL;
+    }
     if (closure == NULL) {
+        NSLog(@"error allocating closure");
         return NULL;
     }
     if (ffi_prep_closure(closure, cif, objc_calling_nu_method_handler, userdata) != FFI_OK) {
+        NSLog(@"error creating closure");
+        return NULL;
+    }
+    if (mprotect(closure, sizeof(closure), PROT_READ | PROT_EXEC) == -1) {
+        NSLog(@"error");
         return NULL;
     }
     return (IMP) closure;
@@ -1006,6 +1022,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
         NSLog(@"failed to construct handler for %s(%s)", method_name_str, signature_str);
         return [NSNull null];
     }
+
     // save the block in a hash table keyed by the imp.
     // this will let us introspect methods and optimize nu-to-nu method calls
     if (!nu_block_table) nu_block_table = st_init_numtable();
@@ -1013,16 +1030,8 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     st_insert(nu_block_table, (long) imp, (long) block);
 
     // insert the method handler in the class method table
-    IMP oldMethod = nu_class_replaceMethod(
-        c,
-        selector,
-        imp,
-        signature_str);
-    if (oldMethod != 0) {
-        // NSLog(@"replacing handler for %s(%s) in class %s", method_name_str, signature_str, c->name);
-        return [NSNull null];
-    }
-
+    nu_class_replaceMethod(c, selector, imp, signature_str);
+    //NSLog(@"setting handler for %s(%s) in class %s", method_name_str, signature_str, class_getName(c));
     return [NSNull null];
 }
 

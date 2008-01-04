@@ -266,8 +266,9 @@ Ivar myclass_getInstanceVariable(Class c, const char *name)
 #ifdef LEOPARD_OBJC2
 IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
 {
-    if (class_addMethod( cls,  name,  imp, types))
+    if (class_addMethod(cls, name, imp, types)) {
         return imp;
+    }
     else {
         return class_replaceMethod(cls, name, imp, types);
     }
@@ -325,13 +326,14 @@ BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL select
     return result;
 }
 
-BOOL nu_objectIsKindOfClass(id object, Class class) {
-	Class classCursor = object->isa;
-	while (classCursor) {
-		if (classCursor == class) return YES;
-		classCursor = class_getSuperclass(classCursor);
-	}
-	return NO;
+BOOL nu_objectIsKindOfClass(id object, Class class)
+{
+    Class classCursor = object->isa;
+    while (classCursor) {
+        if (classCursor == class) return YES;
+        classCursor = class_getSuperclass(classCursor);
+    }
+    return NO;
 }
 
 // This function attempts to recognize the return type from a method signature.

@@ -8,6 +8,8 @@
 #include "class.h"
 #include "mach_override.h"
 
+#ifndef __x86_64__
+
 @interface Protocol : NSObject
 {
     @public
@@ -16,6 +18,7 @@
     struct objc_method_description_list *instance_methods;
     struct objc_method_description_list *class_methods;
 }
+
 - (const char *) name;
 @end
 
@@ -230,9 +233,11 @@ Protocol **nu_objc_copyProtocolList(unsigned int *outCount)
     *outCount += [nuProtocols count];
     return newProtocolList;
 }
+#endif
 
 void nu_initProtocols()
 {
+    #ifndef __x86_64__
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
@@ -247,6 +252,7 @@ void nu_initProtocols()
         mach_override("_objc_getProtocol", NULL, (void*)&nu_objc_getProtocol, (void**)&original_objc_getProtocol);
         mach_override("_objc_copyProtocolList", NULL, (void*)&nu_objc_copyProtocolList, (void**)&original_objc_copyProtocolList);
     }
+    #endif
 }
 
 // bonus: I found this in the ObjC2.0 runtime.

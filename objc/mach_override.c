@@ -40,7 +40,7 @@ long kIslandTemplate[] = {
 #define kInstructionHi		10
 #define kInstructionLo		11
 
-#elif defined(__i386__) 
+#elif defined(__i386__) || defined(__x86_64__)
 
 #define kOriginalInstructionsSize 16
 
