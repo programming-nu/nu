@@ -33,16 +33,11 @@
 
 /*! Create a subclass of a class with the specified name. */
 + (id) createSubclassNamed:(NSString *) subclassName;
-/*! Add an instance method to a class with the specified name, type signature, and body. */
-+ (id) addInstanceMethod:(NSString *) methodName signature:(NSString *)signature body:(NuBlock *) block;
-/*! Add a class method to a class with the specified name, type signature, and body. */
-+ (id) addClassMethod:(NSString *) methodName signature:(NSString *)signature body:(NuBlock *) block;
+
 /*! Copy a named instance method from another class to the receiving class. */
 + (BOOL) copyInstanceMethod:(NSString *) methodName fromClass:(NuClass *) prototypeClass;
 /*! Copy all of the instance methods from a specified class to the receiving class. */
 + (BOOL) include:(NuClass *) prototypeClass;
-/*! Add an instance variable to the receiving class. This will cause problems if there are already instances of the receiving class. */
-+ (id) addInstanceVariable:(NSString *)variableName signature:(NSString *) signature;
 
 /*! Send a message to an object with an execution context */
 - (id) sendMessage:(id)cdr withContext:(NSMutableDictionary *)context;

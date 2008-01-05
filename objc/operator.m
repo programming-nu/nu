@@ -756,7 +756,10 @@ static bool valueIsTrue(id value)
     if ([context objectForKey:[symbolTable symbolWithCString:"_class"]] && ![context objectForKey:[symbolTable symbolWithCString:"_method"]]) {
         // we are inside a class declaration and outside a method declaration.
         // treat this as a "cmethod" call
-        Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass]->isa;
+        NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+        [classWrapper registerClass];
+        Class classToExtend = [classWrapper wrappedClass];
+        if (classToExtend) classToExtend = classToExtend->isa;
         return help_add_method_to_class(classToExtend, cdr, context);
     }
     // otherwise, it's an addition
@@ -810,7 +813,9 @@ static bool valueIsTrue(id value)
     if ([context objectForKey:[symbolTable symbolWithCString:"_class"]] && ![context objectForKey:[symbolTable symbolWithCString:"_method"]]) {
         // we are inside a class declaration and outside a method declaration.
         // treat this as an "imethod" call
-        Class classToExtend = [[ context objectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
+        NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+        [classWrapper registerClass];
+        Class classToExtend = [classWrapper wrappedClass];
         return help_add_method_to_class(classToExtend, cdr, context);
     }
     // otherwise, it's a subtraction
@@ -1267,6 +1272,10 @@ static bool valueIsTrue(id value)
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     id className = [cdr car];
     id body = Nu__null;
+    #ifdef __x86_64__
+    Class newClass = nil;
+    #endif
+    NuClass *childClass;
     //NSLog(@"class name: %@", className);
     if ([cdr cdr]
         && ([cdr cdr] != Nu__null)
@@ -1277,13 +1286,26 @@ static bool valueIsTrue(id value)
         Class parentClass = NSClassFromString([parentName stringValue]);
         if (!parentClass)
             [NSException raise:@"NuUndefinedSuperclass" format:@"undefined superclass %@", [parentName stringValue]];
+
+        #ifdef __x86_64__
+        newClass = objc_allocateClassPair(parentClass, [[className stringValue] cStringUsingEncoding:NSUTF8StringEncoding], 0);
+        childClass = [NuClass classWithClass:newClass];
+        [childClass setRegistered:NO];
+        //NSLog(@"created class %@", [childClass name]);
+        // it seems dangerous to call this here. Maybe it's better to wait until the new class is registered.
+        if ([parentClass respondsToSelector:@selector(inheritedByClass:)]) {
+            [parentClass inheritedByClass:childClass];
+        }
+        #else
         [parentClass createSubclassNamed:[className stringValue]];
+        childClass = [NuClass classWithName:[className stringValue]];
+        #endif
         body = [[[cdr cdr] cdr] cdr];
     }
     else {
+        childClass = [NuClass classWithName:[className stringValue]];
         body = [cdr cdr];
     }
-    NuClass *childClass = [NuClass classWithName:[className stringValue]];
     if (!childClass)
         [NSException raise:@"NuUndefinedClass" format:@"undefined class %@", [className stringValue]];
     id result = nil;
@@ -1295,6 +1317,11 @@ static bool valueIsTrue(id value)
         result = [block evalWithArguments:Nu__null context:Nu__null];
         [block release];
     }
+    #ifdef __x86_64__
+    if (newClass && ([childClass isRegistered] == NO)) {
+        [childClass registerClass];
+    }
+    #endif
     return result;
 }
 
@@ -1307,7 +1334,9 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
+    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+    [classWrapper registerClass];
+    Class classToExtend = [classWrapper wrappedClass];
     if (classToExtend) classToExtend = classToExtend->isa;
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"class method declaration with no enclosing class declaration"];
@@ -1323,7 +1352,9 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context objectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
+    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+    [classWrapper registerClass];
+    Class classToExtend = [classWrapper wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"instance method declaration with no enclosing class declaration"];
     return help_add_method_to_class(classToExtend, cdr, context);
@@ -1338,7 +1369,14 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context lookupObjectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
+    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+    #ifdef __x86_64__
+    // this will only work if the class is unregistered...
+    if ([classWrapper isRegistered]) {
+        [NSException raise:@"NuIvarAddedTooLate" format:@"instance variables must be added when a class is created and before any method declarations"];
+    }
+    #endif
+    Class classToExtend = [classWrapper wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"instance variable declaration with no enclosing class declaration"];
     id cursor = cdr;
@@ -1348,7 +1386,9 @@ static bool valueIsTrue(id value)
         id variableName = [cursor car];
         cursor = [cursor cdr];
         NSString *signature = signature_for_identifier(variableType, symbolTable);
-        [classToExtend addInstanceVariable:[variableName stringValue] signature:signature];
+        class_addInstanceVariable_withSignature(classToExtend,
+            [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
+            [signature cStringUsingEncoding:NSUTF8StringEncoding]);
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
     return Nu__null;
@@ -1363,10 +1403,18 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    Class classToExtend = [[context lookupObjectForKey:[symbolTable symbolWithCString:"_class"]] wrappedClass];
+
+    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+    #ifdef __x86_64__
+    // this will only work if the class is unregistered...
+    if ([classWrapper isRegistered]) {
+        [NSException raise:@"NuIvarAddedTooLate" format:@"instance variables must be added when a class is created and before any method declarations"];
+    }
+    #endif
+    Class classToExtend = [classWrapper wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"dynamic instance variables declaration with no enclosing class declaration"];
-    [classToExtend addInstanceVariable:@"__nuivars" signature:@"@"];
+    class_addInstanceVariable_withSignature(classToExtend, "__nuivars", "@");
     return Nu__null;
 }
 

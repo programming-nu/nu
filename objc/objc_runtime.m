@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <objc/objc-class.h>
+#include <math.h>
+#import <Foundation/Foundation.h> // for NSException
 
 #ifndef LEOPARD_OBJC2
 #include "objc_runtime.h"
@@ -277,6 +279,17 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
 
 void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature)
 {
+    #ifdef __x86_64__
+    extern size_t size_of_objc_type(const char *typeString);
+    size_t size = size_of_objc_type(signature);
+    uint8_t alignment = log2(size);
+    BOOL result = class_addIvar(thisClass, variableName, size, alignment, signature);
+    if (!result) {
+        [NSException raise:@"NuAddIvarFailed"
+            format:@"failed to add instance variable %s to class %s", variableName, class_getName(thisClass)];
+    }
+    //NSLog(@"adding ivar named %s to %s, result is %d", variableName, class_getName(thisClass), result);
+    #else
     struct objc_ivar_list *ivars = thisClass->ivars;
     if (ivars) {
         int i = 0;
@@ -312,6 +325,7 @@ void class_addInstanceVariable_withSignature(Class thisClass, const char *variab
         thisClass->ivars = new_ivar_list;
         thisClass->instance_size += size_of_objc_type(new_ivar->ivar_type);
     }
+    #endif
 }
 
 BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector)

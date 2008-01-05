@@ -16,7 +16,7 @@
 
 (bridge function NSLog "v@")
 (bridge function NSApplicationMain "ii^*")
-(bridge function NSRectFill "v{_NSRect={_NSPoint=ff}{_NSSize=ff}}")
+(bridge function NSRectFill "v{_NSRect}")
 
 (bridge constant NSDefaultRunLoopMode "@")
 (bridge constant NSForegroundColorAttributeName "@")

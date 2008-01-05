@@ -54,10 +54,31 @@
 
 st_table *nu_block_table = NULL;
 
-// This would be helpful
-// :NSRect => [:origin , :size]
-// :NSPoint => [:x, :y]
-//
+#ifdef __x86_64__
+
+#define NSRECT_SIGNATURE0 "{_NSRect={_NSPoint=dd}{_NSSize=dd}}"
+#define NSRECT_SIGNATURE1 "{_NSRect=\"origin\"{_NSPoint=\"x\"d\"y\"d}\"size\"{_NSSize=\"width\"d\"height\"d}}"
+#define NSRECT_SIGNATURE2 "{_NSRect}"
+
+#define CGRECT_SIGNATURE "{CGRect={CGPoint=dd}{CGSize=dd}}"
+
+#define NSRANGE_SIGNATURE "{_NSRange=QQ}"
+#define NSRANGE_SIGNATURE1 "{_NSRange}"
+
+#define NSPOINT_SIGNATURE0 "{_NSPoint=dd}"
+#define NSPOINT_SIGNATURE1 "{_NSPoint=\"x\"d\"y\"d}"
+#define NSPOINT_SIGNATURE2 "{_NSPoint}"
+
+#define CGPOINT_SIGNATURE "{CGPoint=dd}"
+
+#define NSSIZE_SIGNATURE0 "{_NSSize=dd}"
+#define NSSIZE_SIGNATURE1 "{_NSSize=\"width\"d\"height\"d}"
+#define NSSIZE_SIGNATURE2 "{_NSSize}"
+
+#define CGSIZE_SIGNATURE "{CGSize=dd}"
+
+#else
+
 #define NSRECT_SIGNATURE0 "{_NSRect={_NSPoint=ff}{_NSSize=ff}}"
 #define NSRECT_SIGNATURE1 "{_NSRect=\"origin\"{_NSPoint=\"x\"f\"y\"f}\"size\"{_NSSize=\"width\"f\"height\"f}}"
 #define NSRECT_SIGNATURE2 "{_NSRect}"
@@ -65,14 +86,20 @@ st_table *nu_block_table = NULL;
 #define CGRECT_SIGNATURE "{CGRect={CGPoint=ff}{CGSize=ff}}"
 
 #define NSRANGE_SIGNATURE "{_NSRange=II}"
+#define NSRANGE_SIGNATURE1 "{_NSRange}"
 
 #define NSPOINT_SIGNATURE0 "{_NSPoint=ff}"
 #define NSPOINT_SIGNATURE1 "{_NSPoint=\"x\"f\"y\"f}"
 #define NSPOINT_SIGNATURE2 "{_NSPoint}"
 
+#define CGPOINT_SIGNATURE "{CGPoint=ff}"
+
 #define NSSIZE_SIGNATURE0 "{_NSSize=ff}"
 #define NSSIZE_SIGNATURE1 "{_NSSize=\"width\"f\"height\"f}"
 #define NSSIZE_SIGNATURE2 "{_NSSize}"
+
+#define CGSIZE_SIGNATURE "{CGSize=ff}"
+#endif
 
 // private ffi types
 static int initialized_ffi_types = false;
@@ -91,16 +118,26 @@ void initialize_ffi_types(void)
     ffi_type_nspoint.alignment = 0;
     ffi_type_nspoint.type = FFI_TYPE_STRUCT;
     ffi_type_nspoint.elements = malloc(3 * sizeof(ffi_type*));
+    #ifdef __x86_64__
+    ffi_type_nspoint.elements[0] = &ffi_type_double;
+    ffi_type_nspoint.elements[1] = &ffi_type_double;
+    #else
     ffi_type_nspoint.elements[0] = &ffi_type_float;
     ffi_type_nspoint.elements[1] = &ffi_type_float;
+    #endif
     ffi_type_nspoint.elements[2] = NULL;
 
     ffi_type_nssize.size = 0;                     // to be computed automatically
     ffi_type_nssize.alignment = 0;
     ffi_type_nssize.type = FFI_TYPE_STRUCT;
     ffi_type_nssize.elements = malloc(3 * sizeof(ffi_type*));
+    #ifdef __x86_64__
+    ffi_type_nssize.elements[0] = &ffi_type_double;
+    ffi_type_nssize.elements[1] = &ffi_type_double;
+    #else
     ffi_type_nssize.elements[0] = &ffi_type_float;
     ffi_type_nssize.elements[1] = &ffi_type_float;
+    #endif
     ffi_type_nssize.elements[2] = NULL;
 
     ffi_type_nsrect.size = 0;                     // to be computed automatically
@@ -115,8 +152,13 @@ void initialize_ffi_types(void)
     ffi_type_nsrange.alignment = 0;
     ffi_type_nsrange.type = FFI_TYPE_STRUCT;
     ffi_type_nsrange.elements = malloc(3 * sizeof(ffi_type*));
+    #ifdef __x86_64__
+    ffi_type_nsrange.elements[0] = &ffi_type_uint64;
+    ffi_type_nsrange.elements[1] = &ffi_type_uint64;
+    #else
     ffi_type_nsrange.elements[0] = &ffi_type_uint;
     ffi_type_nsrange.elements[1] = &ffi_type_uint;
+    #endif
     ffi_type_nsrange.elements[2] = NULL;
 }
 
@@ -175,14 +217,18 @@ ffi_type *ffi_type_for_objc_type(const char *typeString)
                 if (!initialized_ffi_types) initialize_ffi_types();
                 return &ffi_type_nsrect;
             }
-            else if (!strcmp(typeString, NSRANGE_SIGNATURE)) {
+            else if (
+                !strcmp(typeString, NSRANGE_SIGNATURE) ||
+                !strcmp(typeString, NSRANGE_SIGNATURE1)
+            ) {
                 if (!initialized_ffi_types) initialize_ffi_types();
                 return &ffi_type_nsrange;
             }
             else if (
                 !strcmp(typeString, NSPOINT_SIGNATURE0) ||
                 !strcmp(typeString, NSPOINT_SIGNATURE1) ||
-                !strcmp(typeString, NSPOINT_SIGNATURE2)
+                !strcmp(typeString, NSPOINT_SIGNATURE2) ||
+                !strcmp(typeString, CGPOINT_SIGNATURE)
             ) {
                 if (!initialized_ffi_types) initialize_ffi_types();
                 return &ffi_type_nspoint;
@@ -190,7 +236,8 @@ ffi_type *ffi_type_for_objc_type(const char *typeString)
             else if (
                 !strcmp(typeString, NSSIZE_SIGNATURE0) ||
                 !strcmp(typeString, NSSIZE_SIGNATURE1) ||
-                !strcmp(typeString, NSSIZE_SIGNATURE2)
+                !strcmp(typeString, NSSIZE_SIGNATURE2) ||
+                !strcmp(typeString, CGSIZE_SIGNATURE)
             ) {
                 if (!initialized_ffi_types) initialize_ffi_types();
                 return &ffi_type_nssize;
@@ -240,20 +287,25 @@ size_t size_of_objc_type(const char *typeString)
             ) {
                 return sizeof(NSRect);
             }
-            else if (!strcmp(typeString, NSRANGE_SIGNATURE)) {
+            else if (
+                !strcmp(typeString, NSRANGE_SIGNATURE) ||
+                !strcmp(typeString, NSRANGE_SIGNATURE1)
+            ) {
                 return sizeof(NSRange);
             }
             else if (
                 !strcmp(typeString, NSPOINT_SIGNATURE0) ||
                 !strcmp(typeString, NSPOINT_SIGNATURE1) ||
-                !strcmp(typeString, NSPOINT_SIGNATURE2)
+                !strcmp(typeString, NSPOINT_SIGNATURE2) ||
+                !strcmp(typeString, CGPOINT_SIGNATURE)
             ) {
                 return sizeof(NSPoint);
             }
             else if (
                 !strcmp(typeString, NSSIZE_SIGNATURE0) ||
                 !strcmp(typeString, NSSIZE_SIGNATURE1) ||
-                !strcmp(typeString, NSSIZE_SIGNATURE2)
+                !strcmp(typeString, NSSIZE_SIGNATURE2) ||
+                !strcmp(typeString, CGSIZE_SIGNATURE)
             ) {
                 return sizeof(NSSize);
             }
@@ -302,20 +354,25 @@ void *value_buffer_for_objc_type(const char *typeString)
             ) {
                 return malloc(sizeof(NSRect));
             }
-            else if (!strcmp(typeString, NSRANGE_SIGNATURE)) {
+            else if (
+                !strcmp(typeString, NSRANGE_SIGNATURE) ||
+                !strcmp(typeString, NSRANGE_SIGNATURE1)
+            ) {
                 return malloc(sizeof(NSRange));
             }
             else if (
                 !strcmp(typeString, NSPOINT_SIGNATURE0) ||
                 !strcmp(typeString, NSPOINT_SIGNATURE1) ||
-                !strcmp(typeString, NSPOINT_SIGNATURE2)
+                !strcmp(typeString, NSPOINT_SIGNATURE2) ||
+                !strcmp(typeString, CGPOINT_SIGNATURE)
             ) {
                 return malloc(sizeof(NSPoint));
             }
             else if (
                 !strcmp(typeString, NSSIZE_SIGNATURE0) ||
                 !strcmp(typeString, NSSIZE_SIGNATURE1) ||
-                !strcmp(typeString, NSSIZE_SIGNATURE2)
+                !strcmp(typeString, NSSIZE_SIGNATURE2) ||
+                !strcmp(typeString, CGSIZE_SIGNATURE)
             ) {
                 return malloc(sizeof(NSSize));
             }
@@ -445,14 +502,17 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             ) {
                 NSRect *rect = (NSRect *) objc_value;
                 id cursor = nu_value;
-                rect->origin.x = (float) [[cursor car] doubleValue];            cursor = [cursor cdr];
-                rect->origin.y = (float) [[cursor car] doubleValue];            cursor = [cursor cdr];
-                rect->size.width = (float) [[cursor car] doubleValue];          cursor = [cursor cdr];
-                rect->size.height = (float) [[cursor car] doubleValue];
+                rect->origin.x = (CGFloat) [[cursor car] doubleValue];            cursor = [cursor cdr];
+                rect->origin.y = (CGFloat) [[cursor car] doubleValue];            cursor = [cursor cdr];
+                rect->size.width = (CGFloat) [[cursor car] doubleValue];          cursor = [cursor cdr];
+                rect->size.height = (CGFloat) [[cursor car] doubleValue];
                 //NSLog(@"nu->rect: %x %f %f %f %f", (void *) rect, rect->origin.x, rect->origin.y, rect->size.width, rect->size.height);
                 return NO;
             }
-            else if (!strcmp(typeString, NSRANGE_SIGNATURE)) {
+            else if (
+                !strcmp(typeString, NSRANGE_SIGNATURE) ||
+                !strcmp(typeString, NSRANGE_SIGNATURE1)
+            ) {
                 NSRange *range = (NSRange *) objc_value;
                 id cursor = nu_value;
                 range->location = [[cursor car] intValue];          cursor = [cursor cdr];;
@@ -462,7 +522,8 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             else if (
                 !strcmp(typeString, NSSIZE_SIGNATURE0) ||
                 !strcmp(typeString, NSSIZE_SIGNATURE1) ||
-                !strcmp(typeString, NSSIZE_SIGNATURE2)
+                !strcmp(typeString, NSSIZE_SIGNATURE2) ||
+                !strcmp(typeString, CGSIZE_SIGNATURE)
             ) {
                 NSSize *size = (NSSize *) objc_value;
                 id cursor = nu_value;
@@ -473,7 +534,8 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             else if (
                 !strcmp(typeString, NSPOINT_SIGNATURE0) ||
                 !strcmp(typeString, NSPOINT_SIGNATURE1) ||
-                !strcmp(typeString, NSPOINT_SIGNATURE2)
+                !strcmp(typeString, NSPOINT_SIGNATURE2) ||
+                !strcmp(typeString, CGPOINT_SIGNATURE)
             ) {
                 NSPoint *point = (NSPoint *) objc_value;
                 id cursor = nu_value;
@@ -606,11 +668,37 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
             Class c = *((Class *)objc_value);
             return c ? [[NuClass alloc] initWithClass:c] : Nu__null;
         }
-        case 'c': case 's': case 'i':
+#ifndef __ppc__
+        case 'c':
+        {
+            return [NSNumber numberWithChar:*((char *)objc_value)];
+        }
+        case 's':
+        {
+            return [NSNumber numberWithShort:*((short *)objc_value)];
+        }
+#else
+		case 'c':
+		case 's':
+#endif
+        case 'i':
         {
             return [NSNumber numberWithInt:*((int *)objc_value)];
         }
-        case 'C': case 'S': case 'I':
+#ifndef __ppc__
+        case 'C':
+        {
+            return [NSNumber numberWithUnsignedChar:*((unsigned char *)objc_value)];
+        }
+        case 'S':
+        {
+            return [NSNumber numberWithUnsignedShort:*((unsigned short *)objc_value)];
+        }
+#else
+		case 'C':
+		case 'S':
+#endif
+        case 'I':
         {
             return [NSNumber numberWithUnsignedInt:*((unsigned int *)objc_value)];
         }
@@ -654,21 +742,22 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
                 NSRect *rect = (NSRect *)objc_value;
                 NuCell *list = [[[NuCell alloc] init] autorelease];
                 id cursor = list;
-                [cursor setCar:[NSNumber numberWithFloat:rect->origin.x]];
+                [cursor setCar:[NSNumber numberWithDouble:rect->origin.x]];
                 [cursor setCdr:[[[NuCell alloc] init] autorelease]];
                 cursor = [cursor cdr];
-                [cursor setCar:[NSNumber numberWithFloat:rect->origin.y]];
+                [cursor setCar:[NSNumber numberWithDouble:rect->origin.y]];
                 [cursor setCdr:[[[NuCell alloc] init] autorelease]];
                 cursor = [cursor cdr];
-                [cursor setCar:[NSNumber numberWithFloat:rect->size.width]];
+                [cursor setCar:[NSNumber numberWithDouble:rect->size.width]];
                 [cursor setCdr:[[[NuCell alloc] init] autorelease]];
                 cursor = [cursor cdr];
-                [cursor setCar:[NSNumber numberWithFloat:rect->size.height]];
+                [cursor setCar:[NSNumber numberWithDouble:rect->size.height]];
                 //NSLog(@"converting rect at %x to list: %@", (void *) rect, [list stringValue]);
                 return list;
             }
             else if (
-                !strcmp(typeString, NSRANGE_SIGNATURE)
+                !strcmp(typeString, NSRANGE_SIGNATURE) ||
+                !strcmp(typeString, NSRANGE_SIGNATURE1)
             ) {
                 NSRange *range = (NSRange *)objc_value;
                 NuCell *list = [[[NuCell alloc] init] autorelease];
@@ -682,29 +771,31 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
             else if (
                 !strcmp(typeString, NSPOINT_SIGNATURE0) ||
                 !strcmp(typeString, NSPOINT_SIGNATURE1) ||
-                !strcmp(typeString, NSPOINT_SIGNATURE2)
+                !strcmp(typeString, NSPOINT_SIGNATURE2) ||
+                !strcmp(typeString, CGPOINT_SIGNATURE)
             ) {
                 NSPoint *point = (NSPoint *)objc_value;
                 NuCell *list = [[[NuCell alloc] init] autorelease];
                 id cursor = list;
-                [cursor setCar:[NSNumber numberWithFloat:point->x]];
+                [cursor setCar:[NSNumber numberWithDouble:point->x]];
                 [cursor setCdr:[[[NuCell alloc] init] autorelease]];
                 cursor = [cursor cdr];
-                [cursor setCar:[NSNumber numberWithFloat:point->y]];
+                [cursor setCar:[NSNumber numberWithDouble:point->y]];
                 return list;
             }
             else if (
                 !strcmp(typeString, NSSIZE_SIGNATURE0) ||
                 !strcmp(typeString, NSSIZE_SIGNATURE1) ||
-                !strcmp(typeString, NSSIZE_SIGNATURE2)
+                !strcmp(typeString, NSSIZE_SIGNATURE2) ||
+                !strcmp(typeString, CGSIZE_SIGNATURE)
             ) {
                 NSSize *size = (NSSize *)objc_value;
                 NuCell *list = [[[NuCell alloc] init] autorelease];
                 id cursor = list;
-                [cursor setCar:[NSNumber numberWithFloat:size->width]];
+                [cursor setCar:[NSNumber numberWithDouble:size->width]];
                 [cursor setCdr:[[[NuCell alloc] init] autorelease]];
                 cursor = [cursor cdr];
-                [cursor setCar:[NSNumber numberWithFloat:size->height]];
+                [cursor setCar:[NSNumber numberWithDouble:size->height]];
                 return list;
             }
             else {
@@ -989,7 +1080,7 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
         return NULL;
     }
     ffi_closure *closure = (ffi_closure *)mmap(NULL, sizeof(ffi_closure), PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
-    if (closure == -1) {
+    if (closure == (ffi_closure *) -1) {
         NSLog(@"error setting up closure");
         return NULL;
     }
@@ -1002,7 +1093,7 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
         return NULL;
     }
     if (mprotect(closure, sizeof(closure), PROT_READ | PROT_EXEC) == -1) {
-        NSLog(@"error");
+        NSLog(@"error preparing closure");
         return NULL;
     }
     return (IMP) closure;

@@ -9,6 +9,17 @@
 #import "extensions.h"
 #import "symbol.h"
 
+static NSString *getTypeStringFromNode(id node)
+{
+	static BOOL use64BitTypes = (sizeof(void *) == 8);
+    if (use64BitTypes ) {
+        id type64Attribute = [node attributeForName:@"type64"];
+        if (type64Attribute)
+            return [type64Attribute stringValue];
+    }
+    return [[node attributeForName:@"type"] stringValue];
+}
+
 @implementation NuBridgeSupport
 
 + (void)importLibrary:(NSString *) libraryPath
@@ -55,7 +66,7 @@
                 [NuBridgeSupport importFramework:frameworkName fromPath:fileName intoDictionary:BridgeSupport];
             }
             else if ([[node name] isEqual:@"constant"]) {
-                [constants setValue:[[node attributeForName:@"type"] stringValue]
+                [constants setValue:getTypeStringFromNode(node)
                     forKey:[[node attributeForName:@"name"] stringValue]];
             }
             else if ([[node name] isEqual:@"enum"]) {
@@ -74,10 +85,10 @@
                         if (typeModifier) {
                             [argumentTypes appendString:[typeModifier stringValue]];
                         }
-                        [argumentTypes appendString:[[child attributeForName:@"type"] stringValue]];
+						[argumentTypes appendString:getTypeStringFromNode(child)];
                     }
                     else if ([[child name] isEqual:@"retval"]) {
-                        returnType = [[child attributeForName:@"type"] stringValue];
+						returnType = getTypeStringFromNode(child);
                     }
                     else {
                         NSLog(@"unrecognized type #{[child XMLString]}");

@@ -7,6 +7,7 @@
 #import <Foundation/Foundation.h>
 
 @class NuMethod;
+@class NuBlock;
 
 /*!
     @class NuClass
@@ -17,6 +18,7 @@
 @interface NuClass : NSObject
 {
     Class c;
+	BOOL isRegistered;
 }
 
 /*! Create a class wrapper for the specified class (used from Objective-C). */
@@ -50,6 +52,16 @@ Beware, some of these classes may be deprecated, undocumented, or otherwise unsa
 - (BOOL) isEqual:(NuClass *) anotherClass;
 /*! Change the superclass of a class. Be careful with this. */
 - (void) setSuperclass:(NuClass *) newSuperclass;
+/*! Add an instance method to a class with the specified name, type signature, and body. */
+- (id) addInstanceMethod:(NSString *) methodName signature:(NSString *)signature body:(NuBlock *) block;
+/*! Add a class method to a class with the specified name, type signature, and body. */
+- (id) addClassMethod:(NSString *) methodName signature:(NSString *)signature body:(NuBlock *) block;
+/*! Add an instance variable to the receiving class. This will cause problems if there are already instances of the receiving class. */
+- (id) addInstanceVariable:(NSString *)variableName signature:(NSString *) signature;
+
+- (BOOL) isRegistered;
+- (void) setRegistered:(BOOL) value;
+- (void) registerClass;
 @end
 
 @class NuBlock;

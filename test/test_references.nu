@@ -11,4 +11,3 @@
                   (reference setValue:99)))
           (ReferenceClass returnByReference:(set reference (NuReference new)))	
           (assert_equal 99 (reference value))))
-

@@ -21,6 +21,9 @@ id Nu__null = 0;
     return [[[NuParser alloc] init] autorelease];
 }
 
++ (int) sizeOfPointer {
+	return sizeof(void *);
+}
 @end
 
 @interface NuApplication : NSObject

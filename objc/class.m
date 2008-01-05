@@ -47,6 +47,7 @@
 {
     [super init];
     c = class;
+    isRegistered = YES;                           // unless we explicitly set otherwise
     return self;
 }
 
@@ -119,7 +120,7 @@
         return true;
     Class superclass = [myclass superclass];
     if (superclass)
-		return nu_objectIsKindOfClass(superclass, parent);
+        return nu_objectIsKindOfClass(superclass, parent);
     return false;
 }
 
@@ -160,6 +161,25 @@
     return method;
 }
 
+- (id) addInstanceMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
+{
+    //NSLog(@"adding instance method %@", methodName);
+    return add_method_to_class(c, methodName, signature, block);
+}
+
+- (id) addClassMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
+{
+    //NSLog(@"adding class method %@", methodName);
+    return add_method_to_class(c, methodName, signature, block);
+}
+
+- (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
+{
+    //NSLog(@"adding instance variable %@", variableName);
+    class_addInstanceVariable_withSignature(c, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+    return Nu__null;
+}
+
 - (BOOL) isEqual:(NuClass *) anotherClass
 {
     return c == anotherClass->c;
@@ -167,12 +187,31 @@
 
 - (void) setSuperclass:(NuClass *) newSuperclass
 {
-	struct nu_objc_class
-	{
-	    Class isa;
-	    Class super_class;
-	    // other stuff...
-	};
+    struct nu_objc_class
+    {
+        Class isa;
+        Class super_class;
+        // other stuff...
+    };
     ((struct nu_objc_class *) self->c)->super_class = newSuperclass->c;
 }
+
+- (BOOL) isRegistered
+{
+    return isRegistered;
+}
+
+- (void) setRegistered:(BOOL) value
+{
+    isRegistered = value;
+}
+
+- (void) registerClass
+{
+    if (isRegistered == NO) {
+        objc_registerClassPair(c);
+        isRegistered = YES;
+    }
+}
+
 @end

@@ -171,7 +171,8 @@
 
     // Look up the appropriate method to call for the specified selector.
     Method m;
-    BOOL isAClass = (self->isa == [NuClass class]) ? YES : NO; // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
+                                                  // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
+    BOOL isAClass = (self->isa == [NuClass class]) ? YES : NO;
     if (isAClass) {
         // Class wrappers (objects of type NuClass) get special treatment. Instance methods are sent directly to the class wrapper object.
         // But when a class method is sent to a class wrapper, the method is instead sent as a class method to the wrapped class.
@@ -442,7 +443,7 @@
 
     return newClass;
 }
-
+/*
 + (id) addInstanceMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
 {
     Class c = [self class];
@@ -454,7 +455,7 @@
     Class c = [self class]->isa;
     return add_method_to_class(c, methodName, signature, block);
 }
-
+*/
 + (BOOL) copyInstanceMethod:(NSString *) methodName fromClass:(NuClass *)prototypeClass
 {
     Class thisClass = [self class];
@@ -476,7 +477,7 @@
     }
     return true;
 }
-
+/*
 + (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
 {
     Class thisClass = [self class];
@@ -486,7 +487,7 @@
 
     return Nu__null;
 }
-
+*/
 + (NSString *) help
 {
     return [NSString stringWithFormat:@"This is a class named %s.", class_getName([self class])];

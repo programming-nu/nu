@@ -186,7 +186,7 @@
 }
 
 
-static int sortedArrayUsingBlockHelper(id a, id b, void *context)
+static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
 {
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
