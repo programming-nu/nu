@@ -1,0 +1,12 @@
+#!/bin/sh
+# run this in your PCRE source directory to build and install a PCRE
+# that can be used to build Nu.
+
+env CXXFLAGS="-arch i386 -arch ppc -arch x86_64" \
+	CFLAGS="-arch i386 -arch ppc -arch x86_64" \
+	LDFLAGS="-arch i386 -arch ppc -arch x86_64" \
+	./configure --disable-dependency-tracking --enable-utf8
+
+make
+
+sudo make install
