@@ -13,6 +13,7 @@
 #import "extensions.h"
 #import "st.h"
 #import "reference.h"
+#import "pointer.h"
 #import <sys/mman.h>
 
 /* 
@@ -580,9 +581,13 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                     return YES;
                 }
             }
+            else if (nu_objectIsKindOfClass(nu_value, [NuPointer class])) {
+                *((void **) objc_value) = [nu_value pointer];
+                return NO;                        // don't ask the receiver to retain this, it's just a pointer
+            }
             else {
-                NSLog(@"can't convert value of type %s to a pointer of type %s", class_getName([nu_value class]), typeString);
-                return NO;
+                *((void **) objc_value) = nu_value;
+                return NO;                        // don't ask the receiver to retain this, it isn't expecting an object
             }
         }
 
@@ -604,45 +609,6 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 return NO;
             }
         }
-
-        #if false
-        case 'b':                                 // send bool as int
-            switch (TYPE(ruby_value)) {
-                case T_FIXNUM:
-                case T_BIGNUM:
-                case T_FLOAT:
-                    *((int *) objc_value) = (int) NUM2INT(ruby_value);
-                    return NO;
-                case T_TRUE:
-                    *((int *) objc_value) = (int) 0x01;
-                    return NO;
-                case T_FALSE:
-                    *((int *) objc_value) = (int) 0x00;
-                    return NO;
-                default:
-                    NSLog(@"can't convert ruby type %x to %c", TYPE(ruby_value), typeChar);
-                    *((int *) objc_value) = -1;
-                    return NO;
-            }
-        case 'B':                                 // send bool as int
-            switch (TYPE(ruby_value)) {
-                case T_FIXNUM:
-                case T_BIGNUM:
-                case T_FLOAT:
-                    *((unsigned int *) objc_value) = (unsigned int) NUM2UINT(ruby_value);
-                    return NO;
-                case T_TRUE:
-                    *((unsigned int *) objc_value) = (unsigned int) 0x01;
-                    return NO;
-                case T_FALSE:
-                    *((unsigned int *) objc_value) = (unsigned int) 0x00;
-                    return NO;
-                default:
-                    NSLog(@"can't convert ruby type %x to %c", TYPE(ruby_value), typeChar);
-                    *((int *) objc_value) = -1;
-                    return NO;
-            }
-        #endif
         default:
             NSLog(@"can't wrap argument of type %s", typeString);
     }
@@ -668,7 +634,7 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
             Class c = *((Class *)objc_value);
             return c ? [[NuClass alloc] initWithClass:c] : Nu__null;
         }
-#ifndef __ppc__
+        #ifndef __ppc__
         case 'c':
         {
             return [NSNumber numberWithChar:*((char *)objc_value)];
@@ -677,15 +643,15 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         {
             return [NSNumber numberWithShort:*((short *)objc_value)];
         }
-#else
-		case 'c':
-		case 's':
-#endif
+        #else
+        case 'c':
+        case 's':
+        #endif
         case 'i':
         {
             return [NSNumber numberWithInt:*((int *)objc_value)];
         }
-#ifndef __ppc__
+        #ifndef __ppc__
         case 'C':
         {
             return [NSNumber numberWithUnsignedChar:*((unsigned char *)objc_value)];
@@ -694,10 +660,10 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         {
             return [NSNumber numberWithUnsignedShort:*((unsigned short *)objc_value)];
         }
-#else
-		case 'C':
-		case 'S':
-#endif
+        #else
+        case 'C':
+        case 'S':
+        #endif
         case 'I':
         {
             return [NSNumber numberWithUnsignedInt:*((unsigned int *)objc_value)];
@@ -816,9 +782,14 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         case '^':
         {
             if (!strcmp(typeString, "^v")) {
-                if (*((unsigned int *)objc_value) != 0)
-                    NSLog(@"WARNING: unable to wrap nonzero void * pointer");
-                return [NSNull null];
+                if (*((unsigned long *)objc_value) == 0)
+                    return [NSNull null];
+                else {
+                    id nupointer = [[[NuPointer alloc] init] autorelease];
+                    [nupointer setPointer:*((void **)objc_value)];
+                    [nupointer setTypeString:[NSString stringWithCString:typeString encoding:NSUTF8StringEncoding]];
+                    return nupointer;
+                }
             }
             else if (!strcmp(typeString, "^@")) {
                 id reference = [[[NuReference alloc] init] autorelease];
@@ -826,7 +797,14 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
                 return reference;
             }
             else {
-                NSLog(@"UNIMPLEMENTED: can't wrap pointer of type %s", typeString);
+                if (*((unsigned long *)objc_value) == 0)
+                    return [NSNull null];
+                else {
+                    id nupointer = [[[NuPointer alloc] init] autorelease];
+                    [nupointer setPointer:*((void **)objc_value)];
+                    [nupointer setTypeString:[NSString stringWithCString:typeString encoding:NSUTF8StringEncoding]];
+                    return nupointer;
+                }
             }
             return [NSNull null];
         }

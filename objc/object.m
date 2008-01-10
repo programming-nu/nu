@@ -355,7 +355,9 @@
                 //NSLog(@"setting sparse ivars dictionary: %@", sparseIvars);
                 [self setValue:sparseIvars forIvar:@"__nuivars"];
             }
+			[self willChangeValueForKey:name];
             [sparseIvars setObject:value forKey:name];
+			[self didChangeValueForKey:name];
             return;
         }
         [NSException raise:@"NuNoInstanceVariable"
@@ -363,12 +365,14 @@
             name, self];
         return;
     }
+	[self willChangeValueForKey:name];
     void *location = (void *)&(((char *)self)[ivar_getOffset(v)]);
     if (!strcmp(ivar_getTypeEncoding(v), "@")) {
         [value retain];
         [*((id *)location) release];
     }
     set_objc_value_from_nu_value(location, value, ivar_getTypeEncoding(v));
+	[self didChangeValueForKey:name];
 }
 
 + (NSArray *) classMethods
