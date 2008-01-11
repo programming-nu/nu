@@ -24,6 +24,11 @@
 
 - (NSString *) typeString {return typeString;}
 
+- (id) object
+{
+    return pointer;
+}
+
 - (void) setTypeString:(NSString *) s
 {
     [s retain];

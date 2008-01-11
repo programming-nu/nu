@@ -25,4 +25,6 @@
 - (void) setTypeString:(NSString *) typeString;
 /*! Get an Objective-C type string describing the pointer target. */
 - (NSString *) typeString;
+/*! Assume the pointer is a pointer to an Objective-C object. Get the object. You had better be right, or this will crash. */
+- (id) object;
 @end
