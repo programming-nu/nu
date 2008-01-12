@@ -12,7 +12,6 @@
 #import "regex.h"
 #import <unistd.h>
 
-id Nu__zero = 0;
 id Nu__null = 0;
 
 @implementation Nu
@@ -194,7 +193,6 @@ void NuInit()
         initialized = 1;
 
         Nu__null = [NSNull null];
-        Nu__zero = [NuZero zero];
 
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.

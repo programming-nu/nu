@@ -7,19 +7,6 @@
 #import <Cocoa/Cocoa.h>
 
 /*!
-    @class NuZero
-    @abstract Singleton class for representing zero-valued pointers.
-    @discussion An instance of the NuZero class is bridged as a zero-valued (null) pointer.
-    Pass it as a method argument in Nu when a call from Objective-C would send nil.
-    Don't use it for anything else.
- */
-@interface NuZero : NSObject
-{}
-/*! Get the singleton instance of NuZero. */
-+ (id) zero;
-@end
-
-/*!
     @category NSNull(Nu)
     @abstract NSNull extensions for Nu programming.
     @discussion In Nu, nil is represented by <code>[NSNull null]</code>.

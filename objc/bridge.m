@@ -397,7 +397,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
     switch (typeChar) {
         case '@':
         {
-            if ((nu_value == Nu__zero) || (nu_value == Nu__null)) {
+            if ((nu_value == Nu__null)) {
                 *((id *) objc_value) = nil;
                 return NO;
             }
@@ -552,7 +552,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
 
         case '^':
         {
-            if (!nu_value || (nu_value == [NSNull null]) || (nu_value == Nu__zero)) {
+            if (!nu_value || (nu_value == [NSNull null])) {
                 *((char ***) objc_value) = NULL;
                 return NO;
             }

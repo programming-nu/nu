@@ -16,16 +16,6 @@
 #import <time.h>
 #import <sys/stat.h>
 
-static id __nuzero = 0;
-@implementation NuZero
-+ (id) zero
-{
-    if (!__nuzero) __nuzero = [[self alloc] init];
-    return __nuzero;
-}
-
-@end
-
 extern id Nu__null;
 
 @implementation NSNull(Nu)

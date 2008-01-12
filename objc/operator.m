@@ -43,7 +43,7 @@
 
 static bool valueIsTrue(id value)
 {
-    bool result = value && (value != Nu__null) && (value != Nu__zero);
+    bool result = value && (value != Nu__null);
     if (result && nu_objectIsKindOfClass(value, [NSNumber class])) {
         if ([value doubleValue] == 0.0)
             result = false;
@@ -1549,8 +1549,6 @@ void load_builtins(NuSymbolTable *symbolTable)
 {
     [[[symbolTable symbolWithCString:"t"] retain] setValue:[symbolTable symbolWithCString:"t"]];
     [[[symbolTable symbolWithCString:"nil"] retain] setValue:Nu__null];
-    [[[symbolTable symbolWithCString:"NULL"] retain] setValue:Nu__zero];
-    [[[symbolTable symbolWithCString:"ZERO"] retain] setValue:Nu__zero];
 
     install("car",      Nu_car_operator);
     install("cdr",      Nu_cdr_operator);

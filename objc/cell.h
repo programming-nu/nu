@@ -84,6 +84,5 @@ In Nu, nil is represented with the <code>[NSNull null]</code> object.
 - (void) setComments:(id) comments;
 @end
 
-extern id Nu__zero;
 extern id Nu__null;
 #define IS_NOT_NULL(xyz) ((xyz) && (((id) (xyz)) != Nu__null))

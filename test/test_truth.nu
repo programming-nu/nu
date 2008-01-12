@@ -15,9 +15,8 @@
      (imethod (id) testFalse is
           (assert_equal "false" (if 0 (then "true") (else "false")))
           (assert_equal "false" (if NO (then "true") (else "false")))
-          (assert_equal "false" (if nil (then "true") (else "false")))
-          (assert_equal "false" (if ZERO (then "true") (else "false")))
-          (assert_equal "false" (if NULL (then "true") (else "false")))))
+          (assert_equal "false" (if nil (then "true") (else "false")))))
+      
 
 
 
