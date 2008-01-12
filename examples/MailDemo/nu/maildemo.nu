@@ -44,18 +44,18 @@
         (@controllerAlias setContent:self)
         
         (set @mailboxController ((NSArrayController alloc) init))	    
-        (@mailboxController bind:"contentArray" toObject:@controllerAlias withKeyPath:"selection.mailboxes" options:NULL)
+        (@mailboxController bind:"contentArray" toObject:@controllerAlias withKeyPath:"selection.mailboxes" options:nil)
         (@mailboxController setObjectClass:Mailbox)
         (@addMailboxButton set:(target:@mailboxController action:"add:"))
         (@deleteMailboxButton set:(target:@mailboxController action:"remove:"))
         ((@mailboxTable tableColumnWithIdentifier:"title") 
-         bind:"value" toObject:@mailboxController withKeyPath:"arrangedObjects.title" options:NULL)
+         bind:"value" toObject:@mailboxController withKeyPath:"arrangedObjects.title" options:nil)
         (@mailboxStatusLine 
              bind:"displayPatternValue1" toObject:@mailboxController withKeyPath:"arrangedObjects.@count" 
              options:(NSMutableDictionary dictionaryWithList:(NSDisplayPattern: "%{value1}@ Mailboxes")))
         
         (set @emailController ((NSArrayController alloc) init))
-        (@emailController bind:"contentArray" toObject:@mailboxController withKeyPath:"selection.emails" options:NULL)
+        (@emailController bind:"contentArray" toObject:@mailboxController withKeyPath:"selection.emails" options:nil)
         (@emailController setObjectClass:Email)
         (@addEmailButton set: (target:@emailController action:"add:"))
         (@deleteEmailButton set: (target:@emailController action:"remove:"))
@@ -63,11 +63,11 @@
         ((list "address" "subject" "date") each: 
          (do (item)
              ((@emailTable tableColumnWithIdentifier:item) 
-              bind:"value" toObject:@emailController withKeyPath:"arrangedObjects.#{item}" options:NULL)))
+              bind:"value" toObject:@emailController withKeyPath:"arrangedObjects.#{item}" options:nil)))
         (@emailStatusLine 
              bind:"displayPatternValue1" toObject:@emailController withKeyPath:"arrangedObjects.@count" 
              options:(NSMutableDictionary dictionaryWithList:(NSDisplayPattern: "%{value1}@ Emails")))
-        (@previewPane bind:"data" toObject:@emailController withKeyPath:"selection.body" options:NULL)))
+        (@previewPane bind:"data" toObject:@emailController withKeyPath:"selection.body" options:nil)))
 
 ;; you could do this in the nib file too, but look how clearly our menu is specified here:
 (set maildemo-application-menu

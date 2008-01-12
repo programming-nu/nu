@@ -53,7 +53,7 @@
           (unless @psc
                   (set @psc ((NSPersistentStoreCoordinator alloc) initWithManagedObjectModel:(self managedObjectModel)))
                   (unless (@psc addPersistentStoreWithType:@storeType
-                                configuration:NULL
+                                configuration:nil
                                 URL:@storeURL
                                 options:(NSDictionary dictionary)
                                 error:(set perror ((NuReference alloc) init)))

@@ -173,20 +173,20 @@
      (imethod (void) mouseDown:(id) event is          
           (if (eq @serversThatAreDone @serverCount) ;; Ignore drags while servers are working
               (set @dragging YES)
-              (self setDownPoint:(self convertPoint:(event locationInWindow) fromView:NULL))
+              (self setDownPoint:(self convertPoint:(event locationInWindow) fromView:nil))
               (self setCurrentPoint:@downPoint)))
      
      ;; Handle mouse dragged events.  Updates the selection rectangle and triggers a redraw.
      (imethod (void) mouseDragged:(id) event is     
           (if @dragging
-              (self setCurrentPoint:(self convertPoint:(event locationInWindow) fromView:NULL))
+              (self setCurrentPoint:(self convertPoint:(event locationInWindow) fromView:nil))
               (self setNeedsDisplay:YES)))
      
      ;; Handle mouse up events.  If the selection region is large enough, zoom the view.
      (imethod (void) mouseUp:(id) event is
           (if @dragging
               (set @dragging NO)
-              (self setCurrentPoint:(self convertPoint:(event locationInWindow) fromView:NULL))
+              (self setCurrentPoint:(self convertPoint:(event locationInWindow) fromView:nil))
               (set bounds    (self bounds))
               (set selection (self selectedRect))        
               (set original  (self region))
@@ -360,7 +360,7 @@ View origin is #{(self originString)} and size is #{(self sizeString)}.END)
           
           ;; Create the image rep the servers will draw on
           (set @imageRep ((NSBitmapImageRep alloc)
-                          initWithBitmapDataPlanes:NULL
+                          initWithBitmapDataPlanes:nil
                           pixelsWide:pixelsWide
                           pixelsHigh:pixelsHigh
                           bitsPerSample:8
@@ -398,18 +398,18 @@ View origin is #{(self originString)} and size is #{(self sizeString)}.END)
      (imethod (void) saveImage:(id) sender is
           (set panel (NSSavePanel savePanel))
           (panel setRequiredFileType:"png")
-          (panel beginSheetForDirectory:NULL
-                 file:NULL
+          (panel beginSheetForDirectory:nil
+                 file:nil
                  modalForWindow:(self window)
                  modalDelegate:self
                  didEndSelector:"didEnd:returnCode:contextInfo:"
-                 contextInfo:NULL))     
+                 contextInfo:nil))     
      
      ;; This callback method is called when the saveImage: panel is closed.
      ;; If a file was specified, it writes the image to that file.
      (imethod (void) didEnd:(id) sheet returnCode:(int) code contextInfo:(void *) info is
           (if (eq code NSOKButton)
-              ((@imageRep representationUsingType:NSPNGFileType properties:NULL)
+              ((@imageRep representationUsingType:NSPNGFileType properties:nil)
                writeToFile:(sheet filename) atomically:NO))))
 
 

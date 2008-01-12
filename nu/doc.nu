@@ -31,7 +31,7 @@
      ;; 
      ;; "Thursday, 30 Aug 2007"
      (imethod (id) descriptionForDocumentation is
-          (self descriptionWithCalendarFormat:"%A, %d %b %Y" timeZone:NULL locale:NULL)))
+          (self descriptionWithCalendarFormat:"%A, %d %b %Y" timeZone:nil locale:nil)))
 
 (class NuRegexMatch     
      ;; Compare matches by their location.  This allows arrays of matches to be sorted.

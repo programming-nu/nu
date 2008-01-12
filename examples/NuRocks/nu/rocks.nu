@@ -101,12 +101,12 @@
      (- saveScreenShot:sender is
         (set panel (NSSavePanel savePanel))
         (panel setRequiredFileType:"jpg")
-        (panel beginSheetForDirectory:NULL
-               file:NULL
+        (panel beginSheetForDirectory:nil
+               file:nil
                modalForWindow:(self window)
                modalDelegate:self
                didEndSelector:"didEnd:returnCode:contextInfo:"
-               contextInfo:NULL))     
+               contextInfo:nil))     
      
      ;; This callback method is called when the saveScreenShot: panel is closed.
      (- (void) didEnd:(id) sheet returnCode:(int) code contextInfo:(void *) info is
@@ -114,7 +114,7 @@
             (self lockFocus)
             (set representation ((NSBitmapImageRep alloc) initWithFocusedViewRect:(self bounds)))
             (self unlockFocus)
-            ((representation representationUsingType:NSJPEGFileType properties:NULL)
+            ((representation representationUsingType:NSJPEGFileType properties:nil)
              writeToFile:(sheet filename) atomically:NO))))
 
 (class NuRocksGame is NSObject
