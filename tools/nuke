@@ -12,6 +12,9 @@
 (NSSet include: NuEnumerable)
 (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
 
+;; create an array from a list of values
+(global array (do (*args) (NSArray arrayWithList:*args)))
+
 (function SH (command)
      (puts "nuke: #{command}")
      (set result (system command))
@@ -29,7 +32,7 @@
           (set components (self componentsSeparatedByString:"/"))
           (set result ((NSMutableString alloc) init))
           ((- (components count) 1) times:
-           (do (n) 
+           (do (n)
                (result appendString:(components objectAtIndex:n))
                (result appendString:"/")))
           result)
@@ -39,7 +42,7 @@
           (set components (self componentsSeparatedByString:"/"))
           (components objectAtIndex:(- (components count) 1))))
 
-(class NSDictionary 
+(class NSDictionary
      ;; Create a dictionary from a list.
      (cmethod (id) dictionaryWithList: (id) l is
           (set dict ((NSMutableDictionary alloc) init))
@@ -92,11 +95,11 @@
      results)
 
 ;; @abstract A task description, complete with action and dependency information.
-;; @discussion NukeTasks are used to represent tasks in nuke, 
+;; @discussion NukeTasks are used to represent tasks in nuke,
 ;; the Nu build tool.  A NukeTask may be associated with a file
 ;; or may represent an abstract set of operations.  Tasks have
-;; dependencies; each dependency must be satisfied before 
-;; the task action is attempted.  In nuke, tasks are created 
+;; dependencies; each dependency must be satisfied before
+;; the task action is attempted.  In nuke, tasks are created
 ;; using the <b>task</b> and <b>file</b> macros.
 (class NukeTask is NSObject
      (ivar (id) name)			;; the name of the task
@@ -135,7 +138,7 @@
                 (date           ((NSFileManager modificationTimeForFileNamed:@name) timeIntervalSinceReferenceDate))
                 (else           0)))
      
-     ;; Attempt to update a task, first by updating all its dependencies, 
+     ;; Attempt to update a task, first by updating all its dependencies,
      ;; then, if no errors occurred, by performing the the action of a task.
      (imethod (id) update is
           (unless @result
@@ -190,7 +193,7 @@
      (set momc nil)
      ('( "/Library/Application Support/Apple/Developer Tools/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc"
          "/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc")
-       each: 
+       each:
        (do (momc-path)
            (if (NSFileManager fileExistsNamed:momc-path)
                (set momc (momc-path replaceString:" " withString:-"\ ")))))
@@ -207,15 +210,15 @@
              (set @arch (list (NSString stringWithShellCommand:"arch"))))
      (@arch each: (do (architecture) (system "mkdir -p build/#{architecture}")))
      
-     (unless @ldflags ;; not for compilation, but common across all builds 
-             (set @ldflags ((@frameworks map: (do (framework) " -framework #{framework}")) join)))   
+     (unless @ldflags ;; not for compilation, but common across all builds
+             (set @ldflags ((@frameworks map: (do (framework) " -framework #{framework}")) join)))
      
      ;; compile c files
      (set @c_objects (NSMutableDictionary dictionary))
      (@arch each: (do (architecture) (@c_objects setObject:(NSMutableArray array) forKey:architecture)))
      (@c_files each:
           (do (sourceName)
-              (@arch each:                      
+              (@arch each:
                      (do (architecture)
                          (set objectName "build/#{architecture}/")
                          (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
@@ -228,8 +231,8 @@
      (@arch each: (do (architecture) (@m_objects setObject:(NSMutableArray array) forKey:architecture)))
      (@m_files each:
           (do (sourceName)
-              (@arch each: 
-                     (do (architecture)          
+              (@arch each:
+                     (do (architecture)
                          (set objectName "build/#{architecture}/")
                          (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
                          ((@m_objects objectForKey:architecture) addObject: objectName)
@@ -242,7 +245,7 @@
      ;; compile datamodels
      (@datamodels each:
           (do (model)
-              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))         
+              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
               (file "#{modelName}.mom" => "#{modelName}.xcdatamodel" is
                     (SH "#{(momc-path)} #{modelName}.xcdatamodel #{modelName}.mom"))))
      
@@ -253,9 +256,13 @@
 ;; use this to create all the linking and assembly tasks to build a Cocoa application
 (macro application-tasks
      ;; DEFAULT: if no application name is specified, use something dumb and complain.
-     (unless @application 
+     (unless @application
              (set @application "Untitled")
              (NSLog "Please name your application by setting @application in your Nukefile"))
+     
+     ;; DEFAULT: if no prefix is specified, use the path where nuke is installed.
+     (unless @prefix
+             (set @prefix "#{((((NSProcessInfo processInfo) arguments) 0) dirName)}.."))
      
      ;; DEFAULT: if no application identifier is specifed, use something dumb and complain.
      (unless @application_identifier
@@ -264,10 +271,10 @@
      
      ;; DEFAULT: if no icon is specified, use the nu icon for the application.
      (unless @application_icon_file (set @application_icon_file "nu.icns"))
-     (unless @icon_files (set @icon_files (NSArray arrayWithList:'("/usr/local/share/nu/resources/nu.icns"))))
+     (unless @icon_files (set @icon_files (array "#{@prefix}/share/nu/resources/nu.icns")))
      
      ;; DEFAULT: if no nib files are specified, use the standard (empty) Nu MainMenu.nib.
-     (unless @nib_files (set @nib_files (NSArray arrayWithList:'("/usr/local/share/nu/resources/English.lproj/MainMenu.nib"))))
+     (unless @nib_files (set @nib_files (array "#{@prefix}/share/nu/resources/English.lproj/MainMenu.nib")))
      
      ;; DEFAULT: if no creator code is specified, use "????"
      (unless @application_creator_code (set @application_creator_code "????"))
@@ -280,15 +287,15 @@
      (set @application_resource_localized_dir "#{@application_resource_dir}/English.lproj")
      
      ;; make the application directory structure
-     ((list @application_dir 
-            @application_contents_dir 
-            @application_executable_dir 
-            @application_resource_dir 
+     ((list @application_dir
+            @application_contents_dir
+            @application_executable_dir
+            @application_resource_dir
             @application_resource_localized_dir)
       each: (do (dir) (file dir is (make-directory (target name)))))
      
      ;; application executable
-     (set @application_executable_name "#{@application_executable_dir}/#{@application}")   
+     (set @application_executable_name "#{@application_executable_dir}/#{@application}")
      (if (or (and @c_objects (@c_objects count) (((@c_objects allValues) objectAtIndex:0) count))
              (and @m_objects (@m_objects count) (((@m_objects allValues) objectAtIndex:0) count)))
          (then
@@ -306,8 +313,8 @@
                     (set command "lipo -create #{(@application_executables join)} -output '#{@application_executable_name}'")
                     (SH command)))
          (else
-              (file @application_executable_name => @application_executable_dir is 
-                    (SH "cp /usr/local/bin/nush '#{(target name)}'"))))
+              (file @application_executable_name => @application_executable_dir is
+                    (SH "cp #{@prefix}/bin/nush '#{(target name)}'"))))
      
      ;; copy application_resources into the application
      (task "application_resources" => @application_resource_dir)
@@ -333,7 +340,7 @@
      ;; copy datamodels into the application
      (@datamodels each:
           (do (model)
-              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0)) 
+              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
               (task "application_#{modelName}" => "#{modelName}.mom" @application_resource_dir is
                     (SH "cp #{modelName}.mom #{@application_resource_dir}/#{(modelName lastPathComponent)}.mom"))
               (task "application" => "application_#{modelName}")))
@@ -356,7 +363,7 @@
                                 "NSPrincipalClass" "NSApplication")))
            (if @application_help_folder
                (info setObject:@application_help_folder forKey:"CFBundleHelpBookFolder")
-               (info setObject:@application_help_folder forKey:"CFBundleHelpBookName"))           
+               (info setObject:@application_help_folder forKey:"CFBundleHelpBookName"))
            (if @info (info addEntriesFromDictionary: @info))
            (info writeToFile:(target name) atomically:NO)
            0)
@@ -402,16 +409,16 @@
      (set @framework_resource_dir           "#{@framework_contents_dir}/Resources")
      (set @framework_resource_localized_dir "#{@framework_resource_dir}/English.lproj")
      
-     ((list @framework_dir 
+     ((list @framework_dir
             @framework_versions_dir
-            @framework_contents_dir 
+            @framework_contents_dir
             @framework_headers_dir
             @framework_resource_dir
             @framework_resource_localized_dir)
       each: (do (dir) (file dir is (make-directory (target name)))))
      
-     (set @initflags (if @framework_initializer 
-                         (then "-Wl,-init -Wl,_#{@framework_initializer}") 
+     (set @initflags (if @framework_initializer
+                         (then "-Wl,-init -Wl,_#{@framework_initializer}")
                          (else "")))
      
      ;; framework architecture-specific executable
@@ -452,7 +459,7 @@
      ;; copy datamodels into the framework
      (@datamodels each:
           (do (model)
-              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0)) 
+              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
               (task "framework_#{modelName}" => "#{modelName}.mom" @framework_resource_dir is
                     (SH "cp #{modelName}.mom #{@framework_resource_dir}/#{(modelName lastPathComponent)}.mom"))
               (task "framework" => "framework_#{modelName}")))
@@ -499,9 +506,9 @@
      (set @bundle_dir                    "#{@bundle}.bundle")
      (set @bundle_contents_dir           "#{@bundle_dir}/Contents")
      (set @bundle_executable_dir         "#{@bundle_contents_dir}/MacOS")
-     (set @bundle_resource_dir           "#{@bundle_contents_dir}/Resources")     
-     ((list @bundle_dir 
-            @bundle_contents_dir 
+     (set @bundle_resource_dir           "#{@bundle_contents_dir}/Resources")
+     ((list @bundle_dir
+            @bundle_contents_dir
             @bundle_executable_dir
             @bundle_resource_dir)
       each: (do (dir) (file dir is (make-directory (target name)))))
@@ -532,7 +539,7 @@
                  (set targetFile "#{@bundle_resource_dir}/#{baseName}")
                  (file targetFile => f @bundle_resource_dir is
                        (SH "cp #{f} '#{targetFile}'"))
-                 (task "bundle_resources" => targetFile)))))     
+                 (task "bundle_resources" => targetFile)))))
      
      ;; bundle_infoplist
      (set bundle_infoplist "#{@bundle_contents_dir}/Info.plist")
@@ -583,8 +590,8 @@
 
 ;; @abstract A project consisting of an interrelated set of NukeTasks.
 ;; @discussion NukeProjects gather together a related set of NukeTask task descriptions
-;; and allow them to be more easily referred to by name.  There is typically 
-;; one NukeProject for a given run of nuke.  A Nukefile is evaluated inside 
+;; and allow them to be more easily referred to by name.  There is typically
+;; one NukeProject for a given run of nuke.  A Nukefile is evaluated inside
 ;; an instance method of a NukeProject; so all instance variables in a Nukefile
 ;; belong to the NukeProject instance.
 (class NukeProject is NSObject
@@ -601,7 +608,7 @@
               (@tasks setObject:mytask forKey:taskName))
           mytask)
      
-     ;; Add a new task by to a project. 
+     ;; Add a new task by to a project.
      ;; The new task is specified by its name.
      ;; The task action should be specified as a block.
      (imethod (id) addTask:(id) taskName action:(id) action is
@@ -612,8 +619,8 @@
      ;; Add a dependency between named tasks.
      (imethod (void) addDependency:(id) taskName on:(id) dependency is
           (if (eq YES (dependency isKindOfClass:NSString))
-              (then 
-                    (((self taskNamed:taskName) dependencies) addObject: (self taskNamed:dependency)))
+              (then
+                   (((self taskNamed:taskName) dependencies) addObject: (self taskNamed:dependency)))
               (else ;; if it's not a string, the dependency must be enumerable
                     (dependency each:
                          (do (element)
@@ -622,7 +629,7 @@
      ;; Perform the tasks needed to complete a named target task.
      (imethod (void) nuke:(id) targetName is
           (set target (@tasks objectForKey:targetName))
-          (if target 
+          (if target
               (then (target update))
               (else (puts "error, unknown target: #{targetName}"))))
      
@@ -641,19 +648,19 @@
 ;; main program
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; there's lots more that we could do here, like 
+;; there's lots more that we could do here, like
 ;; adding command line options to get task lists
 ;; or to control the verbosity.
 
 (set argv ((NuApplication sharedApplication) arguments))
-(set target (if (> (argv count) 0) 
+(set target (if (> (argv count) 0)
                 (then (argv objectAtIndex:0))
                 (else "default")))
 
 ;; We expect there to be a file named "Nukefile" in the current directory
 (try
     (set project (((NukeProject alloc) init) load: "Nukefile"))
-    (catch (exception) 
+    (catch (exception)
            (puts "nuke error: #{(exception reason)}")
            ;; bridge and call a standard C function
            (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
