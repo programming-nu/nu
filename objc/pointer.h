@@ -15,6 +15,7 @@
 {
     void *pointer;
     NSString *typeString;
+    bool thePointerIsMine;
 }
 
 /*! Get the value of the pointer. Don't call this from Nu. */
@@ -27,4 +28,6 @@
 - (NSString *) typeString;
 /*! Assume the pointer is a pointer to an Objective-C object. Get the object. You had better be right, or this will crash. */
 - (id) object;
+/*! Get the value of the pointed-to object, using the typeString to determine the correct type */
+- (id) value;
 @end

@@ -582,6 +582,8 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 }
             }
             else if (nu_objectIsKindOfClass(nu_value, [NuPointer class])) {
+                if ([nu_value pointer] == 0)
+                    [nu_value allocateSpaceForTypeString:[NSString stringWithCString:typeString encoding:NSUTF8StringEncoding]];
                 *((void **) objc_value) = [nu_value pointer];
                 return NO;                        // don't ask the receiver to retain this, it's just a pointer
             }
@@ -876,6 +878,7 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
             [cursor setCar:[args objectAtIndex:i]];
         }
         id result = [block evalWithArguments:[arguments cdr] context:nil self:target];
+        [arguments release];
         // ensure that methods declared to return void always return void.
         char return_type_buffer[BUFSIZE];
         method_getReturnType(m, return_type_buffer, BUFSIZE);
