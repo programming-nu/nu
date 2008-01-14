@@ -658,8 +658,19 @@
                 (else "default")))
 
 ;; We expect there to be a file named "Nukefile" in the current directory
+;; or in one of its containing directories
+(function climbToFile (filename)
+     (set path (((NSProcessInfo processInfo) environment) "PWD"))
+     (until (or (eq path "/")
+                ((NSFileManager defaultManager) fileExistsAtPath:(+ path "/" filename)))
+            (set path (path stringByDeletingLastPathComponent)))
+     (if ((NSFileManager defaultManager) fileExistsAtPath:(+ path "/" filename))
+         (puts "nuke: running in #{path}")
+         ((NSFileManager defaultManager) changeCurrentDirectoryPath:path)))
+
 (try
-    (set project (((NukeProject alloc) init) load: "Nukefile"))
+    (climbToFile "Nukefile")
+    (set project (((NukeProject alloc) init) load:"Nukefile"))
     (catch (exception)
            (puts "nuke error: #{(exception reason)}")
            ;; bridge and call a standard C function
