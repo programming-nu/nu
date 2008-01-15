@@ -314,7 +314,7 @@
                     (SH command)))
          (else
               (file @application_executable_name => @application_executable_dir is
-                    (SH "cp #{@prefix}/bin/nush '#{(target name)}'"))))
+                    (SH "cp '#{@prefix}/bin/nush' '#{(target name)}'"))))
      
      ;; copy application_resources into the application
      (task "application_resources" => @application_resource_dir)
@@ -325,7 +325,7 @@
                  (set baseName ((f componentsSeparatedByString:"/") lastObject))
                  (set targetFile "#{@application_resource_dir}/#{baseName}")
                  (file targetFile => f @application_resource_dir is
-                       (SH "cp #{f} '#{targetFile}'"))
+                       (SH "cp '#{f}' '#{targetFile}'"))
                  (task "application_resources" => targetFile)))))
      ((list @nib_files @resources) each:
       (do (l)
@@ -342,7 +342,7 @@
           (do (model)
               (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
               (task "application_#{modelName}" => "#{modelName}.mom" @application_resource_dir is
-                    (SH "cp #{modelName}.mom #{@application_resource_dir}/#{(modelName lastPathComponent)}.mom"))
+                    (SH "cp '#{modelName}.mom' '#{@application_resource_dir}/#{(modelName lastPathComponent)}.mom'"))
               (task "application" => "application_#{modelName}")))
      
      ;; create the application_infoplist
@@ -446,13 +446,13 @@
                  (set baseName ((f componentsSeparatedByString:"/") lastObject))
                  (set targetFile "#{@framework_resource_dir}/#{baseName}")
                  (file targetFile => f @framework_resource_dir is
-                       (SH "cp #{f} '#{targetFile}'"))
+                       (SH "cp '#{f}' '#{targetFile}'"))
                  (task "framework_resources" => targetFile)))))
      (@nib_files each:
           (do (f)
               (set g ((f componentsSeparatedByString:"/") lastObject))
               (file "#{@framework_resource_localized_dir}/#{g}" => f @framework_resource_localized_dir is
-                    (SH "cp -R #{f} '#{((target name) dirName)}'")
+                    (SH "cp -R '#{f}' '#{((target name) dirName)}'")
                     0)
               (task "framework_resources" => "#{@framework_resource_localized_dir}/#{g}")))
      
@@ -461,7 +461,7 @@
           (do (model)
               (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
               (task "framework_#{modelName}" => "#{modelName}.mom" @framework_resource_dir is
-                    (SH "cp #{modelName}.mom #{@framework_resource_dir}/#{(modelName lastPathComponent)}.mom"))
+                    (SH "cp '#{modelName}.mom' '#{@framework_resource_dir}/#{(modelName lastPathComponent)}.mom'"))
               (task "framework" => "framework_#{modelName}")))
      
      ;; framework_infoplist
@@ -538,7 +538,7 @@
                  (set baseName ((f componentsSeparatedByString:"/") lastObject))
                  (set targetFile "#{@bundle_resource_dir}/#{baseName}")
                  (file targetFile => f @bundle_resource_dir is
-                       (SH "cp #{f} '#{targetFile}'"))
+                       (SH "cp '#{f}' '#{targetFile}'"))
                  (task "bundle_resources" => targetFile)))))
      
      ;; bundle_infoplist
