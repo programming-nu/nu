@@ -31,7 +31,7 @@
                       (if (eq count 0)
                           (then (set found YES))
                           (else (set index (- index 1)))))
-               (found ? index : -1))) 
+               (if found (then index) (else -1))))
      
      ;; Search forward from an opening paren to find its match.
      (imethod (int) findClosingParenForParenAt:(int) position is
@@ -49,7 +49,7 @@
                       (if (eq count 0)
                           (then (set found YES))
                           (else (set index (+ index 1)))))
-               (found ? index : -1))))
+               (if found (then index) (else -1)))))
 
 ;; @abstract Value transformer class for binding to menu item.
 ;; @discussion This class is part of the Nu console implementation.
@@ -63,7 +63,7 @@
      (cmethod (BOOL) allowsReverseTransformation is NO)
      
      ;; Convert a boolean value into an appropriate string for the menu item.
-     (imethod (id) transformedValue:(id) v is (v ? "Hide Nu Console" : "Show Nu Console")))
+     (imethod (id) transformedValue:(id) v is (if v (then "Hide Nu Console") (else "Show Nu Console"))))
 
 (NSValueTransformer setValueTransformer: ((NuConsoleShowHideTransformer alloc) init)
      forName:"NuConsoleShowHideTransformer")
@@ -95,9 +95,9 @@
      
      ;; Initialize a console.
      (imethod (id) init is
-          (self initWithWindow:((NSPanel alloc) initWithContentRect:'(0 0 600 200) 
+          (self initWithWindow:((NSPanel alloc) initWithContentRect:'(0 0 600 200)
                                 styleMask:(+ NSTitledWindowMask NSClosableWindowMask NSMiniaturizableWindowMask NSResizableWindowMask NSUtilityWindowMask)
-                                backing:NSBackingStoreBuffered 
+                                backing:NSBackingStoreBuffered
                                 defer:NO))
           (set @console ((NuConsoleViewController alloc) initWithFrame: (list 0 0 (- (third ((self window) frame)) 17) (fourth ((self window) frame)))))
           (self setMyShowConsole:NO)
@@ -136,8 +136,8 @@
                           (a addButtonWithTitle:"OK")
                           (a addButtonWithTitle:"Cancel")
                           (a beginSheetModalForWindow:(self window)
-                             modalDelegate:self 
-                             didEndSelector:"alertDidEnd:returnCode:contextInfo:" 
+                             modalDelegate:self
+                             didEndSelector:"alertDidEnd:returnCode:contextInfo:"
                              contextInfo:nil))
                      NO)))
      
@@ -170,7 +170,7 @@
           (super init)
           (set @textview ((NuConsoleView alloc) initWithFrame: frame))
           (@textview setAutoresizingMask: (+ NSViewHeightSizable NSViewWidthSizable))
-          (@textview set: 
+          (@textview set:
                (backgroundColor: (NSColor colorWithDeviceRed:0.8 green:0.8 blue:1.0 alpha:0.9)
                 textColor: (NSColor blackColor)
                 insertionPointColor: (NSColor blackColor)
@@ -189,7 +189,7 @@
      ;; Get the number of lines to output between handling application events.
      (imethod (id) chunk is @chunk)
      
-     ;; Set the number of lines to output between handling application events. 
+     ;; Set the number of lines to output between handling application events.
      ;; Setting this higher causes output to display faster, but more erratically.
      (imethod (void) setChunk:(id) chunk is (set @chunk chunk))
      
@@ -202,7 +202,7 @@
           ;; In general, writes move both the insertionPoint and the startOfInput forward,
           ;; but we don't want to do this when we write the prompt.
           (let ((savedInsertionPoint @insertionPoint))
-               (if (@parser incomplete) 
+               (if (@parser incomplete)
                    (then (set @insertionPoint @startOfInput)
                          (self write: "- "))
                    (else (self write: "> ")))
@@ -247,24 +247,24 @@
                 ((eq @index -1) nil)
                 (else
                      (set @index (- @index 1))
-                     ((@textview textStorage) 
-                      replaceCharactersInRange:(list @startOfInput (- (self lengthOfTextView) @startOfInput))                    
+                     ((@textview textStorage)
+                      replaceCharactersInRange:(list @startOfInput (- (self lengthOfTextView) @startOfInput))
                       withString:(@history objectAtIndex: @index))
                      (@textview scrollRangeToVisible:(list (self lengthOfTextView) 0)))))
      
-     ;; Replace the current line of input with a line from the input history.  
+     ;; Replace the current line of input with a line from the input history.
      (imethod (void) replaceLineWithNext is
           (cond ((eq @index (- (@history count) 0)) nil)
                 ((eq @index (- (@history count) 1))
                  (set @index (+ @index 1))
-                 ((@textview textStorage) 
-                  replaceCharactersInRange:(list @startOfInput (- (self lengthOfTextView) @startOfInput)) 
+                 ((@textview textStorage)
+                  replaceCharactersInRange:(list @startOfInput (- (self lengthOfTextView) @startOfInput))
                   withString:"")
                  (@textview scrollRangeToVisible:(list (self lengthOfTextView) 0)))
                 (else
                      (set @index (+ @index 1))
-                     ((@textview textStorage) 
-                      replaceCharactersInRange:(list @startOfInput (- (self lengthOfTextView) @startOfInput)) 
+                     ((@textview textStorage)
+                      replaceCharactersInRange:(list @startOfInput (- (self lengthOfTextView) @startOfInput))
                       withString:(@history objectAtIndex: @index))
                      (@textview scrollRangeToVisible:(list (self lengthOfTextView) 0)))))
      
@@ -273,13 +273,13 @@
           ((@textview layoutManager) removeTemporaryAttribute:"NSColor" forCharacterRange:(list 0 (self lengthOfTextView)))
           ((@textview layoutManager) removeTemporaryAttribute:"NSBackgroundColor" forCharacterRange:(list 0 (self lengthOfTextView)))
           ((@textview layoutManager) removeTemporaryAttribute:"NSFont" forCharacterRange:(list 0 (self lengthOfTextView)))
-          (cond ((< (first range) @startOfInput) nil)               ;; no edits are allowed before the prompt              
+          (cond ((< (first range) @startOfInput) nil)               ;; no edits are allowed before the prompt
                 ((and (> (replacement length) 0) (eq (replacement characterAtIndex:(- (replacement length) 1)) RPAREN))
                  ;; add the paren to the view
                  ((@textview textStorage) replaceCharactersInRange:range withString:replacement)
                  ;; look back for the opening paren so the pair can be highlighted.
-                 (set match ((@textview textStorage) 
-                             findOpeningParenForParenAt:(first range) 
+                 (set match ((@textview textStorage)
+                             findOpeningParenForParenAt:(first range)
                              backTo:(if (@parser incomplete) (then 0) (else @startOfInput))))
                  (cond ((and (eq match -1) (eq (@parser incomplete) 0))
                         ;; let's try inserting a paren at the start of the line
@@ -305,7 +305,7 @@
                  ((@textview textStorage) replaceCharactersInRange:range withString:replacement)
                  ;; look back for the opening paren so the pair can be highlighted.
                  (set match ((@textview textStorage) findClosingParenForParenAt:(first range)))
-                 (unless (eq match -1) 
+                 (unless (eq match -1)
                          (set highlight (NSMutableDictionary dictionaryWithList:
                                              (list "NSColor"           (NSColor colorWithDeviceRed:0.0 green:0.0 blue:0 alpha:1)
                                                    "NSBackgroundColor" (NSColor colorWithDeviceRed:0.9 green:0.9 blue:0 alpha:1))))
@@ -335,17 +335,17 @@
                                      (self write:(NSString carriageReturn))
                                      (@parser reset)
                                      (set @insertionPoint @startOfInput))))
-                     (else      
+                     (else
                           (set @insertionPoint @startOfInput)))
                  (self prompt)
                  nil)       ;; don't insert replacement text because we've already inserted it
                 (else t)))  ;; in the general case, the caller should insert replacement text
      
      ;; Delegate method to approve text changes.
-     (imethod (NSRange) textView:(id) textview 
-          willChangeSelectionFromCharacterRange:(NSRange) oldRange 
+     (imethod (NSRange) textView:(id) textview
+          willChangeSelectionFromCharacterRange:(NSRange) oldRange
           toCharacterRange:(NSRange) newRange is
-          (if (and (eq (second newRange) 0) 
+          (if (and (eq (second newRange) 0)
                    (< (first newRange) @startOfInput))
               (then oldRange)
               (else newRange)))
