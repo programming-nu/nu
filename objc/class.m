@@ -214,4 +214,9 @@
     }
 }
 
+- (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
+{
+    [[self wrappedClass] handleUnknownMessage: cdr withContext: context];
+}
+
 @end
