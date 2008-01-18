@@ -137,7 +137,17 @@
      (imethod (id) handleUnknownMessage:(id) method withContext:(id) context is
           (if (eq (method length) 1)
               (then (self objectForKey:((method car) evalWithContext: context)))
-              (else (super handleUnknownMessage:method withContext:context)))))
+              (else (super handleUnknownMessage:method withContext:context))))
+     
+     ;; Look up an object by key, return the specified default if no object is found.
+     (imethod (id) objectForKey:(id)key withDefault:(id)default is
+          (cond ((self objectForKey:key))
+                (else default)))
+     
+     ;; Iterate over the key-object pairs in a dictionary. Pass it a block with two arguments: (key object).
+     (imethod (id) each:(id) block is
+          ((self allKeys) each:
+           (do (key) (block key (self objectForKey:key))))))
 
 
 (class NSString

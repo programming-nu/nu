@@ -22,7 +22,7 @@
           (assert_equal "hello, world" (+ "hello" "," " " "world")))
      
      ;; Our "ternary operator" is really a method and not an operator, but I think it belongs here anyway.
-     (imethod (id) testTernaryOperator is
+     (imethod (id) dontTestTheDeprecatedTernaryOperator is
           (assert_equal "no" (nil ? "yes" : "no"))
           (assert_equal "no" (() ? "yes" : "no")) 
           (assert_equal "no" (0 ? "yes" : "no"))
