@@ -910,9 +910,18 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    double first = [[[cdr car] evalWithContext:context] doubleValue];
-    double second = [[[[cdr cdr] car] evalWithContext:context] doubleValue];
-    return (first > second) ? [symbolTable symbolWithCString:"t"] : Nu__null;
+    id cursor = cdr;
+    id current = [[cursor car] evalWithContext:context];
+    cursor = [cursor cdr];
+    while (cursor && (cursor != Nu__null)) {
+        id next = [[cursor car] evalWithContext:context];
+        NSComparisonResult result = [current compare:next];
+        if (result != NSOrderedDescending)
+            return Nu__null;
+        current = next;
+        cursor = [cursor cdr];
+    }
+    return [symbolTable symbolWithCString:"t"];
 }
 
 @end
@@ -924,9 +933,18 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    double first = [[[cdr car] evalWithContext:context] doubleValue];
-    double second = [[[[cdr cdr] car] evalWithContext:context] doubleValue];
-    return (first < second) ? [symbolTable symbolWithCString:"t"] : Nu__null;
+    id cursor = cdr;
+    id current = [[cursor car] evalWithContext:context];
+    cursor = [cursor cdr];
+    while (cursor && (cursor != Nu__null)) {
+        id next = [[cursor car] evalWithContext:context];
+        NSComparisonResult result = [current compare:next];
+        if (result != NSOrderedAscending)
+            return Nu__null;
+        current = next;
+        cursor = [cursor cdr];
+    }
+    return [symbolTable symbolWithCString:"t"];
 }
 
 @end
@@ -938,9 +956,18 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    double first = [[[cdr car] evalWithContext:context] doubleValue];
-    double second = [[[[cdr cdr] car] evalWithContext:context] doubleValue];
-    return (first >= second) ? [symbolTable symbolWithCString:"t"] : Nu__null;
+    id cursor = cdr;
+    id current = [[cursor car] evalWithContext:context];
+    cursor = [cursor cdr];
+    while (cursor && (cursor != Nu__null)) {
+        id next = [[cursor car] evalWithContext:context];
+        NSComparisonResult result = [current compare:next];
+        if (result == NSOrderedAscending)
+            return Nu__null;
+        current = next;
+        cursor = [cursor cdr];
+    }
+    return [symbolTable symbolWithCString:"t"];
 }
 
 @end
@@ -952,9 +979,18 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    double first = [[[cdr car] evalWithContext:context] doubleValue];
-    double second = [[[[cdr cdr] car] evalWithContext:context] doubleValue];
-    return (first <= second) ? [symbolTable symbolWithCString:"t"] : Nu__null;
+    id cursor = cdr;
+    id current = [[cursor car] evalWithContext:context];
+    cursor = [cursor cdr];
+    while (cursor && (cursor != Nu__null)) {
+        id next = [[cursor car] evalWithContext:context];
+        NSComparisonResult result = [current compare:next];
+        if (result == NSOrderedDescending)
+            return Nu__null;
+        current = next;
+        cursor = [cursor cdr];
+    }
+    return [symbolTable symbolWithCString:"t"];
 }
 
 @end
