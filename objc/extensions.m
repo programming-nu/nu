@@ -301,6 +301,8 @@ extern id Nu__null;
 
 @end
 
+#import <Cocoa/Cocoa.h>
+
 @implementation NSView (Nu)
 
 - (id) nuRetain

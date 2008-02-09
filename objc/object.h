@@ -4,7 +4,7 @@
     @discussion Nu extensions to NSObject for higher-level programming.
 */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 @class NuBlock;
 @class NuClass;
 

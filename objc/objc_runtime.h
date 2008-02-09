@@ -12,7 +12,7 @@
 #import <objc/objc-runtime.h>
 #import <objc/objc-class.h>
 #import <objc/Protocol.h>
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "ffi/ffi.h"
 
 #ifndef LEOPARD_OBJC2

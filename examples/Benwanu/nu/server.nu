@@ -15,7 +15,7 @@
 
 (get "/screenshot"
      ((response objectForKey:"headers") setObject:"image/png" forKey:"Content-Type")
-     (set mainWindow ((NSApplication sharedApplication) mainWindow))
+     (set mainWindow ((NSApplication sharedApplication) frontWindow))
      (set imageView (((mainWindow contentView) subviews) 0))
      ((imageView imageRep) representationUsingType:NSPNGFileType properties:nil))
 

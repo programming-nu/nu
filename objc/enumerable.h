@@ -3,7 +3,7 @@
     @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
     @discussion Declarations for the NuEnumerable mixin class.
 */
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "cell.h"
 #import "block.h"
 

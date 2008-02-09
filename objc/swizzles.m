@@ -3,7 +3,7 @@
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "class.h"
 #import "object.h"
 

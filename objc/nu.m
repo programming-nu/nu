@@ -199,6 +199,7 @@ void NuInit()
         transplant_nu_methods([NSProxy class], [NSObject class]);
 
         // Stop NSView from complaining when we retain alloc-ed views.
+	Class NSView = NSClassFromString(@"NSView");
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
 
         // Apply swizzles to container classes to make them tolerant of nil insertions.

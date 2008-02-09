@@ -4,7 +4,7 @@
    @discussion Nu extensions to various Objective-C types.
 */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 /*!
     @category NSNull(Nu)
