@@ -20,9 +20,11 @@ id Nu__null = 0;
     return [[[NuParser alloc] init] autorelease];
 }
 
-+ (int) sizeOfPointer {
-	return sizeof(void *);
++ (int) sizeOfPointer
+{
+    return sizeof(void *);
 }
+
 @end
 
 @interface NuApplication : NSObject
@@ -73,84 +75,91 @@ int NuMain(int argc, const char *argv[])
     void NuInit();
     NuInit();
 
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @try
+    {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    // collect the command-line arguments
-    [[NuApplication sharedApplication] setArgc:argc argv:argv];
+        // collect the command-line arguments
+        [[NuApplication sharedApplication] setArgc:argc argv:argv];
 
-    // first we try to load main.nu from the application bundle.
-    NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
-    if (main_path) {
-        NSString *main_nu = [NSString stringWithContentsOfFile:main_path];
-        if (main_nu) {
+        // first we try to load main.nu from the application bundle.
+        NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
+        if (main_path) {
+            NSString *main_nu = [NSString stringWithContentsOfFile:main_path];
+            if (main_nu) {
+                NuParser *parser = [[NuParser alloc] init];
+                id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
+                [parser eval:script];
+                [parser release];
+                [pool release];
+                return 0;
+            }
+        }
+        // if that doesn't work, use the arguments to decide what to execute
+        else if (argc > 1) {
             NuParser *parser = [[NuParser alloc] init];
-            id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
-            [parser eval:script];
+            id script, result;
+            bool didSomething = false;
+            int i = 1;
+            bool fileEvaluated = false;           // only evaluate one filename
+            while (i < argc) {
+                if (!strcmp(argv[i], "-e")) {
+                    i++;
+                    script = [parser parse:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
+                    result = [parser eval:script];
+                    didSomething = true;
+                }
+                else if (!strcmp(argv[i], "-f")) {
+                    i++;
+                    script = [parser parse:[NSString stringWithFormat:@"(load \"%s\")", argv[i]] asIfFromFilename:argv[i]];
+                    result = [parser eval:script];
+                }
+                else if (!strcmp(argv[i], "-i")) {
+                    [parser interact];
+                    didSomething = true;
+                }
+                else {
+                    if (!fileEvaluated) {
+                        id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
+                        if (string) {
+                            id script = [parser parse:string asIfFromFilename:argv[i]];
+                            [parser eval:script];
+                            fileEvaluated = true;
+                        }
+                        else {
+                            // complain somehow. Throw an exception?
+                            NSLog(@"Error: can't open file named %s", argv[i]);
+                        }
+                        didSomething = true;
+                    }
+                }
+                i++;
+            }
+            if (!didSomething)
+                [parser interact];
             [parser release];
             [pool release];
             return 0;
         }
-    }
-    // if that doesn't work, use the arguments to decide what to execute
-    else if (argc > 1) {
-        NuParser *parser = [[NuParser alloc] init];
-        id script, result;
-        bool didSomething = false;
-        int i = 1;
-        bool fileEvaluated = false;               // only evaluate one filename
-        while (i < argc) {
-            if (!strcmp(argv[i], "-e")) {
-                i++;
-                script = [parser parse:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
-                result = [parser eval:script];
-                didSomething = true;
-            }
-            else if (!strcmp(argv[i], "-f")) {
-                i++;
-                script = [parser parse:[NSString stringWithFormat:@"(load \"%s\")", argv[i]] asIfFromFilename:argv[i]];
-                result = [parser eval:script];
-            }
-            else if (!strcmp(argv[i], "-i")) {
-                [parser interact];
-                didSomething = true;
+        // if there's no file, run at the terminal
+        else {
+            if (!isatty(stdin->_file)) {
+                NuParser *parser = [[NuParser alloc] init];
+                id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+                id script = [parser parse:string asIfFromFilename:"stdin"];
+                [parser eval:script];
+                [parser release];
+                [pool release];
             }
             else {
-                if (!fileEvaluated) {
-                    id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
-                    if (string) {
-                        id script = [parser parse:string asIfFromFilename:argv[i]];
-                        [parser eval:script];
-                        fileEvaluated = true;
-                    }
-                    else {
-                        // complain somehow. Throw an exception?
-                        NSLog(@"Error: can't open file named %s", argv[i]);
-                    }
-                    didSomething = true;
-                }
+                [pool release];
+                return [NuParser main];
             }
-            i++;
         }
-        if (!didSomething)
-            [parser interact];
-        [parser release];
-        [pool release];
-        return 0;
     }
-    // if there's no file, run at the terminal
-    else {
-        if (!isatty(stdin->_file)) {
-            NuParser *parser = [[NuParser alloc] init];
-            id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
-            id script = [parser parse:string asIfFromFilename:"stdin"];
-            [parser eval:script];
-            [parser release];
-            [pool release];
-        }
-        else {
-            [pool release];
-            return [NuParser main];
-        }
+    @catch (id exception) {
+        NSLog(@"Terminating due to uncaught exception (below):");
+        NSLog(@"%@: %@", [exception name], [exception reason]);
     }
     return 0;
 }
@@ -199,7 +208,7 @@ void NuInit()
         transplant_nu_methods([NSProxy class], [NSObject class]);
 
         // Stop NSView from complaining when we retain alloc-ed views.
-	Class NSView = NSClassFromString(@"NSView");
+        Class NSView = NSClassFromString(@"NSView");
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
 
         // Apply swizzles to container classes to make them tolerant of nil insertions.

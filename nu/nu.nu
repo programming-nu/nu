@@ -199,15 +199,19 @@
                                      (super handleUnknownMessage:message withContext:context))))
                         (2
                           ;; try to automatically set an ivar
-                          (try
-                              (let ((firstArgument ((message first) stringValue)))
-                                   (let ((variableName0 ((firstArgument substringWithRange:'(3 1)) lowercaseString))
-                                         (variableName1 ((firstArgument substringWithRange:(list 4 (- (firstArgument length) 5))))))
-                                        (self setValue:((message second) evalWithContext:context) forIvar: "#{variableName0}#{variableName1}")))
-                              (catch (error)
-                                     (super handleUnknownMessage:message withContext:context))))
+                          (if (eq (((message first) stringValue) substringWithRange:'(0 3)) "set")
+                              (then
+                                   (try
+                                       (let ((firstArgument ((message first) stringValue)))
+                                            (let ((variableName0 ((firstArgument substringWithRange:'(3 1)) lowercaseString))
+                                                  (variableName1 ((firstArgument substringWithRange:
+                                                                       (list 4 (- (firstArgument length) 5))))))
+                                                 (self setValue:((message second) evalWithContext:context)
+                                                       forIvar: "#{variableName0}#{variableName1}")))
+                                       (catch (error)
+                                              (super handleUnknownMessage:message withContext:context))))
+                              (else (super handleUnknownMessage:message withContext:context))))
                         (else (super handleUnknownMessage:message withContext:context))))))
-
 
 ;; use this to create and extend protocols
 (global protocol

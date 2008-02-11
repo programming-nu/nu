@@ -120,6 +120,23 @@ extern id Nu__null;
     return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
 }
 
+// If the last character is a newline, delete it.
+- (NSString *) chomp
+{
+    int lastIndex = [self length] - 1;
+    if (lastIndex >= 0) {
+        if ([self characterAtIndex:lastIndex] == 10) {
+            return [self substringWithRange:NSMakeRange(0, lastIndex)];
+        }
+        else {
+            return self;
+        }
+    }
+    else {
+        return self;
+    }
+}
+
 @end
 
 @implementation NSNumber(Nu)
