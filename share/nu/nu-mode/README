@@ -1,0 +1,15 @@
+To install add the following lines to your .emacs file:
+
+(add-to-list 'load-path "/some/path")
+(require 'nu)
+
+I'd recommend also to install PAREDIT and PARENFACE modes and
+activate them for NU-MODE:
+
+(require 'paredit)
+(add-hook 'nu-mode-hook (lambda () (paredit-mode +1)))
+
+(require 'parenface)
+(set-face-foreground 'paren-face "SteelBlue")
+(add-hook 'nu-mode-hook (paren-face-add-support nu-font-lock-keywords))
+
