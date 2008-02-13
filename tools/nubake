@@ -3,55 +3,61 @@
 # @file nubake
 # Bake Nu scripts into Objective-C.
 # When run with the "-s" option, standalone programs are created.  Compile them with:
-#   gcc myprogram.m -o myprogram -framework Cocoa -framework Nu
+#   gcc myprogram.m -o myprogram -framework Foundation -framework Nu
 # Compiled programs require Nu.framework in /Library/Frameworks or another standard path.
 #
 # @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
 (class NSString
      ;; Output a string as an array of ints. This way we don't have to worry about escaping special characters.
-     (- characterArray is 
-        (set result "(const char[]){")
-        ((self length) times:
-         (do (i) (result appendString:"#{(self characterAtIndex:i)},")))
-        (result appendString:"0}")
-        result))
+     (imethod characterArray is
+          (set result "(const char[]){")
+          ((self length) times:
+           (do (i) (result appendString:"#{(self characterAtIndex:i)},")))
+          (result appendString:"0}")
+          result))
 
+;; @abstract A Nu code beautifier.
+;; @discussion This class is used by nubake, the standalone Nu code "baker", to automatically convert Nu code into equivalent Objective-C functions.
 (class NuBake is NSObject
-     ;; Convert a Nu expression into an equivalent C expression.
-     ;; You might ask, "is this really all it takes?"  It is.
-     (+ (id) expandNuExpression:(id) node is
-        (set result "")
-        (cond ((eq node nil)
-               (result appendString:"_nunull()"))
-              ((node isKindOfClass:NuCell)
-               (result appendString:(+ "_nucell(" (self expandNuExpression:(node car)) ",\n" (self expandNuExpression:(node cdr)) ")")))
-              ((node isKindOfClass:NuSymbol)
-               (result appendString:"_nusymbol(#{((node stringValue) characterArray)})"))
-              ((node isKindOfClass:NSString)
-               (result appendString:"_nustring(#{(node characterArray)})"))
-              ((node isKindOfClass:NSNumber)
-               (result appendString:"_nunumberd(#{node})"))
-              ((node isKindOfClass:NuRegex)
-               (result appendString:"_nuregex(#{((node pattern) characterArray)}, #{(node options)})"))        
-              (else (result appendString:"[ERROR]")))
-        result)
      
-     ;; Generate the Objective-C source file.
-     (+ (id) bakeNuCode:(id)program intoFunction:(id)functionName standalone:(int)standalone is 
-        (set result <<-END
+     ;; Convert a Nu expression into an equivalent C expression.
+     ;; Used internally.
+     ;; Upon reading it, you might ask, "is this really all it takes?"  It is.
+     (cmethod (id) expandNuExpression:(id) node is
+          (set result "")
+          (cond ((eq node nil)
+                 (result appendString:"_nunull()"))
+                ((node isKindOfClass:NuCell)
+                 (result appendString:(+ "_nucell(" (self expandNuExpression:(node car)) ",\n" (self expandNuExpression:(node cdr)) ")")))
+                ((node isKindOfClass:NuSymbol)
+                 (result appendString:"_nusymbol(#{((node stringValue) characterArray)})"))
+                ((node isKindOfClass:NSString)
+                 (result appendString:"_nustring(#{(node characterArray)})"))
+                ((node isKindOfClass:NSNumber)
+                 (result appendString:"_nunumberd(#{node})"))
+                ((node isKindOfClass:NuRegex)
+                 (result appendString:"_nuregex(#{((node pattern) characterArray)}, #{(node options)})"))
+                (else (result appendString:"[ERROR]")))
+          result)
+     
+     ;; Generate an Objective-C source file from parsed Nu source code.
+     ;; The file will a function named 'functionName' that when called, will construct a code tree that is identical to the specified program.
+     ;; If 'standalone' is true, a 'main()' function will be included to allow the file to be compiled, linked, and run standalone.
+     (cmethod (id) bakeNuCode:(id)program intoFunction:(id)functionName standalone:(int)standalone is
+          (set result <<-END
 #import <Cocoa/Cocoa.h>
 #import <Nu/Nu.h>
 
 id #{functionName}() {
 	return END)
-        (result appendString:(self expandNuExpression:program))
-        (result appendString:<<-END
+          (result appendString:(self expandNuExpression:program))
+          (result appendString:<<-END
 ;
 }
 END)
-        (if (standalone) 
-            (result appendString:<<-END
+          (if (standalone)
+              (result appendString:<<-END
 	
 int main(int argc, char *argv[]) {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -61,7 +67,7 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 END))
-        result))
+          result))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; main program
@@ -74,7 +80,7 @@ END))
 (if (/(.*)nush$/ findInString:(argv 0))
     (set argi (+ argi 1)))
 
-;; skip the program name	
+;; skip the program name
 (set argi (+ argi 1))
 
 ;; the options we need to set
@@ -89,24 +95,24 @@ END))
              ("-f" (set argi (+ argi 1)) (set functionName (argv argi)))
              ("-o" (set argi (+ argi 1)) (set outputFileName (argv argi)))
              ("-s" (set standalone t))
-             (else (set sourceFileName (argv argi))))              
+             (else (set sourceFileName (argv argi))))
        (set argi (+ argi 1)))
 
 (if sourceFileName
     (then
          (unless functionName
-                 (set functionName ((sourceFileName stringByDeletingPathExtension) lastPathComponent)))       
+                 (set functionName ((sourceFileName stringByDeletingPathExtension) lastPathComponent)))
          (unless outputFileName
                  (set outputFileName (+ (sourceFileName stringByDeletingPathExtension) ".m")))
          (try
-             ((NuBake bakeNuCode:(parse (NSString stringWithContentsOfFile:sourceFileName)) 
-                      intoFunction:functionName 
+             ((NuBake bakeNuCode:(parse (NSString stringWithContentsOfFile:sourceFileName))
+                      intoFunction:functionName
                       standalone:standalone)
               writeToFile:outputFileName atomically:NO)
-             (catch (exception) 
+             (catch (exception)
                     (puts "error: #{(exception reason)}")
-                    (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))           
-                    (exit -1))))    
+                    (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
+                    (exit -1))))
     (else
          (puts "usage: nubake <sourcefile> [-f <functionname>] [-o <outputfilename>] [-s]")))
 

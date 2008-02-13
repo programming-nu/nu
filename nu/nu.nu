@@ -66,7 +66,7 @@
                                                (else (self setValue:value forKey:label))))))
           self)
      
-     ;; A C-style ternary operator.
+     ;; A C-style ternary operator. Deprecated, because unlike the C operator, all of its arguments are evaluated.
      (imethod (id) ? (id) a : (id) b is
           (unless $ternary_deprecation_warning_already
                   ;; The problem is that because it is a message,
