@@ -17,6 +17,8 @@
 - (id) valueForKey:(NSString *)string;
 /*! Set the value of a name in the parser's context. Use this to insert object references into Nu contexts. */
 - (void) setValue:(id)value forKey:(NSString *)string;
+/*! Call this when you're finished using a parser. */
+- (void) close;
 @end
 
 /*!
@@ -43,6 +45,8 @@ Get a Nu parser. The parser will implement the NuParsing protocol, shown below.
 &#45; (id) valueForKey:(NSString *)string;<br/>
 // Set the value of a name in the parser's context. Use this to insert object references into Nu contexts.<br/>
 &#45; (void) setValue:(id)value forKey:(NSString *)string;<br/>
+// Call this when you're finished using a parser.<br/>
+&#45; (void) close;<br/>
 @end
 </code>
 </div>

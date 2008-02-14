@@ -54,8 +54,6 @@ extern const char *nu_parsedFilename(int i)
 
 @end
 
-extern void load_builtins(NuSymbolTable *);
-
 id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTable)
 {
     char c = ((char *) bytes)[length];
@@ -224,6 +222,7 @@ id regexWithString(NSString *string)
     for (i = 0; i < MAXDEPTH; i++) {
         quoteDepth[i] = false;
     }
+    [root release];
     root = current = [[NuCell alloc] init];
     [root setFile:filenum line:linenum];
     [root setCar:[symbolTable symbolWithCString:"progn"]];
@@ -242,24 +241,31 @@ id regexWithString(NSString *string)
     linenum = 1;
     column = 0;
     opens = [[NuStack alloc] init];
-    // create symbol table and top-level context
-    //symbolTable = [[NuSymbolTable alloc] init];
+    // attach to symbol table (or create one if we want a separate table per parser)
     symbolTable = [[NuSymbolTable sharedSymbolTable] retain];
+    // create top-level context
     context = [[NSMutableDictionary alloc] init];
 
-    // load symbol table
-    load_builtins(symbolTable);
-    [context setObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
+	[context setObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
     [context setObject:symbolTable forKey:SYMBOLS_KEY];
 
     [self reset];
     return self;
 }
 
+- (void) close
+{
+	// break this retain cycle so the parser can be deleted.
+    [context setObject:[NSNull null] forKey:[symbolTable symbolWithCString:"_parser"]];
+}
+
 - (void) dealloc
 {
+    [opens release];
     [context release];
     [symbolTable release];
+    [root release];
+    [stack release];
     [super dealloc];
 }
 
