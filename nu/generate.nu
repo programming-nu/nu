@@ -6,7 +6,7 @@
 
 (load "template")
 
-(class NSString 
+(class NSString
      ;; Get the last character of a string.
      (imethod (int) lastCharacter is
           (self characterAtIndex:(- (self length) 1)))
@@ -24,9 +24,9 @@
 ;; code includes variable declarations, accessors, and
 ;; encoding and decoding methods.  Much of this capability
 ;; is available in Objective-C 2.0 using properties,
-;; but it is provided here to show how easy it is to 
+;; but it is provided here to show how easy it is to
 ;; use Nu to take direct control of the process.
-;; 
+;;
 (class NuGenerator is NSObject
      (ivars)
      
@@ -36,11 +36,47 @@
           (set @description description)
           self)
      
-     ;; Generate class declarations; usually these are placed in header files.
-     (imethod (id) generateDeclarations is          
+     ;; Generate typedefs for enumerated types
+     (imethod (id) generateEnumTypedefs is
+          (set result ((NSMutableString alloc) init))
+          (@description each:
+               (do (declaration)
+                   (if (eq (car declaration) 'enum)
+                       (set enumType ((declaration second) stringValue))
+                       (result appendString:<<-END
+typedef enum {
+END)
+                       (((declaration cdr) cdr) each:
+                        (do (enum)
+                            (result appendString:<<-END
+    #{enumType}#{enum},
+END)))
+                       (result appendString:<<-END
+} #{enumType}Type;
+	
+END)               
+                       
+                       )))
+          result)
+     
+     ;; Generate class forward declarations; usually these are placed in header files.
+     (imethod (id) generateDeclarations is
           (set result ((NSMutableString alloc) init))
           
-          (@description each: 
+          (@description each:
+               (do (declaration)
+                   (if (eq (car declaration) 'class)
+                       ;; open the class interface
+                       (result appendString:<<-END
+@class #{(declaration second)};
+END))))
+          result)
+     
+     ;; Generate class interface descriptions; usually these are placed in header files.
+     (imethod (id) generateInterfaces is
+          (set result ((NSMutableString alloc) init))
+          
+          (@description each:
                (do (declaration)
                    (if (eq (car declaration) 'class)
                        ;; open the class interface
@@ -51,7 +87,7 @@ END)
                        (while cursor
                               (set group (cursor car))
                               (if (eq (group car) 'ivar)
-                                  ((group cdr) eachPair: 
+                                  ((group cdr) eachPair:
                                    (do (type name)
                                        ;; declare each variable
                                        (result appendString:<<-END
@@ -75,7 +111,7 @@ END)
 - (void) set#{((name stringValue) capitalizeFirstCharacter)}: #{type} #{name};	
 END)
                                          
-                                         )))))                      
+                                         )))))
                        ;; close the class interface
                        (result appendString:<<-END
 @end
@@ -84,11 +120,11 @@ END)
                        )))
           result)
      
-     ;; Generate class definitions; usually these are placed in source (.m) files.
-     (imethod (id) generateDefinitions is          
+     ;; Generate class implementations; usually these are placed in source (.m) files.
+     (imethod (id) generateImplementations is
           (set result ((NSMutableString alloc) init))
           
-          (@description each: 
+          (@description each:
                (do (declaration)
                    (if (eq (car declaration) 'class)
                        ;; open the class implementation
@@ -178,7 +214,7 @@ END))))
                 ((eq (typeName lastCharacter) 42)
                  "    [coder encodeObject:_#{name}];")
                 (t
-                  "    [coder encodeValueOfObjCType:@encode(int) at:&_#{name}];")))   
+                  "    [coder encodeValueOfObjCType:@encode(int) at:&_#{name}];")))
      
      ;; Generate code to decode instance variables during unarchiving.
      (cmethod (id) decodeVariable:(id) name withType:(id) type is
