@@ -10,6 +10,8 @@
 #import "extensions.h"
 #import "bridge.h"
 
+extern void load_builtins(NuSymbolTable *);
+
 static NuSymbolTable *sharedSymbolTable = 0;
 
 @implementation NuSymbolTable
@@ -18,6 +20,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
 {
     if (!sharedSymbolTable) {
         sharedSymbolTable = [[self alloc] init];
+        load_builtins(sharedSymbolTable);
     }
     return sharedSymbolTable;
 }

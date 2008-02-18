@@ -13,16 +13,25 @@
 (get "/"
      (self redirectResponse:response toLocation:"/screenshot"))
 
+(function current-mandelbrot-view ()
+     (if (and (set frontWindow ((NSApplication sharedApplication) frontWindow))
+              (set mandelbrotView (((frontWindow contentView) subviews) 0))
+              (mandelbrotView isKindOfClass:MandelbrotView))
+         (then mandelbrotView)
+         (else nil)))
+
+(set NO_VIEW_AT_FRONT "<h3>No View at Front</h3><p>Please be sure that a Mandelbrot view is open and that the console is closed.</p>")
+
 (get "/screenshot"
-     ((response objectForKey:"headers") setObject:"image/png" forKey:"Content-Type")
-     (set mainWindow ((NSApplication sharedApplication) frontWindow))
-     (set imageView (((mainWindow contentView) subviews) 0))
-     ((imageView imageRep) representationUsingType:NSPNGFileType properties:nil))
+     (if (set mandelbrotView (current-mandelbrot-view))
+         (then ((response objectForKey:"headers") setObject:"image/png" forKey:"Content-Type")
+               ((mandelbrotView imageRep) representationUsingType:NSPNGFileType properties:nil))
+         (else NO_VIEW_AT_FRONT)))
 
 (get "/recenter"
-     (set frontWindow ((NSApplication sharedApplication) frontWindow))
-     (set imageView (((frontWindow contentView) subviews) 0))
-     (imageView recenter)
-     (self redirectResponse:response toLocation:"/screenshot"))
+     (if (set mandelbrotView (current-mandelbrot-view))
+         (then (mandelbrotView recenter)
+               (self redirectResponse:response toLocation:"/screenshot"))
+         (else NO_VIEW_AT_FRONT)))
 
 (server setHandlers:handlers)
