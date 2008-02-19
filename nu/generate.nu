@@ -91,7 +91,7 @@ END)
                                    (do (type name)
                                        ;; declare each variable
                                        (result appendString:<<-END
-	#{((type stringValue) stripParens)} _#{name};									
+	#{((type stringValue) stripParens)} #{name};									
 END)									
                                        )))
                               (set cursor (cursor cdr)))
@@ -141,17 +141,17 @@ END)
                                      (do (type name)
                                          ;; define each getter and setter
                                          (result appendString:<<-END
-- #{type} #{name} {return _#{name};}
+- #{type} #{name} {return #{name};}
 
-- (void) set#{((name stringValue) capitalizeFirstCharacter)}:#{type} #{name} {
+- (void) set#{((name stringValue) capitalizeFirstCharacter)}:#{type} _#{name} {
 END)
                                          (if (or (eq type '(id)) (eq (((type stringValue) stripParens) lastCharacter) 42))
                                              (result appendString:<<-END
-    [#{name} retain];
-    [_#{name} release];
+    [_#{name} retain];
+    [#{name} release];
 END))
                                          (result appendString:<<-END
-    _#{name} = #{name};
+    #{name} = _#{name};
 }
 
 END))))))
@@ -206,26 +206,26 @@ END))))
      (cmethod (id) encodeVariable:(id) name withType:(id) type is
           (set typeName ((type stringValue) stripParens))
           (cond ((eq typeName "int")
-                 "    [coder encodeValueOfObjCType:@encode(int) at:&_#{name}];")
+                 "    [coder encodeValueOfObjCType:@encode(int) at:&#{name}];")
                 ((eq typeName "double")
-                 "    [coder encodeValueOfObjCType:@encode(double) at:&_#{name}];")
+                 "    [coder encodeValueOfObjCType:@encode(double) at:&#{name}];")
                 ((eq typeName "bool")
-                 "    [coder encodeValueOfObjCType:@encode(bool) at:&_#{name}];")
+                 "    [coder encodeValueOfObjCType:@encode(bool) at:&#{name}];")
                 ((eq (typeName lastCharacter) 42)
-                 "    [coder encodeObject:_#{name}];")
+                 "    [coder encodeObject:#{name}];")
                 (t
-                  "    [coder encodeValueOfObjCType:@encode(int) at:&_#{name}];")))
+                  "    [coder encodeValueOfObjCType:@encode(int) at:&#{name}];")))
      
      ;; Generate code to decode instance variables during unarchiving.
      (cmethod (id) decodeVariable:(id) name withType:(id) type is
           (set typeName ((type stringValue) stripParens))
           (cond ((eq typeName "int")
-                 "    [coder decodeValueOfObjCType:@encode(int) at:&_#{name}];")
+                 "    [coder decodeValueOfObjCType:@encode(int) at:&#{name}];")
                 ((eq typeName "double")
-                 "    [coder decodeValueOfObjCType:@encode(double) at:&_#{name}];")
+                 "    [coder decodeValueOfObjCType:@encode(double) at:&#{name}];")
                 ((eq typeName "bool")
-                 "    [coder decodeValueOfObjCType:@encode(bool) at:&_#{name}];")
+                 "    [coder decodeValueOfObjCType:@encode(bool) at:&#{name}];")
                 ((eq (typeName lastCharacter) 42)
-                 "    _#{name} = [[coder decodeObject] retain];")
+                 "    #{name} = [[coder decodeObject] retain];")
                 (t
-                  "    [coder decodeValueOfObjCType:@encode(int) at:&_#{name}];"))))
+                  "    [coder decodeValueOfObjCType:@encode(int) at:&#{name}];"))))
