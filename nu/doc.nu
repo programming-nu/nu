@@ -116,7 +116,7 @@
           (cond ((or (line beginsWithString:"@class")   
                      (line beginsWithString:"@category")
                      (line beginsWithString:"@method") 
-                     (line beginsWithString:"@function")) (set @finished t))
+                     (line beginsWithString:"@function")) (set @finished YES))
                 ((line beginsWithString:"!/") nil)
                 ((line beginsWithString:"@header")
                  (set @file (line substringFromIndex:(+ 1 ("@header" length)))))

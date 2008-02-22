@@ -94,12 +94,12 @@
                                                                    (if (> j (+ p 8)) (set j (+ p 4)))
                                                                    ;;(if (> j (+ p 2)) (set j (+ p 2))) ;; aggressively tight formatting
                                                                    (indentation_stack push:j)
-                                                                   (set finished t))
+                                                                   (set finished YES))
                                                            (LPAREN (indentation_stack push:j)
-                                                                   (set finished t))
+                                                                   (set finished YES))
                                                            (COLON  ;; we're starting with a label. indent at the last paren
                                                                    (indentation_stack push:p)
-                                                                   (set finished t))
+                                                                   (set finished YES))
                                                            (else   (set j (+ j 1)))))
                                               (if (and (eq j (line length)) (not finished))
                                                   (indentation_stack push:j)))))))

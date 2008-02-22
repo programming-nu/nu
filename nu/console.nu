@@ -339,7 +339,7 @@
                           (set @insertionPoint @startOfInput)))
                  (self prompt)
                  nil)       ;; don't insert replacement text because we've already inserted it
-                (else t)))  ;; in the general case, the caller should insert replacement text
+                (else YES)))  ;; in the general case, the caller should insert replacement text
      
      ;; Delegate method to approve text changes.
      (imethod (NSRange) textView:(id) textview

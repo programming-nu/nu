@@ -72,7 +72,7 @@
                   ;; The problem is that because it is a message,
                   ;; all its arguments are evaluated
                   (NSLog "The ternary operator is deprecated. Please don't use it.")
-                  (set $ternary_deprecation_warning_already t))
+                  (set $ternary_deprecation_warning_already YES))
           (if self (then a) (else b))))
 
 (class NSArray
