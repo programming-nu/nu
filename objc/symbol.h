@@ -45,7 +45,7 @@
 	the list is considered to be a special type of list called a property list.  
 	Each member of a property list is evaluated and the resulting list is returned with no further evaluation.
  */
-@interface NuSymbol : NSObject
+@interface NuSymbol : NSObject <NSCoding>
 {
     NuSymbolTable *table;
     id value;
@@ -75,4 +75,7 @@
 - (NSComparisonResult) compare:(NuSymbol *) anotherSymbol;
 /*! Get a description of a symbol.  This is equivalent to a call to stringValue. */
 - (NSString *) description;
+
+- (void)encodeWithCoder:(NSCoder *)coder;
+- (id) initWithCoder:(NSCoder *)coder;
 @end

@@ -20,7 +20,7 @@
     The cdr of the last element in a list is nil.
 In Nu, nil is represented with the <code>[NSNull null]</code> object.
 */
-@interface NuCell : NSObject
+@interface NuCell : NSObject <NSCoding>
 {
     id car;
     id cdr;
@@ -63,6 +63,9 @@ In Nu, nil is represented with the <code>[NSNull null]</code> object.
 - (void) setFile:(int) f line:(int) l;
 - (int) file;
 - (int) line;
+
+- (void)encodeWithCoder:(NSCoder *)coder;
+- (id) initWithCoder:(NSCoder *)coder;
 
 @end
 
