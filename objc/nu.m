@@ -14,19 +14,6 @@
 
 id Nu__null = 0;
 
-@implementation Nu
-+ (id<NuParsing>) parser
-{
-    return [[[NuParser alloc] init] autorelease];
-}
-
-+ (int) sizeOfPointer
-{
-    return sizeof(void *);
-}
-
-@end
-
 @interface NuApplication : NSObject
 {
     NSMutableArray *arguments;
@@ -164,23 +151,6 @@ int NuMain(int argc, const char *argv[])
     return 0;
 }
 
-static int load_nu_files(NSString *bundleIdentifier, NSString *mainFile)
-{
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:bundleIdentifier];
-    NSString *main_path = [bundle pathForResource:mainFile ofType:@"nu"];
-    if (main_path) {
-        NSString *main_nu = [NSString stringWithContentsOfFile:main_path];
-        if (main_nu) {
-            id parser = [Nu parser];
-            id script = [parser parse:main_nu asIfFromFilename:[main_path cStringUsingEncoding:NSUTF8StringEncoding]];
-            [parser eval:script];
-        }
-    }
-    [pool release];
-    return 0;
-}
-
 static void transplant_nu_methods(Class destination, Class source)
 {
     if (!nu_copyInstanceMethod(destination, source, @selector(evalWithArguments:context:)))
@@ -223,10 +193,10 @@ void NuInit()
         // transplant_nu_methods([Protocol class], [NSObject class]);
 
         // Load some standard files
-        load_nu_files(@"nu.programming.framework", @"nu");
-        load_nu_files(@"nu.programming.framework", @"bridgesupport");
-        load_nu_files(@"nu.programming.framework", @"cocoa");
-        load_nu_files(@"nu.programming.framework", @"help");
+        [Nu loadNuFile:@"nu"            fromBundleWithIdentifier:@"nu.programming.framework"];
+        [Nu loadNuFile:@"bridgesupport" fromBundleWithIdentifier:@"nu.programming.framework"];
+        [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework"];
+        [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework"];
     }
 }
 
@@ -261,3 +231,36 @@ id _nuregex(const char *pattern, int options)
 {
     return [NuRegex regexWithPattern:_nustring(pattern) options:options];
 }
+
+@implementation Nu
++ (id<NuParsing>) parser
+{
+    return [[[NuParser alloc] init] autorelease];
+}
+
++ (int) sizeOfPointer
+{
+    return sizeof(void *);
+}
+
++ (void) loadNuFile:(NSString *) fileName fromBundleWithIdentifier:(NSString *) bundleIdentifier
+{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSBundle *bundle = [NSBundle bundleWithIdentifier:bundleIdentifier];
+    NSString *main_path = [bundle pathForResource:fileName ofType:@"nu"];
+    if (main_path) {
+        NSString *main_nu = [NSString stringWithContentsOfFile:main_path];
+        if (main_nu) {
+            id parser = [Nu parser];
+            id script = [parser parse:main_nu asIfFromFilename:[main_path cStringUsingEncoding:NSUTF8StringEncoding]];
+            [parser eval:script];
+        }
+    }
+    else {
+        [NSException raise:@"NuCantLoadFile"
+        format:@"Unable to load file %@ from bundle with identifier %@", fileName, bundleIdentifier];
+    }
+    [pool release];
+}
+
+@end
