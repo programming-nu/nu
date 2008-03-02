@@ -19,6 +19,36 @@
 @end
 
 /*!
+    @category NSArray(Nu)
+    @abstract NSArray extensions for Nu programming.
+ */
+@interface NSArray(Nu)
+/*! Creates an array that contains the contents of a specified list. */
++ (NSArray *) arrayWithList:(id) list;
+@end
+
+/*!
+    @category NSSet(Nu)
+    @abstract NSSet extensions for Nu programming.
+ */
+@interface NSSet(Nu)
+/*! Creates a set that contains the contents of a specified list. */
++ (NSSet *) setWithList:(id) list;
+@end
+
+/*!
+    @category NSDictionary(Nu)
+    @abstract NSDictionary extensions for Nu programming.
+ */
+@interface NSDictionary(Nu)
+/*! Creates a dictionary that contains the contents of a specified list.
+    The list should be a sequence of interleaved keys and values.  */
++ (NSDictionary *) dictionaryWithList:(id) list;
+/*! Look up an object by key, returning the specified default if no object is found. */
+- (id) objectForKey:(id)key withDefault:(id)defaultValue;
+@end
+
+/*!
     @category NSMutableDictionary(Nu)
     @abstract NSMutableDictionary extensions for Nu programming.
     @discussion In Nu, NSMutableDictionaries are used to represent evaluation contexts.

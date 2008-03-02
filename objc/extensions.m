@@ -46,6 +46,61 @@ extern id Nu__null;
 
 @end
 
+@implementation NSArray(Nu)
++ (NSArray *) arrayWithList:(id) list
+{
+    NSMutableArray *a = [NSMutableArray array];
+    id cursor = list;
+    while (cursor && cursor != Nu__null) {
+        [a addObject:[cursor car]];
+        cursor = [cursor cdr];
+    }
+    return a;
+}
+
+@end
+
+@implementation NSSet(Nu)
++ (NSSet *) setWithList:(id) list
+{
+    NSMutableSet *s = [NSMutableSet set];
+    id cursor = list;
+    while (cursor && cursor != Nu__null) {
+        [s addObject:[cursor car]];
+        cursor = [cursor cdr];
+    }
+    return s;
+}
+
+@end
+
+@implementation NSDictionary(Nu)
++ (NSDictionary *) dictionaryWithList:(id) list
+{
+    NSMutableDictionary *d = [NSMutableDictionary dictionary];
+    id cursor = list;
+    while (cursor && (cursor != Nu__null) && ([cursor cdr]) && ([cursor cdr] != Nu__null)) {
+        id key = [cursor car];
+        id value = [[cursor cdr] car];
+        if ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) {
+            [d setValue:value forKey:[key labelName]];
+        }
+        else {
+            [d setValue:value forKey:key];
+        }
+        cursor = [[cursor cdr] cdr];
+    }
+    return d;
+}
+
+- (id) objectForKey:(id)key withDefault:(id)defaultValue
+{
+    id value = [self objectForKey:key];
+    return value ? value : defaultValue;
+}
+
+@end
+
 @implementation NSMutableDictionary(Nu)
 - (id) lookupObjectForKey:(id)key
 {
@@ -203,7 +258,7 @@ extern id Nu__null;
 
 @end
 
-@implementation NSDate (Nu)
+@implementation NSDate(Nu)
 
 + dateWithTimeIntervalSinceNow:(NSTimeInterval) seconds
 {
@@ -212,7 +267,7 @@ extern id Nu__null;
 
 @end
 
-@implementation NSFileManager (Nu)
+@implementation NSFileManager(Nu)
 
 // crashes
 + (id) _timestampForFileNamed:(NSString *) filename
@@ -276,7 +331,7 @@ extern id Nu__null;
 
 @end
 
-@implementation NSBundle (Nu)
+@implementation NSBundle(Nu)
 
 + (NSBundle *) frameworkWithName:(NSString *) frameworkName
 {
@@ -333,7 +388,7 @@ extern id Nu__null;
 
 #import <Cocoa/Cocoa.h>
 
-@implementation NSView (Nu)
+@implementation NSView(Nu)
 
 - (id) nuRetain
 {
@@ -350,7 +405,7 @@ extern id Nu__null;
 
 @end
 
-@implementation NSMethodSignature (Nu)
+@implementation NSMethodSignature(Nu)
 
 - (NSString *) typeString
 {

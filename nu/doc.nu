@@ -13,7 +13,7 @@
      (imethod (id) strip is
           (set i 0)
           (while (and (< i (self length))
-                      (or (eq (self characterAtIndex:i) SPACE) 
+                      (or (eq (self characterAtIndex:i) SPACE)
                           (eq (self characterAtIndex:i) TAB)))
                  (set i (+ i 1)))
           (self substringFromIndex:i))
@@ -26,16 +26,16 @@
           (puts "writing #{fileName}")
           (self writeToFile:fileName atomically:NO encoding:NSUTF8StringEncoding error:(set perror ((NuReference alloc) init)))))
 
-(class NSDate 
+(class NSDate
      ;; Generate a string representation of the same form as this one:
-     ;; 
+     ;;
      ;; "Thursday, 30 Aug 2007"
      (imethod (id) descriptionForDocumentation is
           (self descriptionWithCalendarFormat:"%A, %d %b %Y" timeZone:nil locale:nil)))
 
-(class NuRegexMatch     
+(class NuRegexMatch
      ;; Compare matches by their location.  This allows arrays of matches to be sorted.
-     (imethod (int) compare: (id) other is     
+     (imethod (int) compare: (id) other is
           (set self-start  ((self  range) first))
           (set other-start ((other range) first))
           (self-start compare: other-start)))
@@ -48,11 +48,11 @@
      /(\-|\+)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)/)
 
 ;; Match selectors of arity 1 or more.
-(set signature-pattern1 
+(set signature-pattern1
      /(\-|\+)\s*\(([\w<>]+\s*\*?)\)\s*(((\w+:)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*)+)/)
 
-;; Match all selectors. 
-(set signature-pattern 
+;; Match all selectors.
+(set signature-pattern
      /(\-|\+)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)((:\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*)(\w+:\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*)*)?/)
 
 ;; Match Objective-C class implementation declarations.
@@ -60,7 +60,7 @@
      /@implementation\s+(\w*)/)
 
 ;; Match Objective-C class interface declarations.
-(set interface-pattern 
+(set interface-pattern
      /@interface\s+(\w*)\s*(:\s*(\w*))?/)
 
 ;; Match Objective-C protocol declarations.
@@ -72,7 +72,7 @@
      /(?U)\/\*!((.|\n)+)\*\//)
 
 ;; Match Nu comments.
-(set nu-comment-pattern 
+(set nu-comment-pattern
      /((;|\#)+)\s*(.*)/)
 
 ;; @abstract NuDoc class for building file descriptions.
@@ -113,9 +113,9 @@
      
      ;; Extract information from one line of file comments.
      (imethod (void) parseFileCommentLine:(id) line is
-          (cond ((or (line beginsWithString:"@class")   
+          (cond ((or (line beginsWithString:"@class")
                      (line beginsWithString:"@category")
-                     (line beginsWithString:"@method") 
+                     (line beginsWithString:"@method")
                      (line beginsWithString:"@function")) (set @finished YES))
                 ((line beginsWithString:"!/") nil)
                 ((line beginsWithString:"@header")
@@ -129,7 +129,7 @@
                 ((line beginsWithString:"@info")
                  (set @info (line substringFromIndex:(+ 1 ("@info" length)))))
                 ((and (not @finished) (line beginsWithString:"@discussion"))
-                 (set @discussion (NSMutableString string)) 
+                 (set @discussion (NSMutableString string))
                  (@discussion appendString:(line substringFromIndex:(+ 1 ("@discussion" length)))))
                 ((and (not @finished) (eq line "") (!= @discussion ""))
                  (@discussion appendString:"<br/><br/>"))
@@ -139,25 +139,25 @@
                 (else nil)))
      
      ;; Extract documentation from file comments.
-     (imethod (void) parseFileComments is	
-          (set @discussion (NSMutableString string)) 
+     (imethod (void) parseFileComments is
+          (set @discussion (NSMutableString string))
           (if @comments
               (if (set match (objc-comment-pattern findInString:@comments))
-                  (then 
-                        (set text (match groupAtIndex:1))
-                        (set lines (text lines))
-                        (lines each:
-                               (do (original-line)
-                                   (set line (original-line strip))
-                                   (self parseFileCommentLine:line))))
-                  (else 
-                        (set lines (@comments lines))
-                        (lines each:
-                               (do (original-line)
-                                   (if (set match (nu-comment-pattern findInString:original-line))
-                                       (then 
-                                             (set line (match groupAtIndex:3))
-                                             (self parseFileCommentLine:line)))))))))
+                  (then
+                       (set text (match groupAtIndex:1))
+                       (set lines (text lines))
+                       (lines each:
+                              (do (original-line)
+                                  (set line (original-line strip))
+                                  (self parseFileCommentLine:line))))
+                  (else
+                       (set lines (@comments lines))
+                       (lines each:
+                              (do (original-line)
+                                  (if (set match (nu-comment-pattern findInString:original-line))
+                                      (then
+                                           (set line (match groupAtIndex:3))
+                                           (self parseFileCommentLine:line)))))))))
      
      ;; Add a method description to a file's array of methods.
      (imethod (void) addMethod: (id) method is (@methods addObject:method))
@@ -176,7 +176,7 @@
            ((line beginsWithString:"@method")
             (set @method (line substringFromIndex:(+ 1 ("@method" length)))))
            ((line beginsWithString:"@discussion")
-            (set @discussion (NSMutableString string)) 
+            (set @discussion (NSMutableString string))
             (@discussion appendString:(line substringFromIndex:(+ 1 ("@discussion" length)))))
            ((and (eq line "") (!= @discussion ""))
             (@discussion appendString:"<br/><br/>"))
@@ -186,26 +186,26 @@
 
 ;; Extract documentation information from class and method comments.
 (macro parseClassAndMethodComments
-     (set @discussion (NSMutableString string)) 
+     (set @discussion (NSMutableString string))
      (if @comments
          (if (set match (objc-comment-pattern findInString:@comments))
-             (then 
-                   ;(puts "parsing objc comment text for #{(if @name (then @name)(else @methodName))}")
-                   (set text (match groupAtIndex:1))
-                   (set lines (text lines))
-                   (lines each:
-                          (do (original-line)
-                              (set line (original-line strip))
-                              (parseClassAndMethodCommentLine))))           
-             (else 
-                   ;(puts "parsing nu comment text for #{(if @name (then @name)(else @methodName))}")
-                   (set lines (@comments lines))
-                   (lines each:
-                          (do (original-line)
-                              (if (set match (nu-comment-pattern findInString:original-line))
-                                  (then 
-                                        (set line (match groupAtIndex:3))
-                                        (parseClassAndMethodCommentLine)))))))))
+             (then
+                  ;(puts "parsing objc comment text for #{(if @name (then @name)(else @methodName))}")
+                  (set text (match groupAtIndex:1))
+                  (set lines (text lines))
+                  (lines each:
+                         (do (original-line)
+                             (set line (original-line strip))
+                             (parseClassAndMethodCommentLine))))
+             (else
+                  ;(puts "parsing nu comment text for #{(if @name (then @name)(else @methodName))}")
+                  (set lines (@comments lines))
+                  (lines each:
+                         (do (original-line)
+                             (if (set match (nu-comment-pattern findInString:original-line))
+                                 (then
+                                      (set line (match groupAtIndex:3))
+                                      (parseClassAndMethodCommentLine)))))))))
 
 ;; @abstract NuDoc class for building class descriptions.
 ;; @discussion NuDoc creates one instance of this class for each class that it encounters when reading source files.
@@ -242,7 +242,7 @@
           (@methods select:(do (method) (eq (method methodType) "-"))))
      
      ;; Set the raw comments associated with a class.
-     (imethod (void) setComments:(id) comments is 
+     (imethod (void) setComments:(id) comments is
           (set @comments comments)
           (parseClassAndMethodComments))
      
@@ -253,7 +253,7 @@
      (imethod (id) files is (@files allValues))
      
      ;; Add a file description to the class' list.
-     (imethod (void) addFile:(id) file is 
+     (imethod (void) addFile:(id) file is
           (@files setObject:file forKey:(file name))))
 
 (set method-table-template (NuTemplate codeForString: <<-END
@@ -290,10 +290,12 @@ END))
           (super init)
           (set @file file)
           (set @classInfo classInfo)
-          (set @methodType 
+          (set @methodType
                (case (declaration first)
                      ('cmethod "+")
                      ('imethod "-")
+                     ('+ "+")
+                     ('- "-")
                      (else "?")))
           (set @comments (declaration comments))
           (parseClassAndMethodComments)
@@ -302,20 +304,20 @@ END))
           (cond ((eq 'is (declaration fourth))
                  (set @methodName "#{((declaration second) stringValue)} #{((declaration third) stringValue)}")
                  (set @shortMethodName "#{((declaration third) stringValue)}")) ; that's all
-                (else 
-                      (set cursor ((declaration cdr) cdr))
-                      (set @methodName ((declaration second) stringValue))
-                      (set @selectors ((NSMutableArray alloc) init))
-                      (set @types ((NSMutableArray alloc) init))
-                      (set @names ((NSMutableArray alloc) init))
-                      (while (!= (cursor car) 'is)
-                             (@selectors addObject: ((cursor first) stringValue))
-                             (@types addObject: ((cursor second) stringValue))
-                             (@names addObject: ((cursor third) stringValue))
-                             (set @methodName "#{@methodName} #{((cursor first) stringValue)} #{((cursor second) stringValue)} #{((cursor third) stringValue)}")
-                             (set cursor (((cursor cdr) cdr) cdr)))
-                      (set @shortMethodName (@selectors componentsJoinedByString:""))
-                      ))
+                (else
+                     (set cursor ((declaration cdr) cdr))
+                     (set @methodName ((declaration second) stringValue))
+                     (set @selectors ((NSMutableArray alloc) init))
+                     (set @types ((NSMutableArray alloc) init))
+                     (set @names ((NSMutableArray alloc) init))
+                     (while (!= (cursor car) 'is)
+                            (@selectors addObject: ((cursor first) stringValue))
+                            (@types addObject: ((cursor second) stringValue))
+                            (@names addObject: ((cursor third) stringValue))
+                            (set @methodName "#{@methodName} #{((cursor first) stringValue)} #{((cursor second) stringValue)} #{((cursor third) stringValue)}")
+                            (set cursor (((cursor cdr) cdr) cdr)))
+                     (set @shortMethodName (@selectors componentsJoinedByString:""))
+                     ))
           self)
      
      ;; Initialize a method description from an Objective-C declaration.
@@ -332,9 +334,9 @@ END))
                  (set @selectors ((NSMutableArray alloc) init))
                  (set @types ((NSMutableArray alloc) init))
                  (set @names ((NSMutableArray alloc) init))
-                 (set nameToParse (match groupAtIndex:3))                 
+                 (set nameToParse (match groupAtIndex:3))
                  ((selector-pattern findAllInString:nameToParse) each:
-                  (do (match2) 
+                  (do (match2)
                       (@selectors addObject:(match2 groupAtIndex:1))
                       (@types addObject:"(#{(match2 groupAtIndex:2)})")
                       (@names addObject:(match2 groupAtIndex:3))))
@@ -362,7 +364,7 @@ END))
           (eval method-table-template))
      
      ;; Set the raw comments associatied with a method.
-     (imethod (void) setComments:(id) comments is 
+     (imethod (void) setComments:(id) comments is
           (set @comments comments)
           (parseClassAndMethodComments)))
 
@@ -376,13 +378,13 @@ END))
          (fileInfo setComments:((code second) comments)))
      ;; code is a progn
      ((code cdr) each: (do (statement)
-                           (case (statement first) 
+                           (case (statement first)
                                  ('class
                                         (set className ((statement second) stringValue))
                                         
                                         (unless (set classInfo ($classes valueForKey:className))
                                                 (set classInfo ((NuDocClassInfo alloc) initWithName:className))
-                                                ($classes setValue:classInfo forKey:className))                                        
+                                                ($classes setValue:classInfo forKey:className))
                                         (classInfo addFile:fileInfo)
                                         (classInfo setComments: (statement comments))
                                         (fileInfo addClass:classInfo)
@@ -396,11 +398,13 @@ END))
                                                    (set rest ((statement cdr) cdr))))
                                         
                                         (rest each: (do (statement)
-                                                        (if (eq (statement first) 'imethod)
+                                                        (if (or (eq (statement first) 'imethod)
+                                                                (eq (statement first) '-))
                                                             (set methodInfo ((NuDocMethodInfo alloc) initWithDeclaration:statement file:fileInfo class:classInfo))
                                                             ((classInfo methods) addObject:methodInfo)
                                                             (fileInfo addMethod:methodInfo))
-                                                        (if (eq (statement first) 'cmethod)
+                                                        (if (or (eq (statement first) 'cmethod)
+                                                                (eq (statement first) '+))
                                                             (set methodInfo ((NuDocMethodInfo alloc) initWithDeclaration:statement file:fileInfo class:classInfo))
                                                             ((classInfo methods) addObject:methodInfo)
                                                             (fileInfo addMethod:methodInfo)))))
@@ -413,15 +417,15 @@ END))
 
 ;; extract documentation from Objective-C source files
 (function extract-objc (file)
-     (puts "extracting from #{file}")     
+     (puts "extracting from #{file}")
      (set fileInfo (NuDocFileInfo infoForFileNamed:file))
-     (set code (NSString stringWithContentsOfFile:file))    
+     (set code (NSString stringWithContentsOfFile:file))
      (set matches (NSMutableArray array))
      (matches addObjectsFromArray:(interface-pattern findAllInString:code))
      (matches addObjectsFromArray:(implementation-pattern findAllInString:code))
-     (matches addObjectsFromArray:(protocol-pattern findAllInString:code)) 
+     (matches addObjectsFromArray:(protocol-pattern findAllInString:code))
      (matches addObjectsFromArray:(signature-pattern findAllInString:code))
-     (matches addObjectsFromArray:(objc-comment-pattern findAllInString:code))           
+     (matches addObjectsFromArray:(objc-comment-pattern findAllInString:code))
      (matches sortUsingSelector:"compare:")
      
      ;; get file documentation from beginning of file
@@ -430,10 +434,10 @@ END))
      
      (set $comments "")
      (matches each:
-              (do (match)                 
+              (do (match)
                   (case (match regex)
                         (interface-pattern
-                                          (set className (match groupAtIndex:1))                                     
+                                          (set className (match groupAtIndex:1))
                                           (unless (set $classInfo ($classes valueForKey:className))
                                                   (set $classInfo ((NuDocClassInfo alloc) initWithName:className))
                                                   ($classes setValue:$classInfo forKey:className))
@@ -454,7 +458,7 @@ END))
                         (else nil)))))
 
 (macro site-header
-     (if (eq $sitename "programming.nu") 
+     (if (eq $sitename "programming.nu")
          (then <<-END
 <div style="float:left; margin-right:10px">
 <img src="/files/recycle-s.png" height="50" />
@@ -773,8 +777,8 @@ END))
 
 ;;
 ;; Main program starts here
-;; 
-(macro nudoc 
+;;
+(macro nudoc
      (set $classes (NSMutableDictionary dictionary))
      (set $files (NSMutableDictionary dictionary))
      
@@ -805,7 +809,7 @@ END))
      ((eval index-template) writeToFile:"doc/index.html")
      
      (($classes allValues) each:
-      (do (classInfo) 
+      (do (classInfo)
            ((eval classinfo-template) writeToFile:"doc/classes/#{(classInfo name)}.html")))
      
      (($files allValues) each:

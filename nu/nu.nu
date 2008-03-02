@@ -19,6 +19,7 @@
             (let ((r (NuMath random)))
                  (* maximum (- (/ r maximum) ((/ r maximum) intValue))))))
 
+;; Reverse a list. Just for fun.
 (global reverse
         (do (my-list)
             (if my-list
@@ -38,145 +39,104 @@
                             (results addObject:filename)))
                  ((results allObjects) sortedArrayUsingSelector:"compare:"))))
 
-;; parse operator; parses a string into Nu code objects
-(global parse
-        (do (string)
-            ((NuParser new) parse:string)))
-
-;; create an array from a list of values
-(global array (do (*args) (NSArray arrayWithList:*args)))
-
-;; create a dictionary from a list of key-value pairs
-(global dict (do (*args) (NSDictionary dictionaryWithList:*args)))
-
 (class NSObject
      
      ;; Concisely set key-value pairs from a property list.
-     (imethod (id) set: (id) propertyList is
-          (propertyList eachPair: (do (key value)
-                                      (let ((label (if (and (key isKindOfClass:NuSymbol) (key isLabel))
-                                                       (then (key labelName))
-                                                       (else key))))
-                                           (if (eq label "action")
-                                               (then (self setAction:value))
-                                               (else (self setValue:value forKey:label))))))
-          self)
+     (- (id) set: (id) propertyList is
+        (propertyList eachPair: (do (key value)
+                                    (let ((label (if (and (key isKindOfClass:NuSymbol) (key isLabel))
+                                                     (then (key labelName))
+                                                     (else key))))
+                                         (if (eq label "action")
+                                             (then (self setAction:value))
+                                             (else (self setValue:value forKey:label))))))
+        self)
      
      ;; A C-style ternary operator. Deprecated, because unlike the C operator, all of its arguments are evaluated.
-     (imethod (id) ? (id) a : (id) b is
-          (unless $ternary_deprecation_warning_already
-                  ;; The problem is that because it is a message,
-                  ;; all its arguments are evaluated
-                  (NSLog "The ternary operator is deprecated. Please don't use it.")
-                  (set $ternary_deprecation_warning_already YES))
-          (if self (then a) (else b))))
+     (- (id) ? (id) a : (id) b is
+        (unless $ternary_deprecation_warning_already
+                ;; The problem is that because it is a message,
+                ;; all its arguments are evaluated
+                (NSLog "The ternary operator is deprecated. Please don't use it.")
+                (set $ternary_deprecation_warning_already YES))
+        (if self (then a) (else b))))
 
 (class NSArray
      
      ;; This default sort method sorts an array using its elements' compare: method.
-     (imethod (id) sort is
-          (self sortedArrayUsingSelector:"compare:"))
+     (- (id) sort is
+        (self sortedArrayUsingSelector:"compare:"))
      
      ;; Convert an array into a list.
-     (imethod (id) list is
-          (self reduceLeft:(do (result item) (cons item result)) from: nil))
+     (- (id) list is
+        (self reduceLeft:(do (result item) (cons item result)) from: nil))
      
      ;; When an unknown message is received by an array,
      ;; if it is an integer, treat it as a call to objectAtIndex:.
-     (imethod (id) handleUnknownMessage:(id) method withContext:(id) context is
-          (let ((m ((method car) evalWithContext:context)))
-               (if (m isKindOfClass:NSNumber)
-                   (then (if (and (< m (self count)) (>= m 0))
-                             (then (self objectAtIndex:m))
-                             (else nil)))
-                   (else (super handleUnknownMessage:method withContext:context)))))
-     
-     ;; Convert a list into an array.
-     (cmethod (id) arrayWithList: (id) list is
-          (let ((a (NSMutableArray array)))
-               (list each:(do (object) (a addObject:object)))
-               a)))
+     (- (id) handleUnknownMessage:(id) method withContext:(id) context is
+        (let ((m ((method car) evalWithContext:context)))
+             (if (m isKindOfClass:NSNumber)
+                 (then (if (and (< m (self count)) (>= m 0))
+                           (then (self objectAtIndex:m))
+                           (else nil)))
+                 (else (super handleUnknownMessage:method withContext:context))))))
 
 (class NSMutableArray
      
      ;; Concisely add objects to arrays using this method, which is equivalent to a call to addObject:.
-     (imethod (void) << (id) object is (self addObject:object)))
-
-(class NSSet
-     
-     ;; Convert a list into a set.
-     (cmethod (id) setWithList:(id) list is
-          (let ((s (NSMutableSet set)))
-               (list each:(do (object) (s addObject:object)))
-               s)))
+     (- (void) << (id) object is (self addObject:object)))
 
 (class NSMutableSet
      
      ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
-     (imethod (void) << (id) object is (self addObject:object)))
+     (- (void) << (id) object is (self addObject:object)))
 
 (class NSDictionary
      
-     ;; Convert a list of key-value pairs into a dictionary.
-     (cmethod (id) dictionaryWithList: (id) list is
-          (let (d (NSMutableDictionary dictionary))
-               (list eachPair:
-                     (do (key value)
-                         (if (and (key isKindOfClass:NuSymbol)
-                                  (key isLabel))
-                             (then (d setValue:value forKey:(key labelName)))
-                             (else (d setValue:value forKey:key)))))
-               d))
-     
      ;; When an unknown message is received by a dictionary,
      ;; treat it as a call to objectForKey:.
-     (imethod (id) handleUnknownMessage:(id) method withContext:(id) context is
-          (if (eq (method length) 1)
-              (then (self objectForKey:((method car) evalWithContext: context)))
-              (else (super handleUnknownMessage:method withContext:context))))
-     
-     ;; Look up an object by key, return the specified default if no object is found.
-     (imethod (id) objectForKey:(id)key withDefault:(id)default is
-          (cond ((self objectForKey:key))
-                (else default)))
+     (- (id) handleUnknownMessage:(id) method withContext:(id) context is
+        (if (eq (method length) 1)
+            (then (self objectForKey:((method car) evalWithContext: context)))
+            (else (super handleUnknownMessage:method withContext:context))))
      
      ;; Iterate over the key-object pairs in a dictionary. Pass it a block with two arguments: (key object).
-     (imethod (id) each:(id) block is
-          ((self allKeys) each:
-           (do (key) (block key (self objectForKey:key))))))
+     (- (id) each:(id) block is
+        ((self allKeys) each:
+         (do (key) (block key (self objectForKey:key))))))
 
 
 (class NSString
      
      ;; Convert a string into a symbol.
-     (imethod (id) symbolValue is ((NuSymbolTable sharedSymbolTable) symbolWithString:self))
+     (- (id) symbolValue is ((NuSymbolTable sharedSymbolTable) symbolWithString:self))
      
      ;; Split a string into lines.
-     (imethod (id) lines is
-          (let ((a (self componentsSeparatedByString:(NSString carriageReturn))))
-               (if (eq (a lastObject) "")
-                   (then (a subarrayWithRange:(list 0 (- (a count) 1))))
-                   (else a))))
+     (- (id) lines is
+        (let ((a (self componentsSeparatedByString:(NSString carriageReturn))))
+             (if (eq (a lastObject) "")
+                 (then (a subarrayWithRange:(list 0 (- (a count) 1))))
+                 (else a))))
      
      ;; Replace a substring with another.
-     (imethod (id) replaceString:(id) target withString:(id) replacement is
-          (let ((s (NSMutableString stringWithString:self)))
-               (s replaceOccurrencesOfString:target withString:replacement options:nil range:(list 0 (self length)))
-               s)))
+     (- (id) replaceString:(id) target withString:(id) replacement is
+        (let ((s (NSMutableString stringWithString:self)))
+             (s replaceOccurrencesOfString:target withString:replacement options:nil range:(list 0 (self length)))
+             s)))
 
 (class NuCell
      
      ;; Convert a list into an NSRect. The list must have at least four elements.
-     (imethod (NSRect) rectValue is (list (self first) (self second) (self third) (self fourth)))
+     (- (NSRect) rectValue is (list (self first) (self second) (self third) (self fourth)))
      
      ;; Convert a list into an NSPoint.  The list must have at least two elements.
-     (imethod (NSPoint) pointValue is (list (self first) (self second)))
+     (- (NSPoint) pointValue is (list (self first) (self second)))
      
      ;; Convert a list into an NSSize.  The list must have at least two elements.
-     (imethod (NSSize) sizeValue is (list (self first) (self second)))
+     (- (NSSize) sizeValue is (list (self first) (self second)))
      
      ;; Convert a list into an NSRange.  The list must have at least two elements.
-     (imethod (NSRange) rangeValue is (list (self first) (self second))))
+     (- (NSRange) rangeValue is (list (self first) (self second))))
 
 ;; Call this macro in a class declaration to give a class automatic accessors for its instance variables.
 ;; Watch out for conflicts with other uses of handleUnknownMessage:withContext:.

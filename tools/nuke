@@ -8,12 +8,7 @@
 ;; basic declarations that allow nuke to run in mininush
 (global NO 0)
 (global YES 1)
-(NSArray include: NuEnumerable)
-(NSSet include: NuEnumerable)
 (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
-
-;; create an array from a list of values
-(global array (do (*args) (NSArray arrayWithList:*args)))
 
 (function SH (command)
      (puts "nuke: #{command}")
@@ -42,19 +37,7 @@
           (set components (self componentsSeparatedByString:"/"))
           (components objectAtIndex:(- (components count) 1))))
 
-(class NSDictionary
-     ;; Create a dictionary from a list.
-     (cmethod (id) dictionaryWithList: (id) l is
-          (set dict ((NSMutableDictionary alloc) init))
-          (l eachPair: (do (key object) (dict setObject:object forKey:key)))
-          dict))
-
 (class NSArray
-     ;; Create an array from a list.
-     (cmethod (id) arrayWithList:(id) list is
-          (set l ((NSMutableArray alloc) init))
-          (list each: (do (item) (if item (l addObject:item))))
-          l)
      
      ;; Join the members of an array into a string with array elements separated by spaces.
      (imethod (id) join is

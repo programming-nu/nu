@@ -30,4 +30,6 @@
 - (id) object;
 /*! Get the value of the pointed-to object, using the typeString to determine the correct type */
 - (id) value;
+/*! Helper function, used internally to reserve space for data of a specified type. */
+- (void) allocateSpaceForTypeString:(NSString *) s;
 @end

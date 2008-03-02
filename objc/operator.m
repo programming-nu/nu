@@ -1457,6 +1457,9 @@ static bool valueIsTrue(id value)
 
 @end
 
+#ifdef MACOSX
+#import <Cocoa/Cocoa.h>
+
 @interface Nu_beep_operator : NuOperator {}
 @end
 
@@ -1468,6 +1471,7 @@ static bool valueIsTrue(id value)
 }
 
 @end
+#endif
 
 @interface Nu_system_operator : NuOperator {}
 @end
@@ -1580,6 +1584,65 @@ static bool valueIsTrue(id value)
 
 @end
 
+id evaluatedArguments(id cdr, NSMutableDictionary *context)
+{
+    NuCell *evaluatedArguments = nil;
+    id cursor = cdr;
+    id outCursor = nil;
+    while (cursor && (cursor != Nu__null)) {
+        id nextValue = [[cursor car] evalWithContext:context];
+        id newCell = [[[NuCell alloc] init] autorelease];
+        [newCell setCar:nextValue];
+        if (!outCursor) {
+            evaluatedArguments = newCell;
+        }
+        else {
+            [outCursor setCdr:newCell];
+        }
+        outCursor = newCell;
+        cursor = [cursor cdr];
+    }
+    return evaluatedArguments;
+}
+
+@interface Nu_array_operator : NuOperator {}
+@end
+
+@implementation Nu_array_operator
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    return [NSArray arrayWithList:evaluatedArguments(cdr, context)];
+}
+
+@end
+
+@interface Nu_dict_operator : NuOperator {}
+@end
+
+@implementation Nu_dict_operator
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    return [NSDictionary dictionaryWithList:evaluatedArguments(cdr, context)];
+}
+
+@end
+
+@interface Nu_parse_operator : NuOperator {}
+@end
+
+@implementation Nu_parse_operator
+
+// parse operator; parses a string into Nu code objects
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    id parser = [[[NuParser alloc] init] autorelease];
+    return [parser parse:[[cdr car] evalWithContext:context]];
+}
+
+@end
+
 #define install(name, class) [[[symbolTable symbolWithCString:name] retain] setValue:[[class alloc] init]]
 
 void load_builtins(NuSymbolTable *symbolTable)
@@ -1661,7 +1724,11 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("let",      Nu_let_operator);
 
     install("load",     Nu_load_operator);
+
+    #ifdef MACOSX
     install("beep",     Nu_beep_operator);
+    #endif
+
     install("system",   Nu_system_operator);
 
     install("class",    Nu_class_operator);
@@ -1672,6 +1739,10 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("call",     Nu_call_operator);
     install("send",     Nu_send_operator);
+
+    install("array",    Nu_array_operator);
+    install("dict",     Nu_dict_operator);
+    install("parse",    Nu_parse_operator);
 
     install("help",     Nu_help_operator);
     install("?",        Nu_help_operator);

@@ -8,6 +8,7 @@
 #import "method.h"
 #import "block.h"
 #import "cell.h"
+#import "object.h"
 
 // getting a specific method...
 // (set x (((Convert classMethods) select: (do (m) (eq (m name) "passRect:"))) objectAtIndex:0))
@@ -216,7 +217,7 @@
 
 - (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
 {
-    return [[self wrappedClass] handleUnknownMessage: cdr withContext: context];
+    return [[self wrappedClass] handleUnknownMessage:cdr withContext:context];
 }
 
 @end
