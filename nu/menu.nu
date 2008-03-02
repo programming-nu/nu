@@ -12,7 +12,7 @@
            (cond ((eq (menu title) "Main")     ((NSApplication sharedApplication) setMainMenu:menu))
                  ((eq (menu title) "Window")   ((NSApplication sharedApplication) setWindowsMenu:menu))
                  ((eq (menu title) "Services") ((NSApplication sharedApplication) setServicesMenu:menu))
-                 ((eq (menu title) "Application") (menu setTitle:"\uf8ff"))
+                 ((eq (menu title) "Application") (menu setTitle:(NSString stringWithCharacter:0xf8ff)))
                  ;; The above value is an Apple-specific constant that marks the Application Menu
                  ;; http://lists.apple.com/archives/cocoa-dev/2006/Sep/msg00011.html
                  (else nil))

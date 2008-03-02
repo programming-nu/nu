@@ -1117,9 +1117,10 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     signature = strdup([s cStringUsingEncoding:NSUTF8StringEncoding]);
     function = dlsym(RTLD_DEFAULT, name);
     if (!function) {
-        NSLog(@"%s", dlerror());
-        NSLog(@"If you are using a release build, try rebuilding with the KEEP_PRIVATE_EXTERNS variable set.");
-        NSLog(@"In Xcode, check the 'Preserve Private External Symbols' checkbox.");
+        [NSException raise:@"NuCantFindBridgedFunction"
+            format:@"%s\n%s\n%s\n", dlerror(),
+            "If you are using a release build, try rebuilding with the KEEP_PRIVATE_EXTERNS variable set.",
+            "In Xcode, check the 'Preserve Private External Symbols' checkbox."];
     }
     return self;
 }
@@ -1129,10 +1130,10 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     const char *function_name = [name cStringUsingEncoding:NSUTF8StringEncoding];
     void *function = dlsym(RTLD_DEFAULT, function_name);
     if (!function) {
-        NSLog(@"%s", dlerror());
-        NSLog(@"If you are using a release build, try rebuilding with the KEEP_PRIVATE_EXTERNS variable set.");
-        NSLog(@"In Xcode, check the 'Preserve Private External Symbols' checkbox.");
-        return nil;
+        [NSException raise:@"NuCantFindBridgedFunction"
+            format:@"%s\n%s\n%s\n", dlerror(),
+            "If you are using a release build, try rebuilding with the KEEP_PRIVATE_EXTERNS variable set.",
+            "In Xcode, check the 'Preserve Private External Symbols' checkbox."];
     }
     NuBridgedFunction *wrapper = [[NuBridgedFunction alloc] initWithName:name signature:signature];
     return wrapper;

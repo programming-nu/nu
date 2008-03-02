@@ -49,10 +49,6 @@
 ;; create a dictionary from a list of key-value pairs
 (global dict (do (*args) (NSDictionary dictionaryWithList:*args)))
 
-;; add enumeration to collection classes
-(NSArray include: NuEnumerable)
-(NSSet include: NuEnumerable)
-
 (class NSObject
      
      ;; Concisely set key-value pairs from a property list.

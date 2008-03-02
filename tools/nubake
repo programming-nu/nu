@@ -10,6 +10,7 @@
 
 (class NSString
      ;; Output a string as an array of ints. This way we don't have to worry about escaping special characters.
+     ;; Beware -- this does not correctly handle UTF-8. You will get compilation warnings for characters that are out-of-range.
      (imethod characterArray is
           (set result "(const char[]){")
           ((self length) times:
@@ -46,7 +47,7 @@
      ;; If 'standalone' is true, a 'main()' function will be included to allow the file to be compiled, linked, and run standalone.
      (cmethod (id) bakeNuCode:(id)program intoFunction:(id)functionName standalone:(int)standalone is
           (set result <<-END
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import <Nu/Nu.h>
 
 id #{functionName}() {
@@ -92,7 +93,7 @@ END))
 ;; process the remaining arguments
 (while (< argi (argv count))
        (case (argv argi)
-             ("-f" (set argi (+ argi 1)) (set functionName (argv argi)))
+             ("-n" (set argi (+ argi 1)) (set functionName (argv argi)))
              ("-o" (set argi (+ argi 1)) (set outputFileName (argv argi)))
              ("-s" (set standalone t))
              (else (set sourceFileName (argv argi))))
@@ -114,5 +115,5 @@ END))
                     (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
                     (exit -1))))
     (else
-         (puts "usage: nubake <sourcefile> [-f <functionname>] [-o <outputfilename>] [-s]")))
+         (puts "usage: nubake <sourcefile> [-n <functionname>] [-o <outputfilename>] [-s]")))
 

@@ -56,7 +56,7 @@ Get a Nu parser. The parser will implement the NuParsing protocol, shown below.
 Load a Nu source file from a bundle with the specified identifier.
 Used by bundle (aka framework) initializers.
 */
-+ (void) loadNuFile:(NSString *) fileName fromBundleWithIdentifier:(NSString *) bundleIdentifier;
++ (BOOL) loadNuFile:(NSString *) fileName fromBundleWithIdentifier:(NSString *) bundleIdentifier withContext:(NSMutableDictionary *) context;
 @end
 
 // Helpers for programmatic construction of Nu code.

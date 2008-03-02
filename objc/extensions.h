@@ -47,6 +47,18 @@
 - (id) evalWithContext:(NSMutableDictionary *) context;
 /*! Run a shell command and return its results in a string. */
 + (NSString *) stringWithShellCommand:(NSString *) command;
+
+/*! Create a string from a specified character */
++ (NSString *) stringWithCharacter:(unichar) c;
+@end
+
+/*!
+    @category NSMutableString(Nu)
+    @abstract NSMutableString extensions for Nu programming.
+ */
+@interface NSMutableString(Nu)
+/*! Append a specified character to a string. */
+- (void) appendCharacter:(unichar) c;
 @end
 
 /*!

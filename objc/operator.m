@@ -17,6 +17,7 @@
 #import "parser.h"
 #import "regex.h"
 #import "version.h"
+#import "Nu.h"
 #include <stdlib.h>
 
 @interface NuBreakException : NSException {}
@@ -1243,8 +1244,8 @@ static bool valueIsTrue(id value)
         if ([[NSBundle mainBundle] loadNuFile:resourceName withContext:context])
             return [symbolTable symbolWithCString:"t"];
 
-        // or try the Nu_ bundle
-        if ([[NSBundle bundleForClass:[self class]] loadNuFile:resourceName withContext:context])
+        // next, try the main Nu bundle
+        if ([Nu loadNuFile:resourceName fromBundleWithIdentifier:@"nu.programming.framework" withContext:context])
             return [symbolTable symbolWithCString:"t"];
 
         // if no file was found, try to load a framework with the given name

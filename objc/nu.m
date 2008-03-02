@@ -10,6 +10,9 @@
 #import "object.h"
 #import "objc_runtime.h"
 #import "regex.h"
+#import "bridge.h"
+#import "class.h"
+#import "enumerable.h"
 #import <unistd.h>
 
 id Nu__null = 0;
@@ -173,6 +176,12 @@ void NuInit()
 
         Nu__null = [NSNull null];
 
+        // add enumeration to collection classes
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        [NSArray include: [NuClass classWithClass:[NuEnumerable class]]];
+        [NSSet include: [NuClass classWithClass:[NuEnumerable class]]];
+        [pool release];
+
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
@@ -192,13 +201,16 @@ void NuInit()
         // if you don't like making Protocol a subclass of NSObject (see nu_initProtocols), you can do this instead.
         // transplant_nu_methods([Protocol class], [NSObject class]);
 
-#ifndef MININUSH
+        #ifndef MININUSH
         // Load some standard files
-        [Nu loadNuFile:@"nu"            fromBundleWithIdentifier:@"nu.programming.framework"];
-        [Nu loadNuFile:@"bridgesupport" fromBundleWithIdentifier:@"nu.programming.framework"];
-        [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework"];
-        [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework"];
-#endif
+        // Warning: since these loads are performed without a context, the non-global symbols defined in them
+        // will not be available to other Nu scripts or at the console.  These loads should only be used
+        // to set globals and to make changes to information stored in the ObjC runtime.
+        [Nu loadNuFile:@"nu"            fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
+        [Nu loadNuFile:@"bridgesupport" fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
+        [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
+        [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
+        #endif
     }
 }
 
@@ -245,24 +257,46 @@ id _nuregex(const char *pattern, int options)
     return sizeof(void *);
 }
 
-+ (void) loadNuFile:(NSString *) fileName fromBundleWithIdentifier:(NSString *) bundleIdentifier
++ (BOOL) loadNuFile:(NSString *) fileName fromBundleWithIdentifier:(NSString *) bundleIdentifier withContext:(NSMutableDictionary *) context
 {
+    BOOL success = NO;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSBundle *bundle = [NSBundle bundleWithIdentifier:bundleIdentifier];
-    NSString *main_path = [bundle pathForResource:fileName ofType:@"nu"];
-    if (main_path) {
-        NSString *main_nu = [NSString stringWithContentsOfFile:main_path];
-        if (main_nu) {
+    NSString *filePath = [bundle pathForResource:fileName ofType:@"nu"];
+    if (filePath) {
+        NSString *fileNu = [NSString stringWithContentsOfFile:filePath];
+        if (fileNu) {
             id parser = [Nu parser];
-            id script = [parser parse:main_nu asIfFromFilename:[main_path cStringUsingEncoding:NSUTF8StringEncoding]];
-            [parser eval:script];
+            id script = [parser parse:fileNu asIfFromFilename:[filePath cStringUsingEncoding:NSUTF8StringEncoding]];
+            if (!context) context = [parser context];
+            [script evalWithContext:context];
+            success = YES;
         }
     }
     else {
-        [NSException raise:@"NuCantLoadFile"
-        format:@"Unable to load file %@ from bundle with identifier %@", fileName, bundleIdentifier];
+        if ([bundleIdentifier isEqual:@"nu.programming.framework"]) {
+            // try to read it if it's baked in
+            @try
+            {
+                id baked_function = [NuBridgedFunction functionWithName:[NSString stringWithFormat:@"baked_%@", fileName] signature:@"@"];
+                id baked_code = [baked_function evalWithArguments:nil context:nil];
+                if (!context) {
+                    id parser = [Nu parser];
+                    context = [parser context];
+                }
+                [baked_code evalWithContext:context];
+                success = YES;
+            }
+            @catch (id exception) {
+				success = NO;
+            }
+        }
+        else {
+			success = NO;
+        }
     }
     [pool release];
+    return success;
 }
 
 @end

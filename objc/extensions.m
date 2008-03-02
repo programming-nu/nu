@@ -137,6 +137,19 @@ extern id Nu__null;
     }
 }
 
++ (NSString *) stringWithCharacter:(unichar) c
+{
+    return [self stringWithFormat:@"%C", c];
+}
+
+@end
+
+@implementation NSMutableString(Nu)
+- (void) appendCharacter:(unichar) c
+{
+    [self appendFormat:@"%C", c];
+}
+
 @end
 
 @implementation NSNumber(Nu)

@@ -42,18 +42,6 @@ extern const char *nu_parsedFilename(int i)
 - (int) interact;
 @end
 
-@interface NSMutableString(Nu)
-- (void) appendCharacter:(unichar) c;
-@end
-
-@implementation NSMutableString(Nu)
-- (void) appendCharacter:(unichar) c
-{
-    [self appendFormat:@"%C", c];
-}
-
-@end
-
 id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTable)
 {
     char c = ((char *) bytes)[length];

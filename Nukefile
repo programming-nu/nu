@@ -60,11 +60,11 @@ END)
 ;; build configuration
 (set @cc "gcc")
 (set @leopard "")
-(set @sdk 
+(set @sdk
      (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk")
             (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__")
             ("-isysroot /Developer/SDKs/MacOSX10.5.sdk"))
-           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk") 
+           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk")
             (" -isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
            (else "")))
 (set @cflags "-Wall -g -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
@@ -96,16 +96,17 @@ END)
       (SH "cp objc/Nu.h #{@framework_headers_dir}"))
 
 (task "clobber" => "clean" is
+	  (SH "rm objc/baked_*.m")
       (SH "rm -rf nush #{@framework_dir} doc")
       
-      ((filelist "^examples/[^/]*$") each: 
-       (do (example-dir) 
+      ((filelist "^examples/[^/]*$") each:
+       (do (example-dir)
            (puts example-dir)
            (SH "cd #{example-dir}; nuke clobber"))))
 
 (set nush_thin_binaries (NSMutableArray array))
-(@arch each: 
-       (do (architecture) 
+(@arch each:
+       (do (architecture)
            (set nush_thin_binary "build/#{architecture}/nush")
            (nush_thin_binaries addObject:nush_thin_binary)
            (file nush_thin_binary => "framework" "build/#{architecture}/main.o" is
@@ -130,13 +131,13 @@ END)
 
 (task "default" => "nush")
 
-;; Except for the Nu.framework (installed in /Library/Frameworks), 
+;; Except for the Nu.framework (installed in /Library/Frameworks),
 ;; all scripts and binaries are installed to #{@prefix}/bin
 
 (set @installprefix "#{@destdir}#{@prefix}")
 
 (task "install" => "nush" is
-      ('("nuke" "nubile" "nutemplate" "nutest" "nudoc" "nubake") each: 
+      ('("nuke" "nubile" "nutemplate" "nutest" "nudoc" "nubake") each:
         (do (program)
             (SH "sudo ditto tools/#{program} #{@installprefix}/bin")))
       (SH "sudo ditto nush #{@installprefix}/bin")
@@ -180,3 +181,13 @@ END)
 
 ;; alias for installer task
 (task "dmg" => "installer")
+
+;; "Bake" nu source files into compilable Objective-C files.
+(task "bake" is
+      (set nu_files (((NSString stringWithShellCommand:"ls nu/*.nu") chomp) componentsSeparatedByString:"\n"))
+      (nu_files each:
+           (do (nu_file)
+               (set basename (((nu_file pathComponents) lastObject) stringByDeletingPathExtension))
+               (set command "nubake #{nu_file} -n 'baked_#{basename}' -o objc/baked_#{basename}.m")
+               (puts command)
+               (system command))))
