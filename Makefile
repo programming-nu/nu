@@ -36,7 +36,7 @@ LDFLAGS=-framework Cocoa $(LIBS)
 
 OBJS=$(patsubst %.m,%.o, $(wildcard objc/*.m)) $(patsubst %.c,%.o, $(wildcard objc/*.c))
 
-all: mininush
+all: nush
 
 .m.o:
 	gcc $(CFLAGS) $(MFLAGS) $(INCLUDES) -c $< -o $@
@@ -44,11 +44,21 @@ all: mininush
 .c.o:
 	gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
 
+.PHONY: nush
+nush: mininush 
+	mininush tools/nuke
+
 mininush: $(OBJS)
 	gcc $(OBJS) $(CFLAGS) -o $@ $(LDFLAGS)
 	install_name_tool -change /usr/local/lib/libpcre.0.dylib pcre-7.5/.libs/libpcre.0.dylib $@
 
+# These actions assume that nush and nuke are installed somewhere safe, such as /usr/local/bin
+
 .PHONY: clean
 clean:
 	rm -f objc/*.o mininush
+	nuke clean
 
+.PHONY: clobber
+clobber: clean
+	nuke clobber
