@@ -28,7 +28,7 @@ endif
 
 INCLUDES=$(FFI_INCLUDE) $(PCRE_INCLUDE)
 LIBS=-lobjc -lreadline $(PCRE_LIB) $(FFI_LIB)
-CFLAGS=-g -O2 -Wall -DMACOSX -std=gnu99 -DLEOPARD_OBJC2
+CFLAGS=-g -O2 -Wall -DMACOSX -DMININUSH -std=gnu99 -DLEOPARD_OBJC2
 MFLAGS=-fobjc-exceptions
 LDFLAGS=-framework Cocoa $(LIBS)
 

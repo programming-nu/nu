@@ -37,7 +37,7 @@ CLOBBER.include("mininush")
 @gcc_objects = @gcc_files.sub(/\.c$/, '.o').sub(/\.m$/, '.o')
 
 @cc = "gcc"
-@cflags = "-g -O2 -Wall -DMACOSX -std=gnu99 #{LEOPARD_CFLAGS}"
+@cflags = "-g -O2 -Wall -DMACOSX -DMININUSH -std=gnu99 #{LEOPARD_CFLAGS}"
 @mflags = "-fobjc-exceptions"
 
 @ldflags = @frameworks.map {|framework| " -framework #{framework}"}.join

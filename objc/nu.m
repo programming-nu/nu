@@ -192,11 +192,13 @@ void NuInit()
         // if you don't like making Protocol a subclass of NSObject (see nu_initProtocols), you can do this instead.
         // transplant_nu_methods([Protocol class], [NSObject class]);
 
+#ifndef MININUSH
         // Load some standard files
         [Nu loadNuFile:@"nu"            fromBundleWithIdentifier:@"nu.programming.framework"];
         [Nu loadNuFile:@"bridgesupport" fromBundleWithIdentifier:@"nu.programming.framework"];
         [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework"];
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework"];
+#endif
     }
 }
 
