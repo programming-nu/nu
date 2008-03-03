@@ -14,6 +14,7 @@
 #import "class.h"
 #import "enumerable.h"
 #import <unistd.h>
+#import "pcre.h"
 
 id Nu__null = 0;
 
@@ -174,6 +175,18 @@ void NuInit()
     if (!initialized) {
         initialized = 1;
 
+        // check UTF8 support in PCRE
+        void *pcre_query_result = 0;
+        pcre_config(PCRE_CONFIG_UTF8, &pcre_query_result);
+        if (pcre_query_result == 0) {
+            NSLog(@"Sorry, this build of Nu can't be used.");
+            NSLog(@"The problem is with the PCRE (Perl-Compatible Regular Expression) library.");
+            NSLog(@"Nu requires a PCRE that supports UTF8-encoded strings; the current one doesn't.");
+            NSLog(@"Please see the notes/PCRE file in the Nu source distribution for more details.");
+            NSLog(@"It includes instructions for building a PCRE that will work well with Nu.");
+            exit(-1);
+        }
+
         Nu__null = [NSNull null];
 
         // add enumeration to collection classes
@@ -288,11 +301,11 @@ id _nuregex(const char *pattern, int options)
                 success = YES;
             }
             @catch (id exception) {
-				success = NO;
+                success = NO;
             }
         }
         else {
-			success = NO;
+            success = NO;
         }
     }
     [pool release];
