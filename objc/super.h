@@ -1,7 +1,7 @@
 /*!
     @header super.h
-  	@copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
-  	@discussion Declarations for NuSuper, a Nu proxy for object superclasses.
+    @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+    @discussion Declarations for NuSuper, a Nu proxy for object superclasses.
     NuSuper allows Nu method implementations to send messages to their superclass implementations.
 
 */
@@ -9,15 +9,17 @@
 #import <Foundation/Foundation.h>
 
 #import <objc/objc.h>
+#ifdef DARWIN
 #import <objc/objc-runtime.h>
 #import <objc/objc-class.h>
+#endif
 
 /*!
     @class NuSuper
     @abstract The Nu superclass proxy, an implementation detail used by Nu methods.
     @discussion Instances of this class in Nu methods act as proxies for object superclasses.
-    Each time a Nu implementation of a method is called, 
-    a NuSuper instance is created and inserted into the method's execution context with the name "super".  
+    Each time a Nu implementation of a method is called,
+    a NuSuper instance is created and inserted into the method's execution context with the name "super".
     This allows method implementations to send messages to superclass implementations.
     Typically, there is no need to directly interact with this class from Nu.
  */

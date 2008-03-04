@@ -2,6 +2,7 @@
 //  Nu reader for Apple BridgeSupport files.
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+#ifdef DARWIN
 
 #import <Foundation/Foundation.h>
 #import <dlfcn.h>
@@ -171,3 +172,4 @@ static NSString *getTypeStringFromNode(id node)
 }
 
 @end
+#endif

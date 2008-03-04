@@ -4,6 +4,7 @@
 		Some rights reserved: <http://creativecommons.org/licenses/by/2.0/>
 
 	***************************************************************************/
+#ifdef DARWIN
 
 #include "mach_override.h"
 
@@ -600,4 +601,5 @@ asm(
 			"	ret"
 );
 
+#endif
 #endif

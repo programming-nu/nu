@@ -4,7 +4,7 @@
 		Some rights reserved: <http://creativecommons.org/licenses/by/2.0/>
 
 	***************************************************************************/
-
+#ifdef DARWIN
 /***************************************************************************//**
 	@mainpage	mach_override
 	@author		Jonathan 'Wolf' Rentzsch: <http://rentzsch.com>
@@ -121,3 +121,4 @@ mach_override_ptr(
 	}
 #endif
 #endif	//	_mach_override_
+#endif

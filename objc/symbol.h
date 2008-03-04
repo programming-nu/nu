@@ -5,6 +5,10 @@
 
 */
 
+#ifdef LINUX
+#define bool char
+#endif
+
 #import <Foundation/Foundation.h>
 #import "nuinternals.h"
 

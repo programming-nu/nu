@@ -6,6 +6,10 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef LINUX
+#define bool char
+#endif
+
 /*!
     @category NSNull(Nu)
     @abstract NSNull extensions for Nu programming.

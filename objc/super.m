@@ -33,7 +33,7 @@
 
     //NSLog(@"messaging super with %@", [cdr stringValue]);
     // But when they're at the head of a list, the list is converted to a message and sent to the object
-   
+
     NSMutableArray *args = [[NSMutableArray alloc] init];
     id cursor = cdr;
     id selector = [cursor car];
@@ -49,10 +49,13 @@
     }
     SEL sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
 
-	// we're going to send the message to the handler of its superclass instead of one defined for its class.
+    // we're going to send the message to the handler of its superclass instead of one defined for its class.
     Class c = class_getSuperclass(class);
-
+    #ifdef DARWIN
     Method m = class_getInstanceMethod(c, sel);
+    #else
+    Method_t m = class_get_instance_method(c, sel);
+    #endif
     if (!m) m = class_getClassMethod(c, sel);
 
     id result = [NSNull null];

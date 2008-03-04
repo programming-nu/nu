@@ -3,6 +3,9 @@
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
+#ifdef LINUX
+#define __USE_GNU
+#endif
 #import <Foundation/Foundation.h>
 #import "objc_runtime.h"
 #import "class.h"
@@ -982,6 +985,16 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
 + (BOOL) autoreleasePoolExists;
 @end
 
+#ifdef LINUX
+@implementation NSAutoreleasePool (UndocumentedInterface)
++ (BOOL) autoreleasePoolExists
+{
+    return true; // this is wrong. Fix it later.
+}
+
+@end
+#endif
+
 @interface NSMethodSignature (UndocumentedInterface)
 + (id) signatureWithObjCTypes:(const char*)types;
 @end
@@ -1107,6 +1120,9 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     return [NSNull null];
 }
 
+#ifdef LINUX
+#define __USE_GNU
+#endif
 #include <dlfcn.h>
 
 @implementation NuBridgedFunction

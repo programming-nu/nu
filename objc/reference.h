@@ -6,6 +6,12 @@
 */
 #import <Foundation/Foundation.h>
 
+#ifdef LINUX
+#define bool char
+#define true 1
+#define false 0
+#endif
+
 /*!
    @class NuReference
    @abstract The Nu object wrapper.

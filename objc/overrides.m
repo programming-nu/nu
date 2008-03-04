@@ -2,6 +2,7 @@
 //  Overrides to system library functions.
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+#ifdef DARWIN
 
 #include "mach_override.h"
 #include "Foundation/Foundation.h"
@@ -81,4 +82,5 @@ void nu_enableNSLog()
 {
     g_enableNSLog = true;
 }
+#endif
 #endif

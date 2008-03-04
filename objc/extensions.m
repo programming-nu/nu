@@ -164,9 +164,15 @@ extern id Nu__null;
 {
     NSTask *task = [NSTask new];
     [task setLaunchPath:@"/bin/sh"];
+#ifdef DARWIN
     NSPipe *input = [NSPipe new];
     [task setStandardInput:input];
     NSPipe *output = [NSPipe new];
+#else
+    NSPipe *input = [NSPipe pipe];
+    [task setStandardInput:input];
+    NSPipe *output = [NSPipe pipe];
+#endif
     [task setStandardOutput:output];
     [task launch];
     [[input fileHandleForWriting] writeData:[command dataUsingEncoding:NSUTF8StringEncoding]];
@@ -194,7 +200,11 @@ extern id Nu__null;
 
 + (NSString *) stringWithCharacter:(unichar) c
 {
+#ifdef DARWIN
     return [self stringWithFormat:@"%C", c];
+#else
+   return [self stringWithFormat:@"%c", (char ) c];
+#endif
 }
 
 @end
@@ -202,7 +212,11 @@ extern id Nu__null;
 @implementation NSMutableString(Nu)
 - (void) appendCharacter:(unichar) c
 {
+#ifdef DARWIN
     [self appendFormat:@"%C", c];
+#else
+    [self appendFormat:@"%c", (char) c];
+#endif
 }
 
 @end
@@ -287,7 +301,11 @@ extern id Nu__null;
     if (result == -1) {
         return nil;
     }
+    #ifdef DARWIN
     return [NSDate dateWithTimeIntervalSince1970:sb.st_ctimespec.tv_sec];
+    #else
+    return [NSDate dateWithTimeIntervalSince1970:sb.st_ctime];
+    #endif
 }
 
 + (id) modificationTimeForFileNamed:(NSString *) filename
@@ -300,7 +318,11 @@ extern id Nu__null;
     if (result == -1) {
         return nil;
     }
+    #ifdef DARWIN
     return [NSDate dateWithTimeIntervalSince1970:sb.st_mtimespec.tv_sec];
+    #else
+    return [NSDate dateWithTimeIntervalSince1970:sb.st_mtime];
+    #endif
 }
 
 + (int) directoryExistsNamed:(NSString *) filename
@@ -386,6 +408,7 @@ extern id Nu__null;
 
 @end
 
+#ifdef DARWIN
 #import <Cocoa/Cocoa.h>
 
 @implementation NSView(Nu)
@@ -404,11 +427,13 @@ extern id Nu__null;
 }
 
 @end
+#endif
 
 @implementation NSMethodSignature(Nu)
 
 - (NSString *) typeString
 {
+#ifdef DARWIN
     // in 10.5, we can do this:
     // return [self _typeString];
     NSMutableString *result = [NSMutableString stringWithFormat:@"%s", [self methodReturnType]];
@@ -418,6 +443,100 @@ extern id Nu__null;
         [result appendFormat:@"%s", [self getArgumentTypeAtIndex:i]];
     }
     return result;
+#else
+    return [NSString stringWithCString:types];
+#endif
 }
 
 @end
+
+#ifdef LINUX
+@implementation NXConstantString (extra)
+- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
+{
+    return [self cString];
+}
+
+@end
+
+@implementation NSString (extra)
+
++ (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding
+{
+    return [[[NSString alloc] initWithCString:cString] autorelease];
+}
+
+- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
+{
+    return [self cString];
+}
+
+@end
+
+@implementation NSMutableDictionary (extra)
+
+- (void) setValue:(id) value forKey:(id) key
+{
+    [self setObject:value forKey:key];
+}
+
+@end
+
+@implementation NSObject (morestuff)
+
+- (void)willChangeValueForKey:(NSString *)key
+{
+}
+
+- (void)didChangeValueForKey:(NSString *)key
+{
+}
+
++ (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
+    register const char *types = NULL;
+
+    if (aSelector == NULL)                        // invalid selector
+        return nil;
+
+    if (types == NULL) {
+        // lookup method for selector
+        struct objc_method *mth;
+        mth = (object_is_instance(self) ?
+            class_get_instance_method(self->class_pointer, aSelector)
+            : class_get_class_method(self->class_pointer, aSelector));
+        if (mth) types = mth->method_types;
+    }
+
+    if (types == NULL) {
+        /* construct a id-signature */
+        register const char *sel;
+        if ((sel = sel_get_name(aSelector))) {
+            register int colCount = 0;
+            static char *idSigs[] = {
+                "@@:", "@@:@", "@@:@@", "@@:@@@", "@@:@@@@", "@@:@@@@@",
+                "@@:@@@@@@", "@@:@@@@@@", "@@:@@@@@@@", "@@:@@@@@@@@"
+            };
+
+            while (*sel) {
+                if (*sel == ':')
+                    colCount++;
+                sel++;
+            }
+            types = idSigs[colCount];
+        }
+        else
+            return nil;
+    }
+
+    //    NSLog(@"types: %s", types);
+    return [NSMethodSignature signatureWithObjCTypes:types];
+}
+
+@end
+
+const char *stringValue(id object)
+{
+    return [[object stringValue] cString];
+}
+#endif

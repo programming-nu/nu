@@ -6,6 +6,10 @@
 */
 #import <Foundation/Foundation.h>
 
+#ifdef LINUX
+#define bool char
+#endif
+
 /*!
    @class NuPointer
    @abstract The Nu pointer wrapper.

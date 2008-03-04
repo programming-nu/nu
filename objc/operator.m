@@ -524,6 +524,7 @@ static bool valueIsTrue(id value)
 
 @end
 
+#ifdef DARWIN
 @interface Nu_throw_operator : NuOperator {}
 @end
 
@@ -536,7 +537,9 @@ static bool valueIsTrue(id value)
 }
 
 @end
+#endif
 
+#ifdef DARWIN
 @interface Nu_synchronized_operator : NuOperator {}
 @end
 
@@ -561,6 +564,7 @@ static bool valueIsTrue(id value)
 }
 
 @end
+#endif
 
 @interface Nu_quote_operator : NuOperator {}
 @end
@@ -1457,7 +1461,7 @@ static bool valueIsTrue(id value)
 
 @end
 
-#ifdef MACOSX
+#ifdef DARWIN
 #import <Cocoa/Cocoa.h>
 
 @interface Nu_beep_operator : NuOperator {}
@@ -1691,8 +1695,10 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("continue", Nu_continue_operator);
 
     install("try",      Nu_try_operator);
+    #ifdef DARWIN
     install("throw",    Nu_throw_operator);
     install("synchronized", Nu_synchronized_operator);
+    #endif
 
     install("quote",    Nu_quote_operator);
     install("eval",     Nu_eval_operator);

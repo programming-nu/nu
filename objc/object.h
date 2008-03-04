@@ -4,6 +4,10 @@
     @discussion Nu extensions to NSObject for higher-level programming.
 */
 
+#ifdef LINUX
+#define bool char
+#endif
+
 #import <Foundation/Foundation.h>
 @class NuBlock;
 @class NuClass;
