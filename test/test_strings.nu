@@ -16,21 +16,24 @@
           (assert_equal 34 ("\"" characterAtIndex:0))
           (assert_equal 92 ("\\" characterAtIndex:0)))
      
-     (imethod (id) testOctalEscapedStrings is 
-          (assert_equal 0 ("\000" characterAtIndex:0))
+     (imethod (id) testOctalEscapedStrings is
+          (if (eq (uname) "Darwin") ;; requires UTF-8
+              (assert_equal 0 ("\000" characterAtIndex:0)))
           (assert_equal 1 ("\001" characterAtIndex:0))
           (assert_equal 255 ("\377" characterAtIndex:0)))
      
      (imethod (id) testHexEscapedStrings is
-          (assert_equal 0 ("\x00" characterAtIndex:0))
+          (if (eq (uname) "Darwin") ;; requires UTF-8
+              (assert_equal 0 ("\x00" characterAtIndex:0)))
           (assert_equal 1 ("\x01" characterAtIndex:0))
           (assert_equal 255 ("\xfF" characterAtIndex:0)))
      
-     (imethod (id) testUnicodeEscapedStrings is
-          (assert_equal 0 ("\u0000" characterAtIndex:0))
-          (assert_equal 1 ("\u0001" characterAtIndex:0))
-          (assert_equal 255 ("\u00ff" characterAtIndex:0))
-          (assert_equal 65535 ("\uFfFf" characterAtIndex:0)))
+     (if (eq (uname) "Darwin") ;; requires UTF-8
+         (imethod (id) testUnicodeEscapedStrings is
+              (assert_equal 0 ("\u0000" characterAtIndex:0))
+              (assert_equal 1 ("\u0001" characterAtIndex:0))
+              (assert_equal 255 ("\u00ff" characterAtIndex:0))
+              (assert_equal 65535 ("\uFfFf" characterAtIndex:0))))
      
      (imethod (id) testEscapedHereStrings is
           (set x <<+END
@@ -45,31 +48,32 @@
           (assert_equal 34 (x characterAtIndex:7))
           (assert_equal 92 (x characterAtIndex:8)))
      
-     (imethod (id) testOctalEscapedHereStrings is 
+     (imethod (id) testOctalEscapedHereStrings is
           (set x <<+END
-\000\001\377END)
-          (assert_equal 0 (x characterAtIndex:0))
+\003\001\377END)
+          (assert_equal 3 (x characterAtIndex:0))
           (assert_equal 1 (x characterAtIndex:1))
           (assert_equal 255 (x characterAtIndex:2)))
      
      (imethod (id) testHexEscapedHereStrings is
           (set x <<+END
-\x00\x01\xffEND)
-          (assert_equal 0 (x characterAtIndex:0))
+\x03\x01\xffEND)
+          (assert_equal 3 (x characterAtIndex:0))
           (assert_equal 1 (x characterAtIndex:1))
           (assert_equal 255 (x characterAtIndex:2)))
      
-     (imethod (id) testUnicodeEscapedHereStrings is
-          (set x <<+END
+     (if (eq (uname) "Darwin") ;; requires UTF-8
+         (imethod (id) testUnicodeEscapedHereStrings is
+              (set x <<+END
 \u0000\u0001\u00ff\uFfFfEND)
-          (assert_equal 0 (x characterAtIndex:0))
-          (assert_equal 1 (x characterAtIndex:1))
-          (assert_equal 255 (x characterAtIndex:2))
-          (assert_equal 65535 (x characterAtIndex:3)))
+              (assert_equal 0 (x characterAtIndex:0))
+              (assert_equal 1 (x characterAtIndex:1))
+              (assert_equal 255 (x characterAtIndex:2))
+              (assert_equal 65535 (x characterAtIndex:3))))
      
      (imethod (id) testExplicitlyUnescapedStrings is
           (assert_equal 92 (-"\n" characterAtIndex:0))
-          (assert_equal 92 (-"\s" characterAtIndex:0))       
+          (assert_equal 92 (-"\s" characterAtIndex:0))
           (assert_equal 92 (-"\x20" characterAtIndex:0)))
      
      (imethod (id) testExplicitlyEscapedStrings is

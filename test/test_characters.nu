@@ -29,21 +29,24 @@
           (assert_equal 27 '\e')
           (assert_equal 32 '\s'))
      
-     (imethod (id) testOctalEscapedCharacters is 
-          (assert_equal 0 '\000')
+     (imethod (id) testOctalEscapedCharacters is
+          (if (eq (uname) "Darwin") ;; requires UTF-8
+              (assert_equal 0 '\000'))
           (assert_equal 1 '\001')
           (assert_equal 255 '\377'))
      
      (imethod (id) testHexEscapedCharacters is
-          (assert_equal 0 '\x00')
+          (if (eq (uname) "Darwin") ;; requires UTF-8
+              (assert_equal 0 '\x00'))
           (assert_equal 1 '\x01')
           (assert_equal 255 '\xfF'))
      
-     (imethod (id) testUnicodeEscapedCharacters is
-          (assert_equal 0 '\u0000')
-          (assert_equal 1 '\u0001')
-          (assert_equal 255 '\u00ff')
-          (assert_equal 65535 '\uFfFf'))
+     (if (eq (uname) "Darwin") ;; requires UTF-8
+         (imethod (id) testUnicodeEscapedCharacters is
+              (assert_equal 0 '\u0000')
+              (assert_equal 1 '\u0001')
+              (assert_equal 65535 '\uFfFf')
+              (assert_equal 255 '\u00ff')))
      
      (imethod (id) testFourCharacterIntegers is
           (assert_equal 1886604404 'psLt')

@@ -3,6 +3,7 @@
 ;;
 ;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
+(if (eq (uname) "Darwin")
 (import Foundation)
 
 (class TestBridgeSupport is NuTestCase
@@ -14,5 +15,4 @@
           (assert_equal 4 NSGreaterThanComparison))
      
      (imethod (id) testFunctions is
-          (assert_equal 2 (NSMinY '(1 2 3 4)))))
-
+          (assert_equal 2 (NSMinY '(1 2 3 4))))))

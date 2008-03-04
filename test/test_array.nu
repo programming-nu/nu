@@ -32,9 +32,9 @@
           (set array (NSArray arrayWithList:(list 9 42 37 1 17 30 11 28)))
           (set sorted (array sortedArrayUsingBlock:(do (a b) (b compare:a))))
           (assert_equal '(42 37 30 28 17 11 9 1) (sorted list))
-          (set array (NSArray arrayWithList:(list "mary" "chris" "zed" "brian" "tim" "jennifer")))
+          (set array (NSArray arrayWithList:(list "mary" "christopher" "ed" "brian" "tim" "jennifer")))
           (set sorted (array sortedArrayUsingBlock:(do (a b) ((a length) compare:(b length)))))
-          (assert_equal '("zed" "tim" "mary" "chris" "brian" "jennifer") (sorted list))))
+          (assert_equal '("ed" "tim" "mary" "brian" "jennifer" "christopher") (sorted list))))
 
 
 

@@ -1487,6 +1487,23 @@ static bool valueIsTrue(id value)
 
 @end
 
+@interface Nu_uname_operator : NuOperator {}
+@end
+
+@implementation Nu_uname_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    #if defined DARWIN
+    return @"Darwin";
+    #elif defined LINUX
+    return @"Linux";
+    #else
+    return @"Unknown";
+    #endif
+}
+
+@end
+
 @interface Nu_help_operator : NuOperator {}
 @end
 
@@ -1724,11 +1741,11 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("let",      Nu_let_operator);
 
     install("load",     Nu_load_operator);
-
-    #ifdef MACOSX
+    #ifdef DARWIN
     install("beep",     Nu_beep_operator);
     #endif
 
+    install("uname",    Nu_uname_operator);
     install("system",   Nu_system_operator);
 
     install("class",    Nu_class_operator);

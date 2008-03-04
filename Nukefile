@@ -67,7 +67,7 @@ END)
            ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk")
             (" -isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
            (else "")))
-(set @cflags "-Wall -g -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
+(set @cflags "-Wall -g -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
 (set @mflags "-fobjc-exceptions") ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
 
 ;; use this to build a universal binary
