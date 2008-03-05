@@ -1083,11 +1083,11 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     char **userdata = (char **) malloc ((argument_count+2) * sizeof(char*));
     ffi_type **argument_types = (ffi_type **) malloc ((argument_count+1) * sizeof(ffi_type *));
     userdata[0] = (char *) malloc (2 + strlen(return_type_string));
-    #ifdef DARWIN
+#ifdef DARWIN
     const char *methodName = sel_getName(sel);
-    #else
+#else
     const char *methodName = sel_get_name(sel);
-    #endif
+#endif
     BOOL returnsRetainedResult = NO;
     if ((strlen(methodName) >= 4)                 // retain the result of any method
         && !strncmp("init", methodName, 4)        // whose name begins with "init"
@@ -1143,11 +1143,11 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 {
     const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     const char *signature_str = [signature cStringUsingEncoding:NSUTF8StringEncoding];
-    #ifdef DARWIN
+#ifdef DARWIN
     SEL selector = sel_registerName(method_name_str);
-    #else
+#else
     SEL selector = sel_register_name(method_name_str);
-    #endif
+#endif
 
     NuSymbolTable *symbolTable = [[block context] objectForKey:SYMBOLS_KEY];
     [[block context] setObject:[[NuClass alloc] initWithClass:c] forKey:[symbolTable symbolWithCString:"_class"]];
@@ -1166,11 +1166,11 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 
     // insert the method handler in the class method table
     nu_class_replaceMethod(c, selector, imp, signature_str);
-    #ifdef DARWIN
+#ifdef DARWIN
     //NSLog(@"setting handler for %s(%s) in class %s", method_name_str, signature_str, class_getName(c));
-    #else
+#else
     //NSLog(@"setting handler for %s(%s) in class %s", method_name_str, signature_str, class_get_class_name(c));
-    #endif
+#endif
     return [NSNull null];
 }
 
@@ -1548,12 +1548,12 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
 
         if ((returnType == Nu__null) || ([argumentTypes length] < [argumentNames length])) {
             // look up the signature
-            #ifdef DARWIN
+#ifdef DARWIN
             SEL selector = sel_registerName([methodName cStringUsingEncoding:NSUTF8StringEncoding]);
-            #else
+#else
             SEL selector = sel_register_name([methodName cStringUsingEncoding:NSUTF8StringEncoding]);
-            #endif
-            NSMethodSignature *methodSignature = [classToExtend instanceMethodSignatureForSelector:selector];
+#endif
+            NSMethodSignature *methodSignature = [classToExtend instanceMethodSignatureForSelector:selector];                      
 
             if (!methodSignature)
                 methodSignature = [classToExtend methodSignatureForSelector:selector];
@@ -1590,15 +1590,15 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
         [[block context]
             setObject:methodName
             forKey:[symbolTable symbolWithCString:"_method"]];
-        #ifdef DARWIN
-        return add_method_to_class(
+#ifdef DARWIN
+	return add_method_to_class(
             addClassMethod ? classToExtend->isa : classToExtend,
             methodName, signature, block);
-        #else
+#else
         return add_method_to_class(
             addClassMethod ? classToExtend->class_pointer : classToExtend,
             methodName, signature, block);
-        #endif
+#endif
     }
     else {
         // not good. you probably forgot the "is" in your method declaration.

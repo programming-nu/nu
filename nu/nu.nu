@@ -124,19 +124,16 @@
              (s replaceOccurrencesOfString:target withString:replacement options:nil range:(list 0 (self length)))
              s)))
 
-(class NuCell
-     
-     ;; Convert a list into an NSRect. The list must have at least four elements.
-     (- (NSRect) rectValue is (list (self first) (self second) (self third) (self fourth)))
-     
-     ;; Convert a list into an NSPoint.  The list must have at least two elements.
-     (- (NSPoint) pointValue is (list (self first) (self second)))
-     
-     ;; Convert a list into an NSSize.  The list must have at least two elements.
-     (- (NSSize) sizeValue is (list (self first) (self second)))
-     
-     ;; Convert a list into an NSRange.  The list must have at least two elements.
-     (- (NSRange) rangeValue is (list (self first) (self second))))
+(if (eq (uname) "Darwin")
+    (class NuCell
+         ;; Convert a list into an NSRect. The list must have at least four elements.
+         (- (NSRect) rectValue is (list (self first) (self second) (self third) (self fourth)))
+         ;; Convert a list into an NSPoint.  The list must have at least two elements.
+         (- (NSPoint) pointValue is (list (self first) (self second)))
+         ;; Convert a list into an NSSize.  The list must have at least two elements.
+         (- (NSSize) sizeValue is (list (self first) (self second)))
+         ;; Convert a list into an NSRange.  The list must have at least two elements.
+         (- (NSRange) rangeValue is (list (self first) (self second)))))
 
 ;; Call this macro in a class declaration to give a class automatic accessors for its instance variables.
 ;; Watch out for conflicts with other uses of handleUnknownMessage:withContext:.

@@ -8,7 +8,11 @@
 
 @implementation NuMethod
 
+#ifdef DARWIN
 - (id) initWithMethod:(Method) method
+#else
+- (id) initWithMethod:(Method_t) method
+#endif
 {
     [super init];
     m = method;
@@ -17,7 +21,11 @@
 
 - (NSString *) name
 {
+#ifdef DARWIN
     return m ? [NSString stringWithCString:(sel_getName(method_getName(m))) encoding:NSUTF8StringEncoding] : [NSNull null];
+#else
+    return m ? [NSString stringWithCString:(sel_get_name(method_getName(m))) encoding:NSUTF8StringEncoding] : [NSNull null];
+#endif
 }
 
 - (int) argumentCount
@@ -47,7 +55,11 @@
         start = &start[step];
         len -= step;
     }
+#ifdef DARWIN
     //  printf("%s %d %d %s\n", sel_getName(method_getName(m)), i, len, signature);
+#else
+    //  printf("%s %d %d %s\n", sel_get_name(method_getName(m)), i, len, signature);
+#endif
     id result = [NSString stringWithCString:signature encoding:NSUTF8StringEncoding];
     free(signature);
     return result;

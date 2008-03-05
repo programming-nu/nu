@@ -239,7 +239,7 @@ id regexWithString(NSString *string)
     // create top-level context
     context = [[NSMutableDictionary alloc] init];
 
-	[context setObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
+    [context setObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
     [context setObject:symbolTable forKey:SYMBOLS_KEY];
 
     [self reset];
@@ -248,7 +248,7 @@ id regexWithString(NSString *string)
 
 - (void) close
 {
-	// break this retain cycle so the parser can be deleted.
+    // break this retain cycle so the parser can be deleted.
     [context setObject:[NSNull null] forKey:[symbolTable symbolWithCString:"_parser"]];
 }
 
@@ -858,32 +858,63 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
         }
         else {
             id progn = nil;
+            #ifdef DARWIN
             @try
+                #else
+                NS_DURING
+                #endif
             {
                 progn = [[self parse:[NSString stringWithCString:line encoding:NSUTF8StringEncoding]] retain];
             }
-            @catch (id exception) {
+            #ifdef DARWIN
+            @catch (id exception)
+                #else
+                NS_HANDLER
+                #endif
+            {
+                #ifndef DARWIN
+                id exception = localException;
+                #endif
                 printf("%s: %s\n",
                     [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
                     [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
                 [self reset];
             }
+            #ifndef DARWIN
+            NS_ENDHANDLER
+                #endif
             if (progn && (progn != [NSNull null])) {
                 id cursor = [progn cdr];
                 while (cursor && (cursor != [NSNull null])) {
                     if ([cursor car] != [NSNull null]) {
                         id expression = [cursor car];
                         //printf("evaluating %s\n", [[expression stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
+#ifdef DARWIN
                         @try
+#else
+                        NS_DURING
+#endif
                         {
                             id result = [expression evalWithContext:context];
+                            if (result)
                             printf("%s\n", [[result stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
                         }
-                        @catch (id exception) {
+#ifdef DARWIN
+@catch (id exception) 
+#else
+                        NS_HANDLER
+#endif
+                        {
+#ifndef DARWIN
+                            id exception = localException;
+#endif
                             printf("%s: %s\n",
                                 [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
                                 [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
                         }
+#ifndef DARWIN
+                        NS_ENDHANDLER
+#endif
                     }
                     cursor = [cursor cdr];
                 }
