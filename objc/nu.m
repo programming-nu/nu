@@ -61,8 +61,18 @@ void write_arguments(int argc, char *argv[])
     }
 }
 
+#ifdef DARWIN
 int NuMain(int argc, const char *argv[])
+#else
+int NuMain(int argc, const char *argv[], const char *envp[])
+#endif
 {
+
+#ifdef LINUX
+ NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    [NSProcessInfo initializeWithArguments:argv count:argc environment:envp];
+#endif
+
     void NuInit();
     NuInit();
 
@@ -134,7 +144,12 @@ int NuMain(int argc, const char *argv[])
         }
         // if there's no file, run at the terminal
         else {
-            if (!isatty(stdin->_file)) {
+#ifdef DARWIN
+            if (!isatty(stdin->_file)) 
+#else
+        if (!isatty(stdin->_fileno))
+#endif
+{
                 NuParser *parser = [[NuParser alloc] init];
                 id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
                 id script = [parser parse:string asIfFromFilename:"stdin"];
@@ -195,6 +210,7 @@ void NuInit()
         [NSSet include: [NuClass classWithClass:[NuEnumerable class]]];
         [pool release];
 
+        #ifdef DARWIN
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
@@ -223,6 +239,9 @@ void NuInit()
         [Nu loadNuFile:@"bridgesupport" fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
+        #endif
+        #else
+        [[Nu parser] parseEval:@"(load \"nu\")"];
         #endif
     }
 }

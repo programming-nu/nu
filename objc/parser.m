@@ -3,6 +3,11 @@
 //
 //  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
+#ifdef LINUX
+#define true 1
+#define false 0
+#endif
+
 #import "parser.h"
 #import "symbol.h"
 #import "extensions.h"

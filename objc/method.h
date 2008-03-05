@@ -17,11 +17,19 @@
  */
 @interface NuMethod : NSObject
 {
+#ifdef DARWIN
     Method m;
+#else
+    Method_t m;
+#endif
 }
 
 /*! Initialize a NuMethod for a given Objective-C method (used from Objective-C) */
+#ifdef DARWIN
 - (id) initWithMethod:(Method) method;
+#else
+- (id) initWithMethod:(Method_t) method;
+#endif
 /*! Get the name of a method. */
 - (NSString *) name;
 /*! Get the number of arguments to a method. */

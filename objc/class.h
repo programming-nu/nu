@@ -18,7 +18,7 @@
 @interface NuClass : NSObject
 {
     Class c;
-	BOOL isRegistered;
+    BOOL isRegistered;
 }
 
 /*! Create a class wrapper for the specified class (used from Objective-C). */

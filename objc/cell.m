@@ -168,6 +168,7 @@ extern char *nu_parsedFilename(int i);
 {
     id value = [car evalWithContext:context];
 
+#ifdef DARWIN
     if (NU_LIST_EVAL_BEGIN_ENABLED()) {
         if ((self->line != -1) && (self->file != -1)) {
             NU_LIST_EVAL_BEGIN(nu_parsedFilename(self->file), self->line);
@@ -176,8 +177,10 @@ extern char *nu_parsedFilename(int i);
             NU_LIST_EVAL_BEGIN("", 0);
         }
     }
+#endif
     id result = [value evalWithArguments:cdr context:context];
 
+#ifdef DARWIN
     if (NU_LIST_EVAL_END_ENABLED()) {
         if ((self->line != -1) && (self->file != -1)) {
             NU_LIST_EVAL_END(nu_parsedFilename(self->file), self->line);
@@ -186,6 +189,7 @@ extern char *nu_parsedFilename(int i);
             NU_LIST_EVAL_END("", 0);
         }
     }
+#endif
     return result;
 }
 
@@ -270,7 +274,6 @@ extern char *nu_parsedFilename(int i);
 
 - (int) file {return file;}
 - (int) line {return line;}
-
 @end
 
 @implementation NuCellWithComments

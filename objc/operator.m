@@ -458,7 +458,11 @@ static bool valueIsTrue(id value)
     id catchSymbol = [symbolTable symbolWithCString:"catch"];
     id finallySymbol = [symbolTable symbolWithCString:"finally"];
     id result = Nu__null;
+    #ifdef DARWIN
     @try
+        #else
+        NS_DURING
+        #endif
     {
         // evaluate all the expressions that are outside catch and finally blocks
         id expressions = cdr;
@@ -475,7 +479,15 @@ static bool valueIsTrue(id value)
             expressions = [expressions cdr];
         }
     }
-    @catch (id thrownObject) {
+    #ifdef DARWIN
+    @catch (id thrownObject)
+        #else
+        NS_HANDLER
+        #endif
+    {
+        #ifdef LINUX
+        id thrownObject = localException;
+        #endif
         // evaluate all the expressions that are in catch blocks
         id expressions = cdr;
         while (expressions && (expressions != Nu__null)) {
@@ -499,7 +511,11 @@ static bool valueIsTrue(id value)
             expressions = [expressions cdr];
         }
     }
+#ifdef DARWIN
     @finally
+#else
+    NS_ENDHANDLER
+#endif
     {
         // evaluate all the expressions that are in finally blocks
         id expressions = cdr;
@@ -764,8 +780,7 @@ static bool valueIsTrue(id value)
         NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
         [classWrapper registerClass];
         Class classToExtend = [classWrapper wrappedClass];
-        if (classToExtend) classToExtend = classToExtend->isa;
-        return help_add_method_to_class(classToExtend, cdr, context);
+        return help_add_method_to_class(classToExtend, cdr, context, YES);
     }
     // otherwise, it's an addition
     id firstArgument = [[cdr car] evalWithContext:context];
@@ -821,7 +836,7 @@ static bool valueIsTrue(id value)
         NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
         [classWrapper registerClass];
         Class classToExtend = [classWrapper wrappedClass];
-        return help_add_method_to_class(classToExtend, cdr, context);
+        return help_add_method_to_class(classToExtend, cdr, context, NO);
     }
     // otherwise, it's a subtraction
     id cursor = cdr;
@@ -1197,6 +1212,28 @@ static bool valueIsTrue(id value)
 @interface Nu_load_operator : NuOperator {}
 @end
 
+#ifdef LINUX
+id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable)
+{
+    NSString *fullPath = [NSString stringWithFormat:@"/usr/local/share/libNu/nu/%@.nu", nuFileName];
+    if ([NSFileManager fileExistsNamed:fullPath]) {
+        NSString *string = [NSString stringWithContentsOfFile:fullPath];
+        id value = Nu__null;
+        if (string) {
+            id body = [parser parse:string asIfFromFilename:[fullPath cStringUsingEncoding:NSUTF8StringEncoding]];
+            value = [body evalWithContext:context];
+            return [symbolTable symbolWithCString:"t"];
+        }
+        else {
+            return nil;
+        }
+    }
+    else {
+        return nil;
+    }
+}
+#endif
+
 @implementation Nu_load_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -1209,7 +1246,16 @@ static bool valueIsTrue(id value)
     if ([split count] == 2) {
         id frameworkName = [split objectAtIndex:0];
         id nuFileName = [split objectAtIndex:1];
-
+#ifdef LINUX
+        if ([frameworkName isEqual:@"Nu"]) {
+            if (loadNuLibraryFile(nuFileName, parser, context, symbolTable) == nil) {
+                [NSException raise:@"NuLoadFailed" format:@"unable to load %@", nuFileName];
+            }
+            else {
+                return [symbolTable symbolWithCString:"t"];
+            }
+        }
+#endif
         NSBundle *framework = [NSBundle frameworkWithName:frameworkName];
         if ([framework loadNuFile:nuFileName withContext:context])
             return [symbolTable symbolWithCString:"t"];
@@ -1251,6 +1297,11 @@ static bool valueIsTrue(id value)
         // next, try the main Nu bundle
         if ([Nu loadNuFile:resourceName fromBundleWithIdentifier:@"nu.programming.framework" withContext:context])
             return [symbolTable symbolWithCString:"t"];
+
+#ifdef LINUX
+        if (loadNuLibraryFile(resourceName, parser, context, symbolTable))
+            return [symbolTable symbolWithCString:"t"];
+#endif
 
         // if no file was found, try to load a framework with the given name
         if ([NSBundle frameworkWithName:resourceName])
@@ -1378,10 +1429,9 @@ static bool valueIsTrue(id value)
     NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
     [classWrapper registerClass];
     Class classToExtend = [classWrapper wrappedClass];
-    if (classToExtend) classToExtend = classToExtend->isa;
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"class method declaration with no enclosing class declaration"];
-    return help_add_method_to_class(classToExtend, cdr, context);
+    return help_add_method_to_class(classToExtend, cdr, context, YES);
 }
 
 @end
@@ -1398,7 +1448,7 @@ static bool valueIsTrue(id value)
     Class classToExtend = [classWrapper wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"instance method declaration with no enclosing class declaration"];
-    return help_add_method_to_class(classToExtend, cdr, context);
+    return help_add_method_to_class(classToExtend, cdr, context, NO);
 }
 
 @end

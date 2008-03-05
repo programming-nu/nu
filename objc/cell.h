@@ -4,6 +4,10 @@
     @discussion Declarations for Nu cells. In Lisp, these cells are called "cons" cells.
 */
 
+#ifdef LINUX
+#define bool char
+#endif
+
 #import <Foundation/Foundation.h>
 @class NuBlock;
 
