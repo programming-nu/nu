@@ -39,9 +39,9 @@
 
 (class NSArray
      
-     ;; Join the members of an array into a string with array elements separated by spaces.
+     ;; Join the non-null members of an array into a string with array elements separated by spaces.
      (imethod (id) join is
-          (self componentsJoinedByString:" "))
+          ((self select:(do (x) x)) componentsJoinedByString:" "))
      
      ;; Get the element of an array with the maximum value (as obtained using the specified block).
      (imethod (id) maximum:(id)block from:(id)initial is
