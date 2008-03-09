@@ -18,6 +18,7 @@
 #import "regex.h"
 #import "version.h"
 #import "Nu.h"
+#include <readline/readline.h>
 #include <stdlib.h>
 
 @interface NuBreakException : NSException {}
@@ -1126,6 +1127,19 @@ static bool valueIsTrue(id value)
 
 @end
 
+@interface Nu_gets_operator : NuOperator {}
+@end
+
+@implementation Nu_gets_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    char *input = readline("");
+    NSString *result = [NSString stringWithUTF8String: input];
+    return result;
+}
+
+@end
+
 @interface Nu_print_operator : NuOperator {}
 @end
 
@@ -1790,6 +1804,7 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("do",       Nu_do_operator);
 
+    install("gets",     Nu_gets_operator);
     install("puts",     Nu_puts_operator);
     install("print",    Nu_print_operator);
 

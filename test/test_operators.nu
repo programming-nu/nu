@@ -34,4 +34,9 @@
           (set x 1) 
           (assert_equal "one" ((== x 0) ? "zero" : ((== x 1) ? "one" : "many")))
           (set x 2) 
-          (assert_equal "many" ((== x 0) ? "zero" : ((== x 1) ? "one" : "many")))))
+          (assert_equal "many" ((== x 0) ? "zero" : ((== x 1) ? "one" : "many"))))
+     
+     (imethod (id) testTheGetsOperator is
+          (assert_not_equal nil gets)
+          (puts "\nPlease don't enter anything.")
+          (assert_equal (gets) "")))
