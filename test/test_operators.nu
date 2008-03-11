@@ -36,7 +36,8 @@
           (set x 2) 
           (assert_equal "many" ((== x 0) ? "zero" : ((== x 1) ? "one" : "many"))))
      
-     (imethod (id) testTheGetsOperator is
+     ;; turn this off by default; it's a good test, but it requires manual intervention
+     (imethod (id) dontTestTheGetsOperator is
           (assert_not_equal nil gets)
           (puts "\nPlease don't enter anything.")
           (assert_equal (gets) "")))
