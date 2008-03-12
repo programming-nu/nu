@@ -486,7 +486,7 @@ static bool valueIsTrue(id value)
         NS_HANDLER
         #endif
     {
-        #ifdef LINUX
+        #ifndef DARWIN
         id thrownObject = localException;
         #endif
         // evaluate all the expressions that are in catch blocks

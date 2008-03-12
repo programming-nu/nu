@@ -13,6 +13,8 @@
 - (id) parse:(NSString *)string;
 /*! Evaluate a parsed code structure in the parser's context. */
 - (id) eval: (id) code;
+/*! Parse and evaluate a string containing Nu source code. */
+- (id) parseEval: (id) code;
 /*! Get the value of a name or expression in the parser's context. */
 - (id) valueForKey:(NSString *)string;
 /*! Set the value of a name in the parser's context. Use this to insert object references into Nu contexts. */

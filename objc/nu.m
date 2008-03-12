@@ -68,15 +68,18 @@ int NuMain(int argc, const char *argv[], const char *envp[])
 #endif
 {
 
-#ifdef LINUX
- NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    #ifdef LINUX
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [NSProcessInfo initializeWithArguments:argv count:argc environment:envp];
-#endif
+    #endif
 
     void NuInit();
     NuInit();
-
+    #ifdef DARWIN
     @try
+        #else
+        NS_DURING
+        #endif
     {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -144,12 +147,12 @@ int NuMain(int argc, const char *argv[], const char *envp[])
         }
         // if there's no file, run at the terminal
         else {
-#ifdef DARWIN
-            if (!isatty(stdin->_file)) 
-#else
-        if (!isatty(stdin->_fileno))
-#endif
-{
+            #ifdef DARWIN
+            if (!isatty(stdin->_file))
+            #else
+                if (!isatty(stdin->_fileno))
+            #endif
+            {
                 NuParser *parser = [[NuParser alloc] init];
                 id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
                 id script = [parser parse:string asIfFromFilename:"stdin"];
@@ -163,11 +166,22 @@ int NuMain(int argc, const char *argv[], const char *envp[])
             }
         }
     }
-    @catch (id exception) {
+    #ifdef DARWIN
+    @catch (id exception)
+        #else
+        NS_HANDLER
+        #endif
+    {
+        #ifndef DARWIN
+        id exception = localException;
+        #endif
         NSLog(@"Terminating due to uncaught exception (below):");
         NSLog(@"%@: %@", [exception name], [exception reason]);
     }
-    return 0;
+    #ifndef DARWIN
+    NS_ENDHANDLER
+        #endif
+        return 0;
 }
 
 static void transplant_nu_methods(Class destination, Class source)
@@ -308,7 +322,11 @@ id _nuregex(const char *pattern, int options)
     else {
         if ([bundleIdentifier isEqual:@"nu.programming.framework"]) {
             // try to read it if it's baked in
+            #ifdef DARWIN
             @try
+                #else
+                NS_DURING
+                #endif
             {
                 id baked_function = [NuBridgedFunction functionWithName:[NSString stringWithFormat:@"baked_%@", fileName] signature:@"@"];
                 id baked_code = [baked_function evalWithArguments:nil context:nil];
@@ -319,9 +337,20 @@ id _nuregex(const char *pattern, int options)
                 [baked_code evalWithContext:context];
                 success = YES;
             }
-            @catch (id exception) {
+            #ifdef DARWIN
+            @catch (id exception)
+                #else
+                NS_HANDLER
+                #endif
+            {
+                #ifndef DARWIN
+                id exception = localException;
+                #endif
                 success = NO;
             }
+            #ifndef DARWIN
+            NS_ENDHANDLER
+                #endif
         }
         else {
             success = NO;

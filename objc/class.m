@@ -245,9 +245,7 @@
 
         - (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
         {
-            Class c = [self wrappedClass];
-            //NSLog(@"referring unknown message %@ to class %@", [cdr stringValue], c);
-            return [c handleUnknownMessage:cdr withContext:context];
+            return [[self wrappedClass] handleUnknownMessage:cdr withContext:context];
         }
 
         @end
