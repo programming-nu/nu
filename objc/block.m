@@ -1,4 +1,4 @@
-/*!1
+/*!
 @file block.m
 @description Nu blocks.
 @copyright Copyright (c) 2007 Neon Design Technology, Inc.

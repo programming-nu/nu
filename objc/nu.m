@@ -210,11 +210,16 @@ static void transplant_nu_methods(Class destination, Class source)
         NSLog(@"method copy failed");
 }
 
+extern void nu_note_placeholders();
+
 void NuInit()
 {
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
+
+        // note known placeholder classes
+        nu_note_placeholders();
 
         // check UTF8 support in PCRE
         void *pcre_query_result = 0;
@@ -240,11 +245,11 @@ void NuInit()
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
-#if defined(DARWIN) && !defined(IPHONE)
+        #if defined(DARWIN) && !defined(IPHONE)
         // Stop NSView from complaining when we retain alloc-ed views.
         Class NSView = NSClassFromString(@"NSView");
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
-#endif
+        #endif
         // Apply swizzles to container classes to make them tolerant of nil insertions.
         extern void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();

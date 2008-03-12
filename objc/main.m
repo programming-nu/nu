@@ -14,14 +14,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#ifdef DARWIN
+#if defined(DARWIN) && !defined(IPHONE)
 int NuMain(int argc, const char *argv[]);
 
 int main(int argc, const char *argv[])
 {
-	return NuMain(argc, argv);
+    return NuMain(argc, argv);
 }
-#else
+
+#elif defined(LINUX)
 int NuMain(int argc, const char *argv[], const char *envp[]);
 
 int main(int argc, char *argv[], char *envp[])

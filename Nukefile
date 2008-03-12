@@ -97,7 +97,6 @@ END)
       (SH "cp objc/Nu.h #{@framework_headers_dir}"))
 
 (task "clobber" => "clean" is
-	  (SH "rm -f baked/*.m")
       (SH "rm -rf nush #{@framework_dir} doc")
       
       ((filelist "^examples/[^/]*$") each:

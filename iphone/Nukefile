@@ -4,7 +4,7 @@
 (set @m_files      (filelistWithRoot "^objc/.*\.m$" ".."))
 (@m_files unionSet:(filelistWithRoot "^baked/.*\.m$" ".."))
 
-(set @cflags "-g -Iinclude -DDARWIN -DIPHONE -DMACOSX -std=gnu99 -O2 -isysroot /Developer/Platforms/AspenSimulator.platform/Developer/SDKs/AspenSimulator1.2.sdk -mmacosx-version-min=10.5")
+(set @cflags "-g -Iinclude -DDARWIN -DIPHONE -DMACOSX -std=gnu99 -isysroot /Developer/Platforms/AspenSimulator.platform/Developer/SDKs/AspenSimulator1.2.sdk -mmacosx-version-min=10.5")
 
 (set @arch '("i386"))
 
