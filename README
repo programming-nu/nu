@@ -25,14 +25,16 @@ Ruby, while adding the syntactic simplicity and flexibility of Lisp.
 
 LEGAL
 
-Nu is open-source software that is copyrighted by me and released under the
-same terms as Ruby.  For details on the license, see the notes/COPYING file.
+Nu is copyrighted open-source software that is released under the Apache
+Public License, version 2.0.  For details on the license, see the LICENSE file.
 In its use to name a programming language, "Nu" is a trademark of Neon Design 
 Technology, Inc.
 
 SYSTEM REQUIREMENTS
 
-Nu currently requires Mac OS X version 10.5 or greater.
+On Macintosh systems, Nu requires Mac OS X version 10.5 or greater.
+It is also possible to build Nu to run on Linux systems and the 
+Apple iPhone.
 
 INSTALLATION
 

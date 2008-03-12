@@ -1,0 +1,18 @@
+This product includes software developed by
+Neon Design Technology, Inc. (http://www.neontology.com/).
+		
+The following files contain source code developed and copyrighted by others.
+See individual files for their license details.
+
+objc/regex.[mh] is Copyright (c) 2002 Aram Greenman.
+
+objc/st.[ch] is public domain software written by Peter Moore.
+
+objc/mach_override.[ch] are Copyright (c) 2003-2005 Jonathan 'Wolf' Rentzsch.
+
+examples/NuAnywhere/libinject/objc/* are Copyright (c) 2003-2005 Jonathan 'Wolf' Rentzsch.
+
+libffi/* is Copyright (c) 1996-2003  Red Hat, Inc.
+
+iphone/include/pcre.h is by Philip Hazel and Copyright (c) 1997-2008 University of Cambridge.
+The iphone/libpcre.a was generated from the PCRE sources.
