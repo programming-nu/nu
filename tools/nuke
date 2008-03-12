@@ -77,6 +77,16 @@
                      (results addObject:filename))))
      results)
 
+;; we need support for optional arguments with default values...
+(function filelistWithRoot (pattern root)
+     (set regex (NuRegex regexWithPattern:pattern))
+     (set results ((NSMutableSet alloc) init))
+     (let (enumerator ((NSFileManager defaultManager) enumeratorAtPath:root))
+          (while (set filename (enumerator nextObject))
+                 (if (regex findInString:(filename stringValue))
+                     (results addObject:filename))))
+     results)
+
 ;; @abstract A task description, complete with action and dependency information.
 ;; @discussion NukeTasks are used to represent tasks in nuke,
 ;; the Nu build tool.  A NukeTask may be associated with a file

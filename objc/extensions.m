@@ -409,6 +409,7 @@ extern id Nu__null;
 @end
 
 #ifdef DARWIN
+#ifndef IPHONE
 #import <Cocoa/Cocoa.h>
 
 @implementation NSView(Nu)
@@ -427,6 +428,7 @@ extern id Nu__null;
 }
 
 @end
+#endif
 #endif
 
 @implementation NSMethodSignature(Nu)

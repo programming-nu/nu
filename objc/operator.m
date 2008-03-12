@@ -613,7 +613,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
 
-    id symbol = [cdr car];
+    NuSymbol *symbol = [cdr car];
     id value = [[cdr cdr] car];
     id result = [value evalWithContext:context];
 
@@ -653,7 +653,7 @@ static bool valueIsTrue(id value)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
 
-    id symbol = [cdr car];
+    NuSymbol *symbol = [cdr car];
     id value = [[cdr cdr] car];
     id result = [value evalWithContext:context];
     [symbol setValue:result];
@@ -1525,7 +1525,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 
 @end
 
-#ifdef DARWIN
+#if defined(DARWIN) && !defined(IPHONE)
 #import <Cocoa/Cocoa.h>
 
 @interface Nu_beep_operator : NuOperator {}
@@ -1728,12 +1728,12 @@ id evaluatedArguments(id cdr, NSMutableDictionary *context)
 
 @end
 
-#define install(name, class) [[[symbolTable symbolWithCString:name] retain] setValue:[[class alloc] init]]
+#define install(name, class) [(NuSymbol *) [[symbolTable symbolWithCString:name] retain] setValue:[[class alloc] init]]
 
 void load_builtins(NuSymbolTable *symbolTable)
 {
-    [[[symbolTable symbolWithCString:"t"] retain] setValue:[symbolTable symbolWithCString:"t"]];
-    [[[symbolTable symbolWithCString:"nil"] retain] setValue:Nu__null];
+    [(NuSymbol *) [[symbolTable symbolWithCString:"t"] retain] setValue:[symbolTable symbolWithCString:"t"]];
+    [(NuSymbol *) [[symbolTable symbolWithCString:"nil"] retain] setValue:Nu__null];
 
     install("car",      Nu_car_operator);
     install("cdr",      Nu_cdr_operator);
@@ -1812,7 +1812,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("let",      Nu_let_operator);
 
     install("load",     Nu_load_operator);
-    #ifdef DARWIN
+    #if defined(DARWIN) && !defined(IPHONE)
     install("beep",     Nu_beep_operator);
     #endif
 

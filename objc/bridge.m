@@ -883,6 +883,10 @@ static Class placeholderClass[MAXPLACEHOLDERS];
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableString");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSManagedObjectModel");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSXMLDocument");
+#ifdef IPHONE
+    placeholderClass[placeholderCount++] = NSClassFromString(@"UINavigationController");
+    placeholderClass[placeholderCount++] = NSClassFromString(@"UIWindow");	
+#endif
 }
 
 @end

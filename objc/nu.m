@@ -228,11 +228,11 @@ void NuInit()
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
-
+#if defined(DARWIN) && !defined(IPHONE)
         // Stop NSView from complaining when we retain alloc-ed views.
         Class NSView = NSClassFromString(@"NSView");
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
-
+#endif
         // Apply swizzles to container classes to make them tolerant of nil insertions.
         extern void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();

@@ -214,7 +214,7 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
     method_list->method_next = NULL;
 #endif
     class_addMethods(cls, method_list);
-    return NULL;
+    return imp;
 }
 
 Ivar *class_copyIvarList(Class cls, unsigned int *outCount)

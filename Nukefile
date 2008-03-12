@@ -28,6 +28,7 @@ END)
 ;; source files
 (set @c_files     (filelist "^objc/.*\.c$"))
 (set @m_files     (filelist "^objc/.*\.m$"))
+(@m_files unionSet:(filelist "^baked/.*\.m$"))
 (set @nu_files 	  (filelist "^nu/.*\.nu$"))
 (set @icon_files  (filelist "^lib/.*\.icns$"))
 (set @nib_files   '("share/nu/resources/English.lproj/MainMenu.nib"))
@@ -96,7 +97,7 @@ END)
       (SH "cp objc/Nu.h #{@framework_headers_dir}"))
 
 (task "clobber" => "clean" is
-	  (SH "rm -f objc/baked_*.m")
+	  (SH "rm -f baked/*.m")
       (SH "rm -rf nush #{@framework_dir} doc")
       
       ((filelist "^examples/[^/]*$") each:
@@ -188,6 +189,6 @@ END)
       (nu_files each:
            (do (nu_file)
                (set basename (((nu_file pathComponents) lastObject) stringByDeletingPathExtension))
-               (set command "nubake #{nu_file} -n 'baked_#{basename}' -o objc/baked_#{basename}.m")
+               (set command "nubake #{nu_file} -n 'baked_#{basename}' -o baked/baked_#{basename}.m")
                (puts command)
                (system command))))

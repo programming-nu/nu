@@ -1,0 +1,20 @@
+
+;; source files
+(set @c_files      (filelistWithRoot "^objc/.*\.c$" ".."))
+(set @m_files      (filelistWithRoot "^objc/.*\.m$" ".."))
+(@m_files unionSet:(filelistWithRoot "^baked/.*\.m$" ".."))
+
+(set @cflags "-g -Iinclude -DDARWIN -DIPHONE -DMACOSX -std=gnu99 -O2 -isysroot /Developer/Platforms/AspenSimulator.platform/Developer/SDKs/AspenSimulator1.2.sdk -mmacosx-version-min=10.5")
+
+(set @arch '("i386"))
+
+;; library description
+(set @library "libNu")
+
+(compilation-tasks)
+(library-tasks)
+
+(task "default" => "library")
+
+(task "clobber" => "clean" is
+      (SH "rm -rf libNu.a"))
