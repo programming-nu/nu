@@ -49,7 +49,19 @@
           (set components (self componentsSeparatedByString:"/"))
           (components objectAtIndex:(- (components count) 1))))
 
+(class NSDictionary
+     ;; Create a dictionary from a list.
+     (cmethod (id) dictionaryWithList: (id) l is
+          (set dict ((NSMutableDictionary alloc) init))
+          (l eachPair: (do (key object) (dict setObject:object forKey:key)))
+          dict))
+
 (class NSArray
+     ;; Create an array from a list.
+     (cmethod (id) arrayWithList:(id) list is
+          (set l ((NSMutableArray alloc) init))
+          (list each: (do (item) (if item (l addObject:item))))
+          l)
      
      ;; Join the non-null members of an array into a string with array elements separated by spaces.
      (imethod (id) join is
@@ -228,8 +240,11 @@
                          (set objectName "build/#{architecture}/")
                          (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
                          ((@c_objects objectForKey:architecture) addObject: objectName)
+                         (if (eq (uname) "Darwin")
+                             (then (set archflags "-arch #{architecture}"))
+                             (else (set archflags "")))
                          (file objectName => sourceName is
-                               (SH "#{@cc} #{@cflags} -arch #{architecture} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
+                               (SH "#{@cc} #{@cflags} #{archflags} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
      
      ;; compile objc files
      (set @m_objects (NSMutableDictionary dictionary))
@@ -241,8 +256,11 @@
                          (set objectName "build/#{architecture}/")
                          (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
                          ((@m_objects objectForKey:architecture) addObject: objectName)
+                         (if (eq (uname) "Darwin")
+                             (then (set archflags "-arch #{architecture}"))
+                             (else (set archflags "")))
                          (file objectName => sourceName is
-                               (SH "#{@cc} #{@cflags} #{@mflags} -arch #{architecture} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
+                               (SH "#{@cc} #{@cflags} #{@mflags} #{archflags} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
      
      ;(puts (@c_objects description))
      ;(puts (@m_objects description))
@@ -310,12 +328,17 @@
                      (do (architecture)
                          (set application_executable "build/#{architecture}/application-#{@application}")
                          (@application_executables addObject:application_executable)
+                         (if (eq (uname) "Darwin")
+                             (then (set archflags "-arch #{architecture}"))
+                             (else (set archflags "")))
                          (file application_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                               (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} -arch #{architecture} #{@cflags} #{@ldflags} -o '#{(target name)}'")
+                               (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} -o '#{(target name)}'")
                                (SH command))))
               ;; application fat executable
               (file @application_executable_name => @application_executable_dir @application_executables is
-                    (set command "lipo -create #{(@application_executables join)} -output '#{@application_executable_name}'")
+                    (if (eq (uname) "Darwin")
+                        (then (set command "lipo -create #{(@application_executables join)} -output '#{@application_executable_name}'"))
+                        (else (set command "cp '#{(@application_executables objectAtIndex:0)}' '#{@application_executable_name}'")))
                     (SH command)))
          (else
               (file @application_executable_name => @application_executable_dir is
@@ -432,14 +455,19 @@
             (do (architecture)
                 (set framework_executable "build/#{architecture}/framework-#{@framework}")
                 (@framework_executables addObject:framework_executable)
+                (if (eq (uname) "Darwin")
+                    (then (set archflags "-arch #{architecture}"))
+                    (else (set archflags "")))
                 (file framework_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} -arch #{architecture} #{@cflags} #{@ldflags} #{@initflags} -install_name #{@framework_executable_name} -dynamiclib -o '#{(target name)}'")
+                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{@initflags} -install_name #{@framework_executable_name} -dynamiclib -o '#{(target name)}'")
                       (SH command))))
      
      ;; framework fat executable
      (set @framework_executable_name "#{@framework_contents_dir}/#{@framework}")
      (file @framework_executable_name => @framework_contents_dir @framework_executables is
-           (set command "lipo -create #{(@framework_executables join)} -output '#{@framework_executable_name}'")
+           (if (eq (uname) "Darwin")
+               (then (set command "lipo -create #{(@framework_executables join)} -output '#{@framework_executable_name}'"))
+               (else (set command "cp '#{(@framework_executables objectAtIndex:0)}' '#{@framework_executable_name}'")))
            (SH command))
      
      ;; framework_resources
@@ -524,8 +552,11 @@
             (do (architecture)
                 (set bundle_executable "build/#{architecture}/bundle-#{@bundle}")
                 (@bundle_executables addObject:bundle_executable)
+                (if (eq (uname) "Darwin")
+                    (then (set archflags "-arch #{architecture}"))
+                    (else (set archflags "")))
                 (file bundle_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} -arch #{architecture} #{@cflags} #{@ldflags} -bundle -o '#{(target name)}'")
+                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} -bundle -o '#{(target name)}'")
                       (SH command))))
      
      ;; bundle fat executable

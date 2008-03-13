@@ -210,16 +210,17 @@ static void transplant_nu_methods(Class destination, Class source)
         NSLog(@"method copy failed");
 }
 
-extern void nu_note_placeholders();
-
 void NuInit()
 {
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
 
+#ifdef DARWIN
         // note known placeholder classes
+        extern void nu_note_placeholders();
         nu_note_placeholders();
+#endif
 
         // check UTF8 support in PCRE
         void *pcre_query_result = 0;
