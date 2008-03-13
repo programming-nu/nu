@@ -46,8 +46,8 @@ END)
 
 ;; includes
 (if (eq (uname) "Darwin")
-    (then (set @includes ""))
-    (else (set @includes " -I/usr/local/include")))
+    (then (set @includes " -I./include "))
+    (else (set @includes " -I./include -I/usr/local/include")))
 
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@includes appendString:" -I #{@prefix}/include"))
 
@@ -67,6 +67,9 @@ END)
 (set @framework_icon_file    "nu.icns")
 (if (eq (uname) "Darwin") (then (set @framework_initializer  "NuInit")))
 (set @framework_creator_code "????")
+
+;; for Linux, we build Nu as a dynamic library
+(set @dylib "libNu")
 
 ;; build configuration
 (set @cc "gcc")
@@ -103,7 +106,7 @@ END)
                 join)))
     (else (set @ldflags
                ((list
-                     "-lNuFoundation -L/usr/local/lib -lobjc -Wl,--rpath -Wl,/usr/local/lib"
+                     "-lNuFound -L/usr/local/lib -lobjc -Wl,--rpath -Wl,/usr/local/lib"
                      (cond  ;; statically link in pcre since most people won't have it..
                             ((NSFileManager fileExistsNamed:"/usr/lib/libpcre.a") "/usr/lib/libpcre.a")
                             ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") ("#{@prefix}/lib/libpcre.a"))
@@ -114,15 +117,19 @@ END)
 ;; Setup the tasks for compilation and framework-building.
 ;; These are defined in the nuke application source file.
 (compilation-tasks)
-(framework-tasks)
+(if (eq (uname) "Darwin")
+    (then (framework-tasks))
+    (else (dylib-tasks)))
 
 (task "framework" => "#{@framework_headers_dir}/Nu.h")
 
-(file "#{@framework_headers_dir}/Nu.h" => "objc/Nu.h" @framework_headers_dir is
-      (SH "cp objc/Nu.h #{@framework_headers_dir}"))
+(if (eq (uname) "Darwin")
+    (file "#{@framework_headers_dir}/Nu.h" => "objc/Nu.h" @framework_headers_dir is
+          (SH "cp objc/Nu.h #{@framework_headers_dir}")))
 
 (task "clobber" => "clean" is
-      (SH "rm -rf nush #{@framework_dir} doc")
+      (if (eq (uname) "Darwin")
+          (SH "rm -rf nush #{@framework_dir} doc"))
       ((filelist "^examples/[^/]*$") each:
        (do (example-dir)
            (puts example-dir)
@@ -136,10 +143,10 @@ END)
            (if (eq (uname) "Darwin")
                (then
                     (file nush_thin_binary => "framework" "build/#{architecture}/main.o" is
-                          (SH "#{@cc} #{@cflags} -arch #{architecture} -F. -framework Nu build/#{architecture}/main.o #{@ldflags} -o #{(target name)}")))
+                          (SH "#{@cc} #{@cflags} #{@mflags} main/main.m -arch #{architecture} -F. -framework Nu #{@ldflags} -o #{(target name)}")))
                (else
-                    (file nush_thin_binary => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                          (SH "#{@cc} #{@cflags} -F. build/#{architecture}/nu.o /usr/lib/libNu.so #{@ldflags} -o #{(target name)}"))))))
+                    (file nush_thin_binary => "dylib" (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                          (SH "#{@cc} #{@cflags} #{@mflags} main/main.m #{@library_executable_name} #{@ldflags} -o #{(target name)}"))))))
 
 (file "nush" => "framework" nush_thin_binaries is
       (if (eq (uname) "Darwin")
@@ -170,14 +177,20 @@ END)
 (task "install" => "nush" is
       ('("nuke" "nubile" "nutemplate" "nutest" "nudoc" "nubake") each:
         (do (program)
-            (SH "sudo ditto tools/#{program} #{@installprefix}/bin")))
-      (SH "sudo ditto nush #{@installprefix}/bin")
-      (SH "sudo rm -rf #{@destdir}/Library/Frameworks/#{@framework}.framework")
-      (SH "ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework")
+            (SH "sudo cp tools/#{program} #{@installprefix}/bin")))
+      (SH "sudo cp nush #{@installprefix}/bin")
+      (if (eq (uname) "Darwin")
+          ;; install the framework
+          (SH "sudo rm -rf #{@destdir}/Library/Frameworks/#{@framework}.framework")
+          (SH "ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
+      (if (eq (uname) "Linux")
+          ;; install the dynamic library
+          (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib"))
       (SH "sudo mkdir -p #{@installprefix}/share")
       (SH "sudo rm -rf #{@installprefix}/share/nu")
-      (SH "sudo ditto share/nu #{@installprefix}/share/nu")
-      (SH "sudo ditto examples #{@installprefix}/share/nu/examples"))
+      (SH "sudo cp -rp share/nu #{@installprefix}/share/nu")
+      (if (eq (uname) "Darwin")
+          (SH "sudo ditto examples #{@installprefix}/share/nu/examples")))
 
 ;; Build a disk image for distributing the framework.
 (task "framework_image" => "framework" is

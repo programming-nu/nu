@@ -86,5 +86,3 @@
 (global NSOrderedAscending 				-1)
 (global NSOrderedSame       			0)
 (global NSOrderedDescending 			1)
-(global NO                            	0)
-(global YES								1)

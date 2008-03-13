@@ -49,7 +49,7 @@ CLEAN.include("*/*.o")
 CLOBBER.include("mininush")
 
 @c_files      = FileList['objc/*.c'] 
-@objc_files   = FileList['objc/*.m']
+@objc_files   = FileList['objc/*.m'] + FileList['main/*.m']
 @gcc_files   = @objc_files + @c_files
 @gcc_objects = @gcc_files.sub(/\.c$/, '.o').sub(/\.m$/, '.o')
 
@@ -67,7 +67,7 @@ end
 @ldflags += @lib_dirs.map {|libdir| " -L#{libdir}"}.join 
 @ldflags += " #{FFI_LIB}"
 if SYSTEM == "Linux"
-  @ldflags += " -lobjc -lNuFoundation"
+  @ldflags += " -lobjc -lNuFound"
   @ldflags += " -Wl,--rpath -Wl,/usr/local/lib"
 end
 

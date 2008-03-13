@@ -624,6 +624,39 @@
      
      (task "library" => @library_executable_name))
 
+;; use this to create all the linking and assembly tasks to build a dynamically-linkable library
+(macro dylib-tasks
+     (unless (and @arch (@arch length))
+             (set @arch (list (NSString stringWithShellCommand:"arch"))))
+     (set libext (if (eq (uname) "Darwin") (then "dylib") (else "so")))
+     
+     ;; library architecture-specific executable
+     (set @library_executables (NSMutableArray array))
+     (@arch each:
+            (do (architecture)
+                (set library_executable "build/#{architecture}/#{@dylib}.#{libext}")
+                (@library_executables addObject:library_executable)
+                (if (eq (uname) "Darwin")
+                    (then (set dylibflag "-dynamiclib"))
+                    (else (set dylibflag "-shared")))
+                (if (eq (uname) "Darwin")
+                    (then (set archflags "-arch #{architecture}"))
+                    (else (set archflags "")))
+                (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{dylibflag} -o '#{(target name)}'")
+                      (SH command))))
+     
+     ;; fat dynamic library
+     (set @library_executable_name "#{@dylib}.#{libext}")
+     (file @library_executable_name => @library_executables is
+           (if (eq (uname) "Darwin")
+               (then (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'"))
+               (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
+           (SH command))
+     
+     (task "dylib" => @library_executable_name))
+
+
 ;; @abstract A project consisting of an interrelated set of NukeTasks.
 ;; @discussion NukeProjects gather together a related set of NukeTask task descriptions
 ;; and allow them to be more easily referred to by name.  There is typically

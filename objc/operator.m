@@ -524,11 +524,11 @@ static bool valueIsTrue(id value)
             expressions = [expressions cdr];
         }
     }
-#ifdef DARWIN
+    #ifdef DARWIN
     @finally
-#else
-    NS_ENDHANDLER
-#endif
+        #else
+        NS_ENDHANDLER
+        #endif
     {
         // evaluate all the expressions that are in finally blocks
         id expressions = cdr;
@@ -1272,7 +1272,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     if ([split count] == 2) {
         id frameworkName = [split objectAtIndex:0];
         id nuFileName = [split objectAtIndex:1];
-#ifdef LINUX
+        #ifdef LINUX
         if ([frameworkName isEqual:@"Nu"]) {
             if (loadNuLibraryFile(nuFileName, parser, context, symbolTable) == nil) {
                 [NSException raise:@"NuLoadFailed" format:@"unable to load %@", nuFileName];
@@ -1281,7 +1281,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
                 return [symbolTable symbolWithCString:"t"];
             }
         }
-#endif
+        #endif
         NSBundle *framework = [NSBundle frameworkWithName:frameworkName];
         if ([framework loadNuFile:nuFileName withContext:context])
             return [symbolTable symbolWithCString:"t"];
@@ -1324,10 +1324,10 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         if ([Nu loadNuFile:resourceName fromBundleWithIdentifier:@"nu.programming.framework" withContext:context])
             return [symbolTable symbolWithCString:"t"];
 
-#ifdef LINUX
+        #ifdef LINUX
         if (loadNuLibraryFile(resourceName, parser, context, symbolTable))
             return [symbolTable symbolWithCString:"t"];
-#endif
+        #endif
 
         // if no file was found, try to load a framework with the given name
         if ([NSBundle frameworkWithName:resourceName])
@@ -1746,6 +1746,8 @@ void load_builtins(NuSymbolTable *symbolTable)
 {
     [(NuSymbol *) [[symbolTable symbolWithCString:"t"] retain] setValue:[symbolTable symbolWithCString:"t"]];
     [(NuSymbol *) [[symbolTable symbolWithCString:"nil"] retain] setValue:Nu__null];
+    [(NuSymbol *) [[symbolTable symbolWithCString:"YES"] retain] setValue:[NSNumber numberWithInt:1]];
+    [(NuSymbol *) [[symbolTable symbolWithCString:"NO"] retain] setValue:[NSNumber numberWithInt:0]];
 
     install("car",      Nu_car_operator);
     install("cdr",      Nu_cdr_operator);

@@ -1,5 +1,5 @@
 
-(set @nu_files (filelist "^[^/]*nu$")) 	;; don't forget that filelist expects regular expressions.
+(set @nu_files (filelist "^nu/.*\.nu$")) 	;; don't forget that filelist expects regular expressions.
 
 (set @application "Growler")
 (set @application_identifier "nu.programming.growler")
