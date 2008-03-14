@@ -26,9 +26,9 @@ else
 	PCRE_INCLUDE=-I pcre-7.5
 endif
 
-INCLUDES=$(FFI_INCLUDE) $(PCRE_INCLUDE)
+INCLUDES=$(FFI_INCLUDE) $(PCRE_INCLUDE) -I./include/Nu
 LIBS=-lobjc -lreadline $(PCRE_LIB) $(FFI_LIB)
-CFLAGS=-g -O2 -Wall -DMACOSX -DMININUSH -std=gnu99 -DLEOPARD_OBJC2
+CFLAGS=-g -O2 -Wall -DDARWIN -DMACOSX -DMININUSH -std=gnu99 -DLEOPARD_OBJC2
 MFLAGS=-fobjc-exceptions
 LDFLAGS=-framework Cocoa $(LIBS)
 
@@ -49,7 +49,7 @@ nush: mininush
 	mininush tools/nuke
 
 mininush: $(OBJS)
-	gcc $(OBJS) $(CFLAGS) -o $@ $(LDFLAGS)
+	gcc $(OBJS) $(CFLAGS) $(MFLAGS) $(INCLUDES) main/main.m -o $@ $(LDFLAGS)
 	install_name_tool -change /usr/local/lib/libpcre.0.dylib pcre-7.5/.libs/libpcre.0.dylib $@
 
 # These actions assume that nush and nuke are installed somewhere safe, such as /usr/local/bin
