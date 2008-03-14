@@ -449,6 +449,8 @@
                          (then "-Wl,-init -Wl,_#{@framework_initializer}")
                          (else "")))
      
+     (set @framework_executable_name "#{@framework_contents_dir}/#{@framework}")
+
      ;; framework architecture-specific executable
      (set @framework_executables (NSMutableArray array))
      (@arch each:
@@ -459,7 +461,7 @@
                     (then (set archflags "-arch #{architecture}"))
                     (else (set archflags "")))
                 (if (eq (uname) "Darwin")
-                    (then (set installnameflag "-install_name #{framework_executable}"))
+                    (then (set installnameflag "-install_name #{@framework_executable_name}"))
                     (else (set installnameflag "")))
                 (if (eq (uname) "Darwin")
                     (then (set dylibflag "-dynamiclib"))
@@ -469,7 +471,6 @@
                       (SH command))))
      
      ;; framework fat executable
-     (set @framework_executable_name "#{@framework_contents_dir}/#{@framework}")
      (file @framework_executable_name => @framework_contents_dir @framework_executables is
            (if (eq (uname) "Darwin")
                (then (set command "lipo -create #{(@framework_executables join)} -output '#{@framework_executable_name}'"))
