@@ -458,8 +458,14 @@
                 (if (eq (uname) "Darwin")
                     (then (set archflags "-arch #{architecture}"))
                     (else (set archflags "")))
+                (if (eq (uname) "Darwin")
+                    (then (set installnameflag "-install_name #{framework_executable}"))
+                    (else (set installnameflag "")))
+                (if (eq (uname) "Darwin")
+                    (then (set dylibflag "-dynamiclib"))
+                    (else (set dylibflag "-shared")))
                 (file framework_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{@initflags} -install_name #{@framework_executable_name} -dynamiclib -o '#{(target name)}'")
+                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{@initflags} #{installnameflag} #{dylibflag} -o '#{(target name)}'")
                       (SH command))))
      
      ;; framework fat executable

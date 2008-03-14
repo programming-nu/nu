@@ -46,8 +46,8 @@ END)
 
 ;; includes
 (if (eq (uname) "Darwin")
-    (then (set @includes " -I./include "))
-    (else (set @includes " -I./include -I/usr/local/include")))
+    (then (set @includes " -I ./include -I ./include/Nu "))
+    (else (set @includes " -I ./include -I ./include/Nu -I /usr/local/include")))
 
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@includes appendString:" -I #{@prefix}/include"))
 
@@ -125,7 +125,7 @@ END)
 
 (if (eq (uname) "Darwin")
     (file "#{@framework_headers_dir}/Nu.h" => "objc/Nu.h" @framework_headers_dir is
-          (SH "cp objc/Nu.h #{@framework_headers_dir}")))
+          (SH "cp include/Nu/Nu.h #{@framework_headers_dir}")))
 
 (task "clobber" => "clean" is
       (if (eq (uname) "Darwin")
@@ -185,7 +185,10 @@ END)
           (SH "ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
       (if (eq (uname) "Linux")
           ;; install the dynamic library
-          (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib"))
+          (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib")
+          ;; copy the headers
+		  (SH "sudo rm -rf /usr/local/include/Nu")
+          (SH "sudo cp -rp include/Nu /usr/local/include"))
       (SH "sudo mkdir -p #{@installprefix}/share")
       (SH "sudo rm -rf #{@installprefix}/share/nu")
       (SH "sudo cp -rp share/nu #{@installprefix}/share/nu")
