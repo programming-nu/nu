@@ -477,7 +477,7 @@ END))
 </div>
 <div style="float:left">
 <h1><a href="/">Programming Nu</a></h1>
-<h3>Reduce, Reuse, and Recycle <em>code</em>.</h3>
+<h3>Website for the Nu programming language.</h3>
 </div>END) (else "")))
 
 ;;;;;;;;;;;;; Footer Template ;;;;;;;;;;;;;;;;;

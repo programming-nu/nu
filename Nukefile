@@ -34,38 +34,38 @@ END)
 (set @nib_files   '("share/nu/resources/English.lproj/MainMenu.nib"))
 
 ;; libraries
-(if (eq (uname) "Darwin")
-    (then (set @frameworks '("Cocoa"))
-          (set @libs       '("edit" "ffi" ))
-          (set @lib_dirs   (NSMutableArray arrayWithObject:"/usr/lib")))
-    (else (set @frameworks nil)
-          (set @libs       (list "readline" "ffi" "m" ))
-          (set @lib_dirs   (NSMutableArray arrayWithList:(list "../lib")))))
+(ifDarwin
+         (then (set @frameworks '("Cocoa"))
+               (set @libs       '("edit" "ffi" ))
+               (set @lib_dirs   (NSMutableArray arrayWithObject:"/usr/lib")))
+         (else (set @frameworks nil)
+               (set @libs       (list "readline" "ffi" "m" ))
+               (set @lib_dirs   (NSMutableArray arrayWithList:(list "../lib")))))
 
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/lib") (@lib_dirs addObject:"#{@prefix}/lib"))
 
 ;; includes
-(if (eq (uname) "Darwin")
-    (then (set @includes " -I ./include -I ./include/Nu "))
-    (else (set @includes " -I ./include -I ./include/Nu -I /usr/local/include")))
+(ifDarwin
+         (then (set @includes " -I ./include -I ./include/Nu "))
+         (else (set @includes " -I ./include -I ./include/Nu -I /usr/local/include")))
 
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@includes appendString:" -I #{@prefix}/include"))
 
-(if (eq (uname) "Darwin")
-    (then (if (NSFileManager fileExistsNamed:"/usr/lib/libffi.dylib")
-              (then ;; Use the libffi that ships with OS X.
-                    (@includes appendString:" -I /usr/include"))
-              (else ;; Use the libffi that is distributed with Nu.
-                    (@includes appendString:" -I ./libffi/include")
-                    (@lib_dirs addObject:"./libffi"))))
-    (else ;; Use the libffi that ships with Linux
-          (@includes appendString:" -I /usr/include")))
+(ifDarwin
+         (then (if (NSFileManager fileExistsNamed:"/usr/lib/libffi.dylib")
+                   (then ;; Use the libffi that ships with OS X.
+                         (@includes appendString:" -I /usr/include"))
+                   (else ;; Use the libffi that is distributed with Nu.
+                         (@includes appendString:" -I ./libffi/include")
+                         (@lib_dirs addObject:"./libffi"))))
+         (else ;; Use the libffi that ships with Linux
+               (@includes appendString:" -I /usr/include")))
 
 ;; framework description
 (set @framework "Nu")
 (set @framework_identifier   "nu.programming.framework")
 (set @framework_icon_file    "nu.icns")
-(if (eq (uname) "Darwin") (then (set @framework_initializer  "NuInit")))
+(ifDarwin (then (set @framework_initializer  "NuInit")))
 (set @framework_creator_code "????")
 
 ;; for Linux, we build Nu as a dynamic library
@@ -82,19 +82,19 @@ END)
             (" -isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
            (else "")))
 
-(if (eq (uname) "Darwin")
+(ifDarwin
     (then (set @cflags "-Wall -g -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
           (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
     (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
           (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")))
 
-(if (eq (uname) "Darwin")
-    ;; use this to build a universal binary
-    (then (set @arch '("ppc" "i386")))
-    ;; or this to just build for your current platform
-    (else (set @arch '("i386"))))
+(ifDarwin
+    (then (set @arch '("ppc" "i386")))) ;; build a universal binary
 
-(if (eq (uname) "Darwin")
+;; or set this to just build for your chosen platform
+;; (set @arch '("i386"))
+
+(ifDarwin
     (then (set @ldflags
                ((list
                      (cond  ;; statically link in pcre since most people won't have it..
@@ -117,18 +117,18 @@ END)
 ;; Setup the tasks for compilation and framework-building.
 ;; These are defined in the nuke application source file.
 (compilation-tasks)
-(if (eq (uname) "Darwin")
+(ifDarwin
     (then (framework-tasks))
     (else (dylib-tasks)))
 
 (task "framework" => "#{@framework_headers_dir}/Nu.h")
 
-(if (eq (uname) "Darwin")
+(ifDarwin
     (file "#{@framework_headers_dir}/Nu.h" => "objc/Nu.h" @framework_headers_dir is
           (SH "cp include/Nu/Nu.h #{@framework_headers_dir}")))
 
 (task "clobber" => "clean" is
-      (if (eq (uname) "Darwin")
+      (ifDarwin
           (SH "rm -rf nush #{@framework_dir} doc"))
       ((filelist "^examples/[^/]*$") each:
        (do (example-dir)
@@ -140,7 +140,7 @@ END)
        (do (architecture)
            (set nush_thin_binary "build/#{architecture}/nush")
            (nush_thin_binaries addObject:nush_thin_binary)
-           (if (eq (uname) "Darwin")
+           (ifDarwin
                (then
                     (file nush_thin_binary => "framework" "build/#{architecture}/main.o" is
                           (SH "#{@cc} #{@cflags} #{@mflags} main/main.m -arch #{architecture} -F. -framework Nu #{@ldflags} -o #{(target name)}")))
@@ -149,7 +149,7 @@ END)
                           (SH "#{@cc} #{@cflags} #{@mflags} main/main.m #{@library_executable_name} #{@ldflags} -o #{(target name)}"))))))
 
 (file "nush" => "framework" nush_thin_binaries is
-      (if (eq (uname) "Darwin")
+      (ifDarwin
           (then (SH "lipo -create #{(nush_thin_binaries join)} -output #{(target name)}"))
           (else (SH "cp '#{(nush_thin_binaries objectAtIndex:0)}' '#{(target name)}'"))))
 
@@ -179,7 +179,7 @@ END)
         (do (program)
             (SH "sudo cp tools/#{program} #{@installprefix}/bin")))
       (SH "sudo cp nush #{@installprefix}/bin")
-      (if (eq (uname) "Darwin")
+      (ifDarwin
           ;; install the framework
           (SH "sudo rm -rf #{@destdir}/Library/Frameworks/#{@framework}.framework")
           (SH "ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
@@ -187,12 +187,12 @@ END)
           ;; install the dynamic library
           (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib")
           ;; copy the headers
-		  (SH "sudo rm -rf /usr/local/include/Nu")
+          (SH "sudo rm -rf /usr/local/include/Nu")
           (SH "sudo cp -rp include/Nu /usr/local/include"))
       (SH "sudo mkdir -p #{@installprefix}/share")
       (SH "sudo rm -rf #{@installprefix}/share/nu")
       (SH "sudo cp -rp share/nu #{@installprefix}/share/nu")
-      (if (eq (uname) "Darwin")
+      (ifDarwin
           (SH "sudo ditto examples #{@installprefix}/share/nu/examples")))
 
 ;; Build a disk image for distributing the framework.

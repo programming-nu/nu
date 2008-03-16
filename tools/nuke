@@ -18,16 +18,18 @@
 #   limitations under the License.
 
 ;; basic declarations that allow nuke to run in mininush
-(global NO 0)
-(global YES 1)
 (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
 
+;; system-level helpers
 (function SH (command)
      (puts "nuke: #{command}")
      (set result (system command))
      (if result
          (puts "nuke: terminating on command error (return code #{result})")
          (exit result)))
+
+(macro ifDarwin (eval (append '(if (eq (uname) "Darwin")) margs)))
+(macro ifLinux (eval (append '(if (eq (uname) "Linux")) margs)))
 
 (class NSString
      ;; Change the extension at the end of a file name to a new specified value.
@@ -223,8 +225,10 @@
      (unless @cflags (set @cflags "-g"))
      (unless @mflags (set @mflags "-fobjc-exceptions"))
      (unless @includes (set @includes ""))
-     (unless (and @arch (@arch length))
-             (set @arch (list (NSString stringWithShellCommand:"arch"))))
+     (ifDarwin
+              (then (unless (and @arch (@arch length))
+                            (set @arch (list (NSString stringWithShellCommand:"arch")))))
+              (else (set @arch (list "x86-linux"))))
      (@arch each: (do (architecture) (system "mkdir -p build/#{architecture}")))
      
      (unless @ldflags ;; not for compilation, but common across all builds
@@ -240,7 +244,7 @@
                          (set objectName "build/#{architecture}/")
                          (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
                          ((@c_objects objectForKey:architecture) addObject: objectName)
-                         (if (eq (uname) "Darwin")
+                         (ifDarwin
                              (then (set archflags "-arch #{architecture}"))
                              (else (set archflags "")))
                          (file objectName => sourceName is
@@ -256,7 +260,7 @@
                          (set objectName "build/#{architecture}/")
                          (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
                          ((@m_objects objectForKey:architecture) addObject: objectName)
-                         (if (eq (uname) "Darwin")
+                         (ifDarwin
                              (then (set archflags "-arch #{architecture}"))
                              (else (set archflags "")))
                          (file objectName => sourceName is
@@ -328,7 +332,7 @@
                      (do (architecture)
                          (set application_executable "build/#{architecture}/application-#{@application}")
                          (@application_executables addObject:application_executable)
-                         (if (eq (uname) "Darwin")
+                         (ifDarwin
                              (then (set archflags "-arch #{architecture}"))
                              (else (set archflags "")))
                          (file application_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
@@ -336,7 +340,7 @@
                                (SH command))))
               ;; application fat executable
               (file @application_executable_name => @application_executable_dir @application_executables is
-                    (if (eq (uname) "Darwin")
+                    (ifDarwin
                         (then (set command "lipo -create #{(@application_executables join)} -output '#{@application_executable_name}'"))
                         (else (set command "cp '#{(@application_executables objectAtIndex:0)}' '#{@application_executable_name}'")))
                     (SH command)))
@@ -450,20 +454,20 @@
                          (else "")))
      
      (set @framework_executable_name "#{@framework_contents_dir}/#{@framework}")
-
+     
      ;; framework architecture-specific executable
      (set @framework_executables (NSMutableArray array))
      (@arch each:
             (do (architecture)
                 (set framework_executable "build/#{architecture}/framework-#{@framework}")
                 (@framework_executables addObject:framework_executable)
-                (if (eq (uname) "Darwin")
+                (ifDarwin
                     (then (set archflags "-arch #{architecture}"))
                     (else (set archflags "")))
-                (if (eq (uname) "Darwin")
+                (ifDarwin
                     (then (set installnameflag "-install_name #{@framework_executable_name}"))
                     (else (set installnameflag "")))
-                (if (eq (uname) "Darwin")
+                (ifDarwin
                     (then (set dylibflag "-dynamiclib"))
                     (else (set dylibflag "-shared")))
                 (file framework_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
@@ -472,7 +476,7 @@
      
      ;; framework fat executable
      (file @framework_executable_name => @framework_contents_dir @framework_executables is
-           (if (eq (uname) "Darwin")
+           (ifDarwin
                (then (set command "lipo -create #{(@framework_executables join)} -output '#{@framework_executable_name}'"))
                (else (set command "cp '#{(@framework_executables objectAtIndex:0)}' '#{@framework_executable_name}'")))
            (SH command))
@@ -559,7 +563,7 @@
             (do (architecture)
                 (set bundle_executable "build/#{architecture}/bundle-#{@bundle}")
                 (@bundle_executables addObject:bundle_executable)
-                (if (eq (uname) "Darwin")
+                (ifDarwin
                     (then (set archflags "-arch #{architecture}"))
                     (else (set archflags "")))
                 (file bundle_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
@@ -635,7 +639,7 @@
 (macro dylib-tasks
      (unless (and @arch (@arch length))
              (set @arch (list (NSString stringWithShellCommand:"arch"))))
-     (set libext (if (eq (uname) "Darwin") (then "dylib") (else "so")))
+     (set libext (ifDarwin (then "dylib") (else "so")))
      
      ;; library architecture-specific executable
      (set @library_executables (NSMutableArray array))
@@ -643,10 +647,10 @@
             (do (architecture)
                 (set library_executable "build/#{architecture}/#{@dylib}.#{libext}")
                 (@library_executables addObject:library_executable)
-                (if (eq (uname) "Darwin")
+                (ifDarwin
                     (then (set dylibflag "-dynamiclib"))
                     (else (set dylibflag "-shared")))
-                (if (eq (uname) "Darwin")
+                (ifDarwin
                     (then (set archflags "-arch #{architecture}"))
                     (else (set archflags "")))
                 (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
@@ -656,7 +660,7 @@
      ;; fat dynamic library
      (set @library_executable_name "#{@dylib}.#{libext}")
      (file @library_executable_name => @library_executables is
-           (if (eq (uname) "Darwin")
+           (ifDarwin
                (then (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'"))
                (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
            (SH command))
