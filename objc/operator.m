@@ -283,18 +283,28 @@ static bool valueIsTrue(id value)
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     //id thenSymbol = [symbolTable symbolWithCString:"then"];
     id elseSymbol = [symbolTable symbolWithCString:"else"];
+    id elseifSymbol = [symbolTable symbolWithCString:"elseif"];
 
     id result = Nu__null;
     id test = [[cdr car] evalWithContext:context];
 
     bool testIsTrue = valueIsTrue(test);
+    bool noneIsTrue = !testIsTrue;
 
     id expressions = [cdr cdr];
     while (expressions && (expressions != Nu__null)) {
         id nextExpression = [expressions car];
         if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
-            if ([nextExpression car] == elseSymbol) {
-                if (!testIsTrue)
+            if ([nextExpression car] == elseifSymbol) {
+                test = [[[[expressions car] cdr] car] evalWithContext:context];
+                testIsTrue = noneIsTrue && valueIsTrue(test);
+                noneIsTrue = noneIsTrue && !testIsTrue;
+                if (testIsTrue)
+                    // skip the test:
+                    result = [[[nextExpression cdr] cdr] evalWithContext:context];
+            }
+            else if ([nextExpression car] == elseSymbol) {
+                if (noneIsTrue)
                     result = [nextExpression evalWithContext:context];
             }
             else {
@@ -303,8 +313,20 @@ static bool valueIsTrue(id value)
             }
         }
         else {
-            if (testIsTrue)
-                result = [nextExpression evalWithContext:context];
+            if (nextExpression == elseifSymbol) {
+                test = [[[expressions cdr] car] evalWithContext:context];
+                testIsTrue = noneIsTrue && valueIsTrue(test);
+                noneIsTrue = noneIsTrue && !testIsTrue;
+                expressions = [expressions cdr];            // skip the test
+            }
+            else if (nextExpression == elseSymbol) {
+                testIsTrue = noneIsTrue;
+                noneIsTrue = NO;
+            }
+            else {
+                if (testIsTrue)
+                    result = [nextExpression evalWithContext:context];
+            }
         }
         expressions = [expressions cdr];
     }
