@@ -275,10 +275,16 @@ static bool valueIsTrue(id value)
 @end
 
 @interface Nu_if_operator : NuOperator {}
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context flipped:(bool)flip;
 @end
 
 @implementation Nu_if_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    return [self callWithArguments:cdr context:context flipped:NO];
+}
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context flipped:(bool)flip
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     //id thenSymbol = [symbolTable symbolWithCString:"then"];
@@ -288,7 +294,7 @@ static bool valueIsTrue(id value)
     id result = Nu__null;
     id test = [[cdr car] evalWithContext:context];
 
-    bool testIsTrue = valueIsTrue(test);
+    bool testIsTrue = flip ^ valueIsTrue(test);
     bool noneIsTrue = !testIsTrue;
 
     id expressions = [cdr cdr];
@@ -335,41 +341,13 @@ static bool valueIsTrue(id value)
 
 @end
 
-@interface Nu_unless_operator : NuOperator {}
+@interface Nu_unless_operator : Nu_if_operator {}
 @end
 
 @implementation Nu_unless_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    //id thenSymbol = [symbolTable symbolWithCString:"then"];
-    id elseSymbol = [symbolTable symbolWithCString:"else"];
-
-    id result = Nu__null;
-    id test = [[cdr car] evalWithContext:context];
-
-    bool testIsTrue = valueIsTrue(test);
-
-    id expressions = [cdr cdr];
-    while (expressions && (expressions != Nu__null)) {
-        id nextExpression = [expressions car];
-        if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
-            if ([nextExpression car] == elseSymbol) {
-                if (testIsTrue)
-                    result = [nextExpression evalWithContext:context];
-            }
-            else {
-                if (!testIsTrue)
-                    result = [nextExpression evalWithContext:context];
-            }
-        }
-        else {
-            if (!testIsTrue)
-                result = [nextExpression evalWithContext:context];
-        }
-        expressions = [expressions cdr];
-    }
-    return result;
+    return [super callWithArguments:cdr context:context flipped:YES];
 }
 
 @end
