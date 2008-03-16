@@ -40,4 +40,76 @@
      (imethod (id) dontTestTheGetsOperator is
           (assert_not_equal nil gets)
           (puts "\nPlease don't enter anything.")
-          (assert_equal (gets) "")))
+          (assert_equal (gets) ""))
+     
+     (imethod (id) testIfOperator is
+         (set x 0)
+         (assert_equal 'yes (if t 'yes))
+         (assert_equal 'yes (if t (set x 1) 'yes))
+         (assert_equal x 1)
+         (assert_equal 'yes (if t 'yes (else (set x 'error))))
+         (assert_equal x 1)
+         (assert_equal 'yes (if t (then 'yes)))
+         (assert_equal 'yes (if t (then (set x 2) 'yes)))
+         (assert_equal x 2)
+         (assert_equal 'yes (if t (then 'yes) (else (set x 'error))))
+         (assert_equal x 2)
+         (assert_equal 'no (if nil (else 'no)))
+         (assert_equal 'no (if nil (else (set x 3) 'no)))
+         (assert_equal x 3)
+         (assert_equal 'no (if nil (set x 'error) (else 'no)))
+         (assert_equal x 3)
+         (assert_equal 'no (if nil (then (set x 'error)) (else 'no)))
+         (assert_equal x 3))
+     
+     (imethod (id) testIfSugaredOperator is
+         (set x 0)
+         (assert_equal 'yes (if t then 'yes))
+         (assert_equal 'yes (if t then (set x 1) 'yes))
+         (assert_equal x 1)
+         (assert_equal 'yes (if t then 'yes else (set x 'error)))
+         (assert_equal x 1)
+         (assert_equal 'yes (if t then 'yes (else (set x 'error))))
+         (assert_equal x 1)
+         (assert_equal 'no (if nil else 'no))
+         (assert_equal 'no (if nil else (set x 2) 'no))
+         (assert_equal x 2)
+         (assert_equal 'no (if nil (set x 'error) else 'no))
+         (assert_equal x 2)
+         (assert_equal 'no (if nil then (set x 'error) else 'no))
+         (assert_equal x 2)
+         (assert_equal 'no (if nil (then (set x 'error)) else 'no))
+         (assert_equal x 2))
+     
+     (imethod (id) testIfElseifOperator is
+         (set x 1)
+         (set y 'true)
+         (assert_equal 'one (if (eq x 0) 'none
+                                elseif (eq x 1) 'one
+                                else 'many))
+         (assert_equal 'one (if (eq x 0) 'none
+                                elseif (eq x 2) 'two
+                                elseif (eq x 1) 'one
+                                else 'more))
+         (assert_equal 'one (if (eq x 0) (set y 'none)
+                                elseif (eq x 1) 'one
+                                else (set y 'many)))
+         (assert_equal y 'true)
+         (assert_equal 'one (if (eq x 0) (set y 'none)
+                                elseif (eq x 2) (set y 'two)
+                                elseif (eq x 1) 'one
+                                else (set y 'more)))
+         (assert_equal y 'true)
+         (assert_equal 'one (if (eq x 0) 'none
+                                elseif (eq x 1)
+                                    (set y 'one)
+                                    'one
+                                else 'many))
+         (assert_equal y 'one)
+         (assert_equal 'one (if (eq x 0) 'none
+                                elseif (eq x 2) 'two
+                                elseif (eq x 1)
+                                    (set y 'two)
+                                    'one
+                                else 'more))
+         (assert_equal y 'two)))
