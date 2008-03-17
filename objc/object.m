@@ -20,6 +20,7 @@ limitations under the License.
 #import "method.h"
 #import "objc_runtime.h"
 #import "bridge.h"
+#import "extensions.h"
 
 // use this to look up selectors with symbols
 @interface NuSelectorCache : NSObject

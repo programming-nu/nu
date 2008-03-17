@@ -62,6 +62,9 @@ limitations under the License.
 + (NSDictionary *) dictionaryWithList:(id) list;
 /*! Look up an object by key, returning the specified default if no object is found. */
 - (id) objectForKey:(id)key withDefault:(id)defaultValue;
+#ifdef LINUX
+- (void) setValue:(id) value forKey:(id) key;
+#endif
 @end
 
 /*!
@@ -96,6 +99,10 @@ limitations under the License.
 
 /*! Create a string from a specified character */
 + (NSString *) stringWithCharacter:(unichar) c;
+#ifdef LINUX
++ (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding;
+- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding;
+#endif
 @end
 
 /*!
@@ -174,3 +181,11 @@ limitations under the License.
 /*! Get the type string for a method signature */
 - (NSString *) typeString;
 @end
+
+#ifdef LINUX
+@interface NSObject (morestuff)
+- (void)willChangeValueForKey:(NSString *)key;
+- (void)didChangeValueForKey:(NSString *)key;
++ (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
+@end
+#endif

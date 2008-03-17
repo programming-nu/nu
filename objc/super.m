@@ -22,6 +22,7 @@ limitations under the License.
 #import "cell.h"
 #import "bridge.h"
 #import "objc_runtime.h"
+#import "extensions.h"
 
 @implementation NuSuper
 

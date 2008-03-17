@@ -24,6 +24,7 @@ limitations under the License.
 
 #import <Foundation/Foundation.h>
 #include "class.h"
+#include "extensions.h"
 
 #ifdef DARWIN
 #include "objc/runtime.h"
@@ -31,9 +32,10 @@ limitations under the License.
 #endif
 
 #ifdef LINUX
-struct objc_method_description_list {
-        int count;
-        struct objc_method_description list[1];
+struct objc_method_description_list
+{
+    int count;
+    struct objc_method_description list[1];
 };
 #endif
 
@@ -100,11 +102,11 @@ static void addMethodDescriptionsToArray(Protocol *protocol, BOOL isRequiredMeth
     struct objc_method_description *method_descriptions =
         protocol_copyMethodDescriptionList(protocol, isRequiredMethod, isInstanceMethod, &count);
     for (int i = 0; i < count; i++) {
-#ifdef DARWIN
+        #ifdef DARWIN
         NSString *name = [NSString stringWithCString:sel_getName(method_descriptions[i].name) encoding:NSASCIIStringEncoding];
-#else
+        #else
         NSString *name = [NSString stringWithCString:sel_get_name(method_descriptions[i].name) encoding:NSASCIIStringEncoding];
-#endif
+        #endif
         NSString *signature = [NSString stringWithCString:method_descriptions[i].types encoding:NSASCIIStringEncoding];
         NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:name, @"name",
             signature, @"signature",
@@ -145,11 +147,11 @@ static void addMethodDescriptionsToArray(Protocol *protocol, BOOL isRequiredMeth
 
 - (void) addInstanceMethod:(NSString *)name withSignature:(NSString *)signature
 {
-#ifdef DARWIN
+    #ifdef DARWIN
     SEL sel = sel_registerName([name cStringUsingEncoding:NSUTF8StringEncoding]);
-#else
+    #else
     SEL sel = sel_register_name([name cStringUsingEncoding:NSUTF8StringEncoding]);
-#endif
+    #endif
     const char *types = [signature cStringUsingEncoding:NSUTF8StringEncoding];
 
     struct objc_method_description_list *oldList = self->instance_methods;
@@ -178,11 +180,11 @@ static void addMethodDescriptionsToArray(Protocol *protocol, BOOL isRequiredMeth
 
 - (void) addClassMethod:(NSString *)name withSignature:(NSString *)signature
 {
-#ifdef DARWIN
+    #ifdef DARWIN
     SEL sel = sel_registerName([name cStringUsingEncoding:NSUTF8StringEncoding]);
-#else
+    #else
     SEL sel = sel_register_name([name cStringUsingEncoding:NSUTF8StringEncoding]);
-#endif
+    #endif
     const char *types = [signature cStringUsingEncoding:NSUTF8StringEncoding];
 
     struct objc_method_description_list *oldList = self->class_methods;
@@ -288,12 +290,12 @@ void nu_initProtocols()
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         [[NuClass classWithClass:[Protocol class]] setSuperclass:[NuClass classWithClass:[NSObject class]]];
         [pool release];
-#ifdef DARWIN
+        #ifdef DARWIN
         // Since Apple doesn't have an API to add new protocols, we make our own.
         // We replace these functions with our own versions to include the protocols we create at runtime.
         mach_override("_objc_getProtocol", NULL, (void*)&nu_objc_getProtocol, (void**)&original_objc_getProtocol);
         mach_override("_objc_copyProtocolList", NULL, (void*)&nu_objc_copyProtocolList, (void**)&original_objc_copyProtocolList);
-#endif
+        #endif
     }
     #endif
 }
