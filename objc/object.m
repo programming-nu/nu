@@ -601,9 +601,9 @@ limitations under the License.
 {
     Class myClass = [self class];
     #ifdef DARWIN
-    Method method1 = nil, method2 = nil;
+    Method method1 = NULL, method2 = NULL;
     #else
-    Method_t method1 = nil, method2 = nil;
+    Method_t method1 = NULL, method2 = NULL;
     #endif
 
     // First, look for the methods
@@ -615,17 +615,17 @@ limitations under the License.
     method2 = class_get_instance_method(myClass, sel2);
     #endif
     // If both are found, swizzle them
-    if ((method1 != nil) && (method2 != nil)) {
+    if ((method1 != NULL) && (method2 != NULL)) {
         method_exchangeImplementations(method1, method2);
         return true;
     }
     else {
         #ifdef DARWIN
-        if (method1 == nil) NSLog(@"swap failed: can't find %s", sel_getName(sel1));
-        if (method2 == nil) NSLog(@"swap failed: can't find %s", sel_getName(sel2));
+        if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel1));
+        if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel2));
         #else
-        if (method1 == nil) NSLog(@"swap failed: can't find %s", sel_get_name(sel1));
-        if (method2 == nil) NSLog(@"swap failed: can't find %s", sel_get_name(sel2));
+        if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel1));
+        if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel2));
         #endif
         return false;
     }
@@ -637,9 +637,9 @@ limitations under the License.
 {
     Class myClass = [self class];
     #ifdef DARWIN
-    Method method1 = nil, method2 = nil;
+    Method method1 = NULL, method2 = NULL;
     #else
-    Method_t method1 = nil, method2 = nil;
+    Method_t method1 = NULL, method2 = NULL;
     #endif
 
     // First, look for the methods
@@ -647,17 +647,17 @@ limitations under the License.
     method2 = class_getClassMethod(myClass, sel2);
 
     // If both are found, swizzle them
-    if ((method1 != nil) && (method2 != nil)) {
+    if ((method1 != NULL) && (method2 != NULL)) {
         method_exchangeImplementations(method1, method2);
         return true;
     }
     else {
         #ifdef DARWIN
-        if (method1 == nil) NSLog(@"swap failed: can't find %s", sel_getName(sel1));
-        if (method2 == nil) NSLog(@"swap failed: can't find %s", sel_getName(sel2));
+        if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel1));
+        if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel2));
         #else
-        if (method1 == nil) NSLog(@"swap failed: can't find %s", sel_get_name(sel1));
-        if (method2 == nil) NSLog(@"swap failed: can't find %s", sel_get_name(sel2));
+        if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel1));
+        if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel2));
         #endif
         return false;
     }

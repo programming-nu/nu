@@ -17,6 +17,7 @@ limitations under the License.
 */
 #import "pointer.h"
 #import "bridge.h"
+#import "extensions.h"
 
 @implementation NuPointer
 

@@ -107,7 +107,11 @@ extern id Nu__null;
             // That's for another day.
             // For now, I just substitute each gensym name with its expansion.
             //
+            #ifdef DARWIN
             NSMutableString *tempString = [NSMutableString stringWithString:car];
+            #else
+            NSString *tempString = [NSString stringWithString:car];
+            #endif
             //NSLog(@"checking %@", tempString);
             NSEnumerator *gensymEnumerator = [gensyms objectEnumerator];
             NuSymbol *gensymSymbol;
@@ -181,7 +185,7 @@ extern id Nu__null;
 
     // if the macro contains gensyms, give them a unique prefix
     id bodyToEvaluate = ([[self gensyms] count] == 0)
-        ? body : [self body:body withGensymPrefix:[NSString stringWithFormat:@"g%ld", [NuMath random]] symbolTable:symbolTable];
+        ? (id)body : [self body:body withGensymPrefix:[NSString stringWithFormat:@"g%ld", [NuMath random]] symbolTable:symbolTable];
 
     // uncomment this to get the old (no gensym) behavior.
     //bodyToEvaluate = body;

@@ -62,9 +62,6 @@ limitations under the License.
 + (NSDictionary *) dictionaryWithList:(id) list;
 /*! Look up an object by key, returning the specified default if no object is found. */
 - (id) objectForKey:(id)key withDefault:(id)defaultValue;
-#ifdef LINUX
-- (void) setValue:(id) value forKey:(id) key;
-#endif
 @end
 
 /*!
@@ -79,6 +76,9 @@ limitations under the License.
     If no value is found, looks in the context's parent, continuing
     upward until no more parent contexts are found. */
 - (id) lookupObjectForKey:(id)key;
+#ifdef LINUX
+- (void) setValue:(id) value forKey:(id) key;
+#endif
 @end
 
 /*!

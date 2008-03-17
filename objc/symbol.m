@@ -81,7 +81,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
 - (id) lookup:(const char *) string
 {
     NuSymbol *symbol;
-    return st_lookup(symbol_table, (st_data_t)string, (st_data_t *)&symbol) ? symbol : nil;
+    return st_lookup(symbol_table, (st_data_t)string, (st_data_t *)&symbol) ? (id)symbol : nil;
 }
 
 // helper function for "all" method
@@ -176,7 +176,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
         if (!object) return [NSNull null];
         id ivarName = [[self stringValue] substringFromIndex:1];
         id result = [object valueForIvar:ivarName];
-        return result ? result : [NSNull null];
+        return result ? result : (id) [NSNull null];
     }
 
     // Next, try to find the symbol in the local evaluation context.

@@ -116,7 +116,8 @@ int method_get_number_of_arguments (struct objc_method *);
 
 unsigned int method_getNumberOfArguments(Method_t m)
 {
-    const char *methodTypes = m->method_types;
+    //unused
+    //const char *methodTypes = m->method_types;
     int count = method_get_number_of_arguments(m);
     return count;
 }

@@ -51,6 +51,15 @@ struct objc_method_description_list
 }
 
 - (const char *) name;
++ (Protocol *) protocolWithName:(NSString *) name;
++ (Protocol *) protocolNamed:(NSString *) name;
++ (NSArray *) all;
+- (Protocol *) initWithName:(NSString *) name;
+- (NSArray *) methodDescriptions;
+- (NSComparisonResult) compare:(Protocol *) other;
+- (NSArray *) protocols;
+- (void) addInstanceMethod:(NSString *)name withSignature:(NSString *)signature;
+- (void) addClassMethod:(NSString *)name withSignature:(NSString *)signature;
 @end
 
 // When we create protocols at runtime, we put them here.
@@ -86,9 +95,9 @@ static NSMutableDictionary *nuProtocols;
 {
     [super init];
     protocol_name = strdup([name cStringUsingEncoding:NSUTF8StringEncoding]);
-    protocol_list = nil;
-    instance_methods = nil;
-    class_methods = nil;
+    protocol_list = NULL;
+    instance_methods = NULL;
+    class_methods = NULL;
 
     if (!nuProtocols)
         nuProtocols = [[NSMutableDictionary alloc] init];
@@ -299,7 +308,7 @@ void nu_initProtocols()
     }
     #endif
 }
-
+#ifdef DARWIN
 // bonus: I found this in the ObjC2.0 runtime.
 @interface NuImage : NSObject
 {
@@ -332,3 +341,4 @@ void nu_initProtocols()
 }
 
 @end
+#endif

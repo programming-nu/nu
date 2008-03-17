@@ -41,6 +41,7 @@ extern const char *nu_parsedFilename(int i)
 }
 
 #include <readline/readline.h>
+#include <readline/history.h>
 
 @interface NuParser(Internal)
 - (int) depth;
@@ -148,7 +149,7 @@ id regexWithString(NSString *string)
 
 - (void) setFilename:(const char *) name
 {
-    if (name == nil)
+    if (name == NULL)
         filenum = -1;
     else {
         filenames[filecount] = strdup(name);
@@ -161,7 +162,7 @@ id regexWithString(NSString *string)
 - (const char *) filename
 {
     if (filenum == -1)
-        return nil;
+        return NULL;
     else
         return filenames[filenum];
 }
