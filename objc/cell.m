@@ -237,16 +237,107 @@ extern char *nu_parsedFilename(int i);
     return self;
 }
 
-- (id) map:(NuBlock *) block
+- (id) eachWithIndex:(NuBlock *) block
 {
-    NuCell *result = [[[NuCell alloc] init] autorelease];
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
-        [args setCar:[self car]];
-        [result setCar: [block evalWithArguments:args context:Nu__null]];
+        [args setCdr:[[NuCell alloc] init]];
+        id cursor = self;
+        int i = 0;
+        while (cursor && (cursor != Nu__null)) {
+            [args setCar:[cursor car]];
+            [[args cdr] setCar:[NSNumber numberWithInt:i]];
+            [block evalWithArguments:args context:Nu__null];
+            cursor = [cursor cdr];
+            i++;
+        }
         [args release];
-        if ([self cdr] != Nu__null)
-            [result setCdr: [((NuCell *)[self cdr]) map:block]];
+    }
+    return self;
+}
+
+- (id) select:(NuBlock *) block
+{
+    NuCell *parent = [[NuCell alloc] init];
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+        id args = [[NuCell alloc] init];
+        id cursor = self;
+        id resultCursor = parent;
+        while (cursor && (cursor != Nu__null)) {
+            [args setCar:[cursor car]];
+            id result = [block evalWithArguments:args context:Nu__null];
+            if (result && (result != Nu__null)) {
+                [resultCursor setCdr:[NuCell cellWithCar:[cursor car] cdr:[resultCursor cdr]]];
+                resultCursor = [resultCursor cdr];
+            }
+            cursor = [cursor cdr];
+        }
+        [args release];
+    }
+    else
+        return Nu__null;
+    NuCell *selected = [parent cdr];
+    [parent release];
+    return selected;
+}
+
+- (id) find:(NuBlock *) block
+{
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+        id args = [[NuCell alloc] init];
+        id cursor = self;
+        while (cursor && (cursor != Nu__null)) {
+            [args setCar:[cursor car]];
+            id result = [block evalWithArguments:args context:Nu__null];
+            if (result && (result != Nu__null)) {
+                [args release];
+                return [cursor car];
+            }
+            cursor = [cursor cdr];
+        }
+        [args release];
+    }
+    return Nu__null;
+}
+
+- (id) map:(NuBlock *) block
+{
+    NuCell *parent = [[NuCell alloc] init];
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+        id args = [[NuCell alloc] init];
+        id cursor = self;
+        id resultCursor = parent;
+        while (cursor && (cursor != Nu__null)) {
+            [args setCar:[cursor car]];
+            id result = [block evalWithArguments:args context:Nu__null];
+            [resultCursor setCdr:[NuCell cellWithCar:result cdr:[resultCursor cdr]]];
+            cursor = [cursor cdr];
+            resultCursor = [resultCursor cdr];
+        }
+        [args release];
+    }
+    else
+        return Nu__null;
+    NuCell *result = [parent cdr];
+    [parent release];
+    return result;
+}
+
+- (id) reduce:(NuBlock *) block from:(id) initial
+{
+    id result = initial;
+    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+        id args = [[NuCell alloc] init];
+        [args setCdr:[[NuCell alloc] init]];
+        id cursor = self;
+        while (cursor && (cursor != Nu__null)) {
+            [args setCar:result];
+            [[args cdr] setCar:[cursor car]];
+            result = [block evalWithArguments:args context:Nu__null];
+            cursor = [cursor cdr];
+        }
+        [[args cdr] release];
+        [args release];
     }
     return result;
 }

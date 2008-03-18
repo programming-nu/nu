@@ -68,11 +68,16 @@ In Nu, nil is represented with the <code>[NSNull null]</code> object.
 - (id) each:(NuBlock *) block;
 /*! Iterate over each pair of elements of the list headed by a NuCell, calling the specified block with the two elements as arguments. */
 - (id) eachPair:(NuBlock *) block;
-/*!
-    Iterate over each element of the list headed by a NuCell, calling the specified block with the element as an argument.
-    Returns a new list containing the results of each evaluation.
- */
+/*! Iterate over each element of the list headed by a NuCell, calling the specified block with the element and its index as arguments. */
+- (id) eachWithIndex:(NuBlock *) block;
+/*! Iterate over each element of the list headed by a NuCell, returning a list containing the elements for which the provided block evaluates non-nil. */
+- (id) select:(NuBlock *) block;
+/*! Iterate over each element of the list headed by a NuCell, returning the first element for which the provided block evaluates non-nil. */
+- (id) find:(NuBlock *) block;
+/*! Iterate over each element of the list headed by a NuCell, applying the provided block to each element, and returning a list of the results. */
 - (id) map:(NuBlock *) block;
+/*! Iterate over each element of the list headed by a NuCell, using the provided block to combine elements into a single return value. */
+- (id) reduce:(NuBlock *) block from:(id) initial;
 /*! Get the length of a list beginning at a NuCell. */
 - (int) length;
 
