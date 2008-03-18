@@ -90,6 +90,7 @@ limitations under the License.
             [args setCar:object];
             id result = [block evalWithArguments:args context:Nu__null];
             if (result && (result != Nu__null)) {
+                [args release];
                 return object;
             }
         }
