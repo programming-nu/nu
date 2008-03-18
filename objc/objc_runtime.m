@@ -609,6 +609,8 @@ BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL select
 
 BOOL nu_objectIsKindOfClass(id object, Class class)
 {
+    if (object == NULL)
+        return NO;
 #ifdef DARWIN
     Class classCursor = object->isa;
 #else
