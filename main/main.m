@@ -25,7 +25,7 @@ int main(int argc, const char *argv[])
 #elif defined(LINUX)
 int NuMain(int argc, const char *argv[], const char *envp[]);
 
-int main(int argc, char *argv[], char *envp[])
+int main(int argc, const char *argv[], const char *envp[])
 {
     return NuMain(argc, argv, envp);
 }

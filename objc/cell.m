@@ -246,7 +246,7 @@ extern char *nu_parsedFilename(int i);
         [result setCar: [block evalWithArguments:args context:Nu__null]];
         [args release];
         if ([self cdr] != Nu__null)
-            [result setCdr: [[self cdr] map: block]];
+            [result setCdr: [((NuCell *)[self cdr]) map:block]];
     }
     return result;
 }

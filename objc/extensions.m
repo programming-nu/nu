@@ -123,6 +123,12 @@ extern id Nu__null;
     return [parent lookupObjectForKey:key];
 }
 
+#ifdef LINUX
+- (void) setValue:(id) value forKey:(id) key
+{
+    [self setObject:value forKey:key];
+}
+#endif
 @end
 
 @implementation NSString(Nu)
@@ -219,6 +225,17 @@ extern id Nu__null;
 #endif
 }
 
+#ifdef LINUX
++ (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding
+{
+    return [[[NSString alloc] initWithCString:cString] autorelease];
+}
+
+- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
+{
+    return [self cString];
+}
+#endif
 @end
 
 @implementation NSMutableString(Nu)
@@ -469,29 +486,6 @@ extern id Nu__null;
 - (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
 {
     return [self cString];
-}
-
-@end
-
-@implementation NSString (extra)
-
-+ (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding
-{
-    return [[[NSString alloc] initWithCString:cString] autorelease];
-}
-
-- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
-{
-    return [self cString];
-}
-
-@end
-
-@implementation NSMutableDictionary (extra)
-
-- (void) setValue:(id) value forKey:(id) key
-{
-    [self setObject:value forKey:key];
 }
 
 @end

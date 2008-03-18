@@ -663,7 +663,7 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         case '@':
         {
             id result = *((id *)objc_value);
-            return result ? result : [NSNull null];
+            return result ? result : (id)[NSNull null];
         }
         case '#':
         {
@@ -906,9 +906,9 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
     #ifdef DARWIN
     //NSLog(@"calling ObjC method %s with target of class %@", sel_getName(method_getName(m)), [target class]);
     #else
-    SEL sel = method_getName(m);
-    const char *name = sel_get_name(sel);
-    Class targetClass = [target class];
+    //SEL sel = method_getName(m);
+    //const char *name = sel_get_name(sel);
+    //Class targetClass = [target class];
     //NSLog(@"calling ObjC method %s with target of class %@", sel_get_name(method_getName(m)), [target class]);
     #endif
 
@@ -937,7 +937,7 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
         // ensure that methods declared to return void always return void.
         char return_type_buffer[BUFSIZE];
         method_getReturnType(m, return_type_buffer, BUFSIZE);
-        return (!strcmp(return_type_buffer, "v")) ? [NSNull null] : result;
+        return (!strcmp(return_type_buffer, "v")) ? (id)[NSNull null] : result;
     }
 
     // if we get here, we're going through the ObjC runtime to make the call.

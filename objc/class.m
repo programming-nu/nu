@@ -1,6 +1,6 @@
 /*!
 @file class.m
-@description The Nu class abstraction. 
+@description The Nu class abstraction.
 @copyright Copyright (c) 2007 Neon Design Technology, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ limitations under the License.
 #import "block.h"
 #import "cell.h"
 #import "object.h"
+#import "extensions.h"
 
 // getting a specific method...
 // (set x (((Convert classMethods) select: (do (m) (eq (m name) "passRect:"))) objectAtIndex:0))

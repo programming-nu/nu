@@ -26,7 +26,7 @@ limitations under the License.
 
 - (void)nuSetObject:(id)anObject forKey:(id)aKey
 {
-    [self nuSetObject:((anObject == nil) ? [NSNull null] : anObject) forKey:aKey];
+    [self nuSetObject:((anObject == nil) ? (id)[NSNull null] : anObject) forKey:aKey];
 }
 
 @end
@@ -38,17 +38,17 @@ limitations under the License.
 
 - (void)nuAddObject:(id)anObject
 {
-    [self nuAddObject:((anObject == nil) ? [NSNull null] : anObject)];
+    [self nuAddObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
 }
 
 - (void)nuInsertObject:(id)anObject atIndex:(int)index
 {
-    [self nuInsertObject:((anObject == nil) ? [NSNull null] : anObject) atIndex:index];
+    [self nuInsertObject:((anObject == nil) ? (id)[NSNull null] : anObject) atIndex:index];
 }
 
 - (void)nuReplaceObjectAtIndex:(int)index withObject:(id)anObject
 {
-    [self nuReplaceObjectAtIndex:index withObject:((anObject == nil) ? [NSNull null] : anObject)];
+    [self nuReplaceObjectAtIndex:index withObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
 }
 
 @end
@@ -60,7 +60,7 @@ limitations under the License.
 
 - (void)nuAddObject:(id)anObject
 {
-    [self nuAddObject:((anObject == nil) ? [NSNull null] : anObject)];
+    [self nuAddObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
 }
 
 @end

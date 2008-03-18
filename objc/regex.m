@@ -275,7 +275,7 @@ static NuRegex *backrefPattern;
                 }
                 // append the captured subpattern to ther replacement string
                 captured = [match groupAtIndex:idx];
-                [repBuffer appendString:captured ? captured : @""];
+                [repBuffer appendString:captured ? (id)captured : (id)@""];
                 // handle case modifier
             }
             else if (IS_CASE_MODIFIER(backref)) {
@@ -422,7 +422,7 @@ static NuRegex *backrefPattern;
 - (NSString *)groupAtIndex:(int)idx
 {
     NSRange r = [self rangeAtIndex:idx];
-    return r.location == NSNotFound ? nil : [string substringWithRange:r];
+    return r.location == NSNotFound ? (NSString *)nil : [string substringWithRange:r];
 }
 
 - (NSString *)groupNamed:(NSString *)name

@@ -17,6 +17,7 @@ limitations under the License.
 */
 #import "method.h"
 #import "st.h"
+#import "extensions.h"
 
 @implementation NuMethod
 
@@ -33,11 +34,11 @@ limitations under the License.
 
 - (NSString *) name
 {
-#ifdef DARWIN
+    #ifdef DARWIN
     return m ? [NSString stringWithCString:(sel_getName(method_getName(m))) encoding:NSUTF8StringEncoding] : [NSNull null];
-#else
-    return m ? [NSString stringWithCString:(sel_get_name(method_getName(m))) encoding:NSUTF8StringEncoding] : [NSNull null];
-#endif
+    #else
+    return m ? ((id)[NSString stringWithCString:(sel_get_name(method_getName(m))) encoding:NSUTF8StringEncoding]) : ((id)[NSNull null]);
+    #endif
 }
 
 - (int) argumentCount
@@ -67,11 +68,11 @@ limitations under the License.
         start = &start[step];
         len -= step;
     }
-#ifdef DARWIN
+    #ifdef DARWIN
     //  printf("%s %d %d %s\n", sel_getName(method_getName(m)), i, len, signature);
-#else
+    #else
     //  printf("%s %d %d %s\n", sel_get_name(method_getName(m)), i, len, signature);
-#endif
+    #endif
     id result = [NSString stringWithCString:signature encoding:NSUTF8StringEncoding];
     free(signature);
     return result;

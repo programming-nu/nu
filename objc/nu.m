@@ -82,7 +82,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
 
     #ifdef LINUX
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [NSProcessInfo initializeWithArguments:argv count:argc environment:envp];
+    [NSProcessInfo initializeWithArguments:(char **) argv count:argc environment:(char **) envp];
     #endif
 
     void NuInit();
@@ -193,9 +193,14 @@ int NuMain(int argc, const char *argv[], const char *envp[])
     #ifndef DARWIN
     NS_ENDHANDLER
         #endif
-        return 0;
+
+        #ifdef LINUX
+        [pool release];
+    #endif
+    return 0;
 }
 
+#ifdef DARWIN
 static void transplant_nu_methods(Class destination, Class source)
 {
     if (!nu_copyInstanceMethod(destination, source, @selector(evalWithArguments:context:)))
@@ -209,6 +214,7 @@ static void transplant_nu_methods(Class destination, Class source)
     if (!nu_copyInstanceMethod(destination, source, @selector(handleUnknownMessage:withContext:)))
         NSLog(@"method copy failed");
 }
+#endif
 
 void NuInit()
 {
@@ -216,11 +222,11 @@ void NuInit()
     if (!initialized) {
         initialized = 1;
 
-#ifdef DARWIN
+        #ifdef DARWIN
         // note known placeholder classes
         extern void nu_note_placeholders();
         nu_note_placeholders();
-#endif
+        #endif
 
         // check UTF8 support in PCRE
         void *pcre_query_result = 0;
@@ -362,7 +368,8 @@ id _nuregex(const char *pattern, int options)
                 #endif
             {
                 #ifndef DARWIN
-                id exception = localException;
+                //unused
+                //id exception = localException;
                 #endif
                 success = NO;
             }
