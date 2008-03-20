@@ -42,7 +42,8 @@
      
      (if (eq (uname) "Darwin")
          (- (id) testNSWorkspaceSingletonRemoval is
-            (assert_not_equal (NSWorkspace fullPathForApplication:"TextMate") nil)
+            ;; I'm almost positive that all Nubies on Macs will have Xcode installed.
+            (assert_not_equal (NSWorkspace fullPathForApplication:"Xcode") nil)
             (assert_equal ((NSWorkspace sharedWorkspace) notificationCenter) (NSWorkspace notificationCenter))
             (assert_equal ((NSWorkspace sharedWorkspace) activeApplication) (NSWorkspace activeApplication)))
          
