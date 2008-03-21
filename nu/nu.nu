@@ -62,16 +62,7 @@
                                          (if (eq label "action")
                                              (then (self setAction:value))
                                              (else (self setValue:value forKey:label))))))
-        self)
-     
-     ;; A C-style ternary operator. Deprecated, because unlike the C operator, all of its arguments are evaluated.
-     (- (id) ? (id) a : (id) b is
-        (unless $ternary_deprecation_warning_already
-                ;; The problem is that because it is a message,
-                ;; all its arguments are evaluated
-                (NSLog "The ternary operator is deprecated. Please don't use it.")
-                (set $ternary_deprecation_warning_already YES))
-        (if self (then a) (else b))))
+        self))
 
 (class NSArray
      

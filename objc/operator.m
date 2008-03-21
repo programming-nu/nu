@@ -289,7 +289,7 @@ static bool valueIsTrue(id value)
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     //id thenSymbol = [symbolTable symbolWithCString:"then"];
     id elseSymbol = [symbolTable symbolWithCString:"else"];
-    id elseifSymbol = [symbolTable symbolWithCString:"elseif"];
+    //id elseifSymbol = [symbolTable symbolWithCString:"elseif"];
 
     id result = Nu__null;
     id test = [[cdr car] evalWithContext:context];
@@ -301,7 +301,7 @@ static bool valueIsTrue(id value)
     while (expressions && (expressions != Nu__null)) {
         id nextExpression = [expressions car];
         if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
-            if ([nextExpression car] == elseifSymbol) {
+            /*if ([nextExpression car] == elseifSymbol) {
                 test = [[[[expressions car] cdr] car] evalWithContext:context];
                 testIsTrue = noneIsTrue && valueIsTrue(test);
                 noneIsTrue = noneIsTrue && !testIsTrue;
@@ -309,7 +309,8 @@ static bool valueIsTrue(id value)
                     // skip the test:
                     result = [[[nextExpression cdr] cdr] evalWithContext:context];
             }
-            else if ([nextExpression car] == elseSymbol) {
+            else */
+            if ([nextExpression car] == elseSymbol) {
                 if (noneIsTrue)
                     result = [nextExpression evalWithContext:context];
             }
@@ -319,13 +320,14 @@ static bool valueIsTrue(id value)
             }
         }
         else {
-            if (nextExpression == elseifSymbol) {
+            /*if (nextExpression == elseifSymbol) {
                 test = [[[expressions cdr] car] evalWithContext:context];
                 testIsTrue = noneIsTrue && valueIsTrue(test);
                 noneIsTrue = noneIsTrue && !testIsTrue;
                 expressions = [expressions cdr];            // skip the test
             }
-            else if (nextExpression == elseSymbol) {
+            else */
+            if (nextExpression == elseSymbol) {
                 testIsTrue = noneIsTrue;
                 noneIsTrue = NO;
             }

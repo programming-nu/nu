@@ -21,21 +21,6 @@
           (assert_equal 3 (+ 1 1 -5 6))
           (assert_equal "hello, world" (+ "hello" "," " " "world")))
      
-     ;; Our "ternary operator" is really a method and not an operator, but I think it belongs here anyway.
-     (imethod (id) dontTestTheDeprecatedTernaryOperator is
-          (assert_equal "no" (nil ? "yes" : "no"))
-          (assert_equal "no" (() ? "yes" : "no")) 
-          (assert_equal "no" (0 ? "yes" : "no"))
-          (assert_equal "yes" (t ? "yes" : "no"))
-          (assert_equal "yes" ('(a b c) ? "yes" : "no"))
-          (assert_equal "yes" (1 ? "yes" : "no"))
-          (assert_equal "yes" ((== 4 (+ 2 2)) ? "yes" : "no"))
-          (assert_equal "no" ((== 4 (+ 2 2 2)) ? "yes" : "no"))
-          (set x 1) 
-          (assert_equal "one" ((== x 0) ? "zero" : ((== x 1) ? "one" : "many")))
-          (set x 2) 
-          (assert_equal "many" ((== x 0) ? "zero" : ((== x 1) ? "one" : "many"))))
-     
      ;; turn this off by default; it's a good test, but it requires manual intervention
      (imethod (id) dontTestTheGetsOperator is
           (assert_not_equal nil gets)
@@ -43,145 +28,147 @@
           (assert_equal (gets) ""))
      
      (imethod (id) testIfOperator is
-         (set x 0)
-         (assert_equal 'yes (if t 'yes))
-         (assert_equal 'yes (if t (set x 1) 'yes))
-         (assert_equal x 1)
-         (assert_equal 'yes (if t 'yes (else (set x 'error))))
-         (assert_equal x 1)
-         (assert_equal 'yes (if t (then 'yes)))
-         (assert_equal 'yes (if t (then (set x 2) 'yes)))
-         (assert_equal x 2)
-         (assert_equal 'yes (if t (then 'yes) (else (set x 'error))))
-         (assert_equal x 2)
-         (assert_equal 'no (if nil (else 'no)))
-         (assert_equal 'no (if nil (else (set x 3) 'no)))
-         (assert_equal x 3)
-         (assert_equal 'no (if nil (set x 'error) (else 'no)))
-         (assert_equal x 3)
-         (assert_equal 'no (if nil (then (set x 'error)) (else 'no)))
-         (assert_equal x 3))
+          (set x 0)
+          (assert_equal 'yes (if t 'yes))
+          (assert_equal 'yes (if t (set x 1) 'yes))
+          (assert_equal x 1)
+          (assert_equal 'yes (if t 'yes (else (set x 'error))))
+          (assert_equal x 1)
+          (assert_equal 'yes (if t (then 'yes)))
+          (assert_equal 'yes (if t (then (set x 2) 'yes)))
+          (assert_equal x 2)
+          (assert_equal 'yes (if t (then 'yes) (else (set x 'error))))
+          (assert_equal x 2)
+          (assert_equal 'no (if nil (else 'no)))
+          (assert_equal 'no (if nil (else (set x 3) 'no)))
+          (assert_equal x 3)
+          (assert_equal 'no (if nil (set x 'error) (else 'no)))
+          (assert_equal x 3)
+          (assert_equal 'no (if nil (then (set x 'error)) (else 'no)))
+          (assert_equal x 3))
      
      (imethod (id) testIfSugaredOperator is
-         (set x 0)
-         (assert_equal 'yes (if t then 'yes))
-         (assert_equal 'yes (if t then (set x 1) 'yes))
-         (assert_equal x 1)
-         (assert_equal 'yes (if t then 'yes else (set x 'error)))
-         (assert_equal x 1)
-         (assert_equal 'yes (if t then 'yes (else (set x 'error))))
-         (assert_equal x 1)
-         (assert_equal 'no (if nil else 'no))
-         (assert_equal 'no (if nil else (set x 2) 'no))
-         (assert_equal x 2)
-         (assert_equal 'no (if nil (set x 'error) else 'no))
-         (assert_equal x 2)
-         (assert_equal 'no (if nil then (set x 'error) else 'no))
-         (assert_equal x 2)
-         (assert_equal 'no (if nil (then (set x 'error)) else 'no))
-         (assert_equal x 2))
-     
-     (imethod (id) testIfElseifOperator is
-         (set x 1)
-         (set y 'true)
-         (assert_equal 'one (if (eq x 0) 'none
-                                elseif (eq x 1) 'one
-                                else 'many))
-         (assert_equal 'one (if (eq x 0) 'none
-                                elseif (eq x 2) 'two
-                                elseif (eq x 1) 'one
-                                else 'more))
-         (assert_equal 'one (if (eq x 0) (set y 'none)
-                                elseif (eq x 1) 'one
-                                else (set y 'many)))
-         (assert_equal y 'true)
-         (assert_equal 'one (if (eq x 0) (set y 'none)
-                                elseif (eq x 2) (set y 'two)
-                                elseif (eq x 1) 'one
-                                else (set y 'more)))
-         (assert_equal y 'true)
-         (assert_equal 'one (if (eq x 0) 'none
-                                elseif (eq x 1)
-                                    (set y 'one)
-                                    'one
-                                else 'many))
-         (assert_equal y 'one)
-         (assert_equal 'one (if (eq x 0) 'none
-                                elseif (eq x 2) 'two
-                                elseif (eq x 1)
-                                    (set y 'two)
-                                    'one
-                                else 'more))
-         (assert_equal y 'two))
+          (set x 0)
+          (assert_equal 'yes (if t then 'yes))
+          (assert_equal 'yes (if t then (set x 1) 'yes))
+          (assert_equal x 1)
+          (assert_equal 'yes (if t then 'yes else (set x 'error)))
+          (assert_equal x 1)
+          (assert_equal 'yes (if t then 'yes (else (set x 'error))))
+          (assert_equal x 1)
+          (assert_equal 'no (if nil else 'no))
+          (assert_equal 'no (if nil else (set x 2) 'no))
+          (assert_equal x 2)
+          (assert_equal 'no (if nil (set x 'error) else 'no))
+          (assert_equal x 2)
+          (assert_equal 'no (if nil then (set x 'error) else 'no))
+          (assert_equal x 2)
+          (assert_equal 'no (if nil (then (set x 'error)) else 'no))
+          (assert_equal x 2))
      
      (imethod (id) testUnlessOperator is
-         (set x 0)
-         (assert_equal 'yes (unless nil 'yes))
-         (assert_equal 'yes (unless nil (set x 1) 'yes))
-         (assert_equal x 1)
-         (assert_equal 'yes (unless nil 'yes (else (set x 'error))))
-         (assert_equal x 1)
-         (assert_equal 'yes (unless nil (then 'yes)))
-         (assert_equal 'yes (unless nil (then (set x 2) 'yes)))
-         (assert_equal x 2)
-         (assert_equal 'yes (unless nil (then 'yes) (else (set x 'error))))
-         (assert_equal x 2)
-         (assert_equal 'no (unless t (else 'no)))
-         (assert_equal 'no (unless t (else (set x 3) 'no)))
-         (assert_equal x 3)
-         (assert_equal 'no (unless t (set x 'error) (else 'no)))
-         (assert_equal x 3)
-         (assert_equal 'no (unless t (then (set x 'error)) (else 'no)))
-         (assert_equal x 3))
+          (set x 0)
+          (assert_equal 'yes (unless nil 'yes))
+          (assert_equal 'yes (unless nil (set x 1) 'yes))
+          (assert_equal x 1)
+          (assert_equal 'yes (unless nil 'yes (else (set x 'error))))
+          (assert_equal x 1)
+          (assert_equal 'yes (unless nil (then 'yes)))
+          (assert_equal 'yes (unless nil (then (set x 2) 'yes)))
+          (assert_equal x 2)
+          (assert_equal 'yes (unless nil (then 'yes) (else (set x 'error))))
+          (assert_equal x 2)
+          (assert_equal 'no (unless t (else 'no)))
+          (assert_equal 'no (unless t (else (set x 3) 'no)))
+          (assert_equal x 3)
+          (assert_equal 'no (unless t (set x 'error) (else 'no)))
+          (assert_equal x 3)
+          (assert_equal 'no (unless t (then (set x 'error)) (else 'no)))
+          (assert_equal x 3))
      
      (imethod (id) testUnlessSugaredOperator is
-         (set x 0)
-         (assert_equal 'yes (unless nil then 'yes))
-         (assert_equal 'yes (unless nil then (set x 1) 'yes))
-         (assert_equal x 1)
-         (assert_equal 'yes (unless nil then 'yes else (set x 'error)))
-         (assert_equal x 1)
-         (assert_equal 'yes (unless nil then 'yes (else (set x 'error))))
-         (assert_equal x 1)
-         (assert_equal 'no (unless t else 'no))
-         (assert_equal 'no (unless t else (set x 2) 'no))
-         (assert_equal x 2)
-         (assert_equal 'no (unless t (set x 'error) else 'no))
-         (assert_equal x 2)
-         (assert_equal 'no (unless t then (set x 'error) else 'no))
-         (assert_equal x 2)
-         (assert_equal 'no (unless t (then (set x 'error)) else 'no))
-         (assert_equal x 2))
+          (set x 0)
+          (assert_equal 'yes (unless nil then 'yes))
+          (assert_equal 'yes (unless nil then (set x 1) 'yes))
+          (assert_equal x 1)
+          (assert_equal 'yes (unless nil then 'yes else (set x 'error)))
+          (assert_equal x 1)
+          (assert_equal 'yes (unless nil then 'yes (else (set x 'error))))
+          (assert_equal x 1)
+          (assert_equal 'no (unless t else 'no))
+          (assert_equal 'no (unless t else (set x 2) 'no))
+          (assert_equal x 2)
+          (assert_equal 'no (unless t (set x 'error) else 'no))
+          (assert_equal x 2)
+          (assert_equal 'no (unless t then (set x 'error) else 'no))
+          (assert_equal x 2)
+          (assert_equal 'no (unless t (then (set x 'error)) else 'no))
+          (assert_equal x 2))
      
-     (imethod (id) testUnlessElseifOperator is
-         (set x 1)
-         (set y 'true)
-         (assert_equal 'one (unless ((not (eq x 0))) 'none
-                                elseif (eq x 1) 'one
-                                else 'many))
-         (assert_equal 'one (unless ((not (eq x 0))) 'none
-                                elseif (eq x 2) 'two
-                                elseif (eq x 1) 'one
-                                else 'more))
-         (assert_equal 'one (unless ((not (eq x 0))) (set y 'none)
-                                elseif (eq x 1) 'one
-                                else (set y 'many)))
-         (assert_equal y 'true)
-         (assert_equal 'one (unless ((not (eq x 0))) (set y 'none)
-                                elseif (eq x 2) (set y 'two)
-                                elseif (eq x 1) 'one
-                                else (set y 'more)))
-         (assert_equal y 'true)
-         (assert_equal 'one (unless ((not (eq x 0))) 'none
-                                elseif (eq x 1)
-                                    (set y 'one)
-                                    'one
-                                else 'many))
-         (assert_equal y 'one)
-         (assert_equal 'one (unless ((not (eq x 0))) 'none
-                                elseif (eq x 2) 'two
-                                elseif (eq x 1)
-                                    (set y 'two)
-                                    'one
-                                else 'more))
-         (assert_equal y 'two)))
+     ;; support for elseif was removed because elseif is easily confused with elif (Python)
+     ;; and elsif (Ruby), etc. and because cond does the job anyway.     
+     (imethod (id) dontTestIfElseifOperator is
+          (set x 1)
+          (set y 'true)
+          (assert_equal 'one (if (eq x 0) 'none
+                                 elseif (eq x 1) 'one
+                                 else 'many))
+          (assert_equal 'one (if (eq x 0) 'none
+                                 elseif (eq x 2) 'two
+                                 elseif (eq x 1) 'one
+                                 else 'more))
+          (assert_equal 'one (if (eq x 0) (set y 'none)
+                                 elseif (eq x 1) 'one
+                                 else (set y 'many)))
+          (assert_equal y 'true)
+          (assert_equal 'one (if (eq x 0) (set y 'none)
+                                 elseif (eq x 2) (set y 'two)
+                                 elseif (eq x 1) 'one
+                                 else (set y 'more)))
+          (assert_equal y 'true)
+          (assert_equal 'one (if (eq x 0) 'none
+                                 elseif (eq x 1)
+                                 (set y 'one)
+                                 'one
+                                 else 'many))
+          (assert_equal y 'one)
+          (assert_equal 'one (if (eq x 0) 'none
+                                 elseif (eq x 2) 'two
+                                 elseif (eq x 1)
+                                 (set y 'two)
+                                 'one
+                                 else 'more))
+          (assert_equal y 'two))
+     
+     (imethod (id) dontTestUnlessElseifOperator is
+          (set x 1)
+          (set y 'true)
+          (assert_equal 'one (unless ((not (eq x 0))) 'none
+                                     elseif (eq x 1) 'one
+                                     else 'many))
+          (assert_equal 'one (unless ((not (eq x 0))) 'none
+                                     elseif (eq x 2) 'two
+                                     elseif (eq x 1) 'one
+                                     else 'more))
+          (assert_equal 'one (unless ((not (eq x 0))) (set y 'none)
+                                     elseif (eq x 1) 'one
+                                     else (set y 'many)))
+          (assert_equal y 'true)
+          (assert_equal 'one (unless ((not (eq x 0))) (set y 'none)
+                                     elseif (eq x 2) (set y 'two)
+                                     elseif (eq x 1) 'one
+                                     else (set y 'more)))
+          (assert_equal y 'true)
+          (assert_equal 'one (unless ((not (eq x 0))) 'none
+                                     elseif (eq x 1)
+                                     (set y 'one)
+                                     'one
+                                     else 'many))
+          (assert_equal y 'one)
+          (assert_equal 'one (unless ((not (eq x 0))) 'none
+                                     elseif (eq x 2) 'two
+                                     elseif (eq x 1)
+                                     (set y 'two)
+                                     'one
+                                     else 'more))
+          (assert_equal y 'two)))
