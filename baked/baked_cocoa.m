@@ -332,13 +332,5 @@ _nucell(_nucell(_nusymbol((const char[]){103,108,111,98,97,108,0}),
 _nucell(_nusymbol((const char[]){78,83,79,114,100,101,114,101,100,68,101,115,99,101,110,100,105,110,103,0}),
 _nucell(_nunumberd(1),
 _nunull()))),
-_nucell(_nucell(_nusymbol((const char[]){103,108,111,98,97,108,0}),
-_nucell(_nusymbol((const char[]){78,79,0}),
-_nucell(_nunumberd(0),
-_nunull()))),
-_nucell(_nucell(_nusymbol((const char[]){103,108,111,98,97,108,0}),
-_nucell(_nusymbol((const char[]){89,69,83,0}),
-_nucell(_nunumberd(1),
-_nunull()))),
-_nunull()))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
+_nunull()))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));
 }
