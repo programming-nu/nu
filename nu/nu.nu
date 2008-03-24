@@ -72,17 +72,7 @@
      
      ;; Convert an array into a list.
      (- (id) list is
-        (self reduceLeft:(do (result item) (cons item result)) from: nil))
-     
-     ;; When an unknown message is received by an array,
-     ;; if it is an integer, treat it as a call to objectAtIndex:.
-     (- (id) handleUnknownMessage:(id) method withContext:(id) context is
-        (let ((m ((method car) evalWithContext:context)))
-             (if (m isKindOfClass:NSNumber)
-                 (then (if (and (< m (self count)) (>= m 0))
-                           (then (self objectAtIndex:m))
-                           (else nil)))
-                 (else (super handleUnknownMessage:method withContext:context))))))
+        (self reduceLeft:(do (result item) (cons item result)) from: nil)))
 
 (class NSMutableArray
      
@@ -95,13 +85,6 @@
      (- (void) << (id) object is (self addObject:object)))
 
 (class NSDictionary
-     
-     ;; When an unknown message is received by a dictionary,
-     ;; treat it as a call to objectForKey:.
-     (- (id) handleUnknownMessage:(id) method withContext:(id) context is
-        (if (eq (method length) 1)
-            (then (self objectForKey:((method car) evalWithContext: context)))
-            (else (super handleUnknownMessage:method withContext:context))))
      
      ;; Iterate over the key-object pairs in a dictionary. Pass it a block with two arguments: (key object).
      (- (id) each:(id) block is

@@ -22,6 +22,7 @@ limitations under the License.
 #import "block.h"
 #import "class.h"
 #import "parser.h"
+#import "object.h"
 #import "objc_runtime.h"
 #import <stdlib.h>
 #import <math.h>
@@ -70,6 +71,24 @@ extern id Nu__null;
     return a;
 }
 
+// When an unknown message is received by an array, treat it as a call to objectAtIndex:
+- (id) handleUnknownMessage:(NuCell *) method withContext:(NSMutableDictionary *) context
+{
+    id m = [[method car] evalWithContext:context];
+    if ([m isKindOfClass:[NSNumber class]]) {
+        int mm = [m intValue];
+        if ((mm < [self count]) && (mm >= 0)) {
+            return [self objectAtIndex:mm];
+        }
+        else {
+            return nil;
+        }
+    }
+    else {
+        return [super handleUnknownMessage:method withContext:context];
+    }
+}
+
 @end
 
 @implementation NSSet(Nu)
@@ -109,6 +128,17 @@ extern id Nu__null;
 {
     id value = [self objectForKey:key];
     return value ? value : defaultValue;
+}
+
+// When an unknown message is received by a dictionary, treat it as a call to objectForKey:
+- (id) handleUnknownMessage:(NuCell *) method withContext:(NSMutableDictionary *) context
+{
+    if ([method length] == 1) {
+        return [self objectForKey:[[method car] evalWithContext: context]];
+    }
+    else {
+        return [super handleUnknownMessage:method withContext:context];
+    }
 }
 
 @end
@@ -182,15 +212,15 @@ extern id Nu__null;
 {
     NSTask *task = [NSTask new];
     [task setLaunchPath:@"/bin/sh"];
-#ifdef DARWIN
+    #ifdef DARWIN
     NSPipe *input = [NSPipe new];
     [task setStandardInput:input];
     NSPipe *output = [NSPipe new];
-#else
+    #else
     NSPipe *input = [NSPipe pipe];
     [task setStandardInput:input];
     NSPipe *output = [NSPipe pipe];
-#endif
+    #endif
     [task setStandardOutput:output];
     [task launch];
     [[input fileHandleForWriting] writeData:[command dataUsingEncoding:NSUTF8StringEncoding]];
@@ -218,11 +248,11 @@ extern id Nu__null;
 
 + (NSString *) stringWithCharacter:(unichar) c
 {
-#ifdef DARWIN
+    #ifdef DARWIN
     return [self stringWithFormat:@"%C", c];
-#else
-   return [self stringWithFormat:@"%c", (char ) c];
-#endif
+    #else
+    return [self stringWithFormat:@"%c", (char ) c];
+    #endif
 }
 
 #ifdef LINUX
@@ -241,11 +271,11 @@ extern id Nu__null;
 @implementation NSMutableString(Nu)
 - (void) appendCharacter:(unichar) c
 {
-#ifdef DARWIN
+    #ifdef DARWIN
     [self appendFormat:@"%C", c];
-#else
+    #else
     [self appendFormat:@"%c", (char) c];
-#endif
+    #endif
 }
 
 @end
@@ -464,7 +494,7 @@ extern id Nu__null;
 
 - (NSString *) typeString
 {
-#ifdef DARWIN
+    #ifdef DARWIN
     // in 10.5, we can do this:
     // return [self _typeString];
     NSMutableString *result = [NSMutableString stringWithFormat:@"%s", [self methodReturnType]];
@@ -474,9 +504,9 @@ extern id Nu__null;
         [result appendFormat:@"%s", [self getArgumentTypeAtIndex:i]];
     }
     return result;
-#else
+    #else
     return [NSString stringWithCString:types];
-#endif
+    #endif
 }
 
 @end
