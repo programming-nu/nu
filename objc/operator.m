@@ -857,9 +857,16 @@ static bool valueIsTrue(id value)
     id cursor = cdr;
     double sum = [[[cursor car] evalWithContext:context] doubleValue];
     cursor = [cursor cdr];
-    while (cursor && (cursor != Nu__null)) {
-        sum -= [[[cursor car] evalWithContext:context] doubleValue];
-        cursor = [cursor cdr];
+    if (!cursor || (cursor == Nu__null)) {
+        // if there is just one operand, negate it
+        sum = -sum;
+    }
+    else {
+        // otherwise, subtract all the remaining operands from the first one
+        while (cursor && (cursor != Nu__null)) {
+            sum -= [[[cursor car] evalWithContext:context] doubleValue];
+            cursor = [cursor cdr];
+        }
     }
     return [NSNumber numberWithDouble:sum];
 }

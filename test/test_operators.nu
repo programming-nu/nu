@@ -21,6 +21,10 @@
           (assert_equal 3 (+ 1 1 -5 6))
           (assert_equal "hello, world" (+ "hello" "," " " "world")))
      
+     (imethod (id) testSubtractOperator is
+          (assert_equal -3 (- 3))
+          (assert_equal 1 (- 4 2 1)))
+     
      ;; turn this off by default; it's a good test, but it requires manual intervention
      (imethod (id) dontTestTheGetsOperator is
           (assert_not_equal nil gets)
@@ -106,7 +110,7 @@
           (assert_equal x 2))
      
      ;; support for elseif was removed because elseif is easily confused with elif (Python)
-     ;; and elsif (Ruby), etc. and because cond does the job anyway.     
+     ;; and elsif (Ruby), etc. and because cond does the job anyway.
      (imethod (id) dontTestIfElseifOperator is
           (set x 1)
           (set y 'true)
