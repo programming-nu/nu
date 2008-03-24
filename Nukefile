@@ -83,53 +83,53 @@ END)
            (else "")))
 
 (ifDarwin
-    (then (set @cflags "-Wall -g -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
-          (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
-    (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
-          (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")))
+         (then (set @cflags "-Wall -g -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
+               (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
+         (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
+               (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")))
 
 (ifDarwin
-    (then (set @arch '("ppc" "i386")))) ;; build a universal binary
+         (then (set @arch '("ppc" "i386")))) ;; build a universal binary
 
 ;; or set this to just build for your chosen platform
 ;; (set @arch '("i386"))
 
 (ifDarwin
-    (then (set @ldflags
-               ((list
-                     (cond  ;; statically link in pcre since most people won't have it..
-                            ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") ("#{@prefix}/lib/libpcre.a"))
-                            (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
-                     ((@frameworks map: (do (framework) " -framework #{framework}")) join)
-                     ((@libs map: (do (lib) " -l#{lib}")) join)
-                     ((@lib_dirs map: (do (libdir) " -L#{libdir}")) join))
-                join)))
-    (else (set @ldflags
-               ((list
-                     "-lNuFound -L/usr/local/lib -lobjc -Wl,--rpath -Wl,/usr/local/lib"
-                     (cond  ;; statically link in pcre since most people won't have it..
-                            ((NSFileManager fileExistsNamed:"/usr/lib/libpcre.a") "/usr/lib/libpcre.a")
-                            ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") ("#{@prefix}/lib/libpcre.a"))
-                            (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
-                     ((@frameworks map: (do (framework) " -framework #{framework}")) join)
-                     ((@libs map: (do (lib) " -l#{lib}")) join))
-                join))))
+         (then (set @ldflags
+                    ((list
+                          (cond  ;; statically link in pcre since most people won't have it..
+                                 ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") ("#{@prefix}/lib/libpcre.a"))
+                                 (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
+                          ((@frameworks map: (do (framework) " -framework #{framework}")) join)
+                          ((@libs map: (do (lib) " -l#{lib}")) join)
+                          ((@lib_dirs map: (do (libdir) " -L#{libdir}")) join))
+                     join)))
+         (else (set @ldflags
+                    ((list
+                          "-lNuFound -L/usr/local/lib -lobjc -Wl,--rpath -Wl,/usr/local/lib"
+                          (cond  ;; statically link in pcre since most people won't have it..
+                                 ((NSFileManager fileExistsNamed:"/usr/lib/libpcre.a") "/usr/lib/libpcre.a")
+                                 ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") ("#{@prefix}/lib/libpcre.a"))
+                                 (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
+                          ((@frameworks map: (do (framework) " -framework #{framework}")) join)
+                          ((@libs map: (do (lib) " -l#{lib}")) join))
+                     join))))
 ;; Setup the tasks for compilation and framework-building.
 ;; These are defined in the nuke application source file.
 (compilation-tasks)
 (ifDarwin
-    (then (framework-tasks))
-    (else (dylib-tasks)))
+         (then (framework-tasks))
+         (else (dylib-tasks)))
 
 (task "framework" => "#{@framework_headers_dir}/Nu.h")
 
 (ifDarwin
-    (file "#{@framework_headers_dir}/Nu.h" => "objc/Nu.h" @framework_headers_dir is
-          (SH "cp include/Nu/Nu.h #{@framework_headers_dir}")))
+         (file "#{@framework_headers_dir}/Nu.h" => "objc/Nu.h" @framework_headers_dir is
+               (SH "cp include/Nu/Nu.h #{@framework_headers_dir}")))
 
 (task "clobber" => "clean" is
       (ifDarwin
-          (SH "rm -rf nush #{@framework_dir} doc"))
+               (SH "rm -rf nush #{@framework_dir} doc"))
       ((filelist "^examples/[^/]*$") each:
        (do (example-dir)
            (puts example-dir)
@@ -141,17 +141,17 @@ END)
            (set nush_thin_binary "build/#{architecture}/nush")
            (nush_thin_binaries addObject:nush_thin_binary)
            (ifDarwin
-               (then
-                    (file nush_thin_binary => "framework" "build/#{architecture}/main.o" is
-                          (SH "#{@cc} #{@cflags} #{@mflags} main/main.m -arch #{architecture} -F. -framework Nu #{@ldflags} -o #{(target name)}")))
-               (else
-                    (file nush_thin_binary => "dylib" (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                          (SH "#{@cc} #{@cflags} #{@mflags} main/main.m #{@library_executable_name} #{@ldflags} -o #{(target name)}"))))))
+                    (then
+                         (file nush_thin_binary => "framework" "build/#{architecture}/main.o" is
+                               (SH "#{@cc} #{@cflags} #{@mflags} main/main.m -arch #{architecture} -F. -framework Nu #{@ldflags} -o #{(target name)}")))
+                    (else
+                         (file nush_thin_binary => "dylib" (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                               (SH "#{@cc} #{@cflags} #{@mflags} main/main.m #{@library_executable_name} #{@ldflags} -o #{(target name)}"))))))
 
 (file "nush" => "framework" nush_thin_binaries is
       (ifDarwin
-          (then (SH "lipo -create #{(nush_thin_binaries join)} -output #{(target name)}"))
-          (else (SH "cp '#{(nush_thin_binaries objectAtIndex:0)}' '#{(target name)}'"))))
+               (then (SH "lipo -create #{(nush_thin_binaries join)} -output #{(target name)}"))
+               (else (SH "cp '#{(nush_thin_binaries objectAtIndex:0)}' '#{(target name)}'"))))
 
 ;; These tests were the first sanity tests for Nu. They require RubyObjC.
 (task "test.rb" => "framework" is
@@ -180,9 +180,9 @@ END)
             (SH "sudo cp tools/#{program} #{@installprefix}/bin")))
       (SH "sudo cp nush #{@installprefix}/bin")
       (ifDarwin
-          ;; install the framework
-          (SH "sudo rm -rf #{@destdir}/Library/Frameworks/#{@framework}.framework")
-          (SH "ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
+               ;; install the framework
+               (SH "sudo rm -rf #{@destdir}/Library/Frameworks/#{@framework}.framework")
+               (SH "ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
       (if (eq (uname) "Linux")
           ;; install the dynamic library
           (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib")
@@ -193,7 +193,7 @@ END)
       (SH "sudo rm -rf #{@installprefix}/share/nu")
       (SH "sudo cp -rp share/nu #{@installprefix}/share/nu")
       (ifDarwin
-          (SH "sudo ditto examples #{@installprefix}/share/nu/examples")))
+               (SH "sudo ditto examples #{@installprefix}/share/nu/examples")))
 
 ;; Build a disk image for distributing the framework.
 (task "framework_image" => "framework" is
@@ -228,6 +228,13 @@ END)
 
 ;; alias for installer task
 (task "dmg" => "installer")
+
+;; Create a tgz file of the Nu sources.
+(task "archive" is
+      (SH <<-END
+git-archive --format=tar --prefix=Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}/ HEAD |\
+gzip -c > Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}.tgz
+END))
 
 ;; "Bake" nu source files into compilable Objective-C files.
 (task "bake" is
