@@ -133,6 +133,18 @@ limitations under the License.
     return [cursor car];
 }
 
+// When an unknown message is received by a cell, treat it as a call to objectAtIndex:
+- (id) handleUnknownMessage:(NuCell *) method withContext:(NSMutableDictionary *) context
+{
+    id m = [[method car] evalWithContext:context];
+    if ([m isKindOfClass:[NSNumber class]]) {
+        return [self objectAtIndex:[m intValue]];
+    }
+    else {
+        return [super handleUnknownMessage:method withContext:context];
+    }
+}
+
 - (id) lastObject
 {
     id cursor = self;
