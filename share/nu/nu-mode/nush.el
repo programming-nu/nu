@@ -21,6 +21,10 @@
 ;; 8/88
 
 ;; History:
+;; 2008-03-22 Aleksandr Skobelev
+;;    - set COMINT-PROCESS-ECHOES to T
+;;    - changed NUSH-SEND-REGION to not send additional "\n"
+
 ;; 2008-02-11 Aleksandr Skobelev
 ;;    Initial version released
 
@@ -44,7 +48,7 @@
   :type 'string
   :group 'nush)
 
-(defconst nush-version "2008-02-11"
+(defconst nush-version "2008-02-21"
   "Nush Mode version number.")
 
 
@@ -132,9 +136,10 @@ Paragraphs are separated only by blank lines.  Semicolons start comments.
 If you accidentally suspend your process, use \\[comint-continue-subjob]
 to continue it."
   ;; Customize in inferior-nush-mode-hook
-  (setq comint-prompt-regexp "^[^%\n]*%+ *")
+  (setq comint-prompt-regexp "^\\([%-] \\)+")
   
   (nu-mode-variables)
+  (set-local 'comint-process-echoes t)
   (setq mode-line-process '(":%s"))
   (setq comint-input-filter (function nush-input-filter))
   (setq comint-get-old-input (function nush-get-old-input)))
@@ -208,8 +213,14 @@ order.  Return nil if no start file found."
 (defun nush-send-region (start end)
   "Send the current region to the inferior Nush process."
   (interactive "r")
+;;   (save-match-data
+;;     (let ((lines (split-string (buffer-substring start end) "\n")))
+;;       (dolist (line lines)
+;;         (comint-send-string (nush-proc) (concat line "\n"))
+;;         )))
   (comint-send-region (nush-proc) start end)
-  (comint-send-string (nush-proc) "\n"))
+;;   (comint-send-string (nush-proc) "\n")
+  )
 
 (defun nush-send-definition ()
   "Send the current definition to the inferior Nush process."

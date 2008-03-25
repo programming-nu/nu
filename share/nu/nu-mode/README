@@ -15,9 +15,9 @@ activate them for NU-MODE:
 
 
 The hook for paredit-mode must be appended, not prepended, to the mode hook
-list, as it is usually by default. This is because the 'heredoc' strings syntax
-support is made with help of the syntactic fontification API, and the mode
-itself adds a hook to properly fontificate 'heredoc' strings through the whole
-buffer.
+list, as it is usually done by default. This is because the 'heredoc' strings
+syntax support is made with help of the syntactic fontification API, and the
+mode itself adds a hook to properly fontificate 'heredoc' strings through the
+whole buffer when entering nu-mode.
 
 This is still an alpha version, that only has been tested under GNU Emacs 22.1.1. 

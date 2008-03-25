@@ -26,7 +26,10 @@
 ;; at gmail.com.
 
 ;;; History:
-
+;; 2008-03-22 Aleksandr Skobelev
+;;    - Updated 'heredoc' strings handling; added NU-FIND-TAG-DEFAULT function to
+;;      correctly select method keywords in FIND-TAG command
+;;
 ;; 2008-03-16 Aleksandr Skobelev
 ;;    - Added support for 'heredoc' strings (based on font-lock-syntactic-keywords);
 ;;      more font-lock keywords; keywords are indented by column now.
@@ -50,7 +53,7 @@
 
 (autoload 'run-nush "nush" "Run an inferior Nush process." t)
 
-(defconst nu-version "2008-03-16"
+(defconst nu-version "2008-03-21"
   "Nu Mode version number.")
 
 (defgroup nu nil
@@ -131,9 +134,12 @@ See `run-hooks'."
 
 (defun set-local (var val) (set (make-local-variable var) val))
 
-(defvar nu-heredoc-beg-re "\\(<<[+-]\\)\\(\\(?:\\w\\|\\s_\\)+\\)\\(\n\\)")
-(defvar nu-heredoc-re "\\(<<[+-]\\)\\(\\(?:\\w\\|\\s_\\)+\\)\\(\n\\)\\(\\(?:\n\\|^\\|\\([][{}\"#()?]\\)\\|.\\)*?\\(\n\\|^\\|.\\)\\)\\(\\2\\)\\>")
-
+(defvar nu-heredoc-beg-re "<<[+-]\\(\\(?:\\w\\|\\s_\\)+\\)\\(\n\\)?")
+;;                                 1                        2
+(defvar nu-heredoc-re
+  "<<[+-]\\(\\(?:\\w\\|\\s_\\)+?\\)\\(?:\\(?:\\(\n\\)\\(\n\\|\\([][{}\"#()?]\\)\\|.\\)+?\\)\\|\\(?:\n\\)\\)\\(\\1\\>\\)")
+;;         1                                   2       3       4                                             5
+                      
 
 (defun nu-mode-variables ()
 
@@ -144,7 +150,7 @@ See `run-hooks'."
   (set-local 'forward-sexp-function 'nu-forward-sexp)
   (set-local 'lisp-indent-function 'nu-indent-line)
   (set-local 'indent-line-function 'lisp-indent-line)
-
+  (set-local 'find-tag-default-function 'nu-find-tag-default)
   (set-local 'font-lock-multiline t)
   (set-local 'font-lock-defaults
              `((nu-font-lock-keywords)
@@ -152,9 +158,12 @@ See `run-hooks'."
                nil
                (("+-*/.<>=!?@$%_&~^:" . "w"))
                beginning-of-defun
-               (font-lock-syntactic-keywords . ((,nu-heredoc-re  (3 "|")
-                                                                 (5 ".")
-                                                                 (6 "|"))))
+               (font-lock-syntactic-keywords . ((,nu-heredoc-re (2 "|" t t)
+                                                                (4 "." keep t)
+                                                                (3 "|" t t))
+                                                
+                                                ;(,nu-heredoc-beg-re (2 "|" t t))
+                                                ))
                ))
   
   (set-local 'outline-regexp ";;; \\|(....")
@@ -171,7 +180,6 @@ See `run-hooks'."
 
     (set-keymap-parent smap lisp-mode-shared-map)
     (define-key smap "\e\C-q" 'nu-indent-sexp)
-
     (define-key smap [menu-bar nu] (cons "Nu" map))
     (define-key map [run-nush] '("Run Inferior Nush" . run-nush))
     (define-key map [uncomment-region]
@@ -194,7 +202,7 @@ See `run-hooks'."
 ;;;###autoload
 (defun nu-mode ()
   "Major mode for editing Nu code.
-Rest of the documentation goes here."
+\\{nu-mode-map}."
   (interactive)
   (kill-all-local-variables)
   (use-local-map nu-mode-map)
@@ -238,7 +246,7 @@ Rest of the documentation goes here."
               "function" "do" "macro"
 
               ;; Classes and Methods
-              "class" "imethod" "cmethod" "ivar" "ivar-accessors" "is" "self"
+              "class" "imethod" "cmethod" "ivar" "ivars" "ivar-accessors" "is" "self" "super"
 
               ;; Exception Handling Operators
               "try" "catch" "throw"
@@ -277,11 +285,18 @@ Rest of the documentation goes here."
     ;; FUNCIONS
     '("^\\s *(\\s *\\(function\\|macro\\)\\s +\\([^( \t\n]+\\)"
       2 font-lock-function-name-face keep)
-    '("(\\s *\\(set\\|global\\)\\s *\\(\\(\\w\\|\\s_\\)+\\)[ \t\n]\\([ \t\n]*\\([;#].*[\n]\\)*[ \t\n]*\\)(\\(NuBridgedFunction\\|do\\)\\>"
+    '("(\\s *\\(set\\|global\\)[ \t\n]+\\(\\(\\w\\|\\s_\\)+\\)[ \t\n]\\([ \t\n]*\\([;#].*[\n]\\)*[ \t\n]*\\)(\\(NuBridgedFunction\\|do\\)\\>"
       2 font-lock-function-name-face keep)
 
     ;; CLASS DECLARATIONS
-    '("^\\s *(\\s *class\\s +\\(\\(?:\\w\\|\\s_\\)+\\)\\(?:\\s +is\\s +\\(\\(?:\\w\\|\\s_\\)+\\)\\)?"
+    `(,(concat
+        "^\\s *(\\s *class[ \t]+\\(\\(?:\\w\\|\\s_\\)+\\)"
+        "\\(?:"
+        "[ \t\n]\\(?:[ \t\n]*\\(?:[;#].*[\n]\\)*[ \t\n]*\\)"
+        "is"
+        "[ \t\n]\\(?:[ \t\n]*\\(?:[;#].*[\n]\\)*[ \t\n]*\\)"
+        "\\(\\(?:\\w\\|\\s_\\)+\\)"
+        "\\)?")
       (1 font-lock-type-face keep)
       (2 font-lock-type-face keep t))
 
@@ -299,9 +314,9 @@ Rest of the documentation goes here."
    
     ;; HEREDOC KEYWORDS
     `(,nu-heredoc-re
-      (1 font-lock-keyword-face t)
-      (2 font-lock-constant-face t)
-      (6 font-lock-constant-face t))
+      (5 font-lock-constant-face prepend))
+    `(,nu-heredoc-beg-re (1 font-lock-constant-face prepend))
+    '("[\n \t:]\\(<<[+-]\\)" (1 font-lock-keyword-face t))
     )
   "Expressions to highlight in Nu mode.")
 
@@ -322,14 +337,19 @@ Rest of the documentation goes here."
     (unless (eq (char-before) ?\n)
       (skip-chars-forward "^\n")
       (when (< (point) bound-max) (forward-char)))
+    
+    (and (search-backward-regexp nu-heredoc-beg-re bound-min t)
+         (<= (match-beginning 0) start)
+         (looking-at nu-heredoc-re))
 
-    (when (and (search-backward-regexp nu-heredoc-beg-re bound-min t)
-               (<= (match-beginning 0) start))
-      
-      (let ((start (match-beginning 0)))
-        (when (search-forward-regexp (concat (match-string 2) "\\>") bound-max t)
-          (goto-char start)
-          (looking-at nu-heredoc-re))))))
+    ;;     (when (and (search-backward-regexp nu-heredoc-beg-re bound-min t)
+    ;;                (<= (match-beginning 0) start))
+    ;;       (let ((start (match-beginning 0)))
+    ;;         (when (search-forward-regexp (concat (match-string 1) "\\>") bound-max t)
+    ;;           (goto-char start)
+    ;;           (looking-at nu-heredoc-re)))
+
+    ))
 
 ;; ;; NU-FIND-HEREDOC-FORWARD -----------------------------------------------------
 ;; (defun nu-find-heredoc-forward (&optional start bound)
@@ -358,7 +378,7 @@ Rest of the documentation goes here."
     (save-match-data
       (cond
        ((and (nu-find-heredoc-backward pos)
-              (< pos (match-end 0)))
+             (< pos (match-end 0)))
         
         (goto-char (match-end 0)))
 
@@ -594,6 +614,43 @@ Rest of the documentation goes here."
 ;      (message (format "indent: %S %S" sexp-beg sexp-end))
       (indent-region sexp-beg sexp-end)))
   )
+
+;; NU-NEWLINE ------------------------------------------------------------------
+(defun nu-newline (&optional arg)
+  (let ((bol (save-excursion (beginning-of-line))))
+    (newline arg)
+    (let ((pos (point)))
+      (save-match-data
+        (when (save-excursion
+                (search-backward-regexp nu-heredoc-beg-re bol t))
+          (goto-char pos)
+          (insert (match-string 1)) )))))
+
+
+;; NU-FIND-TAG-DEFAULT ---------------------------------------------------------
+(defun nu-find-tag-default ()
+  "Determine default tag to search for, based on text at point.
+If there is no plausible default, return nil."
+  (save-excursion
+    (when (looking-at "\\sw\\|\\s_")
+      (forward-sexp 1))
+    (if (or (re-search-backward "\\sw\\|\\s_"
+                                (save-excursion (beginning-of-line) (point))
+                                t)
+            (re-search-forward "\\(\\sw\\|\\s_\\)+"
+                               (save-excursion (end-of-line) (point))
+                               t))
+        (progn
+          (goto-char (match-end 0))
+          (condition-case nil
+              (buffer-substring-no-properties
+               (point)
+               (progn (forward-sexp -1)
+                      (while (looking-at "\\s'")
+                        (forward-char 1))
+                      (point)))
+            (error nil)))
+        nil)))
 
 
 (put 'function     'lisp-indent-function 'defun)
