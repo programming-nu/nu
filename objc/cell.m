@@ -21,6 +21,7 @@ limitations under the License.
 #import "operator.h"
 #import "block.h"
 #import "dtrace.h"
+#import "object.h"
 #import "objc_runtime.h"
 
 @implementation NuCell
