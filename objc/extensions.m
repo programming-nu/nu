@@ -289,8 +289,20 @@ extern id Nu__null;
         int x = [self intValue];
         int i;
         for (i = 0; i < x; i++) {
-            [args setCar:[NSNumber numberWithInt:i]];
-            [block evalWithArguments:args context:Nu__null];
+            @try
+            {
+                [args setCar:[NSNumber numberWithInt:i]];
+                [block evalWithArguments:args context:Nu__null];
+            }
+            @catch (NuBreakException *exception) {
+                break;
+            }
+            @catch (NuContinueException *exception) {
+                // do nothing, just continue with the next loop iteration
+            }
+            @catch (id exception) {
+                @throw(exception);
+            }
         }
         [args release];
     }
@@ -309,8 +321,20 @@ extern id Nu__null;
         if (nu_objectIsKindOfClass(block, [NuBlock class])) {
             int i;
             for (i = startValue; i >= finalValue; i--) {
-                [args setCar:[NSNumber numberWithInt:i]];
-                [block evalWithArguments:args context:Nu__null];
+                @try
+                {
+                    [args setCar:[NSNumber numberWithInt:i]];
+                    [block evalWithArguments:args context:Nu__null];
+                }
+                @catch (NuBreakException *exception) {
+                    break;
+                }
+                @catch (NuContinueException *exception) {
+                    // do nothing, just continue with the next loop iteration
+                }
+                @catch (id exception) {
+                    @throw(exception);
+                }
             }
         }
         [args release];
@@ -326,8 +350,20 @@ extern id Nu__null;
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         int i;
         for (i = startValue; i <= finalValue; i++) {
-            [args setCar:[NSNumber numberWithInt:i]];
-            [block evalWithArguments:args context:Nu__null];
+            @try
+            {
+                [args setCar:[NSNumber numberWithInt:i]];
+                [block evalWithArguments:args context:Nu__null];
+            }
+            @catch (NuBreakException *exception) {
+                break;
+            }
+            @catch (NuContinueException *exception) {
+                // do nothing, just continue with the next loop iteration
+            }
+            @catch (id exception) {
+                @throw(exception);
+            }
         }
     }
     [args release];

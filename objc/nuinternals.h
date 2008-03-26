@@ -25,3 +25,11 @@ limitations under the License.
 
 // Use this key to get the parent context of an execution context.
 #define PARENT_KEY @"parent"
+
+#import <Foundation/Foundation.h>
+
+@interface NuBreakException : NSException {}
+@end
+
+@interface NuContinueException : NSException {}
+@end

@@ -33,18 +33,12 @@ limitations under the License.
 #include <readline/readline.h>
 #include <stdlib.h>
 
-@interface NuBreakException : NSException {}
-@end
-
 @implementation NuBreakException
 - (id) init
 {
     return [super initWithName:@"NuBreakException" reason:@"A break operator was evaluated" userInfo:nil];
 }
 
-@end
-
-@interface NuContinueException : NSException {}
 @end
 
 @implementation NuContinueException
