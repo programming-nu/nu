@@ -903,6 +903,9 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
 id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
 #endif
 {
+    // this call seems to force the class's +initialize method to be called.
+    [target class];
+
     #ifdef DARWIN
     //NSLog(@"calling ObjC method %s with target of class %@", sel_getName(method_getName(m)), [target class]);
     #else
