@@ -139,7 +139,12 @@ limitations under the License.
 {
     id m = [[method car] evalWithContext:context];
     if ([m isKindOfClass:[NSNumber class]]) {
-        return [self objectAtIndex:[m intValue]];
+        int mm = [m intValue];
+        if (mm < 0) {
+            // if the index is negative, index from the end of the array
+            mm += [self length];
+        }
+        return [self objectAtIndex:mm];
     }
     else {
         return [super handleUnknownMessage:method withContext:context];
@@ -193,7 +198,7 @@ extern char *nu_parsedFilename(int i);
 {
     id value = [car evalWithContext:context];
 
-#ifdef DARWIN
+    #ifdef DARWIN
     if (NU_LIST_EVAL_BEGIN_ENABLED()) {
         if ((self->line != -1) && (self->file != -1)) {
             NU_LIST_EVAL_BEGIN(nu_parsedFilename(self->file), self->line);
@@ -202,10 +207,10 @@ extern char *nu_parsedFilename(int i);
             NU_LIST_EVAL_BEGIN("", 0);
         }
     }
-#endif
+    #endif
     id result = [value evalWithArguments:cdr context:context];
 
-#ifdef DARWIN
+    #ifdef DARWIN
     if (NU_LIST_EVAL_END_ENABLED()) {
         if ((self->line != -1) && (self->file != -1)) {
             NU_LIST_EVAL_END(nu_parsedFilename(self->file), self->line);
@@ -214,7 +219,7 @@ extern char *nu_parsedFilename(int i);
             NU_LIST_EVAL_END("", 0);
         }
     }
-#endif
+    #endif
     return result;
 }
 

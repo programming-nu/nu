@@ -77,6 +77,10 @@ extern id Nu__null;
     id m = [[method car] evalWithContext:context];
     if ([m isKindOfClass:[NSNumber class]]) {
         int mm = [m intValue];
+		if (mm < 0) {
+			// if the index is negative, index from the end of the array
+			mm += [self count];
+		}
         if ((mm < [self count]) && (mm >= 0)) {
             return [self objectAtIndex:mm];
         }
