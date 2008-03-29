@@ -15,7 +15,7 @@
 ;;   See the License for the specific language governing permissions and
 ;;   limitations under the License.
 
-(global first   (do (my-list) (car my-list)))
+;; Warning! I want to deprecate these.
 (global second  (do (my-list) (car (cdr my-list))))
 (global third   (do (my-list) (car (cdr (cdr my-list)))))
 (global fourth  (do (my-list) (car (cdr (cdr (cdr my-list))))))

@@ -26,6 +26,14 @@
         (assert_equal 3 ('(1 2 3) objectAtIndex:2))
         (assert_equal nil ('(1 2 3) objectAtIndex:3)))
      
+     (- testBasicOperators is
+        (assert_equal 1 (car '(1 2 3)))
+        (assert_equal '(2 3) (cdr '(1 2 3)))
+        (assert_equal 1 (first '(1 2 3)))
+        (assert_equal '(2 3) (rest '(1 2 3)))
+        (assert_equal 1 (head '(1 2 3)))
+        (assert_equal '(2 3) (tail '(1 2 3))))
+          
      (- testIndexing is
         (set mylist '(1 2 3))
         (assert_equal 1 (mylist 0))
