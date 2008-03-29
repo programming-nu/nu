@@ -1754,6 +1754,8 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("car",      Nu_car_operator);
     install("cdr",      Nu_cdr_operator);
+	install("first",    Nu_car_operator);
+	install("rest",     Nu_cdr_operator);
     install("head",     Nu_car_operator);
     install("tail",     Nu_cdr_operator);
     install("atom",     Nu_atom_operator);
