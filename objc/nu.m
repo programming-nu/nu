@@ -316,6 +316,31 @@ id _nuregex(const char *pattern, int options)
     return [NuRegex regexWithPattern:_nustring(pattern) options:options];
 }
 
+id _nulist(id firstObject, ...)
+{
+    id list = nil;
+    id eachObject;
+    va_list argumentList;
+    if (firstObject) {
+        // The first argument isn't part of the varargs list,
+        // so we'll handle it separately.
+        list = [[[NuCell alloc] init] autorelease];
+        [list setCar:firstObject];
+        id cursor = list;
+        va_start(argumentList, firstObject);
+        // Start scanning for arguments after firstObject.
+        // As many times as we can get an argument of type "id"
+        // that isn't nil, add it to self's contents.
+        while ((eachObject = va_arg(argumentList, id))) {
+            [cursor setCdr:[[[NuCell alloc] init] autorelease]];
+            cursor = [cursor cdr];
+            [cursor setCar:eachObject];
+        }
+        va_end(argumentList);
+    }
+    return list;
+}
+
 @implementation Nu
 + (id<NuParsing>) parser
 {

@@ -81,3 +81,4 @@ id _nusymbol(const char *string);
 id _nunumberd(double d);
 id _nucell(id car, id cdr);
 id _nuregex(const char *pattern, int options);
+id _nulist(id firstObject,...);
