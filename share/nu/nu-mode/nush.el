@@ -78,15 +78,15 @@
 (define-key nu-mode-map "\C-c\M-e" 'nush-send-definition-and-go)
 (define-key nu-mode-map "\C-c\C-r" 'nush-send-region)
 (define-key nu-mode-map "\C-c\M-r" 'nush-send-region-and-go)
-(define-key nu-mode-map "\C-c\C-z" 'switch-to-nush)
+;; (define-key nu-mode-map "\C-c\C-z" 'switch-to-nush)
 (define-key nu-mode-map "\C-c\C-l" 'nush-load-file)
 
 (let ((map (lookup-key nu-mode-map [menu-bar nu])))
   (define-key map [separator-eval] '("--"))
   (define-key map [load-file]
     '("Load Nu File" . nush-load-file))
-  (define-key map [switch]
-    '("Switch to Nush" . switch-to-nush))
+;;   (define-key map [switch]
+;;     '("Switch to Nush" . switch-to-nush))
   (define-key map [send-def-go]
     '("Evaluate Last Definition & Go" . nush-send-definition-and-go))
   (define-key map [send-def]
@@ -175,7 +175,7 @@ Defaults to a regexp ignoring all inputs of 0, 1, or 2 letters."
                                                  (length string)))))))))
 
 ;;;###autoload
-(defun run-nush (cmd)
+(defun run-nush (&optional cmd)
   "Run an inferior Nush process, input and output via buffer `*nush*'.
 If there is a process already running in `*nush*', switch to that buffer.
 With argument, allows you to edit the command line (default is value
@@ -191,6 +191,8 @@ is run).
    (list (if current-prefix-arg
 			 (read-string "Run Nush: " nush-program-name)
 			 nush-program-name)))
+
+  (if (null cmd) (setq cmd nush-program-name))
   
   (if (not (comint-check-proc "*nush*"))
       (let ((cmdlist (nush-args-to-list cmd)))
@@ -219,7 +221,11 @@ order.  Return nil if no start file found."
 ;;         (comint-send-string (nush-proc) (concat line "\n"))
 ;;         )))
   (comint-send-region (nush-proc) start end)
-;;   (comint-send-string (nush-proc) "\n")
+  (save-excursion
+    (save-match-data
+      (goto-char end)
+      (unless (looking-back "^[ \t]*" end)
+        (comint-send-string (nush-proc) "\n"))))
   )
 
 (defun nush-send-definition ()
@@ -250,7 +256,9 @@ order.  Return nil if no start file found."
 With argument, position cursor at end of buffer."
   (interactive "P")
   (if (or (and nush-buffer (get-buffer nush-buffer))
-          (nush-interactively-start-process))
+          (run-nush)
+;;           (nush-interactively-start-process)
+          )
       (pop-to-buffer nush-buffer)
       (error "No current process buffer.  See variable `nush-buffer'"))
   (when eob-p
@@ -343,7 +351,8 @@ See variable `nush-buffer'."
   (unless (and nush-buffer
                (get-buffer nush-buffer)
                (comint-check-proc nush-buffer))
-    (nush-interactively-start-process))
+;;     (nush-interactively-start-process)
+    (run-nush))
   (or (nush-get-process)
       (error "No current process.  See variable `nush-buffer'")))
 

@@ -26,6 +26,23 @@
 ;; at gmail.com.
 
 ;;; History:
+;; 2008-04-03 Aleksandr Skobelev
+;;    - added support for character syntax; rewrote and optimized indentation and
+;;      navigation functionality
+;; 
+;; 2008-03-31 Aleksandr Skobelev
+;;    - added functions NU-BEGINNING-OF-DEFUN, NU-END-OF-DEFUN, rewrote
+;;      NU-FORWARD-SEXP1, NU-BACKWARD-SEXP1; added support for regexps 
+;;
+;; 2008-03-27 Aleksandr Skobelev
+;;    - optimized NU-FIND-HEREDOCS-RANGES, NU-FIND-HEREDOCS-RANGES-IN-RANGE,
+;;      NU-CUT-HEREDOCS-RANGES
+;;
+;; 2008-03-25 Aleksandr Skobelev
+;;    - Changed NU-FIND-HEREDOCS-RANGES; added NU-HEREDOCS-RANGES variable,
+;;      NU-KNOWN-HEREDOC-RANGE-STARTING-BEFORE, NU-FIND-HEREDOCS-RANGES,
+;;      NU-CUT-HEREDOCS-RANGES, NU-HEREDOCS-RANGES-SPLIT functions
+;;
 ;; 2008-03-22 Aleksandr Skobelev
 ;;    - Updated 'heredoc' strings handling; added NU-FIND-TAG-DEFAULT function to
 ;;      correctly select method keywords in FIND-TAG command
@@ -52,8 +69,9 @@
 (require 'lisp-mode)
 
 (autoload 'run-nush "nush" "Run an inferior Nush process." t)
+(autoload 'switch-to-nush "nush" "Switch to an inferior Nush process." t)
 
-(defconst nu-version "2008-03-21"
+(defconst nu-version "2008-04-03"
   "Nu Mode version number.")
 
 (defgroup nu nil
@@ -75,6 +93,11 @@ See `run-hooks'."
 (defcustom nu-keys-indent 4
   "Number of columns to indent method keywords and arguments."
   :type 'number
+  :group 'nu)
+
+(defcustom nu-align-by-first-colon t
+  "If not NIL, then method keywords will be right-aligned to the first keyword colon, otherwise – to the previous one."
+  :type 'boolen
   :group 'nu)
 
 (defvar nu-mode-syntax-table
@@ -137,19 +160,38 @@ See `run-hooks'."
 (defvar nu-heredoc-beg-re "<<[+-]\\(\\(?:\\w\\|\\s_\\)+\\)\\(\n\\)?")
 ;;                                 1                        2
 (defvar nu-heredoc-re
-  "<<[+-]\\(\\(?:\\w\\|\\s_\\)+?\\)\\(?:\\(?:\\(\n\\)\\(\n\\|\\([][{}\"#()?]\\)\\|.\\)+?\\)\\|\\(?:\n\\)\\)\\(\\1\\>\\)")
-;;         1                                   2       3       4                                             5
+  "<<[+-]\\(\\(?:\\w\\|\\s_\\)+?\\)\\(?:\\(?:\\(\n\\)\\(\n\\|\\([][{}\"#()?]\\)\\|\\(/\\)\\|.\\)+?\\)\\|\\(?:\n\\)\\)\\(\\1\\>\\)")
+;;         1                                   2       3       4                    5                                  6
                       
+(defvar nu-regexp-root-re "\\(/\\)\\(?:[^ \t\n\\]\\|\\(?:[^ \t\n].*?[^\\]\\)\\)?\\(/\\)")
+(defvar nu-regexp-sfx-re "\\([isxlm]\\{0,5\\}\\(\\W\\)\\)")
+(defvar nu-regexp-re (concat nu-regexp-root-re nu-regexp-sfx-re))
+
+(defvar nu-char-re "\\('\\)\\(?:\\\\\\(?:['\\\\]\\|[0-7]\\{3\\}\\|x[0-9a-fA-F]\\{2\\}\\|u[0-9a-fA-F]\\{4\\}\\)\\|\\\\?[^'\\\\xu]\\)\\('\\)")
+
+(defvar nu-defun-re "\\(^(set\\>\\)\\|\\(^\\s *(\\(global\\|class\\|macro\\|function\\)\\>\\)")
+
+;(defun nu-regex-syntax )
 
 (defun nu-mode-variables ()
 
   (set-syntax-table nu-mode-syntax-table)
 
+  (make-local-variable 'after-change-functions)
+  (push 'nu-after-change after-change-functions)
+
+  (set-local 'max-lisp-eval-depth 600)
+  (set-local 'nu-heredocs-ranges nil)
   (set-local 'parse-sexp-lookup-properties t)
   (set-local 'parse-sexp-ignore-comments t)
   (set-local 'forward-sexp-function 'nu-forward-sexp)
   (set-local 'lisp-indent-function 'nu-indent-line)
-  (set-local 'indent-line-function 'lisp-indent-line)
+  (set-local 'indent-region-function 'nu-indent-region)
+  (set-local 'indent-line-function 'nu-lisp-indent-line)
+
+  (set-local 'beginning-of-defun-function 'nu-beginning-of-defun)
+  (set-local 'end-of-defun-function 'nu-end-of-defun)
+
   (set-local 'find-tag-default-function 'nu-find-tag-default)
   (set-local 'font-lock-multiline t)
   (set-local 'font-lock-defaults
@@ -157,13 +199,10 @@ See `run-hooks'."
                nil
                nil
                (("+-*/.<>=!?@$%_&~^:" . "w"))
-               beginning-of-defun
-               (font-lock-syntactic-keywords . ((,nu-heredoc-re (2 "|" t t)
-                                                                (4 "." keep t)
-                                                                (3 "|" t t))
-                                                
-                                                ;(,nu-heredoc-beg-re (2 "|" t t))
-                                                ))
+               nu-beginning-of-syntax
+               (font-lock-syntactic-keywords . ((,nu-heredoc-re (2 "|" t t) (3 "|" t t) (4 "_" t t) (5 "w" t t) )
+                                                (,nu-regexp-re (1 "\"" keep t) (2 "\"" keep t))
+                                                (,nu-char-re (1 "\"" keep t) (2 "\"" keep t))))
                ))
   
   (set-local 'outline-regexp ";;; \\|(....")
@@ -179,8 +218,11 @@ See `run-hooks'."
         (map  (make-sparse-keymap "Nu")))
 
     (set-keymap-parent smap lisp-mode-shared-map)
+    (define-key smap "\C-c\C-z" 'switch-to-nush)
     (define-key smap "\e\C-q" 'nu-indent-sexp)
+    (define-key smap "\t" 'nu-lisp-indent-line)
     (define-key smap [menu-bar nu] (cons "Nu" map))
+    (define-key map [switch-to-nush] '("Switch to Nush" . switch-to-nush))
     (define-key map [run-nush] '("Run Inferior Nush" . run-nush))
     (define-key map [uncomment-region]
       '("Uncomment Out Region" . (lambda (beg end)
@@ -188,7 +230,7 @@ See `run-hooks'."
                                    (comment-region beg end '(4)))))
     (define-key map [comment-region] '("Comment Out Region" . comment-region))
     (define-key map [indent-region] '("Indent Region" . indent-region))
-    (define-key map [indent-line] '("Indent Line" . lisp-indent-line))
+     (define-key map [indent-line] '("Indent Line" . nu-lisp-indent-line))
 
     (put 'comment-region   'menu-enable 'mark-active)
     (put 'uncomment-region 'menu-enable 'mark-active)
@@ -314,135 +356,386 @@ See `run-hooks'."
    
     ;; HEREDOC KEYWORDS
     `(,nu-heredoc-re
-      (5 font-lock-constant-face prepend))
-    `(,nu-heredoc-beg-re (1 font-lock-constant-face prepend))
-    '("[\n \t:]\\(<<[+-]\\)" (1 font-lock-keyword-face t))
+      (6 font-lock-constant-face ))
+    `(,nu-heredoc-beg-re (1 font-lock-constant-face ))
+    '("[\n \t:]\\(<<[+-]\\)" (1 font-lock-keyword-face ))
+
+    ;; REGEXP KEYWORDS
+    `(,nu-regexp-re
+      (3 font-lock-constant-face t))
+    
     )
   "Expressions to highlight in Nu mode.")
 
 (defvar nu-font-lock-keywords nu-font-lock-keywords-1
   "Default expressions to highlight in Nu mode.")
 
+(defvar nu-heredocs-ranges (list '(0 . 0))
+  "List of cached ranges for heredoc strings. Every range is in (BEGIN . END) form.")
+
+;; (defsubst nu-syntax-ppss (&optional pos)
+;;   (let ((beginning-of-defun-function nil)) (synax-ppss pos)))
+
+;; NU-CUT-POINT ----------------------------------------------------------------
+(defsubst nu-cut-point () (or (cdar (last nu-heredocs-ranges)) (point-min)))
+
+;; NU-EMPTY-RANGE --------------------------------------------------------------
+(defsubst nu-empty-range-p (range) (or (null range) (= (car range) (cdr range))))
+
+;; NU-IN-RANGE -----------------------------------------------------------------
+(defsubst nu-in-range-p (point range)
+  (and range (>= point (car range)) (< point (cdr range))))
+
+;; NU-LAST-RANGE ---------------------------------------------------------------
+(defsubst nu-last-range () (car (last nu-heredocs-ranges)))
+
+;; NU-CUT-HEREDOCS-RANGES ----------------------------------------------------
+(defun nu-cut-heredocs-ranges (point)
+  (let (ranges)
+    (do* ((rest nu-heredocs-ranges (cdr rest))
+          (range (car nu-heredocs-ranges) (car rest)))
+        
+        ;; Exit if list is empty or range below point
+        ((or (null rest)
+             (< point (cdr range)))
+         
+         ;; if the point is in non-empty range than set point to the point
+         ;; before the range
+         (cond ((null rest) (setq point nil))
+               ((>= point (car range)) (setq point (1- (car range))))))
+      
+      (push range ranges))
+    
+;;     ;; remove marker range if exists
+;;     (when (nu-empty-range-p (first ranges)) (pop ranges))
+    
+    (when point (push (cons point point) ranges))
+    (setq nu-heredocs-ranges (reverse ranges)))
+  nu-heredocs-ranges)
+
+
+;; NU-FIND-HEREDOCS-RANGES ----------------------------------------------------
+(defun nu-find-heredocs-ranges-in-range (beg end)
+  (save-excursion
+    (save-match-data
+
+      ;; remove marker range at the end of NU-HEREDOCS-RANGES
+      (when (and nu-heredocs-ranges (nu-empty-range-p (nu-last-range)))
+        (setq nu-heredocs-ranges (butlast nu-heredocs-ranges)))
+          
+      (let (ranges
+            range
+            (after-end (progn (goto-char end)
+                              (beginning-of-line 2)
+                              (point))))
+        (goto-char beg)
+
+        ;; if end point is in heredoc range add this range
+        ;; also reset cut-point
+        (while (and (< (point) after-end)
+                    (search-forward-regexp nu-heredoc-beg-re after-end  t)
+                    (<= (match-beginning 0) end))
+          
+;;           (message (format "find hdoc beg in (%d %d)--> \"%s\"" beg end (match-string 0)))
+          (let ((point (match-end 0)))
+            (when (progn (goto-char (match-beginning 0))
+                         (looking-at nu-heredoc-re))
+              ;; (setq cut-point nil)
+;;               (message (format "find full hdoc in (%d %d)--> \"%s\"" beg end (match-string 0)))
+              (setq range (cons (match-beginning 0) (match-end 0)))
+              (push range ranges)
+              (setq point (match-end 0)))
+            
+            (goto-char point)))
+        
+;;         ;; if end point is in heredoc range add this range
+;;         ;; also reset cut-point
+;;         (when (and (search-forward-regexp nu-heredoc-beg-re after-end  t)
+;;                    (<= (match-beginning 0) end)
+;;                    (progn (goto-char (match-beginning 0))
+;;                           (looking-at nu-heredoc-re)))
+          
+;;           (setq cut-point nil)
+;;           (push (cons (match-beginning 0) (match-end 0)) ranges))
+        (when (or (not range) (< (cdr range) end)) 
+          (push (cons end end) ranges))
+        
+        (setq nu-heredocs-ranges
+              (append nu-heredocs-ranges (reverse ranges))) )))
+  nu-heredocs-ranges)
+
+;; NU-FIND-HEREDOCS-RANGES ----------------------------------------------------
+(defun nu-find-heredocs-ranges (&optional end-point no-cut)
+
+  (unless end-point (setq end-point (point-max)))
+  (unless no-cut (setq nu-heredocs-ranges (list '(0 . 0))))
+
+  (let ((cut-point (nu-cut-point)))
+     (when (<= cut-point end-point)
+      (nu-find-heredocs-ranges-in-range cut-point end-point)))
+  nu-heredocs-ranges)
+
+
+
+;; NU-KNOWN-HEREDOC-RANGE-STARTING-BEFORE --------------------------------------
+(defun nu-known-heredoc-range-starting-before (point)
+
+  (do* ((rest nu-heredocs-ranges (cdr rest))
+        (range (car nu-heredocs-ranges) (car rest))
+        prev-range)
+      
+      ;; Exit if list is empty or point below the range end 
+      ((or (nu-empty-range-p range) (< point (cdr range)))
+       (if (nu-in-range-p point range)
+           range
+           prev-range))
+    
+    (setq prev-range range)))
+
+
 ;; NU-FIND-HEREDOC-BACKWARD ----------------------------------------------------
-(defun nu-find-heredoc-backward (&optional start bound-min bound-max)
-  (interactive)
+(defun nu-find-heredoc-backward (&optional point bound-min bound-max)
   
-  (unless start (setq start (point)))
+  (unless point (setq point (point)))
   (unless bound-min (setq bound-min (point-min)))
   (unless bound-max (setq bound-max (point-max)))
 
-  (save-excursion
-
-    (goto-char start)
-    (unless (eq (char-before) ?\n)
-      (skip-chars-forward "^\n")
-      (when (< (point) bound-max) (forward-char)))
-    
-    (and (search-backward-regexp nu-heredoc-beg-re bound-min t)
-         (<= (match-beginning 0) start)
-         (looking-at nu-heredoc-re))
-
-    ;;     (when (and (search-backward-regexp nu-heredoc-beg-re bound-min t)
-    ;;                (<= (match-beginning 0) start))
-    ;;       (let ((start (match-beginning 0)))
-    ;;         (when (search-forward-regexp (concat (match-string 1) "\\>") bound-max t)
-    ;;           (goto-char start)
-    ;;           (looking-at nu-heredoc-re)))
-
-    ))
-
-;; ;; NU-FIND-HEREDOC-FORWARD -----------------------------------------------------
-;; (defun nu-find-heredoc-forward (&optional start bound)
-;;   (interactive)
+  ;; (message (format "find backward at %d min: %d max: %d" point bound-min bound-max))
   
-;;   (unless start (setq start (point)))
-;;   (unless bound (setq bound (point-max)))
-;;   (save-excursion
-;;     (goto-char start)
-;;     (search-forward-regexp nu-heredoc-re bound t)))
+  (save-excursion
+    (nu-find-heredocs-ranges point 'keep)
 
+    (let ((point (car (nu-known-heredoc-range-starting-before point))))
+      (when point
+        (goto-char point)
+        (looking-at nu-heredoc-re)))))
 
 (defvar nu-forward-sexp-level 0)
 
+;; NU-SKIPS-SPACE-FORWARD ---------------------------------------------------
+(defun nu-skip-space-forward (&optional in-clear-state)
+  (skip-chars-forward " \t\n")
+  
+  (let ((state (unless in-clear-state (syntax-ppss))))
+    (when (and (not (nth 3 state))
+               (or (nth 4 state)
+                   (and (char-after)
+                        (= (char-syntax (char-after)) ?<))))
+
+      (while (and (progn (beginning-of-line 2)
+                         (skip-chars-forward " \t\n")
+                         (< (point) (point-max)))
+                  (= (char-syntax (char-after)) ?<)))    
+      )))
+
+
+;; NU-SKIP-STRING-FORWARD ------------------------------------------------------
+(defun nu-skip-string-forward (dlm)
+  (while (progn
+           (while (and (< (point) (point-max))
+                       (/= (char-after) dlm))
+             (forward-char))
+           
+           (and (> (point) (point-min))
+                (= (char-before) ?\\)
+                (oddp (- (point)
+                         (save-excursion
+                           (while (and (> (point) (point-min))
+                                       (progn (backward-char) (= (char-before) ?\\))))
+                           (point))))))
+    (forward-char))
+  (forward-char))
+
+
 ;; NU-FORWARD-SEXP1 -----------------------------------------------------------
-(defun nu-forward-sexp1 ()
-  (interactive "p")
+(defun nu-forward-sexp1 (&optional in-clear-state)
+;;   (message (format "NU-FORWARD-SEXP1 -- NU-FORWARD-SEXP-LEVEL = %d" nu-forward-sexp-level))
+  ;;(message (format "nu-forward-sexp1: entered at %d and state is %sclear" (point) (if in-clear-state "" "not ")))
 
-;;   (message (format "nu-forward-sexp1 point = %d" (point)))
+  ;; (message (format "nu-forward-sexp1 point = %d" (point)))   
+  (nu-skip-space-forward in-clear-state)
+  ;; (message (format "nu-forward-sexp1: skipped space to %d" (point)))
 
-  (skip-chars-forward "[ \t\n]")
+  (when (< (point) (point-max))
+    (let ((pos (point))
+          (level nu-forward-sexp-level))
 
-  (let ((pos (point))
-        (level nu-forward-sexp-level))
-    
-    (save-match-data
-      (cond
-       ((and (nu-find-heredoc-backward pos)
-             (< pos (match-end 0)))
-        
-        (goto-char (match-end 0)))
-
-       ((looking-at "\\w\\|\\s_")
-        
-        (while (and (not (eq (char-after) ?:))
-                    (looking-at "\\w\\|\\s_"))
-          (forward-char))
-        (if (eq (char-after) ?:) (forward-char)))
-       
-       (t
-        (progn
-          (let ((state (syntax-ppss)))
-            (cond
-             ((and (looking-at "(") (not (nth 3 state)))
-              (forward-char)
-              (skip-chars-forward "[ \t\n]")
-              (incf nu-forward-sexp-level)
-              (while (< level nu-forward-sexp-level) (nu-forward-sexp1)))
-
-             ((and (looking-at ")") (not (nth 3 state)))
-              (forward-char)
-              (decf nu-forward-sexp-level))
+      (save-match-data
+        (if (and (nu-find-heredoc-backward pos)
+                 (< pos (match-end 0)))
             
-             (t (let ((forward-sexp-function nil))
-                  (forward-sexp 1)))))))))
+            (goto-char (match-end 0))
 
-    ))
+            
+            (let ((state (unless in-clear-state (syntax-ppss))))
+              (if (nth 3 state)
+                  (progn
+                    (nu-skip-string-forward (nth 3 state))
+                    ;;(message (format "nu-forward-sexp1: skipped string to %d" (point)))
+                    )
+
+                  (let ((ch (char-after)))
+                    (cond               ; not in string
+                   
+                     ((= ch ?\()
+                      ;;(message (format "down in list at %d" (point)))
+                      (while (progn
+                               (incf nu-forward-sexp-level)
+                               (forward-char)
+                               (nu-skip-space-forward 'in-clear-state)
+                               (and (< (point) (point-max))
+                                    (= (char-after) ?\( ))))
+
+;;                       (incf nu-forward-sexp-level)
+                      (while (and (< (point) (point-max))
+                                  (< level nu-forward-sexp-level)) (nu-forward-sexp1 'in-clear-state)))
+                   
+                     ((= ch ?\))
+                      ;;(message (format "up from list at %d" (point)))
+                      (while (progn
+                               (decf nu-forward-sexp-level)
+                               (forward-char)
+                               (nu-skip-space-forward 'in-clear-state)
+                               (and (< (point) (point-max))
+                                    (= (char-after) ?\) )))))
+                     
+                      ;; (decf nu-forward-sexp-level))
+                      
+                     ((when (or (= ch ?\")
+                                (and (= ch ?') (looking-at nu-char-re))
+                                (and (= ch ?/) (looking-at nu-regexp-re)
+                                     ;; (save-excursion (nth 3 (syntax-ppss (1+ (point)))))
+                                     ))
+                        (forward-char)
+                        (nu-skip-string-forward (char-before))
+                        ;;(message (format "nu-forward-sexp1: skipped string from the beginning to %d" (point)))
+                        t))
+               
+                     ((= ch ?\') (forward-char)
+                      ;;(message (format "down in list at %d" (point)))
+                      )
+
+                     ((member (char-syntax ch) '(?w ?_))
+                      (while (and (/= ch ?:)
+                                  (member (char-syntax ch) '(?w ?_)))
+                        (forward-char)
+                        (setq ch (char-after)))
+                
+                      (if (= ch ?:) (forward-char)))
+               
+
+                     (t
+                      ;;(message (format "Unknown state to go forward at point %s : %s" (point) state))
+                      (when (< (point) (point-max))
+                        (forward-char)
+                        (nu-forward-sexp1)) ))))))))))
+
+
+;; NU-SKIP-SPACE-BACKWARD ---------------------------------------------------
+(defun nu-skip-space-backward ()
+
+  (while (and (> (point) (point-min))
+              (skip-chars-backward " \t\n")
+              (let ((state (syntax-ppss))) (and (not (nth 3 state))
+                                                (nth 4 state))))
+    (skip-chars-backward "^;#")
+    (skip-chars-backward ";#")))
+
+
+
+;;------------------------------------------------------------------------------
+(defun nu-skip-string-backward (dlm)
+  (while (progn
+           (while (and (> (point) (point-min))
+                       (/= (char-before) dlm))
+             (backward-char))
+           (backward-char)
+           (and (> (point) (point-min))
+                (= (char-before) ?\\)
+                (oddp (- (point)
+                         (save-excursion
+                           (while (and (> (point) (point-min))
+                                       (progn (backward-char)
+                                              (= (char-before) ?\\))))
+                           (point))))))
+   ))
 
 ;; NU-BACKWARD-SEXP1 -----------------------------------------------------------
 (defun nu-backward-sexp1 ()
-  (interactive "p")
+;;   (message (format "NU-BACKWARD-SEXP1 -- NU-FORWARD-SEXP-LEVEL = %d MAX-LISP-EVAL-DEPTH = %d"
+;;                    nu-forward-sexp-level
+;;                    max-lisp-eval-depth))
 
   ;; (message (format "nu-backward-sexp1 point = %d" (point)))
+  (nu-skip-space-backward)
 
-  (skip-chars-backward "[ \t\n]")
-;;   (while (member (char-before) '(32 ?\t ?\n))
-;;     (backward-char))
+  (when (> (point) (point-min))
+    (let ((pos (point))
+          (level nu-forward-sexp-level))
 
-  (let ((pos (point)))
-    
-    (save-match-data
-      (if (and (nu-find-heredoc-backward pos)
-               (>  pos (match-beginning 0))
-               (<= pos (match-end 0)))
+      (save-match-data
+        (if (and (nu-find-heredoc-backward pos)
+                 (> pos (match-beginning 0))
+                 (<= pos (match-end 0)))
+
+            (goto-char (match-beginning 0))
           
-          (goto-char (match-beginning 0))
+            (let* ((state (syntax-ppss))
+                   (cb (char-before)))
+              
+              (if (nth 3 state)
+                  
+                  (nu-skip-string-backward (nth 3 state))
 
-          ;;else
-          (if (member (char-syntax (char-before)) '(?w ?_))
-              (progn
-                (while
-                    (progn
+                  (cond
+                   ((= cb ?\) )
+                    
+                    (while (progn
+                             (incf nu-forward-sexp-level)
+                             (backward-char)
+                             (nu-skip-space-backward)
+                             (and (> (point) (point-min))
+                                  (= (char-before) ?\) ))))
+                   
+                    ;; (incf nu-forward-sexp-level)
+                    (while (< level nu-forward-sexp-level) (nu-backward-sexp1)))
+               
+               
+                   ((= cb ?\( )
+                
+                    (while (progn
+                             (decf nu-forward-sexp-level)
+                             (backward-char)
+                             (nu-skip-space-backward)
+                             (and (> (point) (point-min))
+                                  (= (char-before) ?\( )))))
+
+                   ;; (decf nu-forward-sexp-level))
+                
+                   ((when (or (= cb ?\")
+                              (and (= cb ?') (looking-back nu-char-re))
+                              (and (= cb ?/) (looking-back nu-regexp-root-re) (looking-at nu-regexp-sfx-re)
+                                   ;; (save-excursion (nth 3 (syntax-ppss (1- (point)))))
+                                   ))
                       (backward-char)
-                      (and (not (eq (char-before) ?:))
-                           (member (char-syntax (char-before)) '(?w ?_)) ))))
-              ;;else 
-              (let ((forward-sexp-function nil))
-                (backward-sexp 1)))))))
+                      (nu-skip-string-backward cb)
+                      t))
+               
+                   ((member (char-syntax cb) '(?w ?_))
+                    (while (progn (backward-char)
+                                  (let ((ch (char-before)))
+                                    (and (not (member ch '(?: ?/)))
+                                         (member (char-syntax ch) '(?w ?_)))))))
+                
+                   (t
+                    ;;(message "Unknown state to go backward")
+                    (when (< (point-min) (point))
+                      (backward-char)
+                      (nu-backward-sexp1)) )))))))))
 
 
 ;; FORWARD-SEXP ----------------------------------------------------------------
 (defun nu-forward-sexp (&optional arg)
-  (interactive "p")
 
   (setq nu-forward-sexp-level 0)
   (unless arg (setq arg 1))
@@ -457,20 +750,16 @@ See `run-hooks'."
     (nu-forward-sexp1)))
 
 
-;; (defadvice nu-indent-line (after print-indent)
-;;   (save-excursion
-;;     (back-to-indentation)
-;;     (message (format "line: %d  indent: %d" (line-number-at-pos) (current-column)))))
-
-
 ;; NU-INDENT-FUNCTION ----------------------------------------------------------
 (defun nu-indent-line (indent-point state)
 
   (if (save-excursion
         (goto-char indent-point)
+        
         (and (nu-find-heredoc-backward (point))
-             (> (point) (match-beginning 0))
+             (> (point) (match-end 1))
              (< (point) (match-end 0))))
+      
       (progn
         (goto-char indent-point)
         (back-to-indentation)
@@ -479,152 +768,253 @@ See `run-hooks'."
       (let ((lisp-body-indent nu-body-indent))
         (let ((lisp-indent (lisp-indent-function indent-point state)))
           
-          ;;       (message (format "lisp-indent: %s indent-point: %s state: %s"
-          ;;                        lisp-indent indent-point state))
-  
-          (unless (or (elt state 3)     ;inside string
-                      (elt state 4)     ;inside comment
+          (unless (or (nth 3 state)     ;inside string
+                      (nth 4 state)     ;inside comment
                       (progn (goto-char indent-point)
-                             (looking-at "[ \t]*\\($\\|)\\)")))
+                             (skip-chars-forward " \t")
+                             (member (char-after) '(?\n ?\) ))))
     
             (save-excursion
         
-              (let* ((list-beg (elt state 1))
+              (let* ((list-beg (nth 1 state))
                      (list-beg-col (progn
                                      (goto-char list-beg)
                                      (current-column)))
                
-                     (first-sexp-end (progn
+                     (first-sexp-beg (progn
                                        (goto-char (+ list-beg 1))
-                                       (nu-forward-sexp)
+                                       (nu-skip-space-forward 'in-clear-state)
                                        (point)))
                
-                     (first-sexp-beg (progn
-                                       (goto-char first-sexp-end)
-                                       (backward-sexp)
+                     (first-sexp-end (progn
+                                       ;; (goto-char first-sexp-beg)
+                                       (nu-forward-sexp1 'in-clear-state)
                                        (point)))
                
                      (first-sexp-str (buffer-substring-no-properties first-sexp-beg
                                                                      first-sexp-end))
-                     (prev-sexp-beg  (elt state 2))
-
-                     (prev-sexp-end (progn
-                                      (goto-char prev-sexp-beg)
-                                      (nu-forward-sexp)
-                                      (point)))
-
-                     (prev-sexp-str (buffer-substring-no-properties prev-sexp-beg
-                                                                    prev-sexp-end))
-               
+                     (prev-sexp-beg  (nth 2 state))
+                     
                      (prev-sexp-col (progn
                                       (goto-char prev-sexp-beg)
                                       (current-column)))
                
-                     (prev-sexp-end-col (progn
-                                          (goto-char prev-sexp-end)
-                                          (current-column)))
+                     (prev-sexp-end (progn
+                                      (nu-forward-sexp1 'in-clear-state)
+                                      (point)))
+
+                     (prev-sexp-end-col (current-column))
+               
+                     (prev-sexp-str (buffer-substring-no-properties prev-sexp-beg
+                                                                    prev-sexp-end))
                
                      (cur-sexp-beg (progn
                                      (goto-char indent-point)
-                                     (back-to-indentation)
+                                     (skip-chars-forward " \t")
                                      (point)))
 
+                     (cur-sexp-col (current-column))
+             
                      (cur-sexp-end (progn
-                                     (goto-char indent-point)
-                                     (nu-forward-sexp)
+                                     (nu-forward-sexp1 'in-clear-state)
                                      (point)))
                
-                     (cur-sexp-col (progn
-                                     (goto-char cur-sexp-beg)
-                                     (current-column)))
-             
-                     (cur-sexp-end-col (progn
-                                         (goto-char cur-sexp-end)
-                                         (current-column)))
+                     (cur-sexp-end-col (current-column))
 
                      (cur-sexp-str (buffer-substring-no-properties cur-sexp-beg
                                                                    cur-sexp-end))
 
                      (cur-sexp-keyword-p (eq ?: (char-before cur-sexp-end)))
-                     (colon-col 0))
+                     colon-col
+                     is-has-found)
 
                 ;; if lisp-indent is not nil, redefine it only, if the first item in
                 ;; the list is a list
                 (when (or (not lisp-indent)
-                          (eq (char-after first-sexp-beg) 40 ))
+                          (= (char-after first-sexp-beg) ?\( ))
         
-                  (goto-char first-sexp-beg)
-
+                  (goto-char first-sexp-end)
+                  
                   ;; find colon column
-                  (while (< (point) prev-sexp-end)
-                    (nu-forward-sexp)
-                    (when (eq ?: (char-before))
-                      (setq colon-col (current-column))
-                      (goto-char prev-sexp-end)))
+                  (while (<= (point) prev-sexp-end)
 
+                    (when (and (or (not nu-align-by-first-colon) (null colon-col))
+                               (eq ?: (char-before)))
+                      (setq colon-col (current-column)))
+
+                    (nu-skip-space-forward 'in-clear-state)
+                    (when (looking-at "is[ \t\n;#]") (setq is-has-found t))
+                    (nu-forward-sexp1 'in-clear-state))
+
+                  
                   ;; calclate indent
                   (setq lisp-indent
                         (cond
                          ;;indent the first method keyword
-                         ((and (zerop colon-col) cur-sexp-keyword-p)
+                         ((and (null colon-col) cur-sexp-keyword-p)
                           (+ list-beg-col nu-keys-indent))
-
+                         
                          ;; indent the body of class and class method definitions
                          ((or (string= first-sexp-str "class")
-                              (and (or (string= cur-sexp-str "is")
-                                       (string= prev-sexp-str "is"))
-                               
-                                   (or (string= first-sexp-str "imethod")
-                                       (string= first-sexp-str "cmethod")
-                                       ;; in fact, + and - require more strict check as it can be
-                                       ;; aritmetic operators
-                                       ;; here I just hope nobody use IS as the name of variable
-                                       (string= first-sexp-str "-")
-                                       (string= first-sexp-str "+"))))
-                  
+                              (and is-has-found
+                                   (string-match "^[ci]method\\|[+-]$" first-sexp-str)))
+                          
                           (+ list-beg-col nu-body-indent))
-
+                         
                          ;; indent method keyword's arguments
-                         ((and (< 0 colon-col) (not cur-sexp-keyword-p))
-                          (if (= colon-col prev-sexp-end-col)
+                         ((and colon-col (not cur-sexp-keyword-p))
+                          (if (and (>= colon-col prev-sexp-col)
+                                   (<= colon-col prev-sexp-end-col))
+                              
                               (+ prev-sexp-col nu-keys-indent)
                               prev-sexp-col))
-
+                         
                          ;; indent method keyword other than the first one 
-                         ((and (< 0 colon-col) cur-sexp-keyword-p)
+                         ((and colon-col cur-sexp-keyword-p)
                           (- colon-col (- cur-sexp-end-col cur-sexp-col)))))
                   )))
-    
+          
             lisp-indent)))))
 
 
+;; NU-LISP-INDENT-LINE ---------------------------------------------------------
+(defun nu-lisp-indent-line (&optional whole-exp)
+  "Indent current line as Lisp code.
+With argument, indent any additional lines of the same expression
+rigidly along with this one."
+  (interactive "P")
+  (unless (save-excursion
+            (beginning-of-line)
+            (and (= (point) (point-min))
+                 (looking-at "#!")))
+    (lisp-indent-line whole-exp)))
+
 ;; NU-INDENT-SEXP --------------------------------------------------------------
-(defun nu-indent-sexp  ()
+(defun nu-indent-sexp  (&optional endpos)
   "Indent each line of the list starting just after point."
   
   (interactive)
   (save-excursion
-    (let* ((pos (point))
-           (sexp-end  (progn
-                        (forward-sexp)
-                        (point)))
-           (sexp-beg (progn
-                       (backward-sexp)
-                       (point))))
-;      (message (format "indent: %S %S" sexp-beg sexp-end))
-      (indent-region sexp-beg sexp-end)))
+    (save-match-data
+      (let* ((pos (point))
+             (state (syntax-ppss))
+             (in-clear-state (not (or (nth 3 state) (nth 4 state))))
+             sexp-beg
+             sexp-end)
+        
+        (when (and in-clear-state
+                   (skip-chars-forward " \t")
+                   (= (char-after) ?\( ))
+          (setq sexp-beg (point)))
+        
+        (setq sexp-end (progn (nu-forward-sexp1 in-clear-state)
+                              (point)))
+        
+        (unless sexp-beg (setq sexp-beg (progn (backward-sexp) (point))))
+
+        (if (progn (goto-char sexp-beg)
+                   (beginning-of-line)
+                   (skip-chars-forward " \t")
+                   (= (point) sexp-beg))
+            
+            (beginning-of-line 2)
+            (setq sexp-beg (point)))
+        
+;;         (message (format "indent: %S %S" sexp-beg sexp-end))
+        (when (< sexp-beg sexp-end) (nu-indent-region sexp-beg sexp-end))))))
+
+
+;; INDENT-SEXP ADVICE ----------------------------------------------------------
+(defadvice indent-sexp (around nu-replace-indent-sexp)
+  (interactive)
+  ;; (message "IN INDENT-SEXP ADVICE ------------------------")
+  (if (eq major-mode 'nu-mode)
+      (nu-indent-sexp)
+      ad-do-it))
+
+(ad-activate 'indent-sexp)
+
+;; NU-INDENT-SEXP --------------------------------------------------------------
+(defun nu-indent-region  (start end)
+  "Indent each line of the list starting just after point."
+  
+  (interactive)
+  (save-excursion
+    (save-match-data
+      (let* ((pos (point))
+             sexp-beg
+             sexp-end)
+
+        (goto-char start)
+        (beginning-of-line)
+
+        (dotimes  (n (count-lines start end))
+          (nu-lisp-indent-line)
+          (beginning-of-line 2))))))
+
+
+;; NU-LOOKING-AT-DEFUN ---------------------------------------------------------
+(defsubst nu-looking-at-defun () (looking-at nu-defun-re))
+
+
+;; NU-BEGINNING-OF-SYNTAX ------------------------------------------------------
+(defun nu-beginning-of-syntax ()
+;;   (beginning-of-line)
+  
+;;   (while (and (> (point) (point-min))
+;;               (not (nu-looking-at-defun))
+;;               (not (nth 3 (syntax-ppss))))
+    
+;;     (beginning-of-line 0))
+  
+  (goto-char (point-min))) 
+
+;; NU-BEGINNING-OF-DEFUN -------------------------------------------------------
+(defun nu-beginning-of-defun ()
+
+  (save-match-data
+    (beginning-of-line)
+    (while (not (or (= (point) (point-min))
+                    (and (nu-looking-at-defun)
+                         (not (nth 3 (syntax-ppss))))))
+      (beginning-of-line 0)))
+
+  (point)) 
+
+;; NU-END-OF-DEFUN -------------------------------------------------------
+(defun nu-end-of-defun ()
+
+  (nu-skip-space-forward)
+  
+  (if (or (nu-looking-at-defun)
+          (nu-beginning-of-defun))
+      (nu-forward-sexp1)))
+
+
+;; NU-AFTER-CHANGE -------------------------------------------------------------
+(defun nu-after-change (beg end old-length)
+
+  (when (string= (buffer-substring-no-properties beg end) "\n")
+    (nu-after-newline beg end))
+
+  (condition-case err
+      ;;(message (format "cat heredocs ranges for point %s" beg))
+    (nu-cut-heredocs-ranges beg)
+
+    (error (message (error-message-string err))))
+  ;; (message (format "changed from: %s to: %s old length: %s" beg end old-length))
   )
 
-;; NU-NEWLINE ------------------------------------------------------------------
-(defun nu-newline (&optional arg)
-  (let ((bol (save-excursion (beginning-of-line))))
-    (newline arg)
-    (let ((pos (point)))
-      (save-match-data
-        (when (save-excursion
-                (search-backward-regexp nu-heredoc-beg-re bol t))
-          (goto-char pos)
-          (insert (match-string 1)) )))))
+;; NU-AFTER-NEWLINE ------------------------------------------------------------
+(defun nu-after-newline (beg end)
+  (save-match-data
+    (let ((bol (save-excursion (beginning-of-line 0) (point))))
+      (when (looking-back nu-heredoc-beg-re bol)
+        (save-excursion
+          (goto-char (match-beginning 0))
+          (let ((emark (match-string 1)))
+            (goto-char end)
+            (insert emark)))))))
 
 
 ;; NU-FIND-TAG-DEFAULT ---------------------------------------------------------
@@ -673,6 +1063,7 @@ If there is no plausible default, return nil."
 ;; force font locking (and so setting proper syntax) for 'heredoc' strings
 (defun nu-setup-heredoc-faces ()
   (save-excursion
+;;     (nu-find-heredocs-ranges)
     (goto-char (point-min))
     
     (while (search-forward-regexp nu-heredoc-re (point-max) 'return-nil)
@@ -690,6 +1081,31 @@ If there is no plausible default, return nil."
 (add-to-list 'auto-mode-alist '("\\.nu\\'" . nu-mode))
 (add-to-list 'auto-mode-alist '("Nukefile\\'" . nu-mode))
 (add-to-list 'interpreter-mode-alist '("nush". nu-mode))
+
+(setq elp-function-list
+      '(nu-indent-line
+        nu-skip-space-forward
+        nu-skip-space-backward
+        nu-forward-sexp1
+        nu-backward-sexp1
+        nu-find-heredoc-backward
+        nu-beginning-of-defun
+        nu-end-of-defun
+        syntax-ppss
+        ))
+
+(elp-instrument-list)
+(setq elp-set-master nil)
+
+;; (setq elp-function-list
+;;       '(nu-skip-space-forward
+;;         syntax-ppss
+;;         char-syntax
+;;         char-after
+;;         beginning-of-line
+;;         ))
+;; (elp-instrument-list)
+;; (setq elp-set-master 'nu-skip-space-forward)
 
 (provide 'nu)
 ;;; nu.el ends here
