@@ -4,61 +4,91 @@
 # version of nush, the Nu shell.
 #
 
-PREFIX?=/usr/local
+SYSTEM = $(shell uname)
 
-ifeq ($(shell test -e /usr/lib/libffi.dylib && echo yes), yes)
-	# Use the libffi that ships with OS X.
-	FFI_LIB=-L/usr/lib -lffi
-	FFI_INCLUDE=-I /usr/include/ffi
-else
-	# Use the libffi that is distributed with Nu.
-	FFI_LIB=-L./libffi -lffi
-	FFI_INCLUDE=-I ./libffi/include
+PREFIX ?= /usr/local
+
+ifeq ($(SYSTEM), Darwin)
+	ifeq ($(shell test -e /usr/lib/libffi.dylib && echo yes), yes)
+		# Use the libffi that ships with OS X.
+		FFI_LIB = -L/usr/lib -lffi
+		FFI_INCLUDE = -I/usr/include/ffi
+		LEOPARD_CFLAGS = -DLEOPARD_OBJC2
+	else
+		# Use the libffi that is distributed with Nu.
+		FFI_LIB = -L./libffi -lffi
+		FFI_INCLUDE = -I./libffi/include
+		LEOPARD_CFLAGS =
+	endif
+
+else # Linux
+	FFI_LIB=-lffi
+	FFI_INCLUDE=
 endif
 
-ifeq ($(shell test -e $(PREFIX)/lib/libpcre.dylib && echo yes), yes)
-	# Use already-installed PCRE.
-	PCRE_LIB=-L$(PREFIX)/lib -lpcre
-	PCRE_INCLUDE=-I $(PREFIX)/include
+INCLUDES = $(FFI_INCLUDE) -I./include/Nu
+
+ifeq ($(SYSTEM), Darwin)
+	ifeq ($(shell test -d $(PREFIX)/include && echo yes), yes)
+		INCLUDES += -I$(PREFIX)/include
+	endif
+	FRAMEWORKS = -framework Cocoa
+	LIBS = -lobjc -lpcre -lreadline
+	LIBDIRS =
+	ifeq ($(shell test -d $(PREFIX)/lib && echo yes), yes)
+		LIBDIRS += -L$(PREFIX)/lib
+	endif
 else
-	# Use PCRE in the Nu directory.
-	PCRE_LIB=-Lpcre-7.5/.libs -lpcre
-	PCRE_INCLUDE=-I pcre-7.5
+	INCLUDES += -I/usr/local/include
+	FRAMEWORKS =
+	LIBS = -lm -lpcre -lreadline
+	LIBDIRS =
 endif
 
-INCLUDES=$(FFI_INCLUDE) $(PCRE_INCLUDE) -I./include/Nu
-LIBS=-lobjc -lreadline $(PCRE_LIB) $(FFI_LIB)
-CFLAGS=-g -O2 -Wall -DDARWIN -DMACOSX -DMININUSH -std=gnu99 -DLEOPARD_OBJC2
-MFLAGS=-fobjc-exceptions
-LDFLAGS=-framework Cocoa $(LIBS)
+C_FILES = $(wildcard objc/*.c)
+OBJC_FILES = $(wildcard objc/*.m) $(wildcard main/*.m)
+GCC_FILES = $(OBJC_FILES) $(C_FILES)
+GCC_OBJS = $(patsubst %.m, %.o, $(OBJC_FILES)) $(patsubst %.c, %.o, $(C_FILES))
 
-# FIXME add PREFIX/lib and PREFIX/include if they exist
+CC = gcc
+CFLAGS = -g -O2 -Wall -DMININUSH -std=gnu99
+MFLAGS = -fobjc-exceptions
 
-OBJS=$(patsubst %.m,%.o, $(wildcard objc/*.m)) $(patsubst %.c,%.o, $(wildcard objc/*.c))
+ifeq ($(SYSTEM), Darwin)
+	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS)
+else
+	CFLAGS += -DLINUX
+s	MFLAGS += -fconstant-string-class=NSConstantString
+endif
 
-all: nush
+LDFLAGS += $(FRAMEWORKS)
+LDFLAGS += $(LIBS)
+LDFLAGS += $(LIBDIRS)
+LDFLAGS += $(FFI_LIB)
 
-.m.o:
-	gcc $(CFLAGS) $(MFLAGS) $(INCLUDES) -c $< -o $@
+ifeq ($(SYSTEM), Linux)
+	LDFLAGS += -lobjc -lNuFound
+	LDFLAGS += -Wl,--rpath -Wl,/usr/local/lib
+endif
 
-.c.o:
-	gcc $(CFLAGS) $(INCLUDES) -c $< -o $@
+all: mininush
 
-.PHONY: nush
-nush: mininush 
-	mininush tools/nuke
+%.o: %.m
+	$(CC) $(CFLAGS) $(MFLAGS) $(INCLUDES) -c $< -o $@
 
-mininush: $(OBJS)
-	gcc $(OBJS) $(CFLAGS) $(MFLAGS) $(INCLUDES) main/main.m -o $@ $(LDFLAGS)
-	install_name_tool -change /usr/local/lib/libpcre.0.dylib pcre-7.5/.libs/libpcre.0.dylib $@
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-# These actions assume that nush and nuke are installed somewhere safe, such as /usr/local/bin
+.PHONY: mininush
+mininush: $(GCC_OBJS)
+	@echo "LDFLAGS: $(LDFLAGS)"
+	@echo "INCLUDES: $(INCLUDES)"
+	$(CC) $(GCC_OBJS) -g -O2 -o mininush $(LDFLAGS)
 
 .PHONY: clean
 clean:
-	rm -f objc/*.o mininush
-	nuke clean
+	rm -f objc/*.o main/*.o
 
 .PHONY: clobber
 clobber: clean
-	nuke clobber
+	rm -f mininush
