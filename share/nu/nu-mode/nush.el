@@ -232,10 +232,10 @@ order.  Return nil if no start file found."
   "Send the current definition to the inferior Nush process."
   (interactive)
   (save-excursion
-    (end-of-defun)
-    (let ((end (point)))
-      (beginning-of-defun)
-      (nush-send-region (point) end))))
+    (beginning-of-defun)
+    (let ((beg (point)))
+      (end-of-defun)
+      (nush-send-region beg (point)))))
 
 (defun nush-send-last-sexp ()
   "Send the previous sexp to the inferior Nush process."
@@ -255,10 +255,10 @@ order.  Return nil if no start file found."
   "Switch to the nush process buffer.
 With argument, position cursor at end of buffer."
   (interactive "P")
-  (if (or (and nush-buffer (get-buffer nush-buffer))
-          (run-nush)
-;;           (nush-interactively-start-process)
-          )
+  (if (or (and nush-buffer
+               (get-buffer nush-buffer)
+               (get-buffer-process nush-buffer))
+          (run-nush))
       (pop-to-buffer nush-buffer)
       (error "No current process buffer.  See variable `nush-buffer'"))
   (when eob-p

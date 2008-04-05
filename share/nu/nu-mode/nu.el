@@ -26,6 +26,12 @@
 ;; at gmail.com.
 
 ;;; History:
+;; 2008-04-04 Aleksandr Skobelev
+;;    - fixed bug in NU-FORWARD-SEXP1 and NU-BACKWARD-SEXP1 with skipping closing parens
+;;      and made them more PAREDIT compatible (signal an error on list bounds);
+;;      fixed positioning of the cursur on empty line;
+;;      changed NU-DEFUN-RE for SET form;
+;;
 ;; 2008-04-03 Aleksandr Skobelev
 ;;    - added support for character syntax; rewrote and optimized indentation and
 ;;      navigation functionality
@@ -71,7 +77,7 @@
 (autoload 'run-nush "nush" "Run an inferior Nush process." t)
 (autoload 'switch-to-nush "nush" "Switch to an inferior Nush process." t)
 
-(defconst nu-version "2008-04-03"
+(defconst nu-version "2008-04-04"
   "Nu Mode version number.")
 
 (defgroup nu nil
@@ -169,7 +175,8 @@ See `run-hooks'."
 
 (defvar nu-char-re "\\('\\)\\(?:\\\\\\(?:['\\\\]\\|[0-7]\\{3\\}\\|x[0-9a-fA-F]\\{2\\}\\|u[0-9a-fA-F]\\{4\\}\\)\\|\\\\?[^'\\\\xu]\\)\\('\\)")
 
-(defvar nu-defun-re "\\(^(set\\>\\)\\|\\(^\\s *(\\(global\\|class\\|macro\\|function\\)\\>\\)")
+(defvar nu-defun-re "\\(^(set\\s +[$]\\w\\)\\|\\(^\\s *(\\(global\\|class\\|macro\\|function\\)\\>\\)")
+
 
 ;(defun nu-regex-syntax )
 
@@ -348,6 +355,9 @@ See `run-hooks'."
     '("\\(\\<\\|:\\)\\([A-Z]\\([A-Z]\\|[_0-9-]\\)+\\)\\>"
       2 font-lock-constant-face keep)
 
+    '("(\\s *\\(set\\|global\\)[ \t\n]+\\(\\(\\w\\|\\s_\\)+\\)[ \t\n]\\([ \t\n]*\\([;#].*[\n]\\)*[ \t\n]*\\)(NuBridgedConstant\\>"
+      2 font-lock-constant-face keep)
+    
     ;;VARIABLE NAMES
     '("^(\\s *\\(set\\|global\\)\\s +\\(\\(\\w\\|\\s_\\)+\\)"
       2 font-lock-variable-name-face keep)
@@ -576,36 +586,29 @@ See `run-hooks'."
 
                   (let ((ch (char-after)))
                     (cond               ; not in string
-                   
+                     
                      ((= ch ?\()
-                      ;;(message (format "down in list at %d" (point)))
                       (while (progn
                                (incf nu-forward-sexp-level)
                                (forward-char)
-                               (nu-skip-space-forward 'in-clear-state)
                                (and (< (point) (point-max))
-                                    (= (char-after) ?\( ))))
-
+                                    (looking-at "[ \t]*(")))
+                        (skip-chars-forward " \t"))
+                      
 ;;                       (incf nu-forward-sexp-level)
                       (while (and (< (point) (point-max))
                                   (< level nu-forward-sexp-level)) (nu-forward-sexp1 'in-clear-state)))
-                   
-                     ((= ch ?\))
-                      ;;(message (format "up from list at %d" (point)))
-                      (while (progn
-                               (decf nu-forward-sexp-level)
-                               (forward-char)
-                               (nu-skip-space-forward 'in-clear-state)
-                               (and (< (point) (point-max))
-                                    (= (char-after) ?\) )))))
                      
-                      ;; (decf nu-forward-sexp-level))
-                      
+                     ((= ch ?\))
+                      (cond ((< 0 nu-forward-sexp-level)
+                             (decf nu-forward-sexp-level)
+                             (forward-char))
+                            ;; else signal a proper 'scan-error to satisfy paredit 
+                            (t (let ((forward-sexp-function nil)) (forward-sexp)))))
+                     
                      ((when (or (= ch ?\")
                                 (and (= ch ?') (looking-at nu-char-re))
-                                (and (= ch ?/) (looking-at nu-regexp-re)
-                                     ;; (save-excursion (nth 3 (syntax-ppss (1+ (point)))))
-                                     ))
+                                (and (= ch ?/) (looking-at nu-regexp-re)))
                         (forward-char)
                         (nu-skip-string-forward (char-before))
                         ;;(message (format "nu-forward-sexp1: skipped string from the beginning to %d" (point)))
@@ -693,22 +696,20 @@ See `run-hooks'."
                     (while (progn
                              (incf nu-forward-sexp-level)
                              (backward-char)
-                             (nu-skip-space-backward)
                              (and (> (point) (point-min))
-                                  (= (char-before) ?\) ))))
+                                  (looking-back ")[ \t]*")))
+                      (skip-chars-backward " \t"))
                    
                     ;; (incf nu-forward-sexp-level)
                     (while (< level nu-forward-sexp-level) (nu-backward-sexp1)))
                
                
                    ((= cb ?\( )
-                
-                    (while (progn
-                             (decf nu-forward-sexp-level)
-                             (backward-char)
-                             (nu-skip-space-backward)
-                             (and (> (point) (point-min))
-                                  (= (char-before) ?\( )))))
+                    (cond ((< 0 nu-forward-sexp-level)
+                           (decf nu-forward-sexp-level)
+                           (backward-char))
+                          ;; else signal a proper 'scan-error to satisfy paredit 
+                          (t (let ((forward-sexp-function nil)) (backward-sexp)))))
 
                    ;; (decf nu-forward-sexp-level))
                 
@@ -872,10 +873,9 @@ See `run-hooks'."
                          ;; indent method keyword other than the first one 
                          ((and colon-col cur-sexp-keyword-p)
                           (- colon-col (- cur-sexp-end-col cur-sexp-col)))))
-                  )))
+                  ))))
           
-            lisp-indent)))))
-
+          lisp-indent))))
 
 ;; NU-LISP-INDENT-LINE ---------------------------------------------------------
 (defun nu-lisp-indent-line (&optional whole-exp)
@@ -887,7 +887,8 @@ rigidly along with this one."
             (beginning-of-line)
             (and (= (point) (point-min))
                  (looking-at "#!")))
-    (lisp-indent-line whole-exp)))
+    (lisp-indent-line whole-exp)
+    ))
 
 ;; NU-INDENT-SEXP --------------------------------------------------------------
 (defun nu-indent-sexp  (&optional endpos)
@@ -986,8 +987,9 @@ rigidly along with this one."
 
   (nu-skip-space-forward)
   
-  (if (or (nu-looking-at-defun)
-          (nu-beginning-of-defun))
+  (when (or (and (nu-looking-at-defun) (not (nth 3 (syntax-ppss))))
+            (nu-beginning-of-defun))
+    
       (nu-forward-sexp1)))
 
 
