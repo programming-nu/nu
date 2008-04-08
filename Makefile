@@ -58,7 +58,7 @@ ifeq ($(SYSTEM), Darwin)
 	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS)
 else
 	CFLAGS += -DLINUX
-s	MFLAGS += -fconstant-string-class=NSConstantString
+	MFLAGS += -fconstant-string-class=NSConstantString
 endif
 
 LDFLAGS += $(FRAMEWORKS)
