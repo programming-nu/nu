@@ -252,8 +252,8 @@ id regexWithString(NSString *string)
     // create top-level context
     context = [[NSMutableDictionary alloc] init];
 
-    [context setObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
-    [context setObject:symbolTable forKey:SYMBOLS_KEY];
+    [context setPossiblyNullObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
+    [context setPossiblyNullObject:symbolTable forKey:SYMBOLS_KEY];
 
     [self reset];
     return self;
@@ -262,7 +262,7 @@ id regexWithString(NSString *string)
 - (void) close
 {
     // break this retain cycle so the parser can be deleted.
-    [context setObject:[NSNull null] forKey:[symbolTable symbolWithCString:"_parser"]];
+    [context setPossiblyNullObject:[NSNull null] forKey:[symbolTable symbolWithCString:"_parser"]];
 }
 
 - (void) dealloc

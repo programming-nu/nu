@@ -44,12 +44,34 @@ limitations under the License.
 @end
 
 /*!
+    @category NSMutableArray(Nu)
+    @abstract NSMutableArray extensions for Nu programming.
+ */
+@interface NSMutableArray(Nu)
+/*! Add an object to an array, automatically converting nil into [NSNull null]. */
+- (void) addPossiblyNullObject:(id)anObject;
+/*! Insert an object into an array, automatically converting nil into [NSNull null]. */
+- (void) insertPossiblyNullObject:(id)anObject atIndex:(int)index;
+/*! Replace an object in an array, automatically converting nil into [NSNull null]. */
+- (void) replaceObjectAtIndex:(int)index withPossiblyNullObject:(id)anObject;
+@end
+
+/*!
     @category NSSet(Nu)
     @abstract NSSet extensions for Nu programming.
  */
 @interface NSSet(Nu)
 /*! Creates a set that contains the contents of a specified list. */
 + (NSSet *) setWithList:(id) list;
+@end
+
+/*!
+    @category NSSet(Nu)
+    @abstract NSSet extensions for Nu programming.
+ */
+@interface NSMutableSet(Nu)
+/*! Add an object to a set, automatically converting nil into [NSNull null]. */
+- (void) addPossiblyNullObject:(id)anObject;
 @end
 
 /*!
@@ -76,6 +98,8 @@ limitations under the License.
     If no value is found, looks in the context's parent, continuing
     upward until no more parent contexts are found. */
 - (id) lookupObjectForKey:(id)key;
+/*! Add an object to a dictionary, automatically converting nil into [NSNull null]. */
+- (void) setPossiblyNullObject:(id) anObject forKey:(id) aKey;
 #ifdef LINUX
 - (void) setValue:(id) value forKey:(id) key;
 #endif

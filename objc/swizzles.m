@@ -15,6 +15,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+#if 0
+// this code is no longer necessary
+
 #import <Foundation/Foundation.h>
 #import "class.h"
 #import "object.h"
@@ -68,7 +72,7 @@ limitations under the License.
 void nu_swizzleContainerClasses()
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	Class NSCFDictionary = NSClassFromString(@"NSCFDictionary");
+    Class NSCFDictionary = NSClassFromString(@"NSCFDictionary");
     Class NSCFArray = NSClassFromString(@"NSCFArray");
     Class NSCFSet = NSClassFromString(@"NSCFSet");
     [NSCFDictionary include:[NuClass classWithName:@"NSCFDictionarySwizzles"]];
@@ -81,3 +85,4 @@ void nu_swizzleContainerClasses()
     [NSCFSet exchangeInstanceMethod:@selector(addObject:) withMethod:@selector(nuAddObject:)];
     [pool release];
 }
+#endif

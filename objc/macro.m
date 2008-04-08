@@ -179,7 +179,7 @@ extern id Nu__null;
     // save the current value of margs
     id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
     // set the arguments to the special variable "margs"
-    [calling_context setObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
+    [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
     // evaluate the body of the block in the calling context (implicit progn)
     id value = Nu__null;
 
@@ -201,7 +201,7 @@ extern id Nu__null;
         [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
     }
     else {
-        [calling_context setObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
+        [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
     }
     // NSLog(@"result is %@", value);
     return value;

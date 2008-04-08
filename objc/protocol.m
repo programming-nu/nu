@@ -101,7 +101,7 @@ static NSMutableDictionary *nuProtocols;
 
     if (!nuProtocols)
         nuProtocols = [[NSMutableDictionary alloc] init];
-    [nuProtocols setObject:self forKey:name];
+    [nuProtocols setPossiblyNullObject:self forKey:name];
     return self;
 }
 

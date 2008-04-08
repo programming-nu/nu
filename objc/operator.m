@@ -641,13 +641,13 @@ static bool valueIsTrue(id value)
         id searchContext = context;
         while (searchContext) {
             if ([searchContext objectForKey:symbol]) {
-                [searchContext setObject:result forKey:symbol];
+                [searchContext setPossiblyNullObject:result forKey:symbol];
                 return result;
             }
             searchContext = [searchContext objectForKey:PARENT_KEY];
         }
         #endif
-        [context setObject:result forKey:symbol];
+        [context setPossiblyNullObject:result forKey:symbol];
     }
     return result;
 }
@@ -707,9 +707,9 @@ static bool valueIsTrue(id value)
     id args = [[cdr cdr] car];
     id body = [[cdr cdr] cdr];
     NuBlock *block = [[NuBlock alloc] initWithParameters:args body:body context:context];
-    [context setObject:block forKey:symbol];      // this defines the function in the calling context
+    [context setPossiblyNullObject:block forKey:symbol];      // this defines the function in the calling context
                                                   // this defines the function in the block context, which allows recursion
-    [[block context] setObject:block forKey:symbol];
+    [[block context] setPossiblyNullObject:block forKey:symbol];
     return block;
 }
 
@@ -726,7 +726,7 @@ static bool valueIsTrue(id value)
     value = [value evalWithContext:context];
     if (nu_objectIsKindOfClass(value, [NuBlock class])) {
         //NSLog(@"setting context[%@] = %@", symbol, value);
-        [((NSMutableDictionary *)[value context]) setObject:value forKey:symbol];
+        [((NSMutableDictionary *)[value context]) setPossiblyNullObject:value forKey:symbol];
     }
     return value;
 }
@@ -743,7 +743,7 @@ static bool valueIsTrue(id value)
     id body = [cdr cdr];
 
     NuMacro *macro = [[NuMacro alloc] initWithName:name body:body];
-    [context setObject:macro forKey:name];        // this defines the function in the calling context
+    [context setPossiblyNullObject:macro forKey:name];        // this defines the function in the calling context
     return macro;
 }
 
@@ -1433,7 +1433,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     if (body && (body != Nu__null)) {
         NuBlock *block = [[NuBlock alloc] initWithParameters:Nu__null body:body context:context];
         [[block context]
-            setObject:childClass
+            setPossiblyNullObject:childClass
             forKey:[symbolTable symbolWithCString:"_class"]];
         result = [block evalWithArguments:Nu__null context:Nu__null];
         [block release];

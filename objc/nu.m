@@ -252,14 +252,12 @@ void NuInit()
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
-        #if defined(DARWIN) && !defined(IPHONE)
+
+        #ifndef IPHONE
         // Stop NSView from complaining when we retain alloc-ed views.
         Class NSView = NSClassFromString(@"NSView");
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
         #endif
-        // Apply swizzles to container classes to make them tolerant of nil insertions.
-        extern void nu_swizzleContainerClasses();
-        nu_swizzleContainerClasses();
 
         // Enable support for protocols in Nu.  Apple doesn't have an API for this, so we use our own.
         extern void nu_initProtocols();
@@ -278,6 +276,7 @@ void NuInit()
         [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         #endif
+
         #else
         [[Nu parser] parseEval:@"(load \"nu\")"];
         #endif

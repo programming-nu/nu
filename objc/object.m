@@ -415,7 +415,7 @@ limitations under the License.
                 [self setValue:sparseIvars forIvar:@"__nuivars"];
             }
             [self willChangeValueForKey:name];
-            [sparseIvars setObject:value forKey:name];
+            [sparseIvars setPossiblyNullObject:value forKey:name];
             [self didChangeValueForKey:name];
             return;
         }

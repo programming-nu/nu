@@ -1163,7 +1163,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     #endif
 
     NuSymbolTable *symbolTable = [[block context] objectForKey:SYMBOLS_KEY];
-    [[block context] setObject:[[NuClass alloc] initWithClass:c] forKey:[symbolTable symbolWithCString:"_class"]];
+    [[block context] setPossiblyNullObject:[[NuClass alloc] initWithClass:c] forKey:[symbolTable symbolWithCString:"_class"]];
 
     IMP imp = construct_method_handler(selector, block, signature_str);
     if (imp == NULL) {
@@ -1601,7 +1601,7 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
         id body = cursor;
         NuBlock *block = [[[NuBlock alloc] initWithParameters:argumentNames body:body context:context] autorelease];
         [[block context]
-            setObject:methodName
+            setPossiblyNullObject:methodName
             forKey:[symbolTable symbolWithCString:"_method"]];
         #ifdef DARWIN
         return add_method_to_class(

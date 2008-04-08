@@ -77,10 +77,10 @@ extern id Nu__null;
     id m = [[method car] evalWithContext:context];
     if ([m isKindOfClass:[NSNumber class]]) {
         int mm = [m intValue];
-		if (mm < 0) {
-			// if the index is negative, index from the end of the array
-			mm += [self count];
-		}
+        if (mm < 0) {
+            // if the index is negative, index from the end of the array
+            mm += [self count];
+        }
         if ((mm < [self count]) && (mm >= 0)) {
             return [self objectAtIndex:mm];
         }
@@ -95,6 +95,25 @@ extern id Nu__null;
 
 @end
 
+@implementation NSMutableArray(Nu)
+
+- (void) addPossiblyNullObject:(id)anObject
+{
+    [self addObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
+}
+
+- (void) insertPossiblyNullObject:(id)anObject atIndex:(int)index
+{
+    [self insertObject:((anObject == nil) ? (id)[NSNull null] : anObject) atIndex:index];
+}
+
+- (void) replaceObjectAtIndex:(int)index withPossiblyNullObject:(id)anObject
+{
+    [self replaceObjectAtIndex:index withObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
+}
+
+@end
+
 @implementation NSSet(Nu)
 + (NSSet *) setWithList:(id) list
 {
@@ -105,6 +124,15 @@ extern id Nu__null;
         cursor = [cursor cdr];
     }
     return s;
+}
+
+@end
+
+@implementation NSMutableSet(Nu)
+
+- (void) addPossiblyNullObject:(id)anObject
+{
+    [self addObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
 }
 
 @end
@@ -155,6 +183,11 @@ extern id Nu__null;
     id parent = [self objectForKey:PARENT_KEY];
     if (!parent) return nil;
     return [parent lookupObjectForKey:key];
+}
+
+- (void) setPossiblyNullObject:(id) anObject forKey:(id) aKey
+{
+	[self setObject:((anObject == nil) ? (id)[NSNull null] : anObject) forKey:aKey];
 }
 
 #ifdef LINUX

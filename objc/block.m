@@ -45,8 +45,8 @@ extern id Nu__null;
     context = [c mutableCopy];
     #else
     context = [[NSMutableDictionary alloc] init];
-    [context setObject:c forKey:PARENT_KEY];
-    [context setObject:[c objectForKey:SYMBOLS_KEY] forKey:SYMBOLS_KEY];
+    [context setPossiblyNullObject:c forKey:PARENT_KEY];
+    [context setPossiblyNullObject:[c objectForKey:SYMBOLS_KEY] forKey:SYMBOLS_KEY];
     #endif
     return self;
 }
@@ -100,7 +100,7 @@ extern id Nu__null;
                 [cursor setCar:value];
                 vlist = [vlist cdr];
             }
-            [evaluation_context setObject:[varargs cdr] forKey:parameter];
+            [evaluation_context setPossiblyNullObject:[varargs cdr] forKey:parameter];
             plist = [plist cdr];
             // this must be the last element in the parameter list
             if (plist != Nu__null) {
@@ -114,7 +114,7 @@ extern id Nu__null;
             if (calling_context && (calling_context != Nu__null))
                 value = [value evalWithContext:calling_context];
             //NSLog(@"setting %@ = %@", parameter, value);
-            [evaluation_context setObject:value forKey:parameter];
+            [evaluation_context setPossiblyNullObject:value forKey:parameter];
             plist = [plist cdr];
             vlist = [vlist cdr];
         }
@@ -159,8 +159,8 @@ extern id Nu__null;
     if (object) {
         NuSymbolTable *symbolTable = [evaluation_context objectForKey:SYMBOLS_KEY];
         NuClass *c = [context objectForKey:[symbolTable symbolWithString:@"_class"]];
-        [evaluation_context setObject:object forKey:[symbolTable symbolWithCString:"self"]];
-        [evaluation_context setObject:[NuSuper superWithObject:object ofClass:[c wrappedClass]] forKey:[symbolTable symbolWithCString:"super"]];
+        [evaluation_context setPossiblyNullObject:object forKey:[symbolTable symbolWithCString:"self"]];
+        [evaluation_context setPossiblyNullObject:[NuSuper superWithObject:object ofClass:[c wrappedClass]] forKey:[symbolTable symbolWithCString:"super"]];
     }
     while (plist && (plist != Nu__null) && vlist && (vlist != Nu__null)) {
         id arg = [plist car];
@@ -168,7 +168,7 @@ extern id Nu__null;
         // we don't evaluate them here; instead we just copy them
         id value = [vlist car];
         //        NSLog(@"setting %@ = %@", arg, value);
-        [evaluation_context setObject:value forKey:arg];
+        [evaluation_context setPossiblyNullObject:value forKey:arg];
         plist = [plist cdr];
         vlist = [vlist cdr];
     }
