@@ -10,6 +10,8 @@
       ("iPhone"
                (set PLATFORM "-isysroot /Developer/Platforms/Aspen.platform/Developer/SDKs/Aspen1.2.sdk")
                (set @arch '("armv6"))
+               (@c_files unionSet:(filelist "^libffi/.*\.c$"))
+               (@c_files unionSet:(filelist "^libffi/.*\.S$"))
                (set @cc "/Developer/Platforms/Aspen.platform/Developer/usr/bin/gcc-4.0"))
       ("simulator"
                   (set PLATFORM "-isysroot /Developer/Platforms/AspenSimulator.platform/Developer/SDKs/AspenSimulator1.2.sdk")
