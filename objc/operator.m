@@ -29,8 +29,10 @@ limitations under the License.
 #import "parser.h"
 #import "regex.h"
 #import "version.h"
-#import "Nu.h"
+#import "Nu/Nu.h"
+#ifndef IPHONE
 #include <readline/readline.h>
+#endif
 #include <stdlib.h>
 
 @implementation NuBreakException

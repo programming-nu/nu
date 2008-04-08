@@ -22,7 +22,9 @@ limitations under the License.
 #import <objc/objc.h>
 #ifdef DARWIN
 #import <objc/objc-runtime.h>
+#ifndef IPHONE
 #import <objc/objc-class.h>
+#endif
 #endif
 
 /*!

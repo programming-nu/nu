@@ -78,8 +78,10 @@ limitations under the License.
     invocation of the parse: method.
 */
 - (BOOL) incomplete;
+#ifndef IPHONE
 /*! Run a parser interactively at the console (Terminal.app). */
 - (int) interact;
 /*! Run the main handler for a console(Terminal.app)-oriented Nu shell. */
 + (int) main;
+#endif
 @end

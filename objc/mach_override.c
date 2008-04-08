@@ -5,6 +5,7 @@
 
 	***************************************************************************/
 #ifdef DARWIN
+#ifndef IPHONE
 
 #include "mach_override.h"
 
@@ -601,5 +602,6 @@ asm(
 			"	ret"
 );
 
+#endif
 #endif
 #endif

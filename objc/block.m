@@ -21,6 +21,7 @@ limitations under the License.
 #import "symbol.h"
 #import "class.h"
 #import "super.h"
+#import "extensions.h"
 
 extern id Nu__null;
 

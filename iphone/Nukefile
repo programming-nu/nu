@@ -1,12 +1,22 @@
 
+(set platform "iPhone")
+
 ;; source files
 (set @c_files      (filelistWithRoot "^objc/.*\.c$" ".."))
 (set @m_files      (filelistWithRoot "^objc/.*\.m$" ".."))
 (@m_files unionSet:(filelistWithRoot "^baked/.*\.m$" ".."))
 
-(set @cflags "-g -Iinclude -DDARWIN -DIPHONE -DMACOSX -std=gnu99 -isysroot /Developer/Platforms/AspenSimulator.platform/Developer/SDKs/AspenSimulator1.2.sdk -mmacosx-version-min=10.5")
+(case platform
+      ("iPhone"
+               (set PLATFORM "-isysroot /Developer/Platforms/Aspen.platform/Developer/SDKs/Aspen1.2.sdk")
+               (set @arch '("armv6"))
+               (set @cc "/Developer/Platforms/Aspen.platform/Developer/usr/bin/gcc-4.0"))
+      ("simulator"
+                  (set PLATFORM "-isysroot /Developer/Platforms/AspenSimulator.platform/Developer/SDKs/AspenSimulator1.2.sdk")
+                  (set @arch '("i386")))
+      (else nil))
 
-(set @arch '("i386"))
+(set @cflags "-g -Iinclude -I../include -DDARWIN -DIPHONE -DMACOSX -std=gnu99 #{PLATFORM}  -mmacosx-version-min=10.5")
 
 ;; library description
 (set @library "libNu")

@@ -244,6 +244,8 @@ extern id Nu__null;
     return [self stringWithCString:"\n" encoding:NSUTF8StringEncoding];
 }
 
+#ifndef IPHONE
+
 // Read the text output of a shell command into a string and return the string.
 + (NSString *) stringWithShellCommand:(NSString *) command
 {
@@ -265,6 +267,8 @@ extern id Nu__null;
     NSData *data = [[[task standardOutput] fileHandleForReading] readDataToEndOfFile];
     return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
 }
+
+#endif
 
 // If the last character is a newline, delete it.
 - (NSString *) chomp

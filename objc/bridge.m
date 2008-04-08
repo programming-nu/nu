@@ -19,6 +19,12 @@ limitations under the License.
 #define __USE_GNU
 #endif
 #import <Foundation/Foundation.h>
+#ifdef IPHONE
+#import <UIKit/UIKit.h>
+#define NSRect CGRect
+#define NSPoint CGPoint
+#define NSSize CGSize
+#endif
 #import "objc_runtime.h"
 #import "class.h"
 #import "block.h"

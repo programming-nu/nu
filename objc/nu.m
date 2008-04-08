@@ -17,7 +17,7 @@ limitations under the License.
 */
 #import "parser.h"
 #import "symbol.h"
-#import "Nu.h"
+#import "Nu/Nu.h"
 #import "extensions.h"
 #import "object.h"
 #import "objc_runtime.h"
@@ -252,8 +252,7 @@ void NuInit()
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
-
-        #ifndef IPHONE
+        #if defined(DARWIN) && !defined(IPHONE)
         // Stop NSView from complaining when we retain alloc-ed views.
         Class NSView = NSClassFromString(@"NSView");
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];

@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #ifdef DARWIN
+#ifndef IPHONE
 
 #import <Foundation/Foundation.h>
 #import <dlfcn.h>
@@ -185,4 +186,5 @@ static NSString *getTypeStringFromNode(id node)
 }
 
 @end
+#endif
 #endif

@@ -118,11 +118,15 @@ limitations under the License.
     Expressions are wrapped in #{...} where the ellipses correspond to a Nu expression.
  */
 - (id) evalWithContext:(NSMutableDictionary *) context;
+
+#ifndef IPHONE
 /*! Run a shell command and return its results in a string. */
 + (NSString *) stringWithShellCommand:(NSString *) command;
+#endif
 
 /*! Create a string from a specified character */
 + (NSString *) stringWithCharacter:(unichar) c;
+
 #ifdef LINUX
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding;
 - (const char *) cStringUsingEncoding:(NSStringEncoding) encoding;

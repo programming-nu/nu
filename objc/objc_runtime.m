@@ -25,7 +25,9 @@ limitations under the License.
 #include <stdlib.h>
 #include <string.h>
 #ifdef DARWIN
+#ifndef IPHONE
 #include <objc/objc-class.h>
+#endif
 #endif
 #include <math.h>
 #import <Foundation/Foundation.h> // for NSException

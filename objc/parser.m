@@ -40,8 +40,10 @@ extern const char *nu_parsedFilename(int i)
     return filenames[i];
 }
 
+#ifndef IPHONE
 #include <readline/readline.h>
 #include <readline/history.h>
+#endif
 
 @interface NuParser(Internal)
 - (int) depth;
@@ -857,6 +859,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     return result;
 }
 
+#ifndef IPHONE
 - (int) interact
 {
     printf("Nu Shell.\n");
@@ -948,5 +951,5 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     [pool release];
     return result;
 }
-
+#endif
 @end
