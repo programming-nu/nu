@@ -26,7 +26,7 @@ else # Linux
 	FFI_INCLUDE=
 endif
 
-INCLUDES = $(FFI_INCLUDE) -I./include/Nu
+INCLUDES = $(FFI_INCLUDE) -I./include
 
 ifeq ($(SYSTEM), Darwin)
 	ifeq ($(shell test -d $(PREFIX)/include && echo yes), yes)
