@@ -258,9 +258,11 @@ void NuInit()
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
         #endif
 
+        #ifndef IPHONE
         // Enable support for protocols in Nu.  Apple doesn't have an API for this, so we use our own.
         extern void nu_initProtocols();
         nu_initProtocols();
+        #endif
 
         // if you don't like making Protocol a subclass of NSObject (see nu_initProtocols), you can do this instead.
         // transplant_nu_methods([Protocol class], [NSObject class]);

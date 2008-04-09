@@ -709,7 +709,8 @@ static bool valueIsTrue(id value)
     id args = [[cdr cdr] car];
     id body = [[cdr cdr] cdr];
     NuBlock *block = [[NuBlock alloc] initWithParameters:args body:body context:context];
-    [context setPossiblyNullObject:block forKey:symbol];      // this defines the function in the calling context
+                                                  // this defines the function in the calling context
+    [context setPossiblyNullObject:block forKey:symbol];
                                                   // this defines the function in the block context, which allows recursion
     [[block context] setPossiblyNullObject:block forKey:symbol];
     return block;
@@ -745,7 +746,8 @@ static bool valueIsTrue(id value)
     id body = [cdr cdr];
 
     NuMacro *macro = [[NuMacro alloc] initWithName:name body:body];
-    [context setPossiblyNullObject:macro forKey:name];        // this defines the function in the calling context
+                                                  // this defines the function in the calling context
+    [context setPossiblyNullObject:macro forKey:name];
     return macro;
 }
 
@@ -1144,6 +1146,7 @@ static bool valueIsTrue(id value)
 
 @end
 
+#ifndef IPHONE
 @interface Nu_gets_operator : NuOperator {}
 @end
 
@@ -1156,6 +1159,7 @@ static bool valueIsTrue(id value)
 }
 
 @end
+#endif
 
 @interface Nu_print_operator : NuOperator {}
 @end
@@ -1395,7 +1399,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     id className = [cdr car];
     id body = Nu__null;
-    #ifdef __x86_64__
+    #if defined(__x86_64__) || defined(IPHONE)
     Class newClass = nil;
     #endif
     NuClass *childClass;
@@ -1410,7 +1414,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         if (!parentClass)
             [NSException raise:@"NuUndefinedSuperclass" format:@"undefined superclass %@", [parentName stringValue]];
 
-        #ifdef __x86_64__
+        #if defined(__x86_64__) || defined(IPHONE)
         newClass = objc_allocateClassPair(parentClass, [[className stringValue] cStringUsingEncoding:NSUTF8StringEncoding], 0);
         childClass = [NuClass classWithClass:newClass];
         [childClass setRegistered:NO];
@@ -1440,7 +1444,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         result = [block evalWithArguments:Nu__null context:Nu__null];
         [block release];
     }
-    #ifdef __x86_64__
+    #if defined(__x86_64__) || defined(IPHONE)
     if (newClass && ([childClass isRegistered] == NO)) {
         [childClass registerClass];
     }
@@ -1492,7 +1496,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
-    #ifdef __x86_64__
+    #if defined(__x86_64__) || defined(IPHONE)
     // this will only work if the class is unregistered...
     if ([classWrapper isRegistered]) {
         [NSException raise:@"NuIvarAddedTooLate" format:@"instance variables must be added when a class is created and before any method declarations"];
@@ -1527,7 +1531,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
 
     NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
-    #ifdef __x86_64__
+    #if defined(__x86_64__) || defined(IPHONE)
     // this will only work if the class is unregistered...
     if ([classWrapper isRegistered]) {
         [NSException raise:@"NuIvarAddedTooLate" format:@"instance variables must be added when a class is created and before any method declarations"];
@@ -1756,8 +1760,8 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("car",      Nu_car_operator);
     install("cdr",      Nu_cdr_operator);
-	install("first",    Nu_car_operator);
-	install("rest",     Nu_cdr_operator);
+    install("first",    Nu_car_operator);
+    install("rest",     Nu_cdr_operator);
     install("head",     Nu_car_operator);
     install("tail",     Nu_cdr_operator);
     install("atom",     Nu_atom_operator);
@@ -1825,7 +1829,9 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("do",       Nu_do_operator);
 
+    #ifndef IPHONE
     install("gets",     Nu_gets_operator);
+    #endif
     install("puts",     Nu_puts_operator);
     install("print",    Nu_print_operator);
 
