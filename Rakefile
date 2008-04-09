@@ -29,7 +29,7 @@ else # Linux
   LEOPARD_CFLAGS = ""
 end
 
-@includes = FFI_INCLUDE + " -I ./include/Nu "
+@includes = FFI_INCLUDE + " -I ./include "
 
 if SYSTEM == "Darwin"
   @includes += " -I #{PREFIX}/include" if File.exist? "#{PREFIX}/include"
