@@ -81,8 +81,6 @@ all: mininush
 
 .PHONY: mininush
 mininush: $(GCC_OBJS)
-	@echo "LDFLAGS: $(LDFLAGS)"
-	@echo "INCLUDES: $(INCLUDES)"
 	$(CC) $(GCC_OBJS) -g -O2 -o mininush $(LDFLAGS)
 
 .PHONY: clean
