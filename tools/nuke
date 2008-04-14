@@ -245,8 +245,8 @@
                          (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
                          ((@c_objects objectForKey:architecture) addObject: objectName)
                          (ifDarwin
-                             (then (set archflags "-arch #{architecture}"))
-                             (else (set archflags "")))
+                                  (then (set archflags "-arch #{architecture}"))
+                                  (else (set archflags "")))
                          (file objectName => sourceName is
                                (SH "#{@cc} #{@cflags} #{archflags} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
      
@@ -261,8 +261,8 @@
                          (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
                          ((@m_objects objectForKey:architecture) addObject: objectName)
                          (ifDarwin
-                             (then (set archflags "-arch #{architecture}"))
-                             (else (set archflags "")))
+                                  (then (set archflags "-arch #{architecture}"))
+                                  (else (set archflags "")))
                          (file objectName => sourceName is
                                (SH "#{@cc} #{@cflags} #{@mflags} #{archflags} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
      
@@ -333,16 +333,16 @@
                          (set application_executable "build/#{architecture}/application-#{@application}")
                          (@application_executables addObject:application_executable)
                          (ifDarwin
-                             (then (set archflags "-arch #{architecture}"))
-                             (else (set archflags "")))
+                                  (then (set archflags "-arch #{architecture}"))
+                                  (else (set archflags "")))
                          (file application_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
                                (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} -o '#{(target name)}'")
                                (SH command))))
               ;; application fat executable
               (file @application_executable_name => @application_executable_dir @application_executables is
                     (ifDarwin
-                        (then (set command "lipo -create #{(@application_executables join)} -output '#{@application_executable_name}'"))
-                        (else (set command "cp '#{(@application_executables objectAtIndex:0)}' '#{@application_executable_name}'")))
+                             (then (set command "lipo -create #{(@application_executables join)} -output '#{@application_executable_name}'"))
+                             (else (set command "cp '#{(@application_executables objectAtIndex:0)}' '#{@application_executable_name}'")))
                     (SH command)))
          (else
               (file @application_executable_name => @application_executable_dir is
@@ -462,14 +462,14 @@
                 (set framework_executable "build/#{architecture}/framework-#{@framework}")
                 (@framework_executables addObject:framework_executable)
                 (ifDarwin
-                    (then (set archflags "-arch #{architecture}"))
-                    (else (set archflags "")))
+                         (then (set archflags "-arch #{architecture}"))
+                         (else (set archflags "")))
                 (ifDarwin
-                    (then (set installnameflag "-install_name #{@framework_executable_name}"))
-                    (else (set installnameflag "")))
+                         (then (set installnameflag "-install_name #{@framework_executable_name}"))
+                         (else (set installnameflag "")))
                 (ifDarwin
-                    (then (set dylibflag "-dynamiclib"))
-                    (else (set dylibflag "-shared")))
+                         (then (set dylibflag "-dynamiclib"))
+                         (else (set dylibflag "-shared")))
                 (file framework_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
                       (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{@initflags} #{installnameflag} #{dylibflag} -o '#{(target name)}'")
                       (SH command))))
@@ -477,8 +477,8 @@
      ;; framework fat executable
      (file @framework_executable_name => @framework_contents_dir @framework_executables is
            (ifDarwin
-               (then (set command "lipo -create #{(@framework_executables join)} -output '#{@framework_executable_name}'"))
-               (else (set command "cp '#{(@framework_executables objectAtIndex:0)}' '#{@framework_executable_name}'")))
+                    (then (set command "lipo -create #{(@framework_executables join)} -output '#{@framework_executable_name}'"))
+                    (else (set command "cp '#{(@framework_executables objectAtIndex:0)}' '#{@framework_executable_name}'")))
            (SH command))
      
      ;; framework_resources
@@ -564,8 +564,8 @@
                 (set bundle_executable "build/#{architecture}/bundle-#{@bundle}")
                 (@bundle_executables addObject:bundle_executable)
                 (ifDarwin
-                    (then (set archflags "-arch #{architecture}"))
-                    (else (set archflags "")))
+                         (then (set archflags "-arch #{architecture}"))
+                         (else (set archflags "")))
                 (file bundle_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
                       (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} -bundle -o '#{(target name)}'")
                       (SH command))))
@@ -648,11 +648,11 @@
                 (set library_executable "build/#{architecture}/#{@dylib}.#{libext}")
                 (@library_executables addObject:library_executable)
                 (ifDarwin
-                    (then (set dylibflag "-dynamiclib"))
-                    (else (set dylibflag "-shared")))
+                         (then (set dylibflag "-dynamiclib"))
+                         (else (set dylibflag "-shared")))
                 (ifDarwin
-                    (then (set archflags "-arch #{architecture}"))
-                    (else (set archflags "")))
+                         (then (set archflags "-arch #{architecture}"))
+                         (else (set archflags "")))
                 (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
                       (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{dylibflag} -o '#{(target name)}'")
                       (SH command))))
@@ -661,8 +661,8 @@
      (set @library_executable_name "#{@dylib}.#{libext}")
      (file @library_executable_name => @library_executables is
            (ifDarwin
-               (then (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'"))
-               (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
+                    (then (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'"))
+                    (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
            (SH command))
      
      (task "dylib" => @library_executable_name))
@@ -721,7 +721,7 @@
      
      ;; Load and evaluate code from a named file. This is typically used to read a Nukefile.
      (imethod (id) load: (id) filename is
-          (load filename)
+          (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new)))))
           self))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -732,12 +732,19 @@
 ;; adding command line options to get task lists
 ;; or to control the verbosity.
 
-(set argv ((NuApplication sharedApplication) arguments))
-(set target (if (> (argv count) 0)
-                (then (argv objectAtIndex:0))
-                (else "default")))
+(set Nukefile "Nukefile")
+(set target "default")
 
-;; We expect there to be a file named "Nukefile" in the current directory
+(set argv ((NuApplication sharedApplication) arguments))
+(for ((set i 0) (< i (argv count)) (set i (+ i 1)))
+     (case (set argi (argv i))
+           ("-v" (set $verbose YES))
+           ("-f" (set Nukefile (argv (set i (+ i 1)))))
+           (else (set target argi))))
+
+(puts "Using #{Nukefile} with target #{target}.")
+
+;; We expect there to be a Nukefile in the current directory
 ;; or in one of its containing directories
 (function climbToFile (filename)
      (set path (((NSProcessInfo processInfo) environment) objectForKey:"PWD"))
@@ -749,8 +756,8 @@
          ((NSFileManager defaultManager) changeCurrentDirectoryPath:path)))
 
 (try
-    (climbToFile "Nukefile")
-    (set project (((NukeProject alloc) init) load:"Nukefile"))
+    (climbToFile Nukefile)
+    (set project (((NukeProject alloc) init) load:Nukefile))
     (catch (exception)
            (puts "nuke error: #{(exception reason)}")
            ;; bridge and call a standard C function
