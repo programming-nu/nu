@@ -26,7 +26,7 @@ else # Linux
 	FFI_INCLUDE=
 endif
 
-INCLUDES = $(FFI_INCLUDE) -I./include/Nu
+INCLUDES = $(FFI_INCLUDE) -I./include
 
 ifeq ($(SYSTEM), Darwin)
 	ifeq ($(shell test -d $(PREFIX)/include && echo yes), yes)
@@ -58,7 +58,7 @@ ifeq ($(SYSTEM), Darwin)
 	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS)
 else
 	CFLAGS += -DLINUX
-s	MFLAGS += -fconstant-string-class=NSConstantString
+	MFLAGS += -fconstant-string-class=NSConstantString
 endif
 
 LDFLAGS += $(FRAMEWORKS)
@@ -81,8 +81,6 @@ all: mininush
 
 .PHONY: mininush
 mininush: $(GCC_OBJS)
-	@echo "LDFLAGS: $(LDFLAGS)"
-	@echo "INCLUDES: $(INCLUDES)"
 	$(CC) $(GCC_OBJS) -g -O2 -o mininush $(LDFLAGS)
 
 .PHONY: clean
