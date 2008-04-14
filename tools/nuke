@@ -19,6 +19,7 @@
 
 ;; basic declarations that allow nuke to run in mininush
 (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
+(set NSUTF8StringEncoding 4)
 
 ;; system-level helpers
 (function SH (command)

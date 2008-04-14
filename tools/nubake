@@ -23,54 +23,54 @@
 (class NSString
      ;; Output a string as an array of ints. This way we don't have to worry about escaping special characters.
      ;; Beware -- this does not correctly handle UTF-8. You will get compilation warnings for characters that are out-of-range.
-     (imethod characterArray is
-          (set result "(const char[]){")
-          ((self length) times:
-           (do (i) (result appendString:"#{(self characterAtIndex:i)},")))
-          (result appendString:"0}")
-          result))
+     (- characterArray is
+        (set result "(const char[]){")
+        ((self length) times:
+         (do (i) (result appendString:"#{(self characterAtIndex:i)},")))
+        (result appendString:"0}")
+        result))
 
-;; @abstract A Nu code beautifier.
+;; @abstract A Nu code "baker".
 ;; @discussion This class is used by nubake, the standalone Nu code "baker", to automatically convert Nu code into equivalent Objective-C functions.
 (class NuBake is NSObject
      
      ;; Convert a Nu expression into an equivalent C expression.
      ;; Used internally.
      ;; Upon reading it, you might ask, "is this really all it takes?"  It is.
-     (cmethod (id) expandNuExpression:(id) node is
-          (set result "")
-          (cond ((eq node nil)
-                 (result appendString:"_nunull()"))
-                ((node isKindOfClass:NuCell)
-                 (result appendString:(+ "_nucell(" (self expandNuExpression:(node car)) ",\n" (self expandNuExpression:(node cdr)) ")")))
-                ((node isKindOfClass:NuSymbol)
-                 (result appendString:"_nusymbol(#{((node stringValue) characterArray)})"))
-                ((node isKindOfClass:NSString)
-                 (result appendString:"_nustring(#{(node characterArray)})"))
-                ((node isKindOfClass:NSNumber)
-                 (result appendString:"_nunumberd(#{node})"))
-                ((node isKindOfClass:NuRegex)
-                 (result appendString:"_nuregex(#{((node pattern) characterArray)}, #{(node options)})"))
-                (else (result appendString:"[ERROR]")))
-          result)
+     (+ (id) expandNuExpression:(id) node is
+        (set result "")
+        (cond ((eq node nil)
+               (result appendString:"_nunull()"))
+              ((node isKindOfClass:NuCell)
+               (result appendString:(+ "_nucell(" (self expandNuExpression:(node car)) ",\n" (self expandNuExpression:(node cdr)) ")")))
+              ((node isKindOfClass:NuSymbol)
+               (result appendString:"_nusymbol(#{((node stringValue) characterArray)})"))
+              ((node isKindOfClass:NSString)
+               (result appendString:"_nustring(#{(node characterArray)})"))
+              ((node isKindOfClass:NSNumber)
+               (result appendString:"_nunumberd(#{node})"))
+              ((node isKindOfClass:NuRegex)
+               (result appendString:"_nuregex(#{((node pattern) characterArray)}, #{(node options)})"))
+              (else (result appendString:"[ERROR]")))
+        result)
      
      ;; Generate an Objective-C source file from parsed Nu source code.
      ;; The file will a function named 'functionName' that when called, will construct a code tree that is identical to the specified program.
      ;; If 'standalone' is true, a 'main()' function will be included to allow the file to be compiled, linked, and run standalone.
-     (cmethod (id) bakeNuCode:(id)program intoFunction:(id)functionName standalone:(int)standalone is
-          (set result <<-END
+     (+ (id) bakeNuCode:(id)program intoFunction:(id)functionName standalone:(int)standalone is
+        (set result <<-END
 #import <Foundation/Foundation.h>
 #import <Nu/Nu.h>
 
 id #{functionName}() {
 	return END)
-          (result appendString:(self expandNuExpression:program))
-          (result appendString:<<-END
+        (result appendString:(self expandNuExpression:program))
+        (result appendString:<<-END
 ;
 }
 END)
-          (if (standalone)
-              (result appendString:<<-END
+        (if (standalone)
+            (result appendString:<<-END
 	
 int main(int argc, char *argv[]) {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 END))
-          result))
+        result))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; main program
