@@ -295,7 +295,6 @@ limitations under the License.
 
 + (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
 {
-    NSLog(@"NSObject +handleUnknownMessage...");
     [NSException raise:@"NuUnknownMessage"
         format:@"unable to find message handler for %@",
         [cdr stringValue]];
