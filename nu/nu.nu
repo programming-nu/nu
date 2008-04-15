@@ -84,14 +84,6 @@
      ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
      (- (void) << (id) object is (self addObject:object)))
 
-(class NSDictionary
-     
-     ;; Iterate over the key-object pairs in a dictionary. Pass it a block with two arguments: (key object).
-     (- (id) each:(id) block is
-        ((self allKeys) each:
-         (do (key) (block key (self objectForKey:key))))))
-
-
 (class NSString
      
      ;; Convert a string into a symbol.

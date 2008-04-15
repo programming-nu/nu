@@ -173,6 +173,22 @@ extern id Nu__null;
     }
 }
 
+// Iterate over the key-object pairs in a dictionary. Pass it a block with two arguments: (key object).
+- (id) each:(id) block
+{
+    id args = [[NuCell alloc] init];
+    [args setCdr:[[[NuCell alloc] init] autorelease]];
+    NSEnumerator *keyEnumerator = [[self allKeys] objectEnumerator];
+    id key;
+    while ((key = [keyEnumerator nextObject])) {
+        [args setCar:key];
+        [[args cdr] setCar:[self objectForKey:key]];
+        [block evalWithArguments:args context:Nu__null];
+    }
+	[args release];
+	return self;
+}
+
 @end
 
 @implementation NSMutableDictionary(Nu)
@@ -187,7 +203,7 @@ extern id Nu__null;
 
 - (void) setPossiblyNullObject:(id) anObject forKey:(id) aKey
 {
-	[self setObject:((anObject == nil) ? (id)[NSNull null] : anObject) forKey:aKey];
+    [self setObject:((anObject == nil) ? (id)[NSNull null] : anObject) forKey:aKey];
 }
 
 #ifdef LINUX
@@ -267,7 +283,6 @@ extern id Nu__null;
     NSData *data = [[[task standardOutput] fileHandleForReading] readDataToEndOfFile];
     return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
 }
-
 #endif
 
 // If the last character is a newline, delete it.
