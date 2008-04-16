@@ -404,6 +404,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
         case 'n': [partial appendCharacter:0x0a]; break;
         case 'r': [partial appendCharacter:0x0d]; break;
         case 'f': [partial appendCharacter:0x0c]; break;
+        case 't': [partial appendCharacter:0x09]; break;
         case 'b': [partial appendCharacter:0x08]; break;
         case 'a': [partial appendCharacter:0x07]; break;
         case 'e': [partial appendCharacter:0x1b]; break;

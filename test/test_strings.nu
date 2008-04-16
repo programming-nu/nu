@@ -9,6 +9,7 @@
           (assert_equal 10 ("\n" characterAtIndex:0))
           (assert_equal 13 ("\r" characterAtIndex:0))
           (assert_equal 12 ("\f" characterAtIndex:0))
+          (assert_equal 9  ("\t" characterAtIndex:0))
           (assert_equal 8  ("\b" characterAtIndex:0))
           (assert_equal 7  ("\a" characterAtIndex:0))
           (assert_equal 27 ("\e" characterAtIndex:0))
@@ -37,16 +38,17 @@
      
      (imethod (id) testEscapedHereStrings is
           (set x <<+END
-\n\r\f\b\a\e\s\"\\END) ;; " fix textmate! 
+\n\r\f\t\b\a\e\s\"\\END) ;; " fix textmate! 
           (assert_equal 10 (x characterAtIndex:0))
           (assert_equal 13 (x characterAtIndex:1))
           (assert_equal 12 (x characterAtIndex:2))
-          (assert_equal 8  (x characterAtIndex:3))
-          (assert_equal 7  (x characterAtIndex:4))
-          (assert_equal 27 (x characterAtIndex:5))
-          (assert_equal 32 (x characterAtIndex:6))
-          (assert_equal 34 (x characterAtIndex:7))
-          (assert_equal 92 (x characterAtIndex:8)))
+          (assert_equal 9  (x characterAtIndex:3))
+          (assert_equal 8  (x characterAtIndex:4))
+          (assert_equal 7  (x characterAtIndex:5))
+          (assert_equal 27 (x characterAtIndex:6))
+          (assert_equal 32 (x characterAtIndex:7))
+          (assert_equal 34 (x characterAtIndex:8))
+          (assert_equal 92 (x characterAtIndex:9)))
      
      (imethod (id) testOctalEscapedHereStrings is
           (set x <<+END
