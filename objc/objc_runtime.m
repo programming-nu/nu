@@ -493,7 +493,7 @@ void objc_registerClassPair(Class cls)
 {
     objc_addClass(cls);
 }
-#endif
+
 Class object_getClass(id obj)
 {
 #ifdef DARWIN
@@ -507,6 +507,7 @@ const char *class_getName(Class c)
 {
     return c->name;
 }
+#endif
 
 #ifdef DARWIN
 void method_exchangeImplementations(Method method1, Method method2)
