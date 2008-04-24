@@ -93,6 +93,29 @@ extern id Nu__null;
     }
 }
 
+// This default sort method sorts an array using its elements' compare: method.
+- (NSArray *) sort
+{
+    return [self sortedArrayUsingSelector:@selector(compare:)];
+}
+
+// Convert an array into a list.
+- (NuCell *) list
+{
+    int count = [self count];
+    if (count == 0)
+        return nil;
+    NuCell *result = [[[NuCell alloc] init] autorelease];
+    NuCell *cursor = result;
+    [result setCar:[self objectAtIndex:0]];
+    for (int i = 1; i < count; i++) {
+        [cursor setCdr:[[[NuCell alloc] init] autorelease]];
+        cursor = [cursor cdr];
+        [cursor setCar:[self objectAtIndex:i]];
+    }
+    return result;
+}
+
 @end
 
 @implementation NSMutableArray(Nu)
@@ -185,8 +208,8 @@ extern id Nu__null;
         [[args cdr] setCar:[self objectForKey:key]];
         [block evalWithArguments:args context:Nu__null];
     }
-	[args release];
-	return self;
+    [args release];
+    return self;
 }
 
 @end
@@ -309,6 +332,32 @@ extern id Nu__null;
     #else
     return [self stringWithFormat:@"%c", (char ) c];
     #endif
+}
+
+// Convert a string into a symbol.
+- (id) symbolValue
+{
+    return [[NuSymbolTable sharedSymbolTable] symbolWithString:self];
+}
+
+// Split a string into lines.
+- (NSArray *) lines
+{
+    NSArray *a = [self componentsSeparatedByString:@"\n"];
+    if ([[a lastObject] isEqualToString:@""]) {
+        return [a subarrayWithRange:NSMakeRange(0, [a count]-1)];
+    }
+    else {
+        return a;
+    }
+}
+
+// Replace a substring with another.
+- (NSString *) replaceString:(NSString *) target withString:(NSString *) replacement
+{
+    NSMutableString *s = [NSMutableString stringWithString:self];
+    [s replaceOccurrencesOfString:target withString:replacement options:nil range:NSMakeRange(0, [self length])];
+    return s;
 }
 
 #ifdef LINUX

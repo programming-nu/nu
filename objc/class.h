@@ -52,6 +52,10 @@ Beware, some of these classes may be deprecated, undocumented, or otherwise unsa
 - (NSArray *) classMethods;
 /*! Get an array containing NuMethod representations of the instance methods of a class. */
 - (NSArray *) instanceMethods;
+/*! Get an array containing the names of the class methods of a class. */
+- (NSArray *) classMethodNames;
+/*! Get an array containing the names of the instance methods of a class. */
+- (NSArray *) instanceMethodNames;
 /*! Determine whether a class is derived from another class. */
 - (BOOL) isDerivedFromClass:(Class) parent;
 /*! Compare a class with another class by name.  This allows arrays of classes to be easily sorted. */

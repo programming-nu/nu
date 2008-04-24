@@ -35,21 +35,25 @@ limitations under the License.
 /*! Iterate over each member of a collection, evaluating the provided block for each member.
     The block is expected to take two arguments: the member and its index. */
 - (id) eachWithIndex:(NuBlock *) block;
-/*! Iterate over each member of a collection, returning a list containing the elements for which the provided block evaluates non-nil. */
-- (id) select:(NuBlock *) block;
+/*! Iterate over each member of a collection, returning an array containing the elements for which the provided block evaluates non-nil. */
+- (NSArray *) select:(NuBlock *) block;
 /*! Iterate over each member of a collection, returning the first element for which the provided block evaluates non-nil. */
 - (id) find:(NuBlock *) block;
-/*! Iterate over each member of a collection, applying the provided block to each member, and returning a list of the results. */
-- (id) map:(NuBlock *) block;
+/*! Iterate over each member of a collection, applying the provided block to each member, and returning an array of the results. */
+- (NSArray *) map:(NuBlock *) block;
 /*! Iterate over each member of a collection, using the provided block to combine members into a single return value. */
 - (id) reduce:(NuBlock *) block from:(id) initial;
+/*! Iterate over each member of a collection, applying the provided selector to each member, and returning an array of the results. */
+- (NSArray *) mapSelector:(SEL) selector;
 @end
 
 @interface NSArray (Enumeration)
 /*! Repeatedly apply a function of two arguments to the elements of an array,
 working from right to left and beginning with the specified inital value. */
 - (id) reduceLeft:(NuBlock *) block from:(id) initial;
+/*! Iterate over each member of an array in reverse order and beginning with the lastObject, evaluating the provided block for each member. */
+- (id) eachInReverse:(NuBlock *) block;
 /*! Return a sorted array using the specified block to compare array elements.
 The block should return -1, 0, or 1. */
-- (id) sortedArrayUsingBlock:(NuBlock *) block;
+- (NSArray *) sortedArrayUsingBlock:(NuBlock *) block;
 @end

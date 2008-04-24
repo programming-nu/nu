@@ -470,6 +470,18 @@ limitations under the License.
     return array;
 }
 
++ (NSArray *) classMethodNames
+{
+    Class c = [self class];
+    return [[c classMethods] mapSelector:@selector(name)];
+}
+
++ (NSArray *) instanceMethodNames
+{
+    Class c = [self class];
+    return [[c instanceMethods] mapSelector:@selector(name)];
+}
+
 + (NSArray *) instanceVariableNames
 {
     NSMutableArray *array = [[NSMutableArray alloc] init];

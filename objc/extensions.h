@@ -17,6 +17,7 @@ limitations under the License.
 */
 
 #import <Foundation/Foundation.h>
+@class NuCell;
 
 #ifdef LINUX
 #define bool char
@@ -41,6 +42,13 @@ limitations under the License.
 @interface NSArray(Nu)
 /*! Creates an array that contains the contents of a specified list. */
 + (NSArray *) arrayWithList:(id) list;
+
+/*! Sort an array using its elements' compare: method. */
+- (NSArray *) sort;
+
+/*! Convert an array into a list. */
+- (NuCell *) list;
+
 @end
 
 /*!
@@ -126,6 +134,15 @@ limitations under the License.
 
 /*! Create a string from a specified character */
 + (NSString *) stringWithCharacter:(unichar) c;
+
+/*! Convert a string into a symbol. */
+- (id) symbolValue;
+
+/*! Split a string into lines. */
+- (NSArray *) lines;
+
+/*! Replace a substring with another. */
+- (NSString *) replaceString:(NSString *) target withString:(NSString *) replacement;
 
 #ifdef LINUX
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding;

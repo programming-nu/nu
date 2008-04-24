@@ -93,4 +93,15 @@ foo\nbarEND)
           (set x <<+END
 foo\nbarEND)
           (assert_equal 7 (x length))
-          (assert_equal 10 (x characterAtIndex:3))))
+          (assert_equal 10 (x characterAtIndex:3)))
+     
+     (imethod (id) testLineSplitting is
+          (set x <<-END
+Line 0
+Line 1
+Line 2
+END)
+          (set lines (x lines))
+          (assert_equal 3 (lines count))
+          (assert_equal "Line 1" (lines objectAtIndex:1))))
+

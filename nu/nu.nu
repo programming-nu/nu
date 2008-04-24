@@ -64,16 +64,6 @@
                                              (else (self setValue:value forKey:label))))))
         self))
 
-(class NSArray
-     
-     ;; This default sort method sorts an array using its elements' compare: method.
-     (- (id) sort is
-        (self sortedArrayUsingSelector:"compare:"))
-     
-     ;; Convert an array into a list.
-     (- (id) list is
-        (self reduceLeft:(do (result item) (cons item result)) from: nil)))
-
 (class NSMutableArray
      
      ;; Concisely add objects to arrays using this method, which is equivalent to a call to addObject:.
@@ -83,24 +73,6 @@
      
      ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
      (- (void) << (id) object is (self addObject:object)))
-
-(class NSString
-     
-     ;; Convert a string into a symbol.
-     (- (id) symbolValue is ((NuSymbolTable sharedSymbolTable) symbolWithString:self))
-     
-     ;; Split a string into lines.
-     (- (id) lines is
-        (let ((a (self componentsSeparatedByString:(NSString carriageReturn))))
-             (if (eq (a lastObject) "")
-                 (then (a subarrayWithRange:(list 0 (- (a count) 1))))
-                 (else a))))
-     
-     ;; Replace a substring with another.
-     (- (id) replaceString:(id) target withString:(id) replacement is
-        (let ((s (NSMutableString stringWithString:self)))
-             (s replaceOccurrencesOfString:target withString:replacement options:nil range:(list 0 (self length)))
-             s)))
 
 (if (eq (uname) "Darwin")
     (class NuCell

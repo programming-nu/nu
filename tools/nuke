@@ -631,7 +631,9 @@
      ;; library fat archive
      (set @library_executable_name "#{@library}.a")
      (file @library_executable_name => @library_executables is
-           (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'")
+           (if (> (@library_executables count) 1)
+               (then (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'"))
+               (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
            (SH command))
      
      (task "library" => @library_executable_name))

@@ -1,6 +1,6 @@
 /*!
 @file enumerable.m
-@description The NuEnumerable mixin. 
+@description The NuEnumerable mixin.
 This class implements methods that enumerate over collections of objects.
 The receiving class must have an objectEnumerator method that returns an NSEnumerator.
 @copyright Copyright (c) 2007 Neon Design Technology, Inc.
@@ -61,7 +61,7 @@ limitations under the License.
     return self;
 }
 
-- (id) select:(NuBlock *) block
+- (NSArray *) select:(NuBlock *) block
 {
     NSMutableArray *selected = [[NSMutableArray alloc] init];
     id args = [[NuCell alloc] init];
@@ -99,7 +99,7 @@ limitations under the License.
     return Nu__null;
 }
 
-- (id) map:(NuBlock *) block
+- (NSArray *) map:(NuBlock *) block
 {
     NSMutableArray *results = [[NSMutableArray alloc] init];
     id args = [[NuCell alloc] init];
@@ -112,6 +112,18 @@ limitations under the License.
         }
     }
     [args release];
+    return results;
+}
+
+- (NSArray *) mapSelector:(SEL) sel
+{
+    NSMutableArray *results = [[NSMutableArray alloc] init];
+    NSEnumerator *enumerator = [self objectEnumerator];
+    id object;
+    while ((object = [enumerator nextObject])) {
+        // this will fail (crash!) if the selector returns any type other than an object.
+        [results addObject:[object performSelector:sel]];
+    }
     return results;
 }
 
@@ -200,7 +212,6 @@ limitations under the License.
     return self;
 }
 
-
 static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
 {
     id args = [[NuCell alloc] init];
@@ -216,7 +227,7 @@ static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
     return [result intValue];
 }
 
-- (id) sortedArrayUsingBlock:(NuBlock *) block
+- (NSArray *) sortedArrayUsingBlock:(NuBlock *) block
 {
     return [self sortedArrayUsingFunction:sortedArrayUsingBlockHelper context:block];
 }

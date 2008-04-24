@@ -44,6 +44,10 @@ limitations under the License.
 + (NSArray *) classMethods;
 /*! Get an array containing NuMethod representations of the instance methods of a class. */
 + (NSArray *) instanceMethods;
+/*! Get an array containing the names of the class methods of a class. */
++ (NSArray *) classMethodNames;
+/*! Get an array containing the names of the instance methods of a class. */
++ (NSArray *) instanceMethodNames;
 /*! Get an array containing the names of all instance variables of the class. */
 + (NSArray *) instanceVariableNames;
 
