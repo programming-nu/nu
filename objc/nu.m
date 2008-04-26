@@ -249,24 +249,21 @@ void NuInit()
         [pool release];
 
         #ifdef DARWIN
+        #ifndef IPHONE
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
-        #if defined(DARWIN) && !defined(IPHONE)
+
         // Stop NSView from complaining when we retain alloc-ed views.
         Class NSView = NSClassFromString(@"NSView");
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
-        #endif
 
-        #ifndef IPHONE
         // Enable support for protocols in Nu.  Apple doesn't have an API for this, so we use our own.
         extern void nu_initProtocols();
         nu_initProtocols();
-        #endif
-
         // if you don't like making Protocol a subclass of NSObject (see nu_initProtocols), you can do this instead.
         // transplant_nu_methods([Protocol class], [NSObject class]);
-
+        
         #ifndef MININUSH
         // Load some standard files
         // Warning: since these loads are performed without a context, the non-global symbols defined in them
@@ -277,7 +274,8 @@ void NuInit()
         [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         #endif
-
+        #endif
+        
         #else
         [[Nu parser] parseEval:@"(load \"nu\")"];
         #endif

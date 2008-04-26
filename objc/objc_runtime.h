@@ -23,10 +23,12 @@ limitations under the License.
 #import <objc/objc.h>
 
 #ifdef DARWIN
-#import <objc/objc-runtime.h>
 #ifndef IPHONE
+#import <objc/objc-runtime.h>
 #import <objc/objc-class.h>
 #import <objc/Protocol.h>
+#else
+#import <objc/runtime.h>
 #endif
 #else
 #import <objc/objc-api.h>
@@ -71,6 +73,7 @@ SEL sel_getUid(const char *str);
 #endif
 
 #ifndef LEOPARD_OBJC2
+#ifndef IPHONE
 // These methods are in Leopard but not earlier versions of Mac OS X.
 // They aren't rocket science, so I wrote equivalent versions.
 #import <stddef.h>
@@ -112,6 +115,7 @@ void method_exchangeImplementations(Method method1, Method method2);
 void method_exchangeImplementations(Method_t method1, Method_t method2);
 #endif
 Ivar class_getInstanceVariable(Class c, const char *name);
+#endif
 #endif
 
 // We'd like for this to be in the ObjC2 API, but it isn't.  Apple thinks it's too dangerous.  It is dangerous.
