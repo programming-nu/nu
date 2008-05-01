@@ -51,6 +51,27 @@ limitations under the License.
 
 @end
 
+@implementation NuReturnException
+- (id) initWithValue:(id) v;
+{
+    [super initWithName:@"NuReturnException" reason:@"A return operator was evaluated" userInfo:nil];
+    value = [v retain];
+    return self; ;
+}
+
+- (void) dealloc
+{
+    [value release];
+    [super dealloc];
+}
+
+- (id) value
+{
+    return value;
+}
+
+@end
+
 @implementation NuOperator : NSObject
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context {return nil;}
 - (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)context {return [self callWithArguments:cdr context:context];}
@@ -1603,7 +1624,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    @throw [[NuBreakException alloc] init];
+    @throw [[[NuBreakException alloc] init] autorelease];
     return nil;                                   // unreached
 }
 
@@ -1616,7 +1637,24 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    @throw [[NuContinueException alloc] init];
+    @throw [[[NuContinueException alloc] init] autorelease];
+    return nil;                                   // unreached
+}
+
+@end
+
+@interface Nu_return_operator : NuOperator {}
+@end
+
+@implementation Nu_return_operator
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    id value = nil;
+    if (cdr && cdr != Nu__null) {
+        value = [[cdr car] evalWithContext:context];
+    }
+    @throw [[[NuReturnException alloc] initWithValue:value] autorelease];
     return nil;                                   // unreached
 }
 
@@ -1772,6 +1810,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("for",      Nu_for_operator);
     install("break",    Nu_break_operator);
     install("continue", Nu_continue_operator);
+    install("return",   Nu_return_operator);
 
     install("try",      Nu_try_operator);
     #ifdef DARWIN

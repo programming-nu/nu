@@ -34,5 +34,12 @@ limitations under the License.
 @interface NuContinueException : NSException {}
 @end
 
+@interface NuReturnException : NSException
+{
+    id value;
+}
+
+@end
+
 // use this to test a value for "truth"
 bool nu_valueIsTrue(id value);

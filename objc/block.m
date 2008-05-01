@@ -123,9 +123,18 @@ extern id Nu__null;
     // evaluate the body of the block with the saved context (implicit progn)
     id value = Nu__null;
     id cursor = body;
-    while (cursor && (cursor != Nu__null)) {
-        value = [[cursor car] evalWithContext:evaluation_context];
-        cursor = [cursor cdr];
+    @try
+    {
+        while (cursor && (cursor != Nu__null)) {
+            value = [[cursor car] evalWithContext:evaluation_context];
+            cursor = [cursor cdr];
+        }
+    }
+    @catch (NuReturnException *exception) {
+        value = [exception value];
+    }
+    @catch (id exception) {
+        @throw(exception);
     }
     //    NSLog(@"before releasing, evaluation context %@ retain count %d", evaluation_context, [evaluation_context retainCount]);
     //    NSLog(@"before releasing, value %@ retain count %d", value, [value retainCount]);
@@ -176,9 +185,18 @@ extern id Nu__null;
     // evaluate the body of the block with the saved context (implicit progn)
     id value = Nu__null;
     id cursor = body;
-    while (cursor && (cursor != Nu__null)) {
-        value = [[cursor car] evalWithContext:evaluation_context];
-        cursor = [cursor cdr];
+    @try
+    {
+        while (cursor && (cursor != Nu__null)) {
+            value = [[cursor car] evalWithContext:evaluation_context];
+            cursor = [cursor cdr];
+        }
+    }
+    @catch (NuReturnException *exception) {
+        value = [exception value];
+    }
+    @catch (id exception) {
+        @throw(exception);
     }
     [value retain];
     [value autorelease];
