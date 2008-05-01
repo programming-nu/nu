@@ -31,6 +31,16 @@ limitations under the License.
 
 id Nu__null = 0;
 
+bool nu_valueIsTrue(id value)
+{
+    bool result = value && (value != Nu__null);
+    if (result && nu_objectIsKindOfClass(value, [NSNumber class])) {
+        if ([value doubleValue] == 0.0)
+            result = false;
+    }
+    return result;
+}
+
 @interface NuApplication : NSObject
 {
     NSMutableArray *arguments;

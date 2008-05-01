@@ -284,7 +284,7 @@ extern char *nu_parsedFilename(int i);
         while (cursor && (cursor != Nu__null)) {
             [args setCar:[cursor car]];
             id result = [block evalWithArguments:args context:Nu__null];
-            if (result && (result != Nu__null)) {
+            if (nu_valueIsTrue(result)) {
                 [resultCursor setCdr:[NuCell cellWithCar:[cursor car] cdr:[resultCursor cdr]]];
                 resultCursor = [resultCursor cdr];
             }
@@ -307,7 +307,7 @@ extern char *nu_parsedFilename(int i);
         while (cursor && (cursor != Nu__null)) {
             [args setCar:[cursor car]];
             id result = [block evalWithArguments:args context:Nu__null];
-            if (result && (result != Nu__null)) {
+            if (nu_valueIsTrue(result)) {
                 [args release];
                 return [cursor car];
             }
@@ -336,6 +336,25 @@ extern char *nu_parsedFilename(int i);
     }
     else
         return Nu__null;
+    NuCell *result = [parent cdr];
+    [parent release];
+    return result;
+}
+
+- (id) mapSelector:(SEL) sel
+{
+    NuCell *parent = [[NuCell alloc] init];
+    id args = [[NuCell alloc] init];
+    id cursor = self;
+    id resultCursor = parent;
+    while (cursor && (cursor != Nu__null)) {
+        id object = [cursor car];
+        id result = [object performSelector:sel];
+        [resultCursor setCdr:[NuCell cellWithCar:result cdr:[resultCursor cdr]]];
+        cursor = [cursor cdr];
+        resultCursor = [resultCursor cdr];
+    }
+    [args release];
     NuCell *result = [parent cdr];
     [parent release];
     return result;

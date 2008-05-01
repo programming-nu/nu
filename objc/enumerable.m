@@ -61,6 +61,16 @@ limitations under the License.
     return self;
 }
 
+static bool nu_valueIsTrue(id value)
+{
+    bool result = value && (value != Nu__null);
+    if (result && nu_objectIsKindOfClass(value, [NSNumber class])) {
+        if ([value doubleValue] == 0.0)
+            result = false;
+    }
+    return result;
+}
+
 - (NSArray *) select:(NuBlock *) block
 {
     NSMutableArray *selected = [[NSMutableArray alloc] init];
@@ -71,7 +81,7 @@ limitations under the License.
         while ((object = [enumerator nextObject])) {
             [args setCar:object];
             id result = [block evalWithArguments:args context:Nu__null];
-            if (result && (result != Nu__null)) {
+            if (nu_valueIsTrue(result)) {
                 [selected addObject:object];
             }
         }
@@ -89,7 +99,7 @@ limitations under the License.
         while ((object = [enumerator nextObject])) {
             [args setCar:object];
             id result = [block evalWithArguments:args context:Nu__null];
-            if (result && (result != Nu__null)) {
+            if (nu_valueIsTrue(result)) {
                 [args release];
                 return object;
             }

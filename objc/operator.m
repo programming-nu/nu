@@ -51,16 +51,6 @@ limitations under the License.
 
 @end
 
-static bool valueIsTrue(id value)
-{
-    bool result = value && (value != Nu__null);
-    if (result && nu_objectIsKindOfClass(value, [NSNumber class])) {
-        if ([value doubleValue] == 0.0)
-            result = false;
-    }
-    return result;
-}
-
 @implementation NuOperator : NSObject
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context {return nil;}
 - (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)context {return [self callWithArguments:cdr context:context];}
@@ -220,7 +210,7 @@ static bool valueIsTrue(id value)
     while (pairs != Nu__null) {
         id condition = [[pairs car] car];
         id test = [condition evalWithContext:context];
-        if (valueIsTrue(test)) {
+        if (nu_valueIsTrue(test)) {
             value = test;
             id cursor = [[pairs car] cdr];
             while (cursor && (cursor != Nu__null)) {
@@ -290,7 +280,7 @@ static bool valueIsTrue(id value)
     id result = Nu__null;
     id test = [[cdr car] evalWithContext:context];
 
-    bool testIsTrue = flip ^ valueIsTrue(test);
+    bool testIsTrue = flip ^ nu_valueIsTrue(test);
     bool noneIsTrue = !testIsTrue;
 
     id expressions = [cdr cdr];
@@ -299,7 +289,7 @@ static bool valueIsTrue(id value)
         if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
             /*if ([nextExpression car] == elseifSymbol) {
                 test = [[[[expressions car] cdr] car] evalWithContext:context];
-                testIsTrue = noneIsTrue && valueIsTrue(test);
+                testIsTrue = noneIsTrue && nu_valueIsTrue(test);
                 noneIsTrue = noneIsTrue && !testIsTrue;
                 if (testIsTrue)
                     // skip the test:
@@ -318,7 +308,7 @@ static bool valueIsTrue(id value)
         else {
             /*if (nextExpression == elseifSymbol) {
                 test = [[[expressions cdr] car] evalWithContext:context];
-                testIsTrue = noneIsTrue && valueIsTrue(test);
+                testIsTrue = noneIsTrue && nu_valueIsTrue(test);
                 noneIsTrue = noneIsTrue && !testIsTrue;
                 expressions = [expressions cdr];            // skip the test
             }
@@ -358,7 +348,7 @@ static bool valueIsTrue(id value)
 {
     id result = Nu__null;
     id test = [[cdr car] evalWithContext:context];
-    while (valueIsTrue(test)) {
+    while (nu_valueIsTrue(test)) {
         @try
         {
             id expressions = [cdr cdr];
@@ -391,7 +381,7 @@ static bool valueIsTrue(id value)
 {
     id result = Nu__null;
     id test = [[cdr car] evalWithContext:context];
-    while (!valueIsTrue(test)) {
+    while (!nu_valueIsTrue(test)) {
         @try
         {
             id expressions = [cdr cdr];
@@ -431,7 +421,7 @@ static bool valueIsTrue(id value)
     [loopinit evalWithContext:context];
     // evaluate the loop condition
     id test = [looptest evalWithContext:context];
-    while (valueIsTrue(test)) {
+    while (nu_valueIsTrue(test)) {
         @try
         {
             id expressions = [cdr cdr];
@@ -1071,7 +1061,7 @@ static bool valueIsTrue(id value)
     id value = Nu__null;
     while (cursor && (cursor != Nu__null)) {
         value = [[cursor car] evalWithContext:context];
-        if (!valueIsTrue(value))
+        if (!nu_valueIsTrue(value))
             return Nu__null;
         cursor = [cursor cdr];
     }
@@ -1089,7 +1079,7 @@ static bool valueIsTrue(id value)
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
         id value = [[cursor car] evalWithContext:context];
-        if (valueIsTrue(value))
+        if (nu_valueIsTrue(value))
             return value;
         cursor = [cursor cdr];
     }
@@ -1108,7 +1098,7 @@ static bool valueIsTrue(id value)
     id cursor = cdr;
     if (cursor && (cursor != Nu__null)) {
         id value = [[cursor car] evalWithContext:context];
-        return valueIsTrue(value) ? Nu__null : [symbolTable symbolWithCString:"t"];
+        return nu_valueIsTrue(value) ? Nu__null : [symbolTable symbolWithCString:"t"];
     }
     return Nu__null;
 }
