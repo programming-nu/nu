@@ -243,6 +243,40 @@ extern id Nu__null;
     return self;
 }
 
+- (NSString *) escapedStringRepresentation
+{
+    NSMutableString *result = [NSMutableString stringWithString:@"\""];
+    int length = [self length];
+    for (int i = 0; i < length; i++) {
+        unichar c = [self characterAtIndex:i];
+        if (c < 32) {
+            switch (c)
+            {
+                case 0x07: [result appendString:@"\\a"]; break;
+                case 0x08: [result appendString:@"\\b"]; break;
+                case 0x09: [result appendString:@"\\t"]; break;
+                case 0x0a: [result appendString:@"\\n"]; break;
+                case 0x0c: [result appendString:@"\\f"]; break;
+                case 0x0d: [result appendString:@"\\r"]; break;
+                case 0x1b: [result appendString:@"\\e"]; break;
+                default:
+                    [result appendFormat:@"\\x%02x", c];
+            }
+        }
+        else if (c < 127) {
+            [result appendCharacter:c];
+        }
+        else if (c < 256) {
+            [result appendFormat:@"\\x%02x", c];
+        }
+        else {
+            [result appendFormat:@"\\u%04x", c];
+        }
+    }
+    [result appendString:@"\""];
+    return result;
+}
+
 - (id) evalWithContext:(NSMutableDictionary *) context
 {
     NSMutableString *result;
@@ -356,7 +390,7 @@ extern id Nu__null;
 - (NSString *) replaceString:(NSString *) target withString:(NSString *) replacement
 {
     NSMutableString *s = [NSMutableString stringWithString:self];
-    [s replaceOccurrencesOfString:target withString:replacement options:nil range:NSMakeRange(0, [self length])];
+    [s replaceOccurrencesOfString:target withString:replacement options:0 range:NSMakeRange(0, [self length])];
     return s;
 }
 

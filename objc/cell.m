@@ -175,7 +175,12 @@ limitations under the License.
             [result appendString:[mycar stringValue]];
         }
         else if (mycar && (mycar != Nu__null)) {
-            [result appendString:[mycar description]];
+            if ([mycar respondsToSelector:@selector(escapedStringRepresentation)]) {
+                [result appendString:[mycar escapedStringRepresentation]];
+            }
+            else {
+                [result appendString:[mycar description]];
+            }
         }
         else {
             [result appendString:@"()"];

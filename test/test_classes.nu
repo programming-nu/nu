@@ -37,13 +37,13 @@
 
 (class TestClassMethodMissing is NuTestCase
      (- (id) testCustomSubclassClassMethodMissing is
-        (assert_equal (MySampleClass hello) "Handling message (hello)")
-        (assert_equal (MySampleClass nu:"rocks") "Handling message (nu: rocks)"))
+        (assert_equal "Handling message (hello)" (MySampleClass hello) )
+        (assert_equal "Handling message (nu: \"rocks\")" (MySampleClass nu:"rocks") ))
      
      (if (eq (uname) "Darwin")
          (- (id) testNSWorkspaceSingletonRemoval is
             ;; I'm almost positive that all Nubies on Macs will have Xcode installed.
-            (assert_not_equal (NSWorkspace fullPathForApplication:"Xcode") nil)
+            (assert_not_equal nil (NSWorkspace fullPathForApplication:"Xcode") )
             (assert_equal ((NSWorkspace sharedWorkspace) notificationCenter) (NSWorkspace notificationCenter))
             (assert_equal ((NSWorkspace sharedWorkspace) activeApplication) (NSWorkspace activeApplication)))
          
@@ -54,16 +54,15 @@
             (assert_throws "NuUnknownMessage" (do () (NSObject shouldFail:2))))
          
          (- (id) testInheritedClassMethodMissing is
-            (assert_equal (YetAnotherClass hello) "Handling message (hello)"))
+            (assert_equal "Handling message (hello)" (YetAnotherClass hello)))
          
          (- (id) testTwoUnknownMessageHandlers is
             (set two (TwoHandle new))
-            (assert_equal (two hello) "Instance-based unknown message: (hello)")
-            (assert_equal (TwoHandle goodbye) "Class-based unknown message: (goodbye)"))
+            (assert_equal "Instance-based unknown message: (hello)" (two hello))
+            (assert_equal "Class-based unknown message: (goodbye)" (TwoHandle goodbye)))
          
          (- (id) testOverridingClassBasedMethodMissing is
-            (assert_equal (Overrider hello) "Overrode successfully with message (hello)"))))
-
+            (assert_equal "Overrode successfully with message (hello)" (Overrider hello)))))
 
 ;; helpers for method missing tests
 

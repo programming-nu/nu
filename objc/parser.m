@@ -906,32 +906,32 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     if ([cursor car] != [NSNull null]) {
                         id expression = [cursor car];
                         //printf("evaluating %s\n", [[expression stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
-#ifdef DARWIN
+                        #ifdef DARWIN
                         @try
-#else
-                        NS_DURING
-#endif
+                            #else
+                            NS_DURING
+                            #endif
                         {
                             id result = [expression evalWithContext:context];
                             if (result)
-                            printf("%s\n", [[result stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
+                                printf("%s\n", [[result stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
                         }
-#ifdef DARWIN
-@catch (id exception) 
-#else
-                        NS_HANDLER
-#endif
+                        #ifdef DARWIN
+                        @catch (id exception)
+                            #else
+                            NS_HANDLER
+                            #endif
                         {
-#ifndef DARWIN
+                            #ifndef DARWIN
                             id exception = localException;
-#endif
+                            #endif
                             printf("%s: %s\n",
                                 [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
                                 [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
                         }
-#ifndef DARWIN
+                        #ifndef DARWIN
                         NS_ENDHANDLER
-#endif
+                            #endif
                     }
                     cursor = [cursor cdr];
                 }

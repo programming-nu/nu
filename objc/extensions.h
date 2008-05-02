@@ -138,6 +138,9 @@ limitations under the License.
 /*! Convert a string into a symbol. */
 - (id) symbolValue;
 
+/*! Get a representation of the string that can be used in Nu source code. */
+- (NSString *) escapedStringRepresentation;
+
 /*! Split a string into lines. */
 - (NSArray *) lines;
 

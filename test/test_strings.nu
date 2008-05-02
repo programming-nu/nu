@@ -103,5 +103,20 @@ Line 2
 END)
           (set lines (x lines))
           (assert_equal 3 (lines count))
-          (assert_equal "Line 1" (lines objectAtIndex:1))))
+          (assert_equal "Line 1" (lines objectAtIndex:1)))
+     
+     (imethod (id) testEscapedRepresentations is
+          ;; verify the named characters
+          (assert_equal "(\"\\a\\b\\t\\n\\f\\r\\e\")" ('("\a\b\t\n\f\r\e") stringValue))
+          ;; verify escaping of low-valued characters
+          (assert_equal "\"\\x01\\x02\"" ("\x01\x02" escapedStringRepresentation))
+          ;;verify that 0x1f is the highest character escaped, 0x20 is kept as-is
+          (assert_equal "\"\\x1f \"" ("\x1f\x20" escapedStringRepresentation))
+          ;; verify that 0x7e is not escaped but 0x7f is
+          (assert_equal "\"~\\x7f\"" ("\x7e\x7f" escapedStringRepresentation))
+          ;; verify escaping of higher-valued one-byte characters
+          (assert_equal "\"\\xe0\\xf0\"" ("\xE0\xf0" escapedStringRepresentation))
+          ;; verify escaping of unicode characters
+          (assert_equal "\"\\u0100\\uffff\"" ("\u0100\uffFF" escapedStringRepresentation))))
+
 
