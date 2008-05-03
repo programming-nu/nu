@@ -1168,8 +1168,8 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     SEL selector = sel_register_name(method_name_str);
     #endif
 
-    NuSymbolTable *symbolTable = [[block context] objectForKey:SYMBOLS_KEY];
-    [[block context] setPossiblyNullObject:[[NuClass alloc] initWithClass:c] forKey:[symbolTable symbolWithCString:"_class"]];
+    //NuSymbolTable *symbolTable = [[block context] objectForKey:SYMBOLS_KEY];
+    //[[block context] setPossiblyNullObject:[[NuClass alloc] initWithClass:c] forKey:[symbolTable symbolWithCString:"_class"]];
 
     IMP imp = construct_method_handler(selector, block, signature_str);
     if (imp == NULL) {

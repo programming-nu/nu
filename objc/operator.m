@@ -651,11 +651,16 @@ limitations under the License.
     }
     else {
         #ifndef CLOSE_ON_VALUES
+        NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+        id classSymbol = [symbolTable symbolWithCString:"_class"];
         id searchContext = context;
         while (searchContext) {
             if ([searchContext objectForKey:symbol]) {
                 [searchContext setPossiblyNullObject:result forKey:symbol];
                 return result;
+            }
+            else if ([searchContext objectForKey:classSymbol]) {
+                break;
             }
             searchContext = [searchContext objectForKey:PARENT_KEY];
         }

@@ -149,6 +149,17 @@ extern id Nu__null;
     return [self callWithArguments:cdr context:calling_context];
 }
 
+id getObjectFromContext(id context, id symbol)
+{
+    while (IS_NOT_NULL(context)) {
+        id object = [context objectForKey:symbol];
+        if (object)
+            return object;
+        context = [context objectForKey:PARENT_KEY];
+    }
+    return nil;
+}
+
 - (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context self:(id)object
 {
     int numberOfArguments = [cdr length];
@@ -168,7 +179,8 @@ extern id Nu__null;
     //    NSLog(@"after copying, evaluation context %@ retain count %d", evaluation_context, [evaluation_context retainCount]);
     if (object) {
         NuSymbolTable *symbolTable = [evaluation_context objectForKey:SYMBOLS_KEY];
-        NuClass *c = [context objectForKey:[symbolTable symbolWithString:@"_class"]];
+        // look up one level for the _class value, but allow for it to be higher (in the perverse case of nested method declarations).
+        NuClass *c = getObjectFromContext([context objectForKey:PARENT_KEY], [symbolTable symbolWithString:@"_class"]);
         [evaluation_context setPossiblyNullObject:object forKey:[symbolTable symbolWithCString:"self"]];
         [evaluation_context setPossiblyNullObject:[NuSuper superWithObject:object ofClass:[c wrappedClass]] forKey:[symbolTable symbolWithCString:"super"]];
     }

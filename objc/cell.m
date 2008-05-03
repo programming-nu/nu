@@ -162,35 +162,38 @@ limitations under the License.
 
 - (NSMutableString *) stringValue
 {
-    NuCell *cell = self;
+    NuCell *cursor = self;
     NSMutableString *result = [NSMutableString stringWithString:@"("];
-    bool first = true;
-    while (IS_NOT_NULL(cell)) {
-        if (first)
-            first = false;
-        else
+    int count = 0;
+    while (IS_NOT_NULL(cursor)) {
+        if (count > 0)
             [result appendString:@" "];
-        id mycar = [cell car];
-        if (nu_objectIsKindOfClass(mycar, [NuCell class])) {
-            [result appendString:[mycar stringValue]];
+        count++;
+        id item = [cursor car];
+        if (nu_objectIsKindOfClass(item, [NuCell class])) {
+            [result appendString:[item stringValue]];
         }
-        else if (mycar && (mycar != Nu__null)) {
-            if ([mycar respondsToSelector:@selector(escapedStringRepresentation)]) {
-                [result appendString:[mycar escapedStringRepresentation]];
+        else if (IS_NOT_NULL(item)) {
+            if ([item respondsToSelector:@selector(escapedStringRepresentation)]) {
+                [result appendString:[item escapedStringRepresentation]];
             }
             else {
-                [result appendString:[mycar description]];
+                [result appendString:[item description]];
             }
         }
         else {
             [result appendString:@"()"];
         }
-        cell = [cell cdr];
+        cursor = [cursor cdr];
         // check for dotted pairs
-        if (IS_NOT_NULL(cell) && !nu_objectIsKindOfClass(cell, [NuCell class])) {
+        if (IS_NOT_NULL(cursor) && !nu_objectIsKindOfClass(cursor, [NuCell class])) {
             [result appendString:@" . "];
-            [result appendString:[cell description]];
-            break;
+            if ([cursor respondsToSelector:@selector(escapedStringRepresentation)]) {
+                [result appendString:[cursor escapedStringRepresentation]];
+            }
+            else {
+                [result appendString:[cursor description]];
+            }            break;
         }
     }
     [result appendString:@")"];
