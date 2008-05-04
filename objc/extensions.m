@@ -250,8 +250,7 @@ extern id Nu__null;
     for (int i = 0; i < length; i++) {
         unichar c = [self characterAtIndex:i];
         if (c < 32) {
-            switch (c)
-            {
+            switch (c) {
                 case 0x07: [result appendString:@"\\a"]; break;
                 case 0x08: [result appendString:@"\\b"]; break;
                 case 0x09: [result appendString:@"\\t"]; break;
@@ -262,6 +261,12 @@ extern id Nu__null;
                 default:
                     [result appendFormat:@"\\x%02x", c];
             }
+        }
+        else if (c == '"') {
+            [result appendString:@"\\\""];
+        }
+        else if (c == '\\') {
+            [result appendString:@"\\\\"];
         }
         else if (c < 127) {
             [result appendCharacter:c];

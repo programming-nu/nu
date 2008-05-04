@@ -913,8 +913,16 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                             #endif
                         {
                             id result = [expression evalWithContext:context];
-                            if (result)
-                                printf("%s\n", [[result stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
+                            if (result) {
+                                id stringToDisplay;
+                                if ([result respondsToSelector:@selector(escapedStringRepresentation)]) {
+                                    stringToDisplay = [result escapedStringRepresentation];
+                                }
+                                else {
+                                    stringToDisplay = [result stringValue];
+                                }
+                                printf("%s\n", [stringToDisplay cStringUsingEncoding:NSUTF8StringEncoding]);
+                            }
                         }
                         #ifdef DARWIN
                         @catch (id exception)
