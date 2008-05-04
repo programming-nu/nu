@@ -302,7 +302,8 @@
      (unless @icon_files (set @icon_files (array "#{@prefix}/share/nu/resources/nu.icns")))
      
      ;; DEFAULT: if no nib files are specified, use the standard (empty) Nu MainMenu.nib.
-     (unless @nib_files (set @nib_files (array "#{@prefix}/share/nu/resources/English.lproj/MainMenu.nib")))
+     ;; -- note -- we no longer do this, instead we just omit the NSMainNibFile entry from Info.plist
+     ;;(unless @nib_files (set @nib_files (array "#{@prefix}/share/nu/resources/English.lproj/MainMenu.nib")))
      
      ;; DEFAULT: if no creator code is specified, use "????"
      (unless @application_creator_code (set @application_creator_code "????"))
@@ -391,9 +392,10 @@
                                 "CFBundlePackageType" "APPL"
                                 "CFBundleSignature" @application_creator_code
                                 "CFBundleVersion" "1.0"
-                                "NSMainNibFile" "MainMenu"
                                 "NSHumanReadableCopyright" "Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc."
                                 "NSPrincipalClass" "NSApplication")))
+           (if @nib_files
+               (info set:(NSMainNibFile:"MainMenu")))
            (if @application_help_folder
                (info setObject:@application_help_folder forKey:"CFBundleHelpBookFolder")
                (info setObject:@application_help_folder forKey:"CFBundleHelpBookName"))
