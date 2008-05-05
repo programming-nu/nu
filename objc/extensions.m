@@ -424,6 +424,33 @@ extern id Nu__null;
 
 @end
 
+@implementation NSData(Nu)
+
+#ifndef IPHONE
+// Read the output of a shell command into an NSData object and return the object.
++ (NSData *) dataWithShellCommand:(NSString *) command
+{
+    NSTask *task = [NSTask new];
+    [task setLaunchPath:@"/bin/sh"];
+    #ifdef DARWIN
+    NSPipe *input = [NSPipe new];
+    [task setStandardInput:input];
+    NSPipe *output = [NSPipe new];
+    #else
+    NSPipe *input = [NSPipe pipe];
+    [task setStandardInput:input];
+    NSPipe *output = [NSPipe pipe];
+    #endif
+    [task setStandardOutput:output];
+    [task launch];
+    [[input fileHandleForWriting] writeData:[command dataUsingEncoding:NSUTF8StringEncoding]];
+    [[input fileHandleForWriting] closeFile];
+    NSData *data = [[[task standardOutput] fileHandleForReading] readDataToEndOfFile];
+    return data;
+}
+#endif
+@end
+
 @implementation NSNumber(Nu)
 
 - (id) times:(id) block

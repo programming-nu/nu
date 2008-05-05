@@ -1085,8 +1085,10 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     //NSLog(@"in nu method handler, putting result %@ in %x with type %s", [result stringValue], (int) returnvalue, ((char **)userdata)[0]);
     char *resultType = (((char **)userdata)[0])+1;// skip the first character, it's a flag
     set_objc_value_from_nu_value(returnvalue, result, resultType);
-    if (((char **)userdata)[0][0] == '!')
+    if (((char **)userdata)[0][0] == '!') {
+        //NSLog(@"retaining result for object %@, count = %d", *(id *)returnvalue, [*(id *)returnvalue retainCount]);
         [*((id *)returnvalue) retain];
+    }
 
     [arguments release];
 
@@ -1108,10 +1110,14 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     const char *methodName = sel_get_name(sel);
     #endif
     BOOL returnsRetainedResult = NO;
-    if ((strlen(methodName) >= 4)                 // retain the result of any method
-        && !strncmp("init", methodName, 4)        // whose name begins with "init"
-        && strcmp("initialize", methodName)       // unless it is named "initialize"
-        )
+
+    if ((!strcmp(methodName, "alloc")) ||
+        (!strcmp(methodName, "allocWithZone:")) ||
+        (!strcmp(methodName, "copy")) ||
+        (!strcmp(methodName, "copyWithZone:")) ||
+        (!strcmp(methodName, "mutableCopy")) ||
+        (!strcmp(methodName, "mutableCopyWithZone:")) ||
+        (!strcmp(methodName, "new")))
         returnsRetainedResult = YES;
     if (returnsRetainedResult)
         sprintf(userdata[0], "!%s", return_type_string);

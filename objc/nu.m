@@ -264,6 +264,9 @@ void NuInit()
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
 
+        void nu_swizzleContainerClasses();
+        nu_swizzleContainerClasses();
+
         // Stop NSView from complaining when we retain alloc-ed views.
         Class NSView = NSClassFromString(@"NSView");
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
@@ -273,7 +276,7 @@ void NuInit()
         nu_initProtocols();
         // if you don't like making Protocol a subclass of NSObject (see nu_initProtocols), you can do this instead.
         // transplant_nu_methods([Protocol class], [NSObject class]);
-        
+
         #ifndef MININUSH
         // Load some standard files
         // Warning: since these loads are performed without a context, the non-global symbols defined in them
@@ -285,7 +288,7 @@ void NuInit()
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         #endif
         #endif
-        
+
         #else
         [[Nu parser] parseEval:@"(load \"nu\")"];
         #endif
