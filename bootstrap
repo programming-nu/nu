@@ -1,0 +1,349 @@
+#!/bin/sh
+# Alternate bootstrap script for Nu, contributed by Andrew Norrie
+# Currently this is for Mac OS systems only.
+
+#	INSTALLING NU
+#	=============
+#	
+#	This script builds and installs a single architecture Nu framework
+#	and nush, the nu shell.
+#	
+#	A univeral-binary version can then be built if required by running
+#
+#	% rm -fR build/*	
+#	% nuke
+#	% nuke install
+#
+
+here=`dirname "$0"`
+
+BUILD_PATH_ROOT="${here}/build"
+BUILD_PATH="${BUILD_PATH_ROOT}"
+
+FRAMEWORK_DESTINATION="/Library/Frameworks/"
+INSTALL_PREFIX="/usr/local"
+
+
+CFLAGS=
+MFLAGS=
+LDFLAGS=
+
+
+FRAMEWORK_NAME="Nu"
+FRAMEWORK_EXECUTABLE_NAME="${FRAMEWORK_NAME}"
+FRAMEWORK_IDENTIFIER="nu.programming.framework"
+FRAMEWORK_ICON="nu.icns"
+FRAMEWORK_CREATOR_CODE="????"
+FRAMEWORK_COPYRIGHT_STRING="Nu. Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc."
+
+FRAMEWORK_REVISION_LETTER="A"
+
+FRAMEWORK_INIT="-Wl,-init -Wl,_NuInit"
+
+
+#	
+#	DETERMINE CURRENT PLATFORM
+#	--------------------------
+#
+#	-	To determine the current platform we test to see if it is Darwin,
+#		a.k.a Mac OS X, or anything else. The Darwin major version number
+#		(8 => 10.4, 9 => 10.5) is passed to the C compiler in the DARWIN
+#		preprocessor symbol.
+#
+
+
+CFLAGS="${CFLAGS} -Wall -g -std=gnu99 -I ${here}/include -I ${here}/include/Nu -I /usr/local/include"
+MFLAGS="${MFLAGS} -fobjc-exceptions"
+
+
+if test `uname -s` = "Darwin"
+then
+	DARWIN=`uname -r | sed '/\..*/s///'`
+else
+	DARWIN=
+fi
+
+if test ${DARWIN}
+then
+	
+	if test ${DARWIN} = "9"
+	then
+		LEOPARD="-DLEOPARD_OBJC2 -D__OBJC2__"
+		SDK="/Developer/SDKs/MacOSX10.5.sdk"
+	else
+	
+	if test ${DARWIN} = "8"
+	then
+		SDK="/Developer/SDKs/MacOSX10.4u.sdk"
+	else
+		echo Error: SDK not found or unknown.
+		exit 1
+	fi
+	fi
+	
+	if test ! -d "${SDK}"
+	then
+		echo Error: "SDK expected at '${SDK}' does not exist."
+		exit 1
+	fi
+
+	CFLAGS="${CFLAGS} -DMACOSX -DDARWIN=${DARWIN} -isysroot ${SDK} ${LEOPARD}"
+else
+
+	MFLAGS="${MFLAGS} -fconstant-string-class=NSConstantString";	
+fi
+
+
+#
+#	LOCATION OF PREREQUISITES
+#	-------------------------
+#	
+#	-	Nu requires PCRE, the Perl-Compatible Regular Expression Library.
+#		Before building Nu, download and install pcre, enabling UTF-8.
+#		Look for it at http://www.pcre.org.
+#		
+#		On Mac OS X, to build a universal binary with UTF-8 support,
+#		use the following command:
+#	
+#		% env \
+#			CXXFLAGS="-arch i386 -arch ppc" \
+#			CFLAGS="-arch i386 -arch ppc" \
+#			LDFLAGS="-arch i386 -arch ppc" \
+#		./configure \
+#			--disable-dependency-tracking \
+#			--enable-utf8
+#	
+#		When you install PCRE, it's best to put it in /usr/local (the default).
+#		If you put it anywhere else, you'll have to modify the Nukefile
+#		used to build Nu.
+#	
+
+PCRE_PREFIX="/usr/local"
+PCRE_LIBRARY_PATH="${PCRE_PREFIX}/lib"
+PCRE_INCLUDE_PATH="${PCRE_PREFIX}/include"
+
+for file in "${PCRE_INCLUDE_PATH}/pcre.h" "${PCRE_LIBRARY_PATH}/libpcre.dylib"
+do
+	if test ! -f "${file}"
+	then
+		echo Error: "Perl-Compatible-Regualar-Expressions file '${file}' connot be found"
+		exit 1
+	fi
+done
+
+
+#	-	Nu requires libffi.
+
+FFI_LIBRARY_PATH="/usr/lib"
+FFI_INCLUDE_PATH="/usr/include"
+
+for file in "${FFI_INCLUDE_PATH}/ffi/ffi.h" "${FFI_LIBRARY_PATH}/libffi.dylib"
+do
+	if test ! -f "${file}"
+	then
+		echo Error: "Foreign-Function-Interface file '${file}' connot be found"
+		exit 1
+	fi
+done
+	
+#	CFLAGS="${CFLAGS} -I ${FFI_INCLUDE_PATH}"
+
+
+#	
+#	BUILD, INSTALL AND TEST NU
+#	--------------------------
+#
+#	-	Make the framework structure
+#
+
+FRAMEWORK_STUB="${FRAMEWORK_NAME}.framework"
+FRAMEWORK_CONTENTS_STUB="${FRAMEWORK_STUB}/Versions/${FRAMEWORK_REVISION_LETTER}"
+
+
+FRAMEWORK="${BUILD_PATH}/${FRAMEWORK_STUB}"
+FRAMEWORK_CONTENTS="${BUILD_PATH}/${FRAMEWORK_CONTENTS_STUB}"
+
+if test ! -d "${FRAMEWORK}/Headers" -o ! -d "${FRAMEWORK}/Resources"
+then
+	mkdir -p "${FRAMEWORK_CONTENTS}/Headers" "${FRAMEWORK_CONTENTS}/Resources" && \
+	(cd "${FRAMEWORK}/Versions"; \
+		ln -sf "${FRAMEWORK_REVISION_LETTER}" Current; \
+		cd ..; \
+		ln -sf "Versions/Current/Headers" "Versions/Current/Resources" .)
+
+	if test ! -d "${FRAMEWORK}/Headers" -o ! -d "${FRAMEWORK}/Resources"
+	then
+		echo Error: "Cannot create the framework folders '${FRAMEWORK}'"
+		exit
+	fi
+fi
+
+#
+#	-	Add additional external libraries and frameworks
+#
+
+if test ${DARWIN}
+then
+
+	for name in "pcre" "edit" "ffi"
+	do
+		LDFLAGS="${LDFLAGS} -l${name}"
+	done
+		
+	for name in "Cocoa"
+	do
+		LDFLAGS="${LDFLAGS} -framework ${name}"
+	done
+
+else
+
+	for name in "pcre" "readline" "ffi" "m"
+	do
+		LDFLAGS="${LDFLAGS} -l${name}"
+	done
+fi
+
+
+#
+#	-	compilation
+#
+
+
+for file in "${here}/objc/"*.m
+do
+	targ=${BUILD_PATH}/`basename "${file}" | sed -e '/\.m$/s//.o/'`
+
+	if test "${targ}" -ot "${file}"
+	then
+		rm -f "${FRAMEWORK_CONTENTS}/${FRAMEWORK_EXECUTABLE_NAME}"
+
+		if ! gcc ${CFLAGS} ${MFLAGS} -c -o "${targ}" "${file}"
+		then
+			exit
+		fi
+	fi
+done
+
+for file in "${here}/objc/"*.c
+do
+	targ=${BUILD_PATH}/`basename "${file}" | sed -e '/\.c$/s//.o/'`
+
+	if test "${targ}" -ot "${file}"
+	then
+		rm -f "${FRAMEWORK_CONTENTS}/${FRAMEWORK_EXECUTABLE_NAME}"
+
+		if ! gcc ${CFLAGS} -c -o "${targ}" "${file}"
+		then
+			exit
+		fi
+	fi
+done
+
+
+if test ! -f "${FRAMEWORK_CONTENTS}/${FRAMEWORK_EXECUTABLE_NAME}"
+then
+	if gcc \
+		${CFLAGS} \
+		${LDFLAGS} \
+		${FRAMEWORK_INIT} \
+		-install_name "${FRAMEWORK_CONTENTS_STUB}/${FRAMEWORK_EXECUTABLE_NAME}" \
+		-dynamiclib \
+		-o "${FRAMEWORK_CONTENTS}/${FRAMEWORK_EXECUTABLE_NAME}" \
+		"${BUILD_PATH}/"*.o
+	then
+		(cd "${FRAMEWORK}"; ln -sf "Versions/Current/${FRAMEWORK_EXECUTABLE_NAME}" .)
+	else
+		exit
+	fi
+fi
+
+
+for file in "${here}/include/Nu/"*
+do
+	cp "${file}" "${FRAMEWORK}/Headers"
+done
+
+
+for file in "${here}/nu/"*
+do
+	cp "${file}" "${FRAMEWORK}/Resources"
+done
+
+
+for file in "${here}/share/nu/resources/"*
+do
+	cp -PR "${file}" "${FRAMEWORK}/Resources"
+done
+		
+
+cat > "${FRAMEWORK}/Resources/info.plist" <<!
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>${FRAMEWORK_EXECUTABLE_NAME}</string>
+	<key>CFBundleGetInfoString</key>
+	<string>${FRAMEWORK_COPYRIGHT_STRING}</string>
+	<key>CFBundleIdentifier</key>
+	<string>${FRAMEWORK_IDENTIFIER}</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>${FRAMEWORK_NAME}</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleSignature</key>
+	<string>${FRAMEWORK_CREATOR_CODE}</string>
+	<key>CFBundleVersion</key>
+	<string>0.1</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>${FRAMEWORK_COPYRIGHT_STRING}</string>
+</dict>
+</plist>
+!
+
+echo Installing Nu framework to ${FRAMEWORK_DESTINATION}
+
+# mv "${FRAMEWORK}" "${FRAMEWORK_DESTINATION}"
+
+if ! gcc \
+	${CFLAGS} \
+	${LDFLAGS} \
+	-framework Nu \
+	-o "${BUILD_PATH}/nush" \
+	main/main.m
+then
+	exit
+fi
+
+
+echo Installing Nu tools
+
+for file in "${BUILD_PATH}/nush" "${here}/tools/"*
+do
+	echo `basename ${file}`
+	sudo cp "${file}" "${INSTALL_PREFIX}/bin"
+done
+
+
+echo Installing Nu shared files and examples
+
+sudo mkdir -p "${INSTALL_PREFIX}/share/nu"
+sudo rm -rf "${INSTALL_PREFIX}/share/nu"*
+sudo cp -rp "${here}/share/nu" "${INSTALL_PREFIX}/share/nu"
+
+sudo ditto "${here}/examples" "${INSTALL_PREFIX}/share/nu/examples"
+
+
+
+echo Testing Nu
+
+#nutest ${here}/test/test_*.nu
+
+nutest test/test_*.nu
+
+
+
