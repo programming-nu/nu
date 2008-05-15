@@ -1157,29 +1157,29 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     argument_types[argument_count] = NULL;
     ffi_cif *cif = (ffi_cif *)malloc(sizeof(ffi_cif));
     if (cif == NULL) {
-        NSLog(@"failed to allocate cif structure");
+        NSLog(@"unable to prepare closure for signature %s (could not allocate memory for cif structure)", signature);
         return NULL;
     }
     int status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argument_count, result_type, argument_types);
     if (status != FFI_OK) {
-        NSLog (@"failed to prepare cif structure");
+        NSLog(@"unable to prepare closure for signature %s (ffi_prep_cif failed)", signature);
         return NULL;
     }
     ffi_closure *closure = (ffi_closure *)mmap(NULL, sizeof(ffi_closure), PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
     if (closure == (ffi_closure *) -1) {
-        NSLog(@"error setting up closure");
+        NSLog(@"unable to prepare closure for signature %s (mmap failed with error %d)", signature, errno);
         return NULL;
     }
     if (closure == NULL) {
-        NSLog(@"error allocating closure");
+        NSLog(@"unable to prepare closure for signature %s (could not allocate memory for closure)", signature);
         return NULL;
     }
     if (ffi_prep_closure(closure, cif, objc_calling_nu_method_handler, userdata) != FFI_OK) {
-        NSLog(@"error creating closure");
+        NSLog(@"unable to prepare closure for signature %s (ffi_prep_closure failed)", signature);
         return NULL;
     }
     if (mprotect(closure, sizeof(closure), PROT_READ | PROT_EXEC) == -1) {
-        NSLog(@"error preparing closure");
+        NSLog(@"unable to prepare closure for signature %s (mprotect failed with error %d)", signature, errno);
         return NULL;
     }
     return (IMP) closure;

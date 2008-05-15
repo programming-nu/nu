@@ -4,7 +4,7 @@
 ;; source files
 (set @c_files      (filelistWithRoot "^objc/.*\.c$" ".."))
 (set @m_files      (filelistWithRoot "^objc/.*\.m$" ".."))
-(@m_files unionSet:(filelistWithRoot "^baked/.*\.m$" ".."))
+(@m_files unionSet:(filelistWithRoot "^baked/baked_nu\.m$" ".."))
 
 (case platform
       ("iPhone"

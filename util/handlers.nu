@@ -26,6 +26,7 @@ END)))
 (function generate-handlers (class-name handlers)
      (eval (NuTemplate codeForString:<<-END
 #import "handler.h"  
+#import <CoreGraphics/CoreGraphics.h>
 
 <% (handlers each:(do (group) %> 
 <%= (generate-handlers-for-type (group 0) (group 2)) %>
