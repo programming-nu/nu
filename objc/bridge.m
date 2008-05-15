@@ -35,6 +35,7 @@ limitations under the License.
 #import "st.h"
 #import "reference.h"
 #import "pointer.h"
+#import "handler.h"
 #import <sys/mman.h>
 
 /* 
@@ -1095,14 +1096,12 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     [pool release];
 }
 
-IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
+char **generate_userdata(SEL sel, NuBlock *block, const char *signature)
 {
     NSMethodSignature *methodSignature = [NSMethodSignature signatureWithObjCTypes:signature];
     const char *return_type_string = [methodSignature methodReturnType];
-    ffi_type *result_type = ffi_type_for_objc_type(return_type_string);
     int argument_count = [methodSignature numberOfArguments];
-    char **userdata = (char **) malloc ((argument_count+2) * sizeof(char*));
-    ffi_type **argument_types = (ffi_type **) malloc ((argument_count+1) * sizeof(ffi_type *));
+    char **userdata = (char **) malloc ((argument_count+3) * sizeof(char*));
     userdata[0] = (char *) malloc (2 + strlen(return_type_string));
     #ifdef DARWIN
     const char *methodName = sel_getName(sel);
@@ -1110,7 +1109,6 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     const char *methodName = sel_get_name(sel);
     #endif
     BOOL returnsRetainedResult = NO;
-
     if ((!strcmp(methodName, "alloc")) ||
         (!strcmp(methodName, "allocWithZone:")) ||
         (!strcmp(methodName, "copy")) ||
@@ -1124,15 +1122,38 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     else
         sprintf(userdata[0], " %s", return_type_string);
     //NSLog(@"constructing handler for method %s with %d arguments and returnType %s", methodName, argument_count, userdata[0]);
-
     userdata[1] = (char *) block;
     [block retain];
     int i;
     for (i = 0; i < argument_count; i++) {
         const char *argument_type_string = [methodSignature getArgumentTypeAtIndex:i];
         if (i > 1) userdata[i] = strdup(argument_type_string);
-        argument_types[i] = ffi_type_for_objc_type(argument_type_string);
     }
+    userdata[argument_count] = NULL;
+    return userdata;
+}
+
+IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
+{
+    char **userdata = generate_userdata(sel, block, signature);
+    IMP imp = [NuHandlerWarehouse handlerWithSelector:sel block:block signature:signature userdata:userdata];
+    if (imp) {
+        return imp;
+    }
+    int argument_count = 0;
+    while (userdata[argument_count] != 0) argument_count++;
+    #ifdef DARWIN
+    const char *methodName = sel_getName(sel);
+    #else
+    const char *methodName = sel_get_name(sel);
+    #endif
+    //NSLog(@"using libffi to construct handler for method %s with %d arguments and signature %s", methodName, argument_count, signature);
+    ffi_type **argument_types = (ffi_type **) malloc ((argument_count+1) * sizeof(ffi_type *));
+    ffi_type *result_type = ffi_type_for_objc_type(userdata[0]+1);
+    argument_types[0] = ffi_type_for_objc_type("@");
+    argument_types[1] = ffi_type_for_objc_type(":");
+    for (int i = 2; i < argument_count; i++)
+        argument_types[i] = ffi_type_for_objc_type(userdata[i]);
     argument_types[argument_count] = NULL;
     ffi_cif *cif = (ffi_cif *)malloc(sizeof(ffi_cif));
     if (cif == NULL) {
