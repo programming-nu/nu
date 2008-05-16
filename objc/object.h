@@ -23,6 +23,7 @@ limitations under the License.
 #import <Foundation/Foundation.h>
 @class NuBlock;
 @class NuClass;
+@class NuCell;
 
 /*!
     @category NSObject(Nu)
@@ -80,5 +81,8 @@ This method should be overridden by subclasses to be more helpful. */
 
 /*! Swap a pair of class methods of the underlying class. */
 + (BOOL) exchangeClassMethod:(SEL)sel1 withMethod:(SEL)sel2;
+
+/*! Concisely set key-value pairs from a property list. */
+- (id) set:(NuCell *) propertyList;
 
 @end

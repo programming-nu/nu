@@ -823,3 +823,48 @@ const char *stringValue(id object)
     return [[object stringValue] cString];
 }
 #endif
+
+
+@implementation NuAutomaticIvars
+
+- (id) handleUnknownMessage:(NuCell *) message withContext:(id) context
+{
+    int message_length = [message length];
+    if (message_length == 1) {
+        // try to automatically get an ivar
+        @try
+        {
+            // ivar name is the first (only) token of the message
+            return [self valueForIvar:[[message car] stringValue]];
+        }
+        @catch (id error) {
+            return [super handleUnknownMessage:message withContext:context];
+        }
+    }
+    else if (message_length == 2) {
+        // try to automatically set an ivar
+        if ([[[[message car] stringValue] substringWithRange:NSMakeRange(0,3)] isEqualToString:@"set"]) {
+            @try
+            {
+                id firstArgument = [[message car] stringValue];
+                id variableName0 = [[firstArgument substringWithRange:NSMakeRange(3,1)] lowercaseString];
+                id variableName1 = [firstArgument substringWithRange:NSMakeRange(4, [firstArgument length] - 5)];
+                [self setValue:[[[message cdr] car] evalWithContext:context]
+                    forIvar:[NSString stringWithFormat:@"%@%@", variableName0, variableName1]];
+                return nil;
+            }
+            @catch (id error) {
+                return [super handleUnknownMessage:message withContext:context];
+            }
+        }
+        else {
+            return [super handleUnknownMessage:message withContext:context];
+        }
+    }
+    else {
+        return [super handleUnknownMessage:message withContext:context];
+    }
+    return nil;
+}
+
+@end

@@ -1142,12 +1142,14 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     }
     int argument_count = 0;
     while (userdata[argument_count] != 0) argument_count++;
+    #if 0
     #ifdef DARWIN
     const char *methodName = sel_getName(sel);
     #else
     const char *methodName = sel_get_name(sel);
     #endif
-    //NSLog(@"using libffi to construct handler for method %s with %d arguments and signature %s", methodName, argument_count, signature);
+    NSLog(@"using libffi to construct handler for method %s with %d arguments and signature %s", methodName, argument_count, signature);
+    #endif
     ffi_type **argument_types = (ffi_type **) malloc ((argument_count+1) * sizeof(ffi_type *));
     ffi_type *result_type = ffi_type_for_objc_type(userdata[0]+1);
     argument_types[0] = ffi_type_for_objc_type("@");

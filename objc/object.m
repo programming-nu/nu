@@ -676,4 +676,23 @@ limitations under the License.
     return YES;
 }
 
+// Concisely set key-value pairs from a property list.
+- (id) set:(NuCell *) propertyList
+{
+    id cursor = propertyList;
+    while (cursor && (cursor != Nu__null) && ([cursor cdr]) && ([cursor cdr] != Nu__null)) {
+        id key = [cursor car];
+        id value = [[cursor cdr] car];
+        id label = ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) ? [key labelName] : key;
+        if ([label isEqualToString:@"action"]) {
+            [self setAction:value];
+        }
+        else {
+            [self setValue:value forKey:label];
+        }
+        cursor = [[cursor cdr] cdr];
+    }
+    return self;
+}
+
 @end

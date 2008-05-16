@@ -238,7 +238,7 @@ limitations under the License.
     @abstract NSMethodSignature extensions for Nu programming.
  */
 @interface NSMethodSignature (Nu)
-/*! Get the type string for a method signature */
+/*! Get the type string for a method signature. */
 - (NSString *) typeString;
 @end
 
@@ -249,3 +249,14 @@ limitations under the License.
 + (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
 @end
 #endif
+
+/*!
+   @class NuAutomaticIvars
+   @abstract Include this class to get handleUnknownMessage:withContext: to emulate ivar accessors.
+ */
+@interface NuAutomaticIvars : NSObject
+{
+}
+/*! Attempt to treat unknown messages as ivar accessors. */
+- (id) handleUnknownMessage:(NuCell *) message withContext:(id) context;
+@end

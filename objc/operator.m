@@ -1562,6 +1562,21 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 
 @end
 
+@interface Nu_ivar_accessors_operator : NuOperator {}
+@end
+
+@implementation Nu_ivar_accessors_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+    Class classToExtend = [classWrapper wrappedClass];
+    [classToExtend include:[NuClass classWithClass:[NuAutomaticIvars class]]];
+    return Nu__null;
+}
+
+@end
+
 #if defined(DARWIN) && !defined(IPHONE)
 #import <Cocoa/Cocoa.h>
 
@@ -1885,6 +1900,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("cmethod",  Nu_cmethod_operator);
     install("ivar",     Nu_ivar_operator);
     install("ivars",    Nu_ivars_operator);
+    install("ivar-accessors", Nu_ivar_accessors_operator);
 
     install("call",     Nu_call_operator);
     install("send",     Nu_send_operator);
