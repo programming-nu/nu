@@ -9,8 +9,5 @@ in libNu.a will not be linked into your application.
 Your application should #include "Nu/Nu.h", which is copied into the include
 directory as part of the build process.
 
-Currently only the iPhone simulator is supported. Support for the iPhone itself
-requires an ARM port of libffi.  A port is available from Anthony Green
-(http://sourceware.org/libffi/), but has not yet been verified on the iPhone.
-
+Note that libffi is included in the iPhoneSimulator sdk.
 

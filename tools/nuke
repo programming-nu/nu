@@ -620,6 +620,9 @@
      (unless (and @arch (@arch length))
              (set @arch (list (NSString stringWithShellCommand:"arch"))))
      
+     (unless @library_extras
+             (set @library_extras ""))
+     
      ;; library architecture-specific executable
      (set @library_executables (NSMutableArray array))
      (@arch each:
@@ -627,7 +630,7 @@
                 (set library_executable "build/#{architecture}/#{@library}.a")
                 (@library_executables addObject:library_executable)
                 (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "libtool -static #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} -o '#{(target name)}'")
+                      (set command "libtool -static #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{@library_extras} -o '#{(target name)}'")
                       (SH command))))
      
      ;; library fat archive
