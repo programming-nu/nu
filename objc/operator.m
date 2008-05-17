@@ -1570,6 +1570,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+    [classWrapper registerClass];
     Class classToExtend = [classWrapper wrappedClass];
     [classToExtend include:[NuClass classWithClass:[NuAutomaticIvars class]]];
     return Nu__null;
