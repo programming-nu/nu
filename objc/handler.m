@@ -18,6 +18,9 @@ limitations under the License.
 
 #import "handler.h"
 #import "cell.h"
+#ifdef IPHONE
+#import <CoreGraphics/CoreGraphics.h>
+#endif
 
 static id collect_arguments(struct handler_description *description, va_list ap)
 {
@@ -53,6 +56,13 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             //NSLog(@"argument is %lf", x);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
+        #ifdef IPHONE
+        else if (!strcmp(type, "{CGRect={CGPoint=ff}{CGSize=ff}}")
+        || (!strcmp(type, "{CGRect=\"origin\"{CGPoint=\"x\"f\"y\"f}\"size\"{CGSize=\"width\"f\"height\"f}}"))) {
+            CGRect x = va_arg(ap, CGRect);
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
+        #endif
         else {
             NSLog(@"unsupported argument type %s, see objc/handler.m to add support for it", type);
         }

@@ -83,7 +83,9 @@ st_table *nu_block_table = NULL;
 #define NSRECT_SIGNATURE1 "{_NSRect=\"origin\"{_NSPoint=\"x\"d\"y\"d}\"size\"{_NSSize=\"width\"d\"height\"d}}"
 #define NSRECT_SIGNATURE2 "{_NSRect}"
 
-#define CGRECT_SIGNATURE "{CGRect={CGPoint=dd}{CGSize=dd}}"
+#define CGRECT_SIGNATURE0 "{CGRect={CGPoint=dd}{CGSize=dd}}"
+#define CGRECT_SIGNATURE1 "{CGRect=\"origin\"{CGPoint=\"x\"d\"y\"d}\"size\"{CGSize=\"width\"d\"height\"d}}"
+#define CGRECT_SIGNATURE2 "{CGRect}"
 
 #define NSRANGE_SIGNATURE "{_NSRange=QQ}"
 #define NSRANGE_SIGNATURE1 "{_NSRange}"
@@ -106,7 +108,9 @@ st_table *nu_block_table = NULL;
 #define NSRECT_SIGNATURE1 "{_NSRect=\"origin\"{_NSPoint=\"x\"f\"y\"f}\"size\"{_NSSize=\"width\"f\"height\"f}}"
 #define NSRECT_SIGNATURE2 "{_NSRect}"
 
-#define CGRECT_SIGNATURE "{CGRect={CGPoint=ff}{CGSize=ff}}"
+#define CGRECT_SIGNATURE0 "{CGRect={CGPoint=ff}{CGSize=ff}}"
+#define CGRECT_SIGNATURE1 "{CGRect=\"origin\"{CGPoint=\"x\"f\"y\"f}\"size\"{CGSize=\"width\"f\"height\"f}}"
+#define CGRECT_SIGNATURE2 "{CGRect}"
 
 #define NSRANGE_SIGNATURE "{_NSRange=II}"
 #define NSRANGE_SIGNATURE1 "{_NSRange}"
@@ -235,7 +239,9 @@ ffi_type *ffi_type_for_objc_type(const char *typeString)
             if (!strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 if (!initialized_ffi_types) initialize_ffi_types();
                 return &ffi_type_nsrect;
@@ -306,7 +312,9 @@ size_t size_of_objc_type(const char *typeString)
             if (!strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 return sizeof(NSRect);
             }
@@ -373,7 +381,9 @@ void *value_buffer_for_objc_type(const char *typeString)
             if (!strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 return malloc(sizeof(NSRect));
             }
@@ -525,7 +535,9 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 !strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 NSRect *rect = (NSRect *) objc_value;
                 id cursor = nu_value;
@@ -750,7 +762,9 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
                 !strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 NSRect *rect = (NSRect *)objc_value;
                 NuCell *list = [[[NuCell alloc] init] autorelease];

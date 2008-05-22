@@ -25,6 +25,7 @@ END)))
 
 (function generate-handlers (class-name handlers)
      (eval (NuTemplate codeForString:<<-END
+#ifdef IPHONE
 #import "handler.h"  
 #import <CoreGraphics/CoreGraphics.h>
 
@@ -42,6 +43,7 @@ END)))
 <% )) %>
 }
 @end
+#endif
 END)))
 
 (set source
