@@ -15,6 +15,8 @@ limitations under the License.
 #import <Foundation/Foundation.h>
 #import <Nu/Nu.h>
 
+static BOOL verbose_helper = false;
+
 @interface NuTestHelper : NSObject
 {
 }
@@ -24,6 +26,16 @@ limitations under the License.
 static int deallocationCount = 0;
 
 @implementation NuTestHelper
+
++ (void) setVerbose:(BOOL) v
+{
+    verbose_helper = v;
+}
+
++ (BOOL) verbose
+{
+    return verbose_helper;
+}
 
 + (id) helperInObjCUsingAllocInit
 {
@@ -39,6 +51,8 @@ static int deallocationCount = 0;
 
 - (void) dealloc
 {
+    if (verbose_helper)
+        NSLog(@"(NuTestHelper dealloc)");
     deallocationCount++;
     [super dealloc];
 }

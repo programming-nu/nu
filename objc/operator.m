@@ -1375,7 +1375,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     id arg_values = [[NuCell alloc] init];
 
     id cursor = [cdr car];
-    if ([[cursor car] atom]) {
+    if ((cursor != [NSNull null]) && [[cursor car] atom]) {
         [arg_names setCar:[cursor car]];
         [arg_values setCar:[[cursor cdr] car]];
     }
@@ -1394,13 +1394,15 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
             }
         }
     }
-
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     id body = [cdr cdr];
     NuBlock *block = [[NuBlock alloc] initWithParameters:arg_names body:body context:context];
-    id result = [block evalWithArguments:arg_values context:context];
+    id result = [[block evalWithArguments:arg_values context:context] retain];
     [arg_names release];
     [arg_values release];
     [block release];
+    [pool release];
+    [result autorelease];
     return result;
 }
 
@@ -1531,11 +1533,13 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         class_addInstanceVariable_withSignature(classToExtend,
             [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
             [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+        if ([signature isEqual:@"@"]) {
+            nu_registerIvarForRelease(classToExtend, [variableName stringValue]);
+        }
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
     return Nu__null;
 }
-
 @end
 
 @interface Nu_ivars_operator : NuOperator {}
@@ -1557,6 +1561,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"dynamic instance variables declaration with no enclosing class declaration"];
     class_addInstanceVariable_withSignature(classToExtend, "__nuivars", "@");
+    nu_registerIvarForRelease(classToExtend, @"__nuivars");
     return Nu__null;
 }
 

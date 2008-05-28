@@ -409,7 +409,7 @@ limitations under the License.
             //NSLog(@"get sparse ivars dictionary: %@", sparseIvars);
             if (!sparseIvars || (sparseIvars == Nu__null)) {
                 //NSLog(@"creating new sparse ivars dictionary");
-                sparseIvars = [[NSMutableDictionary alloc] init];
+                sparseIvars = [[[NSMutableDictionary alloc] init] autorelease];
                 //NSLog(@"setting sparse ivars dictionary: %@", sparseIvars);
                 [self setValue:sparseIvars forIvar:@"__nuivars"];
             }
@@ -432,6 +432,24 @@ limitations under the License.
     }
     set_objc_value_from_nu_value(location, value, ivar_getTypeEncoding(v));
     [self didChangeValueForKey:name];
+}
+
+- (void) nuDealloc
+{
+    NSArray *ivarsToRelease = nu_ivarsToRelease([self class]);
+    if (ivarsToRelease) {      
+        int count = [ivarsToRelease count];
+        for (int i = 0; i < count; i++) {
+            NSString *ivarName = [ivarsToRelease objectAtIndex:i];
+            Ivar ivar = class_getInstanceVariable([self class], [ivarName cStringUsingEncoding:NSUTF8StringEncoding]);
+            if (ivar) {
+                // NSLog(@"releasing ivar %@", ivarName);
+                void *location = (void *)&(((char *)self)[ivar_getOffset(ivar)]);
+                [*((id *)location) release];
+            }
+        }
+    }
+    [self nuDealloc];
 }
 
 + (NSArray *) classMethods
