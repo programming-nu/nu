@@ -18,6 +18,7 @@ limitations under the License.
 #import <Foundation/Foundation.h>
 #import "cell.h"
 #import "block.h"
+#import "operator.h"
 
 /*!
     @class NuEnumerable
@@ -44,7 +45,9 @@ limitations under the License.
 /*! Iterate over each member of a collection, using the provided block to combine members into a single return value. 
     The block is expected to take two arguments: the accumulated return value followed by the collection member.
 */
-- (id) reduce:(NuBlock *) block from:(id) initial;
+
+- (id) reduce:(NSObject *) callable from:(id) initial;
+
 /*! Iterate over each member of a collection, applying the provided selector to each member, and returning an array of the results. */
 - (NSArray *) mapSelector:(SEL) selector;
 @end

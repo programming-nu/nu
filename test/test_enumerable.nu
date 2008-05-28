@@ -45,9 +45,15 @@
         (assert_equal 3 ((((array 100 200 300) map:(do (n) (n stringValue))) 1) length)))
      
      (- testReduce is
+        (set testArray (array 100 200 300))
         (set reduction
-             ((array 100 200 300) reduce:(do (sum n) (+ sum n)) from:0))
-        (assert_equal 600 reduction))
+             (testArray reduce:(do (sum n) (+ sum n)) from:0))
+        (assert_equal 600 reduction)
+        (set reduction ((array 100 200 300) reduce:+ from:0))
+        (assert_equal 600 reduction)
+        (assert_equal (testArray reduce:(do (sum n) (+ sum n)) from:0) (testArray reduce:+ from:0)))
+     
+     
      
      (- testMapSelector is
         (assert_equal 3 ((((array 100 200 300) mapSelector:"stringValue") 1) length))))

@@ -137,18 +137,18 @@ static bool nu_valueIsTrue(id value)
     return results;
 }
 
-- (id) reduce:(NuBlock *) block from:(id) initial
+- (id) reduce:(NSObject *) callable from:(id) initial
 {
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
     id result = initial;
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
             [args setCar:result];
             [[args cdr] setCar: object];
-            result = [block evalWithArguments:args context:Nu__null];
+            result = [callable evalWithArguments:args context:nil];
         }
     }
     [args release];
