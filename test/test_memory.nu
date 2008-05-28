@@ -38,7 +38,7 @@
                (assert_equal 0 (NuTestHelper deallocationCount))))
         (assert_equal 10 (NuTestHelper deallocationCount)))
      
-     (- testIvarReleaseOnDealloc is
+     (- disabled_testIvarReleaseOnDealloc is
         (class IvarReleaseHelper is NuTestHelper
              (ivar (id) x)
              (ivars)
