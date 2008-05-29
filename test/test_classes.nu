@@ -28,7 +28,16 @@
                 (set superName "ObjCLittleCat#{(Alphabet letterAtIndex:i)}")
                 (set className "ObjCLittleCat#{(Alphabet letterAtIndex:(+ i 1))}")
                 ((NuClass classWithName:superName) createSubclassNamed:className)))
-        (assert_equal "Voom!" ((ObjCLittleCatA new) takeOffYourHat))))
+        (assert_equal "Voom!" ((ObjCLittleCatA new) takeOffYourHat)))
+     
+     (- testAddClassMethod is
+        (NSNumber addClassMethod:"three" signature:"@@:" body:(do () (+ 1 1 1)))
+        (assert_equal 3 (NSNumber three)))
+     
+     (- testAddInstanceMethod is
+        (NSObject addInstanceMethod:"beep" signature:"@@:" body:(do () ("beep!")))
+        (set o ((NSObject alloc) init))
+        (assert_equal "beep!" (o beep))))
 
 ;; helper
 (class NSString
