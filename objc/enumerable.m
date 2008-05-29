@@ -27,15 +27,15 @@ limitations under the License.
 
 @implementation NuEnumerable
 
-- (id) each:(NuBlock *) block
+- (id) each:(id) callable
 {
     id args = [[NuCell alloc] init];
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
             [args setCar:object];
-            [block evalWithArguments:args context:Nu__null];
+            [callable evalWithArguments:args context:nil];
         }
     }
     [args release];
@@ -109,16 +109,16 @@ static bool nu_valueIsTrue(id value)
     return Nu__null;
 }
 
-- (NSArray *) map:(NuBlock *) block
+- (NSArray *) map:(id) callable
 {
     NSMutableArray *results = [[NSMutableArray alloc] init];
     id args = [[NuCell alloc] init];
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
             [args setCar:object];
-            [results addObject:[block evalWithArguments:args context:Nu__null]];
+            [results addObject:[callable evalWithArguments:args context:nil]];
         }
     }
     [args release];
@@ -137,7 +137,7 @@ static bool nu_valueIsTrue(id value)
     return results;
 }
 
-- (id) reduce:(NSObject *) callable from:(id) initial
+- (id) reduce:(id) callable from:(id) initial
 {
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];

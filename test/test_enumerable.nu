@@ -9,7 +9,8 @@
         (set sum 0)
         ((array 100 200 300) each:
          (do (n) (set sum (+ sum n))))
-        (assert_equal 600 sum))
+        (assert_equal 600 sum)
+        ((array 100 200 300) each:puts))
      
      (- testEachWithIndex is
         (set sum 0)
@@ -42,7 +43,12 @@
         (assert_equal 2 found))
      
      (- testMap is
-        (assert_equal 3 ((((array 100 200 300) map:(do (n) (n stringValue))) 1) length)))
+        (assert_equal 3 ((((array 100 200 300) map:(do (n) (n stringValue))) 1) length))
+        ;; Testing mapping an operator onto an array
+        (set words (array "the girl" "from ipanema"))
+        (set regexen (words map: regex))
+        (set wanted (array /the girl/ /from ipanema/))
+        (assert_equal wanted regexen))
      
      (- testReduce is
         (set testArray (array 100 200 300))
