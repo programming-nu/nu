@@ -129,8 +129,8 @@ END)
                (SH "rm -rf nush #{@framework_dir} doc"))
       ((filelist "^examples/[^/]*$") each:
        (do (example-dir)
-           (puts example-dir)
-           (SH "cd #{example-dir}; nuke clobber"))))
+           (if ((NSFileManager defaultManager) fileExistsAtPath:(+ example-dir "/Nukefile"))
+               (SH "cd #{example-dir}; nuke clobber")))))
 
 (set nush_thin_binaries (NSMutableArray array))
 (@arch each:

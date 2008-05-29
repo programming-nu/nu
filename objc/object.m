@@ -702,7 +702,7 @@ limitations under the License.
         id key = [cursor car];
         id value = [[cursor cdr] car];
         id label = ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) ? [key labelName] : key;
-        if ([label isEqualToString:@"action"]) {
+        if ([label isEqualToString:@"action"] && [self respondsToSelector:@selector(setAction:)]) {
             [self setAction:value];
         }
         else {

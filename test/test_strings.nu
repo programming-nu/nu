@@ -117,6 +117,12 @@ END)
           ;; verify escaping of higher-valued one-byte characters
           (assert_equal "\"\\xe0\\xf0\"" ("\xE0\xf0" escapedStringRepresentation))
           ;; verify escaping of unicode characters
-          (assert_equal "\"\\u0100\\uffff\"" ("\u0100\uffFF" escapedStringRepresentation))))
+          (assert_equal "\"\\u0100\\uffff\"" ("\u0100\uffFF" escapedStringRepresentation)))
+     
+     (imethod (id) testStringEach is
+          (set start "hello, world")
+          (set finish "")
+          (start each:(do (c) (finish appendCharacter:c)))
+          (assert_equal start finish)))
 
 

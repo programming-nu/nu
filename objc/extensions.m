@@ -399,6 +399,17 @@ extern id Nu__null;
     return s;
 }
 
+- (id) each:(NuBlock *) block
+{
+    int count = [self length];
+    NuCell *args = [[NuCell alloc] init];
+    for (int i = 0; i < count; i++) {
+        [args setCar:[NSNumber numberWithInteger:[self characterAtIndex:i]]];
+        [block evalWithArguments:args context:Nu__null];
+    }
+    return self;
+}
+
 #ifdef LINUX
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding
 {
@@ -823,7 +834,6 @@ const char *stringValue(id object)
     return [[object stringValue] cString];
 }
 #endif
-
 
 @implementation NuAutomaticIvars
 
