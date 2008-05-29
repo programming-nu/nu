@@ -18,6 +18,7 @@ limitations under the License.
 
 #import <Foundation/Foundation.h>
 @class NuCell;
+@class NuBlock;
 
 #ifdef LINUX
 #define bool char
@@ -147,6 +148,9 @@ limitations under the License.
 /*! Replace a substring with another. */
 - (NSString *) replaceString:(NSString *) target withString:(NSString *) replacement;
 
+/*! Iterate over each character in a string, evaluating the provided block for each character. */
+- (id) each:(NuBlock *) block;
+
 #ifdef LINUX
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding;
 - (const char *) cStringUsingEncoding:(NSStringEncoding) encoding;
@@ -257,6 +261,7 @@ limitations under the License.
 @interface NuAutomaticIvars : NSObject
 {
 }
+
 /*! Attempt to treat unknown messages as ivar accessors. */
 - (id) handleUnknownMessage:(NuCell *) message withContext:(id) context;
 @end
