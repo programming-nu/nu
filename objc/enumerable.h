@@ -56,7 +56,7 @@ limitations under the License.
 @interface NSArray (Enumeration)
 /*! Repeatedly apply a function of two arguments to the elements of an array,
 working from right to left and beginning with the specified inital value. */
-- (id) reduceLeft:(NuBlock *) block from:(id) initial;
+- (id) reduceLeft:(id)callable from:(id) initial;
 /*! Iterate over each member of an array in reverse order and beginning with the lastObject, evaluating the provided block for each member. */
 - (id) eachInReverse:(NuBlock *) block;
 /*! Return a sorted array using the specified block to compare array elements.

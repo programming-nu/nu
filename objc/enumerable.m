@@ -189,33 +189,33 @@ static bool nu_valueIsTrue(id value)
 
 @implementation NSArray (Enumeration)
 
-- (id) reduceLeft:(NuBlock *) block from:(id) initial
+- (id) reduceLeft:(id)callable from:(id) initial
 {
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
     id result = initial;
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         int i;
         for (i = [self count] - 1; i >= 0; i--) {
             id object = [self objectAtIndex:i];
             [args setCar:result];
             [[args cdr] setCar: object];
-            result = [block evalWithArguments:args context:Nu__null];
+            result = [callable evalWithArguments:args context:nil];
         }
     }
     [args release];
     return result;
 }
 
-- (id) eachInReverse:(NuBlock *) block
+- (id) eachInReverse:(id) callable
 {
     id args = [[NuCell alloc] init];
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         NSEnumerator *enumerator = [self reverseObjectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
             [args setCar:object];
-            [block evalWithArguments:args context:Nu__null];
+            [callable evalWithArguments:args context:nil];
         }
     }
     [args release];

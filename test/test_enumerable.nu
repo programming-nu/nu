@@ -10,6 +10,7 @@
         ((array 100 200 300) each:
          (do (n) (set sum (+ sum n))))
         (assert_equal 600 sum)
+        ;; I'm not sure how to test this, unless there was an assert_printed macro.
         ((array 100 200 300) each:puts))
      
      (- testEachWithIndex is
@@ -59,7 +60,20 @@
         (assert_equal 600 reduction)
         (assert_equal (testArray reduce:(do (sum n) (+ sum n)) from:0) (testArray reduce:+ from:0)))
      
+     (- testLeftReduce is
+        (set testArray (array 100 200 300))
+        (set r (testArray reduceLeft:(do (diff n) (- diff n)) from:600))
+        (assert_equal 0 r)
+        ; testing using an operator.
+        (assert_equal r (testArray reduceLeft:- from:600)))
      
+     (- testEachInReverse is
+         (set title "")
+         ((array "the" "girl" "from" "ipanema") eachInReverse:
+          (do (n) (set title (+ title n))))
+         (assert_equal title "ipanemafromgirlthe")
+         ;; Again, I'm not sure how to test this, unless there was an assert_printed macro.
+         ((array 100 200 300) eachInReverse:puts))
      
      (- testMapSelector is
         (assert_equal 3 ((((array 100 200 300) mapSelector:"stringValue") 1) length))))
