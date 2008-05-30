@@ -23,7 +23,6 @@ static NSMapTable *ivarsToRelease = NULL;
 // use this to remember that instance variables created by Nu must be released when their owner is deallocated.
 void nu_registerIvarForRelease(Class c, NSString *name)
 {
-    return; // temporarily disable ivar releases.
     if (!ivarsToRelease) {
         //NSLog(@"creating ivarsToRelease map table");
         ivarsToRelease = NSCreateMapTable(NSIntegerMapKeyCallBacks, NSObjectMapValueCallBacks, 0);

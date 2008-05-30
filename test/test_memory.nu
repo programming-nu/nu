@@ -38,9 +38,9 @@
                (assert_equal 0 (NuTestHelper deallocationCount))))
         (assert_equal 10 (NuTestHelper deallocationCount)))
      
-     (- disabled_testIvarReleaseOnDealloc is
+     (- testIvarReleaseOnDealloc is
         (class IvarReleaseHelper is NuTestHelper
-             (ivar (id) x)
+             ;;(ivar (id) x) ;; currently declared ivars are not released, this is consistent with unretained outlets
              (ivars)
              (ivar-accessors)
              (set myDeallocationCount 0) ;; closure gives this variable class scope.

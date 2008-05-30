@@ -258,8 +258,7 @@ void NuInit()
         [NSSet include: [NuClass classWithClass:[NuEnumerable class]]];
         [pool release];
 
-	// temporarily disabled
-        // [NSObject exchangeInstanceMethod:@selector(dealloc) withMethod:@selector(nuDealloc)];
+        [NSObject exchangeInstanceMethod:@selector(dealloc) withMethod:@selector(nuDealloc)];
 
 
         #ifdef DARWIN

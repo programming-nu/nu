@@ -1534,7 +1534,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
             [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
             [signature cStringUsingEncoding:NSUTF8StringEncoding]);
         if ([signature isEqual:@"@"]) {
-            nu_registerIvarForRelease(classToExtend, [variableName stringValue]);
+            //nu_registerIvarForRelease(classToExtend, [variableName stringValue]);
         }
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
