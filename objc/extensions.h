@@ -34,6 +34,8 @@ limitations under the License.
 - (bool) atom;
 /*! The length of nil is zero. */
 - (int) length;
+/*! count is a synonym for length. */
+- (int) count;
 @end
 
 /*!

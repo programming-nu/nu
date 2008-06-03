@@ -42,6 +42,11 @@ extern id Nu__null;
     return 0;
 }
 
+- (int) count
+{
+    return 0;
+}
+
 - (id) stringValue
 {
     return @"()";

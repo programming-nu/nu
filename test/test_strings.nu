@@ -123,6 +123,12 @@ END)
           (set start "hello, world")
           (set finish "")
           (start each:(do (c) (finish appendCharacter:c)))
-          (assert_equal start finish)))
-
-
+          (assert_equal start finish)
+          ;; each with break
+          (set finish "")
+          (start each:(do (c) (if (eq c ',') (break)) (finish appendCharacter:c)))
+          (assert_equal "hello" finish)
+          ;; each with continue
+          (set finish "")
+          (start each:(do (c) (if (eq c ',') (continue)) (finish appendCharacter:c)))
+          (assert_equal "hello world" finish)))
