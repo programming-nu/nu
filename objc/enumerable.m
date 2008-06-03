@@ -20,6 +20,7 @@ limitations under the License.
 
 #import "enumerable.h"
 #import "objc_runtime.h"
+#import "nuinternals.h"
 
 @interface NuEnumerable(Unimplemented)
 - (id) objectEnumerator;
@@ -34,8 +35,20 @@ limitations under the License.
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
-            [args setCar:object];
-            [block evalWithArguments:args context:Nu__null];
+            @try
+            {
+                [args setCar:object];
+                [block evalWithArguments:args context:Nu__null];
+            }
+            @catch (NuBreakException *exception) {
+                break;
+            }
+            @catch (NuContinueException *exception) {
+                // do nothing, just continue with the next loop iteration
+            }
+            @catch (id exception) {
+                @throw(exception);
+            }
         }
     }
     [args release];
@@ -51,24 +64,26 @@ limitations under the License.
         id object;
         int i = 0;
         while ((object = [enumerator nextObject])) {
-            [args setCar:object];
-            [[args cdr] setCar:[NSNumber numberWithInt:i]];
-            [block evalWithArguments:args context:Nu__null];
+            @try
+            {
+                [args setCar:object];
+                [[args cdr] setCar:[NSNumber numberWithInt:i]];
+                [block evalWithArguments:args context:Nu__null];
+            }
+            @catch (NuBreakException *exception) {
+                break;
+            }
+            @catch (NuContinueException *exception) {
+                // do nothing, just continue with the next loop iteration
+            }
+            @catch (id exception) {
+                @throw(exception);
+            }
             i++;
         }
     }
     [args release];
     return self;
-}
-
-static bool nu_valueIsTrue(id value)
-{
-    bool result = value && (value != Nu__null);
-    if (result && nu_objectIsKindOfClass(value, [NSNumber class])) {
-        if ([value doubleValue] == 0.0)
-            result = false;
-    }
-    return result;
 }
 
 - (NSArray *) select:(NuBlock *) block
@@ -214,8 +229,20 @@ static bool nu_valueIsTrue(id value)
         NSEnumerator *enumerator = [self reverseObjectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
-            [args setCar:object];
-            [block evalWithArguments:args context:Nu__null];
+            @try
+            {
+                [args setCar:object];
+                [block evalWithArguments:args context:Nu__null];
+            }
+            @catch (NuBreakException *exception) {
+                break;
+            }
+            @catch (NuContinueException *exception) {
+                // do nothing, just continue with the next loop iteration
+            }
+            @catch (id exception) {
+                @throw(exception);
+            }
         }
     }
     [args release];

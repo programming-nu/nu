@@ -204,9 +204,21 @@ extern id Nu__null;
     NSEnumerator *keyEnumerator = [[self allKeys] objectEnumerator];
     id key;
     while ((key = [keyEnumerator nextObject])) {
-        [args setCar:key];
-        [[args cdr] setCar:[self objectForKey:key]];
-        [block evalWithArguments:args context:Nu__null];
+        @try
+        {
+            [args setCar:key];
+            [[args cdr] setCar:[self objectForKey:key]];
+            [block evalWithArguments:args context:Nu__null];
+        }
+        @catch (NuBreakException *exception) {
+            break;
+        }
+        @catch (NuContinueException *exception) {
+            // do nothing, just continue with the next loop iteration
+        }
+        @catch (id exception) {
+            @throw(exception);
+        }
     }
     [args release];
     return self;
@@ -404,8 +416,20 @@ extern id Nu__null;
     int count = [self length];
     NuCell *args = [[NuCell alloc] init];
     for (int i = 0; i < count; i++) {
-        [args setCar:[NSNumber numberWithInteger:[self characterAtIndex:i]]];
-        [block evalWithArguments:args context:Nu__null];
+        @try
+        {
+            [args setCar:[NSNumber numberWithInteger:[self characterAtIndex:i]]];
+            [block evalWithArguments:args context:Nu__null];
+        }
+        @catch (NuBreakException *exception) {
+            break;
+        }
+        @catch (NuContinueException *exception) {
+            // do nothing, just continue with the next loop iteration
+        }
+        @catch (id exception) {
+            @throw(exception);
+        }
     }
     return self;
 }

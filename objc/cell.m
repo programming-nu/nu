@@ -189,11 +189,12 @@ limitations under the License.
         if (IS_NOT_NULL(cursor) && !nu_objectIsKindOfClass(cursor, [NuCell class])) {
             [result appendString:@" . "];
             if ([cursor respondsToSelector:@selector(escapedStringRepresentation)]) {
-                [result appendString:[cursor escapedStringRepresentation]];
+                [result appendString:[((id) cursor) escapedStringRepresentation]];
             }
             else {
                 [result appendString:[cursor description]];
-            }            break;
+            }
+            break;
         }
     }
     [result appendString:@")"];
@@ -396,6 +397,11 @@ extern char *nu_parsedFilename(int i);
         count++;
     }
     return count;
+}
+
+- (int) count
+{
+    return [self length];
 }
 
 - (id) comments {return nil;}
