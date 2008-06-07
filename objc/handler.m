@@ -39,6 +39,10 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             int x = va_arg(ap, int);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
+        else if (!strcmp(type, "C")) {
+            unsigned char x = va_arg(ap, unsigned char);
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
         else if (!strcmp(type, "f")) {
                                                   // calling this w/ float crashes on intel
             double x = (double) va_arg(ap, double);
