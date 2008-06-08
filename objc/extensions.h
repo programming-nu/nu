@@ -259,6 +259,7 @@ limitations under the License.
 /*!
    @class NuAutomaticIvars
    @abstract Include this class to get handleUnknownMessage:withContext: to emulate ivar accessors.
+   @discussion This class is used inside Nu to implement the ivars operator.
  */
 @interface NuAutomaticIvars : NSObject
 {

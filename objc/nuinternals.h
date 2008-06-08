@@ -28,14 +28,25 @@ limitations under the License.
 
 #import <Foundation/Foundation.h>
 
+/*!
+    @class NuBreakException
+    @abstract Internal class used to implement the Nu break operator.
+ */
 @interface NuBreakException : NSException {}
 @end
 
+/*!
+    @class NuContinueException
+    @abstract Internal class used to implement the Nu continue operator.
+ */
 @interface NuContinueException : NSException {}
 @end
 
-@interface NuReturnException : NSException
-{
+/*!
+    @class NuReturnException
+    @abstract Internal class used to implement the Nu return operator.
+ */
+@interface NuReturnException : NSException {
     id value;
 }
 
