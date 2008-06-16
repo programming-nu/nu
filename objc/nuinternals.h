@@ -21,6 +21,11 @@ limitations under the License.
 // some extra information in our contexts.
 
 // Use this key to get the symbol table from an execution context.
+
+#ifdef LINUX
+#define bool char
+#endif
+
 #define SYMBOLS_KEY @"symbols"
 
 // Use this key to get the parent context of an execution context.

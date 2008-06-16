@@ -1,0 +1,74 @@
+Created by Jonathan Yedidia June 15, 2008.
+
+These are some notes I've been taking on getting Nu to work on Linux.
+I am using Ubuntu 8.04 inside a VirtualBox virtual machine, on a
+Mac OS 10.5.3 machine.
+
+At the moment, I am able to build mininush, albeit with lots of warnings,
+but ./mininush tools/nuke gives me the error:
+
+jonathan@imacvu:~/research/nu-jsyedidia$ ./mininush tools/nuke
+Uncatched Objective-C exception:
+exceptionClass <class NSException>
+Reason: unable to load nu
+UserInfo: no userinfo
+
+I will try to figure out how to fix this problem next. The error message itself
+is probably coming from nu/objc/operator.m, where load errors are defined.
+
+At any rate, here is what I've done so far:
+
+1. Install VirtualBox on my iMac Mac OS X 10.5.3, 2GB RAM dual-core Intel machine.
+2. Download Ubuntu 8.04 for 32-bit.
+3. Create a VirtualBox VM for Ubuntu (512MB RAM, Dynamically-growing hard drive).
+4. Install Ubuntu on the VM.
+5. Add Linux extensions and upgrade the VM to 16MB VRAM so I can run it full-screen
+   on my 24'' iMac.
+6. On the Linux VM, install git-core using Synaptic package manager.
+7. Use git to clone a Nu on the Linux VM.
+8. Install Rake using Synaptic on the Linux VM.
+9. Install Emacs using Synaptic.
+10. Copy nu.el from nu/share/nu/nu-mode/nu.el to /usr/share/emacs/site-lisp/nu.el
+    and add (require 'nu) to my .emacs file. Now I have nu-mode in emacs.
+11. Install build-essential using Synaptic.
+12. Install gobjc using Synaptic.
+13. Clone Markus Hardt's version of nufound using 
+    git clone git://github.com/maccheck/nufound.git
+    I needed to use Hardt's version rather than Tim Burks' because Hardt has
+    a fix for a problem with LONG_LONG_MAX that I need on Ubuntu 8.04.
+14. Installed the Foundation framework from nufound using the instructions in
+    nufound/README, and then cleaned up using make distclean as instructed.
+15. It doesn't have anything specifically to do with Nu, but for convenience, 
+    I set up a shared folder. Used my /User/jonathan/Public folder
+    as the shared folder. Note that there seems to be some weird issue with virtualbox
+    whereby the name of the shared folder has to be lower-case. Since the shared folder
+    GUI in VirtualBox gave my 
+    folder the name "Public" by default, that caused a problem until I googled the
+    problem and found out about the upper case issue. I therefore renamed the
+    shared folder "imacpublic" in the GUI. So now I can mount the Mac OS X directory 
+    /Users/jonathan/Public at ~/Public on my Linux VM by using the command 
+    mount -t vboxsf imacpublic ~/Public
+16. Following instructions in nu/notes/INSTALL, download pcre-7.7.tar.gz from 
+    www.pcre.org.
+17. Unzip and then build pcre by using 
+    ./configure --disable-dependency-tracking --enable-utf8
+    make
+    sudo make install
+18. Install libffi4-dev (to get header files) using Synaptic.
+19. nu/objc/nuinternals.h needed to have at the beginning 
+    #ifdef LINUX
+    #define bool char
+    #endif
+    so I put that in (you won't need to do that if you use my fork of nu).
+20. Edited nu/objc/ivars.m so it uses NSIntMapKeyCallBacks for Linux instead of 
+    NSIntegerMapKeyCallBacks which is new in Leopard. (In my fork of nu).
+21. Installed libreadline5-dev using Synaptic to get readline header files.
+22. Needed to add
+    #ifdef LINUX
+    #define true 1
+    #define false 0
+    #endif
+    to nu/objc/testhelper.m (you won't need to do that if you use my fork of nu).
+
+
+
