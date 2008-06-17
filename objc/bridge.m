@@ -956,6 +956,7 @@ void nu_note_placeholders()
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableString");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSManagedObjectModel");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSXMLDocument");
+    placeholderClass[placeholderCount++] = NSClassFromString(@"NSBitmapImageRep");
     #ifdef IPHONE
     placeholderClass[placeholderCount++] = NSClassFromString(@"UINavigationController");
     placeholderClass[placeholderCount++] = NSClassFromString(@"UIWindow");
