@@ -28,7 +28,11 @@ void nu_registerIvarForRelease(Class c, NSString *name)
     #ifndef IPHONE
     if (!ivarsToRelease) {
         //NSLog(@"creating ivarsToRelease map table");
+        #ifdef DARWIN
         ivarsToRelease = NSCreateMapTable(NSIntegerMapKeyCallBacks, NSObjectMapValueCallBacks, 0);
+        #else
+        ivarsToRelease = NSCreateMapTable(NSIntMapKeyCallBacks, NSObjectMapValueCallBacks, 0);
+        #endif	
     }
     NSMutableArray *ivars = NSMapGet(ivarsToRelease, c);
     if (!ivars) {

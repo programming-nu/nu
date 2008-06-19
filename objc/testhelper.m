@@ -12,6 +12,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#ifdef LINUX
+#define true 1
+#define false 0
+#endif
+
 #import <Foundation/Foundation.h>
 #import <Nu/Nu.h>
 
