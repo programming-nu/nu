@@ -212,7 +212,8 @@
 (function momc-path ()
      (set momc nil)
      ('( "/Library/Application Support/Apple/Developer Tools/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc"
-         "/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc")
+         "/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc"
+         "/Developer/usr/bin/momc")
        each:
        (do (momc-path)
            (if (NSFileManager fileExistsNamed:momc-path)
