@@ -729,7 +729,10 @@
      
      ;; Load and evaluate code from a named file. This is typically used to read a Nukefile.
      (imethod (id) load: (id) filename is
-          (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new)))))
+          (ifLinux
+             (eval (parse (NSString stringWithContentsOfFile:filename)))
+          else
+             (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))
           self))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
