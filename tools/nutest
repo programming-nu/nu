@@ -29,9 +29,7 @@
     (then
          (set tests argv)
          (tests each:
-                (do (target)                  
-                    ((filelist target) each: 
-                     (do (file) 
-                         (load file)))))))
+                 (do (test)
+                     (load test)))))
 
 (NuTestCase runAllTests)
