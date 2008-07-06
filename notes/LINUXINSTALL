@@ -1,0 +1,70 @@
+To install and build Nu on Linux, follow these steps:
+
+1. First make sure you have installed the following packages (these needed
+   to be installed after creating a standard Ubuntu 8.04 install):
+   git-core
+   Rake
+   build-essential
+   gobjc
+   libffi4-dev
+   libreadline5-dev
+
+2. Use git to clone Marcus Hardt's version of nufound using
+   
+% git clone git://github.com/maccheck/nufound.git
+   
+   You need to use Hardt's version rather than Tim Burks' because Hardt has
+   a fix for a problem with LONG_LONG_MAX that occurs on Ubuntu 8.04.
+   Then install the Foundation framework from nufound using the instructions
+   in nufound/README.
+
+3. Download pcre-7.7.tar.gz from www.pcre.org.
+   Unzip and then build pcre by using (from the pcre-7.7 directory)
+  
+% ./configure --disable-dependency-tracking --enable-utf8
+% make
+% sudo make install
+
+4. From the main Nu directory:
+   
+% sudo mkdir -p /usr/local/share/libNu
+% sudo cp -r nu /usr/local/share/libNu
+
+5. From the main Nu directory, use rake to build mininush, a minimal version of the 
+   Nu shell:
+   
+% rake
+
+6. From the main Nu directory, use mininush to run nuke to complete the Nu build
+   process:
+   
+% ./mininush tools/nuke
+
+INSTALL AND TEST NU
+-------------------
+
+7. Use mininush again to install Nu, nush, and the Nu tools.
+
+% ./mininush tools/nuke install
+
+Since the copying step uses "sudo", you will be prompted for your password.
+
+6. Test your installation.
+
+% nuke test
+
+(At the moment, the Linux version of Nu fails some tests. This will be fixed.)
+
+From now on, you can use the installed nush to run nuke. To see for
+yourself, rebuild everything from scratch:
+
+% nuke clobber
+% nuke
+% nuke install
+
+See the Nukefile for other useful tasks.
+
+
+
+
+

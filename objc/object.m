@@ -437,7 +437,7 @@ limitations under the License.
 - (void) nuDealloc
 {
     NSArray *ivarsToRelease = nu_ivarsToRelease([self class]);
-    if (ivarsToRelease) {      
+    if (ivarsToRelease) {
         int count = [ivarsToRelease count];
         for (int i = 0; i < count; i++) {
             NSString *ivarName = [ivarsToRelease objectAtIndex:i];
@@ -703,7 +703,12 @@ limitations under the License.
         id value = [[cursor cdr] car];
         id label = ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) ? [key labelName] : key;
         if ([label isEqualToString:@"action"] && [self respondsToSelector:@selector(setAction:)]) {
-            [self setAction:value];
+            #ifdef DARWIN
+            SEL selector = sel_registerName([value cStringUsingEncoding:NSUTF8StringEncoding]);
+            #else
+            SEL selector = sel_register_name([value cStringUsingEncoding:NSUTF8StringEncoding]);
+            #endif
+            [self setAction:selector];
         }
         else {
             [self setValue:value forKey:label];

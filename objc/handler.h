@@ -25,6 +25,10 @@ struct handler_description
     char **description;
 };
 
+/*!
+    @class NuHandlerWarehouse
+    @abstract Internal class used to store and vend method implementations on platforms that don't allow them to be constructed at runtime.
+ */
 @interface NuHandlerWarehouse : NSObject
 {
 }

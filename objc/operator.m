@@ -887,6 +887,24 @@ limitations under the License.
 
 @end
 
+@interface Nu_exponentiation_operator : NuOperator {}
+@end
+
+@implementation Nu_exponentiation_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    id cursor = cdr;
+    double result = [[[cursor car] evalWithContext:context] doubleValue];
+    cursor = [cursor cdr];
+    while (cursor && (cursor != Nu__null)) {
+        result = pow(result, [[[cursor car] evalWithContext:context] doubleValue]);
+        cursor = [cursor cdr];
+    }
+    return [NSNumber numberWithDouble:result];
+}
+
+@end
+
 @interface Nu_divide_operator : NuOperator {}
 @end
 
@@ -1534,7 +1552,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
             [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
             [signature cStringUsingEncoding:NSUTF8StringEncoding]);
         if ([signature isEqual:@"@"]) {
-            nu_registerIvarForRelease(classToExtend, [variableName stringValue]);
+            //nu_registerIvarForRelease(classToExtend, [variableName stringValue]);
         }
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
@@ -1864,6 +1882,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("-",        Nu_subtract_operator);
     install("*",        Nu_multiply_operator);
     install("/",        Nu_divide_operator);
+    install("**",       Nu_exponentiation_operator);
     install("%",        Nu_modulus_operator);
     install("&",        Nu_bitwiseand_operator);
     install("|",        Nu_bitwiseor_operator);

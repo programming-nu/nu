@@ -224,7 +224,11 @@ limitations under the License.
         - (id) addClassMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
         {
             //NSLog(@"adding class method %@", methodName);
-            return add_method_to_class(c, methodName, signature, block);
+            #ifdef DARWIN
+            return add_method_to_class(c->isa, methodName, signature, block);
+            #else
+            return add_method_to_class(c->class_pointer, methodName, signature, block);
+            #endif
         }
 
         - (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature

@@ -437,34 +437,78 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             return NO;
         }
         case 'I':
+        #ifndef __ppc__
         case 'S':
+        case 'C':
+        #endif
+            {
+                if (nu_value == Nu__null) {
+                    *((unsigned int *) objc_value) = 0;
+                    return NO;
+                }
+                *((unsigned int *) objc_value) = [nu_value unsignedIntValue];
+                return NO;
+            }
+        #ifdef __ppc__
+        case 'S':
+        {
+            if (nu_value == Nu__null) {
+                *((unsigned short *) objc_value) = 0;
+                return NO;
+            }
+            *((unsigned short *) objc_value) = [nu_value unsignedShortValue];
+            return NO;
+        }
         case 'C':
         {
             if (nu_value == Nu__null) {
-                *((unsigned int *) objc_value) = 0;
+                *((unsigned char *) objc_value) = 0;
                 return NO;
             }
-            *((unsigned int *) objc_value) = [nu_value intValue];
+            *((unsigned char *) objc_value) = [nu_value unsignedCharValue];
             return NO;
         }
+        #endif
         case 'i':
+        #ifndef __ppc__
         case 's':
         case 'c':
-        {
-            if (nu_value == [NSNull null]) {
-                *((int *) objc_value) = 0;
+        #endif
+            {
+                if (nu_value == [NSNull null]) {
+                    *((int *) objc_value) = 0;
+                    return NO;
+                }
+                *((int *) objc_value) = [nu_value intValue];
                 return NO;
             }
-            *((int *) objc_value) = [nu_value intValue];
+        #ifdef __ppc__
+        case 's':
+        {
+            if (nu_value == Nu__null) {
+                *((short *) objc_value) = 0;
+                return NO;
+            }
+            *((short *) objc_value) = [nu_value shortValue];
             return NO;
         }
+        case 'c':
+        {
+            if (nu_value == Nu__null) {
+                *((char *) objc_value) = 0;
+                return NO;
+            }
+            *((char *) objc_value) = [nu_value charValue];
+            return NO;
+        }
+        #endif
         case 'L':
         {
             if (nu_value == [NSNull null]) {
                 *((unsigned long *) objc_value) = 0;
                 return NO;
             }
-            *((unsigned long *) objc_value) = [nu_value longValue];
+            *((unsigned long *) objc_value) = [nu_value unsignedLongValue];
             return NO;
         }
         case 'l':
@@ -482,7 +526,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 *((unsigned long long *) objc_value) = 0;
                 return NO;
             }
-            *((unsigned long long *) objc_value) = [nu_value longLongValue];
+            *((unsigned long long *) objc_value) = [nu_value unsignedLongLongValue];
             return NO;
         }
         case 'q':
@@ -912,6 +956,7 @@ void nu_note_placeholders()
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableString");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSManagedObjectModel");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSXMLDocument");
+    placeholderClass[placeholderCount++] = NSClassFromString(@"NSBitmapImageRep");
     #ifdef IPHONE
     placeholderClass[placeholderCount++] = NSClassFromString(@"UINavigationController");
     placeholderClass[placeholderCount++] = NSClassFromString(@"UIWindow");
@@ -1100,13 +1145,39 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     //NSLog(@"in nu method handler, putting result %@ in %x with type %s", [result stringValue], (int) returnvalue, ((char **)userdata)[0]);
     char *resultType = (((char **)userdata)[0])+1;// skip the first character, it's a flag
     set_objc_value_from_nu_value(returnvalue, result, resultType);
+    #ifdef __ppc__
+	// It appears that at least on PowerPC architectures, small values (short, char, ushort, uchar) passed in via 
+	// the ObjC runtime use their actual type while function return values are coerced up to integers. 
+	// I suppose this is because values are passed as arguments in memory and returned in registers.  
+	// This may also be the case on x86 but is unobserved because x86 is little endian.
+    switch (resultType[0]) {
+        case 'C':
+        {
+            *((unsigned int *) returnvalue) = *((unsigned char *) returnvalue);
+            break;
+        }
+        case 'c':
+        {
+            *((int *) returnvalue) = *((char *) returnvalue);
+            break;
+        }
+        case 'S':
+        {
+            *((unsigned int *) returnvalue) = *((unsigned short *) returnvalue);
+            break;
+        }
+        case 's':
+        {
+            *((int *) returnvalue) = *((short *) returnvalue);
+            break;
+        }
+    }
+    #endif
     if (((char **)userdata)[0][0] == '!') {
         //NSLog(@"retaining result for object %@, count = %d", *(id *)returnvalue, [*(id *)returnvalue retainCount]);
         [*((id *)returnvalue) retain];
     }
-
     [arguments release];
-
     [pool release];
 }
 
@@ -1471,7 +1542,7 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
             finished = YES;
         }
         else if ([cursor car] == BOOL_symbol) {
-            [signature appendString:@"c"];
+            [signature appendString:@"C"];
             finished = YES;
         }
         else if ([cursor car] == double_symbol) {

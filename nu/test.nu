@@ -16,13 +16,13 @@
 ;;   limitations under the License.
 
 ;; @class NuTestCase
-;; @abstract Base class for Nu test cases.  
+;; @abstract Base class for Nu test cases.
 ;; @discussion NuTestCase is an abstract base class for Nu test cases.
 ;; To create new tests, create a class derived from this class
 ;; and give your test methods names beginning with "test".
 ;; As with Ruby's Test::Unit, you can also define methods
 ;; named "setup" and "teardown" to be run before and after
-;; each test method.  
+;; each test method.
 ;;
 ;; Here's an example test:
 ;;
@@ -32,25 +32,25 @@
 ;; &nbsp;&nbsp;&nbsp;&nbsp;(assert_equal 4 (+ 2 2))))
 ;; </code></div>
 ;;
-;; To run your tests, use the "nutest" standalone program. 
+;; To run your tests, use the "nutest" standalone program.
 ;; The following invocation runs all of the Nu unit tests
 ;; from a console (Terminal.app):
 ;;
 ;; <code>% nutest test/test_*.nu</code>
-;; 
+;;
 (class NuTestCase is NSObject
      (ivar (id) failures (id) assertions (id) errors)
      
      ;; By overriding this method, we detect each time a class is defined in Nu that inherits from this class.
-     (cmethod (id) inheritedByClass:(id) testClass is 
+     (cmethod (id) inheritedByClass:(id) testClass is
           (unless $testClasses (set $testClasses (NSMutableSet set)))
-          ($testClasses addObject:testClass))     
+          ($testClasses addObject:testClass))
      
-     ;; The setup method is called before each test case is executed.  
+     ;; The setup method is called before each test case is executed.
      ;; The default implementation does nothing.
      (imethod (id) setup is nil)
      
-     ;; The teardown method is called after each test case is executed.  
+     ;; The teardown method is called after each test case is executed.
      ;; The default implementation does nothing.
      (imethod (id) teardown is nil)
      
@@ -62,7 +62,7 @@
           (set $failures 0)
           (set $tests 0)
           (if $testClasses
-              ((($testClasses allObjects) sort) each: 
+              ((($testClasses allObjects) sort) each:
                (do (testClass)
                    (((testClass alloc) init) run))))
           
@@ -70,7 +70,7 @@
           (puts "All: completed #{$tests} tests/#{$assertions} assertions/#{$failures} failures/#{$errors} errors")
           (puts "")
           (if (or $failures $errors)
-              (then (puts "FAILURE (#{$failures} failures, #{$errors} errors)")) 
+              (then (puts "FAILURE (#{$failures} failures, #{$errors} errors)"))
               (else (puts "SUCCESS (0 failures, 0 errors)")))
           (+ $failures $errors))
      
@@ -83,7 +83,7 @@
           (set testcases (((self instanceMethods) sort) select: (do (method) ((pattern findInString:(method name))))))
           (puts "")
           (puts "#{((self class) name)}: running")
-          (testcases each: 
+          (testcases each:
                (do (test)
                    (set $tests (+ $tests 1))
                    (print "--- #{(test name)}")
@@ -95,11 +95,11 @@
                               (print " FAILED: Unhandled #{(exception name)} exception caught in #{(test name)}: #{(exception reason)}")
                               (set @errors (+ @errors 1))))
                    (self teardown)
-                   (puts "")))     
+                   (puts "")))
           (set $errors (+ $errors @errors))
           (set $failures (+ $failures @failures))
-          (set $assertions (+ $assertions @assertions))  
-          (puts "#{((self class) name)}: completed #{(testcases count)} tests/#{@assertions} assertions/#{@failures} failures/#{@errors} errors")))          
+          (set $assertions (+ $assertions @assertions))
+          (puts "#{((self class) name)}: completed #{(testcases count)} tests/#{@assertions} assertions/#{@failures} failures/#{@errors} errors")))
 
 (macro assert_equal
      (set @assertions (+ @assertions 1))
@@ -137,7 +137,7 @@
              (set @failures (+ @failures 1)))
      nil)
 
-(macro assert_throws 
+(macro assert_throws
      (set @assertions (+ @assertions 1))
      (set __desired (eval (car margs)))
      (set __block (cdr margs))
@@ -145,7 +145,7 @@
      (try
          (eval __block)
          (catch (exception) (set __exception exception)))
-     (if __exception 
+     (if __exception
          (then
               (unless (eq (__exception name) __desired)
                       (puts "failure: expected exception #{__desired} to be thrown, got #{(__exception name)}")
@@ -155,7 +155,7 @@
               (set @failures (+ @failures 1))))
      nil)
 
-(macro assert_in_delta 
+(macro assert_in_delta
      (set @assertions (+ @assertions 1))
      (set __reference (eval (car margs)))
      (set __actual (eval (car (cdr (margs)))))
@@ -166,5 +166,19 @@
          (set @failures (+ @failures 1)))
      nil)
 
+(macro assert_true
+     (set @assertions (+ @assertions 1))
+     (set __actual (eval (car margs)))
+     (unless __actual
+             (puts "failure: #{(car margs)} expected true value, got '#{__actual}'")
+             (set @failures (+ @failures 1)))
+     nil)
 
+(macro assert_false
+     (set @assertions (+ @assertions 1))
+     (set __actual (eval (car margs)))
+     (if __actual
+         (puts "failure: #{(car margs)} expected false value, got '#{__actual}'")
+         (set @failures (+ @failures 1)))
+     nil)
 

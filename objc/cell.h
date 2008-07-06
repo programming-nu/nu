@@ -80,6 +80,8 @@ In Nu, nil is represented with the <code>[NSNull null]</code> object.
 - (id) reduce:(NuBlock *) block from:(id) initial;
 /*! Get the length of a list beginning at a NuCell. */
 - (int) length;
+/*! Get the number of elements in a list. Synonymous with length. */
+- (int) count;
 
 - (void) setFile:(int) f line:(int) l;
 - (int) file;

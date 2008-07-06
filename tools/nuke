@@ -212,7 +212,8 @@
 (function momc-path ()
      (set momc nil)
      ('( "/Library/Application Support/Apple/Developer Tools/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc"
-         "/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc")
+         "/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc"
+         "/Developer/usr/bin/momc")
        each:
        (do (momc-path)
            (if (NSFileManager fileExistsNamed:momc-path)
@@ -729,7 +730,10 @@
      
      ;; Load and evaluate code from a named file. This is typically used to read a Nukefile.
      (imethod (id) load: (id) filename is
-          (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new)))))
+          (ifLinux
+             (eval (parse (NSString stringWithContentsOfFile:filename)))
+          else
+             (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))
           self))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
