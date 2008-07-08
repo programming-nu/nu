@@ -9,12 +9,12 @@ To install and build Nu on Linux, follow these steps:
    libffi4-dev
    libreadline5-dev
 
-2. Use git to clone Marcus Hardt's version of nufound using
-   
-% git clone git://github.com/maccheck/nufound.git
-   
-   You need to use Hardt's version rather than Tim Burks' because Hardt has
-   a fix for a problem with LONG_LONG_MAX that occurs on Ubuntu 8.04.
+2. Use git to clone Jonathan Yedidia's version of nufound using
+
+% git clone git://github.com/jsyedidia/nufound.git
+
+   You need to use Yedidia's version rather than Tim Burks' because Yedidia includes
+   fixes for a couple problems that occur on Ubuntu 8.04.
    Then install the Foundation framework from nufound using the instructions
    in nufound/README.
 
@@ -53,16 +53,24 @@ Since the copying step uses "sudo", you will be prompted for your password.
 
 % nuke test
 
-(At the moment, the Linux version of Nu fails some tests. This will be fixed.)
+(At the moment, the Linux version of Nu fails some tests. This will be fixed.
+However, even with the failed tests, Nu appears to be usable on Linux.)
 
-From now on, you can use the installed nush to run nuke. To see for
-yourself, rebuild everything from scratch:
+If you modify your version of Nu, either by making your own changes, or by
+pulling in a new version of Nu, you should build the new version using the
+command:
 
-% nuke clobber
-% nuke
-% nuke install
+./mininush tools/nuke install
 
-See the Nukefile for other useful tasks.
+N.B.: This is different from the procedure on Mac OS X, where you use "nuke install".
+
+ADDITIONAL NOTES
+----------------
+On Darwin, Nu is installed as a framework in /Library/Frameworks. On Linux, it is built
+as a dynamic library and installed in /usr/local/lib (or the lib dir of whatever is your 
+desired installation prefix). Because nush is linked against libNu.so,
+running "nuke install" will crash on Linux when the libNu.so is overwritten. So be sure to 
+install with "mininush tools/nuke install".
 
 
 
