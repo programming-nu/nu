@@ -7,9 +7,17 @@ BUILD THE PREREQUISITES
 1. Nu requires PCRE, the Perl-Compatible Regular Expression Library.
    Before building Nu, download and install pcre, enabling UTF-8.
    Look for it at http://www.pcre.org.  
-   To build a universal binary with UTF-8 support, use the following command:
+   To build and install a universal binary with UTF-8 support, use the
+   following commands:
 
-% env CXXFLAGS="-arch i386 -arch ppc" CFLAGS="-arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc" ./configure --disable-dependency-tracking --enable-utf8
+   % env CXXFLAGS="-arch i386 -arch ppc -arch x86_64" \
+   	CFLAGS="-arch i386 -arch ppc -arch x86_64" \
+   	LDFLAGS="-arch i386 -arch ppc -arch x86_64" \
+   	./configure --disable-dependency-tracking --enable-utf8
+
+   % make
+
+   % sudo make install
 
    When you install PCRE, it's best to put it in /usr/local (the default).
    If you put it anywhere else, you'll have to modify the Rakefile and Nukefile
