@@ -25,11 +25,16 @@
 
 (set argv ((NuApplication sharedApplication) arguments))
 
-(if (> (argv count) 0) 
+(if (> (argv count) 0)
     (then
-         (set tests argv)
-         (tests each:
-                 (do (test)
-                     (load test)))))
-
-(NuTestCase runAllTests)
+         (if (eq (argv 0) "-v")
+             (then
+                  (system "nush -v"))
+             (else
+                  (set tests argv)
+                  (tests each:
+                         (do (test)
+                             (load test)))
+                  (NuTestCase runAllTests))))
+    (else
+         (puts "usage: nutest <sourcefile>")))
