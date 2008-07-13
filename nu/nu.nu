@@ -31,14 +31,49 @@
             (let ((r (NuMath random)))
                  (* maximum (- (/ r maximum) ((/ r maximum) intValue))))))
 
-;; Reverse a list. Just for fun.
+;; Reverses a list. Just for fun.
 (global reverse
         (do (my-list)
             (if my-list
                 (then (append (reverse (cdr my-list)) (list (car my-list))))
                 (else nil))))
 
-;; returns an array of filenames matching a given pattern.
+;; Returns the first true item in the list, or nil if no item is true.
+(global any
+        (do (ls)
+            (ls find:(do (x) x))))
+
+;; Returns t if all elements of the list are true.
+(global all
+        (do (ls)
+            (not (any (ls map:(do (x) (not x)))))))
+
+# Applies a function to a list of arguments.
+# For example (apply + '(1 2)) returns 3.
+(global apply
+        (macro _
+          (set __f (eval (car margs)))
+          (set __args (eval (cdr margs)))
+          (eval (cons __f __args))))
+
+;; Allows mapping a function over multiple lists.
+;; For example (map + '(1 2) '(3 4)) returns '(4 6).
+;; The length of the result is the same as that of the shortest list passed in.
+;; For example (map + '(1 2) '(3)) returns '(4).
+(global map
+        (progn
+          (set _map
+            (do (f _lists)
+                (if (_lists select:(do (x) (not x)))
+                  (then '())
+                  (else
+                    (cons
+                      (apply f (_lists map: (do (ls) (first ls))))
+                      (_map f (_lists map: (do (ls) (rest ls)))))))))
+          (do (fun *lists)
+              (_map fun *lists))))
+
+;; Returns an array of filenames matching a given pattern.
 ;; the pattern is a string that is converted into a regular expression.
 (global filelist
         (do (pattern)
@@ -52,12 +87,12 @@
                  ((results allObjects) sortedArrayUsingSelector:"compare:"))))
 
 (class NSMutableArray
-     
+
      ;; Concisely add objects to arrays using this method, which is equivalent to a call to addObject:.
      (- (void) << (id) object is (self addObject:object)))
 
 (class NSMutableSet
-     
+
      ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
      (- (void) << (id) object is (self addObject:object)))
 
@@ -72,7 +107,7 @@
          ;; Convert a list into an NSRange.  The list must have at least two elements.
          (- (NSRange) rangeValue is (list (self first) (self second)))))
 
-;; Use this macro to create and extend protocols. 
+;; Use this macro to create and extend protocols.
 ;; The odd-looking use of the global operator is to define the macro globally.
 ;; We just use an "_" for the macro name argument because its local name is unimportant.
 ;; It does not work with the latest (more restrictive) ObjC runtimes from Apple.
@@ -81,7 +116,7 @@
              (set __signatureForIdentifier (NuBridgedFunction functionWithName:"signature_for_identifier" signature:"@@@"))
              (function __parse_signature (typeSpecifier)
                   (__signatureForIdentifier typeSpecifier (NuSymbolTable sharedSymbolTable)))
-             
+
              (set __name ((margs car) stringValue))
              (unless (set __protocol (Protocol protocolNamed: __name))
                      (set __protocol ((Protocol alloc) initWithName: __name)))
