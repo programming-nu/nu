@@ -48,8 +48,8 @@
         (do (ls)
             (not (any (ls map:(do (x) (not x)))))))
 
-# Applies a function to a list of arguments.
-# For example (apply + '(1 2)) returns 3.
+;; Applies a function to a list of arguments.
+;; For example (apply + '(1 2)) returns 3.
 (global apply
         (macro _
           (set __f (eval (car margs)))
@@ -72,6 +72,14 @@
                       (_map f (_lists map: (do (ls) (rest ls)))))))))
           (do (fun *lists)
               (_map fun *lists))))
+
+;; Sorts a list.
+(global sort
+        (do (ls *more-args)
+            (set block (if *more-args
+                           (then (first *more-args))
+                           (else (do (a b) (a compare:b)))))
+            (((apply array ls) sortedArrayUsingBlock:block) list)))
 
 ;; Returns an array of filenames matching a given pattern.
 ;; the pattern is a string that is converted into a regular expression.

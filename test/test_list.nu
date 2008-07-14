@@ -71,12 +71,21 @@
         (assert_equal 1 (apply + '(1)))
         (assert_equal 3 (apply + '(1 2))))
 
+     (- testSort is
+        (assert_equal '() (sort '()))
+        (assert_equal '(1) (sort '(1)))
+        (assert_equal '(1 2) (sort '(1 2)))
+        (assert_equal '(1 2) (sort '(2 1)))
+        (assert_equal '(1 1 2) (sort '(1 2 1)))
+        (assert_equal '(1 2 3) (sort '(3 2 1)))
+        (assert_equal '(3 2 1) (sort '(1 2 3) (do (a b) (- (a compare:b))))))
+
      (- testMap is
-        (assert_equal '()     (map + '()))
-        (assert_equal '()     (map + '() '()))
-        (assert_equal '()     (map + '(1) '()))
-        (assert_equal '()     (map + '() '(1)))
-        (assert_equal '(3)    (map + '(1) '(2)))
+        (assert_equal '() (map + '()))
+        (assert_equal '() (map + '() '()))
+        (assert_equal '() (map + '(1) '()))
+        (assert_equal '() (map + '() '(1)))
+        (assert_equal '(3) (map + '(1) '(2)))
         (assert_equal '(9 12) (map + '(1 2) '(3 4) '(5 6)))
-        (assert_equal '(9)    (map + '(1 2) '(3) '(5 6)))))
+        (assert_equal '(9) (map + '(1 2) '(3) '(5 6)))))
 
