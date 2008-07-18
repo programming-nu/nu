@@ -3,6 +3,7 @@
 ;;
 ;;  Copyright (c) 2007 Michael Burks/Tim Burks, Neon Design Technology, Inc.
 
+(load "math")
 (set PI 3.14159)
 (set E 2.71828)
 
