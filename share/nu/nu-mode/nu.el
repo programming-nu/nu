@@ -72,6 +72,7 @@
 
 ;;; Code:
 
+(require 'cl)
 (require 'lisp-mode)
 
 (autoload 'run-nush "nush" "Run an inferior Nush process." t)
@@ -735,7 +736,7 @@ See `run-hooks'."
                       (nu-backward-sexp1)) )))))))))
 
 ;; incf is not defined in GNU Emacs 22.1.1 (mac-apple-darwin, Carbon Version 1.6.0)
-;; and possibly elsewhere
+;; and possibly elsewhere.
 (defmacro incf (x)
   `(setq ,x (+ ,x 1)))
 
