@@ -31,6 +31,45 @@
             (let ((r (NuMath random)))
                  (* maximum (- (/ r maximum) ((/ r maximum) intValue))))))
 
+(global char?
+        (do (x)
+            (eq (x class) ('a' class))))
+
+(global atom?
+        (do (x)
+            (or (null? x)
+                (number? x)
+                (symbol? x)
+                (string? x)
+                (char? x))))
+
+(global number?
+        (do (x)
+            (eq (x class) (1 class))))
+
+;; O(n) in the length of the list (if it is a list).
+(global list?
+        (do (x)
+            (or (eq x nil)
+                (and (pair? x)
+                     (list? (cdr x))))))
+
+(global null?
+        (do (x)
+            (eq x nil)))
+
+(global pair?
+        (do (x)
+            (eq (x class) NuCell)))
+
+(global string?
+        (do (x)
+            (eq (x class) NSCFString)))
+
+(global symbol?
+        (do (x)
+            (eq (x class) NuSymbol)))
+
 ;; Reverses a list.
 (global reverse
         (do (my-list)

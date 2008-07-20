@@ -4,6 +4,25 @@
 ;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
 
 (class TestList is NuTestCase
+     (- testPair? is
+       (assert_false (pair? nil))
+       (assert_true (pair? '(1 . 2)))
+       (assert_true (pair? '(1))))
+
+     (- testNull? is
+       (assert_true (null? nil))
+       (assert_false (null? 1))
+       (assert_false (null? ""))
+       (assert_false (null? 0))
+       (assert_false (null? '(1))))
+  
+     (- testList? is
+       (assert_true (list? '()))
+       (assert_true (list? '(1)))
+       (assert_true (list? '(1 (2 3))))
+       (assert_false (list? 1))
+       (assert_false (list? ""))
+       (assert_false (list? "a")))
 
      (- testCompare is
         (assert_equal t (eq '(1 2 3) '(1 2 3)))
