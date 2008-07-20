@@ -24,18 +24,34 @@
         (eval (append (list 'let (destructure __pat __seq))
                       __body))))
 
+(macro dset
+    (set __pat (first margs))
+    (set __seq (eval (second margs)))
+    (set __bindings (destructure __pat __seq))
+    (set __set-statements
+          (__bindings map:(do (b)
+                              (list 'set (first b) (second b)))))
+    (eval (cons 'progn __set-statements)))
+
+(macro assert
+    (if (not (eval (car margs)))
+        (then (print "Assertion failed: ")
+              (print (car margs)))))
+
 ;; Given a pattern like '(a (b c)) and a sequence like '(1 (2 3)),
 ;; returns a list of bindings like '((a 1) (b 2) (c 3)).
 (function destructure (pat seq)
-    (if (symbol? pat)
-        (then 
-            (let (seq (if (atom? seq)
-                          (then seq)
-                          (else (list 'quote seq))))
-                (list (list pat seq))))
-        (else (if (pair? pat)
-                  (then (let ((bindings1 (destructure (car pat) (car seq)))
-                              (bindings2 (destructure (cdr pat) (cdr seq))))
-                            (append bindings1 bindings2)))
-                  (else nil)))))
+    (cond
+     ((null? pat)
+      nil)
+     ((symbol? pat)
+      (let (seq (if (or (pair? seq) (symbol? seq))
+                    (then (list 'quote seq))
+                    (else seq)))
+          (list (list pat seq))))
+     ((pair? pat)
+      (then (let ((bindings1 (destructure (car pat) (car seq)))
+                  (bindings2 (destructure (cdr pat) (cdr seq))))
+                (append bindings1 bindings2))))
+     (else (print "ERROR: pat is not nil, a symbol or a pair: " pat "\n"))))
 
