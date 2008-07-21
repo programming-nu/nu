@@ -18,25 +18,24 @@
 ;; Destructuring bind.  The implementation here is very loosely based
 ;; on the one on p. 232 of Paul Graham's book On Lisp.
 (macro dbind
-    (let ((__pat (first margs))
-          (__seq (eval (second margs)))
-          (__body (cdr (cdr margs))))
-        (eval (append (list 'let (destructure __pat __seq))
-                      __body))))
+    (set __pat (first margs))
+    (set __seq (eval (second margs)))
+    (set __body (cdr (cdr margs)))
+    (set __bindings (destructure __pat __seq))
+    (check-bindings __bindings)
+    (set __result (append (list 'let __bindings)
+                          __body))
+    (eval __result))
 
 (macro dset
     (set __pat (first margs))
     (set __seq (eval (second margs)))
     (set __bindings (destructure __pat __seq))
+    (check-bindings __bindings)
     (set __set-statements
           (__bindings map:(do (b)
                               (list 'set (first b) (second b)))))
     (eval (cons 'progn __set-statements)))
-
-(macro assert
-    (if (not (eval (car margs)))
-        (then (print "Assertion failed: ")
-              (print (car margs)))))
 
 ;; Given a pattern like '(a (b c)) and a sequence like '(1 (2 3)),
 ;; returns a list of bindings like '((a 1) (b 2) (c 3)).
@@ -55,3 +54,25 @@
                 (append bindings1 bindings2))))
      (else (print "ERROR: pat is not nil, a symbol or a pair: " pat "\n"))))
 
+;; Makes sure that no key is set to two different values.
+;; For example (check-bindings '((a 1) (a 1) (b 2))) just returns its argument,
+;; but (check-bindings '((a 1) (a 2) (b 2))) throws a NuDestructuringException.
+(function check-bindings (bindings)
+    (set dic (dict))
+    (bindings each:(do (b) 
+                       (set key (first b))
+                       (set val (second b))
+                       (set prev-val (dic key))  ; valueForKey inexplicably rejects symbols
+                       (if (eq nil prev-val)
+                           (then (dic setValue:val forKey:key))
+                           (else
+                               (if (not (eq val prev-val))
+                                   (then 
+                                       ;; TODO(issac.trotts@gmail.com): Add a more informative
+                                       ;; error message.
+                                       (set exn
+                                            ((NSException alloc) initWithName:"NuDestructuringException"
+                                                                       reason:"Inconsistent bindings"
+                                                                     userInfo:nil))
+                                       (exn raise)))))))
+    bindings)

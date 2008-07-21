@@ -7,6 +7,13 @@
 
 (class TestDestructuring is NuTestCase
      
+     (imethod (id) testCheckBindings is
+         (check-bindings '())  ;; empty set of bindings should not throw
+         (check-bindings '((a 1)))
+         (check-bindings '((a 1) (a 1)))  ;; consistent
+         (assert_throws "NuDestructuringException"
+                        (do () (check-bindings '((a 1) (a 2))))))  ;; inconsistent
+
      ;; dbind
      (imethod (id) testDbind is
          (assert_equal 3 (dbind a 3
@@ -31,16 +38,30 @@
          (assert_equal '(1 (2 3))
                        (dbind (a b) '(1 (2 3))
                               (list a b)))
+
          ;; Test it with expressions on the right.
          (assert_equal (list 3 12)
                        (dbind (a b) (list (+ 1 2) (* 3 4))
                               (list a b)))
+
          ;; Test it with symbols on the right.
          (assert_equal '(bottle rum)
                        (dbind (yo ho) '(bottle rum)
-                              (list yo ho))))
+                              (list yo ho)))
 
-     ;; dset 
+         ;; The same symbol can show up twice in the LHS (left hand side) as long as it
+         ;; binds to eq things on the RHS (right hand side).
+         (assert_equal '(bottle rum)
+                       (dbind (yo ho ho) '(bottle rum rum)
+                              (list yo ho)))
+
+         ;; An error occurs if we try to match the same symbol to two different things on
+         ;; the right.
+         (assert_throws "NuDestructuringException"
+                        (dbind (a a) '(1 2)
+                               nil)))
+
+     ;; dset
      (imethod (id) testDset is
          (dset a 3)
          (assert_equal 3 a)
@@ -65,5 +86,7 @@
                         (do () (dset (a b) (1))))
 
          (dset (a b) '(1 (2 3)))
-         (assert_equal '(1 (2 3)) (list a b))))
+         (assert_equal '(1 (2 3)) (list a b))
 
+         (assert_throws "NuDestructuringException"
+                        (dset (a a) '(1 2)))))

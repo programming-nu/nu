@@ -95,6 +95,18 @@
           (set __args (eval (cdr margs)))
           (eval (cons __f __args))))
 
+;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
+;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
+;; an exception.
+(global assert
+        (macro _
+          (set expression (car margs))
+          (if (not (eval expression))
+              (then (throw ((NSException alloc)
+                             initWithName:"NuAssertionFailure"
+                             reason:(expression stringValue)
+                             userInfo:nil))))))
+
 ;; Allows mapping a function over multiple lists.
 ;; For example (map + '(1 2) '(3 4)) returns '(4 6).
 ;; The length of the result is the same as that of the shortest list passed in.
