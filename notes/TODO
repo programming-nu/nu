@@ -107,3 +107,5 @@ COMPLETED
 * nuke builds for apps with spaces in their names.
 
 * ocaml-like pattern matching, a.k.a. destructuring-bind, though there is still room for improvement here.
+  It would be nice to have something called dcase (destructuring case) that would match the input
+  with the first compatible template, binding variables in it.
