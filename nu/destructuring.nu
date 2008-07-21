@@ -41,8 +41,9 @@
 ;; returns a list of bindings like '((a 1) (b 2) (c 3)).
 (function destructure (pat seq)
     (cond
-     ((null? pat)
-      nil)
+     ((and (not pat) seq) 
+      (destruc-throw "Attempt to match empty pattern to non-empty object"))
+     ((not pat) nil)
      ((symbol? pat)
       (let (seq (if (or (pair? seq) (symbol? seq))
                     (then (list 'quote seq))
@@ -52,7 +53,7 @@
       (then (let ((bindings1 (destructure (car pat) (car seq)))
                   (bindings2 (destructure (cdr pat) (cdr seq))))
                 (append bindings1 bindings2))))
-     (else (print "ERROR: pat is not nil, a symbol or a pair: " pat "\n"))))
+     (else (destruc-throw "pattern is not nil, a symbol or a pair: #{pat}"))))
 
 ;; Makes sure that no key is set to two different values.
 ;; For example (check-bindings '((a 1) (a 1) (b 2))) just returns its argument,
@@ -70,9 +71,31 @@
                                    (then 
                                        ;; TODO(issac.trotts@gmail.com): Add a more informative
                                        ;; error message.
-                                       (set exn
-                                            ((NSException alloc) initWithName:"NuDestructuringException"
-                                                                       reason:"Inconsistent bindings"
-                                                                     userInfo:nil))
-                                       (exn raise)))))))
+                                       (destruc-throw "Inconsistent bindings")))))))
     bindings)
+
+(macro match
+    (set __obj (eval (first margs)))
+    (set __patterns (rest margs))
+    ;; Make __result a list with nils for patterns that don't match, and expressions for ones that do.
+    (set __result
+         (__patterns map:(do (pat-and-body)
+                             (set __pat (first pat-and-body))
+                             (set __body (rest pat-and-body))
+                             (if (eq __pat 'else)
+                                 (then __body)
+                                 (else 
+                                     (try
+                                      (set __bindings (destructure __pat __obj))
+                                      (cons 'let (cons __bindings __body))
+                                      (catch (exception) nil)))))))
+
+    ;; Evaluate and return the first expression that matches.
+    (set __todo (any __result))
+    (eval __todo))
+
+(function destruc-throw (reason)
+    (throw ((NSException alloc) initWithName:"NuDestructuringException"
+                                      reason:reason
+                                    userInfo:nil)))
+

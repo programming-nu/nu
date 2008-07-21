@@ -6,7 +6,20 @@
 (load "destructuring")
 
 (class TestDestructuring is NuTestCase
-     
+
+     ;; match
+     (imethod (id) testMatch is
+         (function people-to-string (people)
+             (match people
+                    (() "no people")
+                    ((p1) "one person: #{p1}")
+                    ((p1 p2) "two people: #{p1} and #{p2}")
+                    (else "too many people: #{(people length)}")))
+         (assert_equal "no people" (people-to-string '()))
+         (assert_equal "one person: Tim" (people-to-string '(Tim)))
+         (assert_equal "two people: Tim and Matz" (people-to-string '(Tim Matz)))
+         (assert_equal "too many people: 3" (people-to-string '(Tim Guido Matz))))
+
      (imethod (id) testCheckBindings is
          (check-bindings '())  ;; empty set of bindings should not throw
          (check-bindings '((a 1)))
