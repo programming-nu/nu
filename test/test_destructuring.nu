@@ -18,7 +18,14 @@
          (assert_equal "no people" (people-to-string '()))
          (assert_equal "one person: Tim" (people-to-string '(Tim)))
          (assert_equal "two people: Tim and Matz" (people-to-string '(Tim Matz)))
-         (assert_equal "too many people: 3" (people-to-string '(Tim Guido Matz))))
+         (assert_equal "too many people: 3" (people-to-string '(Tim Guido Matz)))
+
+         ;; If there is no else clause then it throws an exception.
+         (assert_throws "NuMatchException"
+                        (match '(1 2)
+                               (() 'foo)
+                               ((a b c) 'bar))))
+
 
      (imethod (id) testCheckBindings is
          (check-bindings '())  ;; empty set of bindings should not throw

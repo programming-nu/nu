@@ -4,7 +4,10 @@
 ;;  Copyright (c) 2008 Issac Trotts
 
 (class TestNu is NuTestCase
-     
+     (imethod (id) testThrow* is
+         (assert_throws "NuFunkyException"
+                        (throw* "NuFunkyException" "Something funky happened.")))
+
      (imethod (id) testSymbol? is
          (assert_true (symbol? 'a))
          (assert_true (symbol? 'ab))

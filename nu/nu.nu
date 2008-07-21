@@ -132,6 +132,14 @@
                            (else (do (a b) (a compare:b)))))
             (((apply array ls) sortedArrayUsingBlock:block) list)))
 
+;; Throws an exception.
+;; This function is more concise and easier to remember than throw.
+(global throw* 
+        (do (type reason)
+            (throw ((NSException alloc) initWithName:type
+                                              reason:reason
+                                            userInfo:nil))))
+
 ;; Returns an array of filenames matching a given pattern.
 ;; the pattern is a string that is converted into a regular expression.
 (global filelist
