@@ -41,6 +41,11 @@
          (assert_equal '(* 2 x) (simplify '(+ x x)))
          (assert_equal '(+ foo 1) (simplify '(+ foo 1))))
 
+     (imethod (id) testMatchWithWildCards is
+         (assert_equal '(1 4) 
+                       (match '(1 (2 (3)) 4 5)
+                              ((a _ b _) (list a b)))))
+
      (imethod (id) testCheckBindings is
          (check-bindings '())  ;; empty set of bindings should not throw
          (check-bindings '((a 1)))

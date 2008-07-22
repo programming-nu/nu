@@ -64,8 +64,10 @@
 (function destructure (pat seq)
     (cond
      ((and (not pat) seq) 
-      (throw* "Attempt to match empty pattern to non-empty object"))
+      (throw* "NuDestructuringException"
+              "Attempt to match empty pattern to non-empty object"))
      ((not pat) nil)
+     ((eq pat '_) '())  ; wildcard match produces no binding.
      ((symbol? pat)
       (let (seq (if (or (pair? seq) (symbol? seq))
                     (then (list 'quote seq))
@@ -73,9 +75,9 @@
           (list (list pat seq))))
      ((pair? pat)
       (let ((bindings1 (destructure (car pat) (car seq)))
-                  (bindings2 (destructure (cdr pat) (cdr seq))))
-                (append bindings1 bindings2)))
-     ((eq pat seq) '())  # literal match
+            (bindings2 (destructure (cdr pat) (cdr seq))))
+          (append bindings1 bindings2)))
+     ((eq pat seq) '())  ; literal match produces no binding
      (else (throw* "NuDestructuringException"
                    "pattern is not nil, a symbol or a pair: #{pat}"))))
 
@@ -98,6 +100,10 @@
     bindings)
 
 ;; Matches an object against some patterns with associated expressions.
+;; TODO
+;; - symbolic literals in patterns
+;; - rest-of-list patterns
+;; - boolean conditions for patterns (like "when" in ocaml)
 (macro match
     (set __obj (eval (first margs)))
     (set __patterns (rest margs))
