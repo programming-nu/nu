@@ -63,7 +63,7 @@
 ;; returns a list of bindings like '((a 1) (b 2) (c 3)).
 (function destructure (pat seq)
     (cond
-     ((and (not pat) seq) 
+     ((and (not pat) seq)
       (throw* "NuDestructuringException"
               "Attempt to match empty pattern to non-empty object"))
      ((not pat) nil)
@@ -73,6 +73,15 @@
                     (then (list 'quote seq))
                     (else seq)))
           (list (list pat seq))))
+     ;; For clauses like ((head . tail) stuff)
+     ((and (pair? pat)
+           (pair? (cdr pat))
+           (eq '. (second pat))
+           (pair? (cdr (cdr pat)))
+           (eq nil (cdr (cdr (cdr pat)))))
+      (let ((bindings1 (destructure (first pat) (first seq)))
+            (bindings2 (destructure (third pat) (rest seq))))
+          (append bindings1 bindings2)))
      ((pair? pat)
       (let ((bindings1 (destructure (car pat) (car seq)))
             (bindings2 (destructure (cdr pat) (cdr seq))))
@@ -102,7 +111,6 @@
 ;; Matches an object against some patterns with associated expressions.
 ;; TODO
 ;; - symbolic literals in patterns
-;; - rest-of-list patterns
 ;; - boolean conditions for patterns (like "when" in ocaml)
 (macro match
     (set __obj (eval (first margs)))

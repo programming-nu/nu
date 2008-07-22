@@ -46,6 +46,11 @@
                        (match '(1 (2 (3)) 4 5)
                               ((a _ b _) (list a b)))))
 
+     (imethod (id) testRestOfListPatterns is
+         (assert_equal '(1 (2 3))
+                       (match '(1 2 3) 
+                              ((a . b) (list a b)))))
+
      (imethod (id) testCheckBindings is
          (check-bindings '())  ;; empty set of bindings should not throw
          (check-bindings '((a 1)))
