@@ -64,7 +64,7 @@
 (function destructure (pat seq)
     (cond
      ((and (not pat) seq) 
-      (destruc-throw "Attempt to match empty pattern to non-empty object"))
+      (throw* "Attempt to match empty pattern to non-empty object"))
      ((not pat) nil)
      ((symbol? pat)
       (let (seq (if (or (pair? seq) (symbol? seq))
@@ -72,9 +72,10 @@
                     (else seq)))
           (list (list pat seq))))
      ((pair? pat)
-      (then (let ((bindings1 (destructure (car pat) (car seq)))
+      (let ((bindings1 (destructure (car pat) (car seq)))
                   (bindings2 (destructure (cdr pat) (cdr seq))))
-                (append bindings1 bindings2))))
+                (append bindings1 bindings2)))
+     ((eq pat seq) '())  # literal match
      (else (throw* "NuDestructuringException"
                    "pattern is not nil, a symbol or a pair: #{pat}"))))
 
@@ -112,6 +113,7 @@
                                  (else 
                                      (try
                                       (set __bindings (destructure __pat __obj))
+                                      (check-bindings __bindings)
                                       (cons 'let (cons __bindings __body))
                                       (catch (exception) nil)))))))
 

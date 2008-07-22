@@ -9,6 +9,8 @@
 
      ;; match
      (imethod (id) testMatch is
+         (assert_equal '(1 2) (match '(1 2) ((a a) a) ((a b) (list a b))))
+
          (function people-to-string (people)
              (match people
                     (() "no people")
@@ -26,6 +28,18 @@
                                (() 'foo)
                                ((a b c) 'bar))))
 
+     (imethod (id) testMatchWithLiterals is
+         ;; Toy algebraic simplifier
+         (function simplify (expr)
+             (match expr
+                    ((+ 0 a) a)
+                    ((+ a 0) a)
+                    ((+ a a) (list '* 2 a))
+                    (else expr)))
+         (assert_equal 'foo (simplify '(+ 0 foo)))
+         (assert_equal 'foo (simplify '(+ foo 0)))
+         (assert_equal '(* 2 x) (simplify '(+ x x)))
+         (assert_equal '(+ foo 1) (simplify '(+ foo 1))))
 
      (imethod (id) testCheckBindings is
          (check-bindings '())  ;; empty set of bindings should not throw
