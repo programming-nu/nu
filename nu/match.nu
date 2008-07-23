@@ -1,4 +1,4 @@
-;; @file       destructuring.nu
+;; @file       match.nu
 ;; @discussion Macros similar to destructuring-bind in Common Lisp.
 ;;
 ;; @copyright  Copyright (c) 2008 Issac Trotts
@@ -64,16 +64,16 @@
 (function destructure (pat seq)
     (cond
      ((and (not pat) seq)
-      (throw* "NuDestructuringException"
+      (throw* "NuMatchException"
               "Attempt to match empty pattern to non-empty object"))
      ((not pat) nil)
-     ((eq pat '_) '())  ; wildcard match produces no binding.
+     ((eq pat '_) '())  ; wildcard match produces no binding
      ((symbol? pat)
       (let (seq (if (or (pair? seq) (symbol? seq))
                     (then (list 'quote seq))
                     (else seq)))
           (list (list pat seq))))
-     ;; For clauses like ((head . tail) stuff)
+     ;; Patterns like (head . tail)
      ((and (pair? pat)
            (pair? (cdr pat))
            (eq '. (second pat))
@@ -82,17 +82,26 @@
       (let ((bindings1 (destructure (first pat) (first seq)))
             (bindings2 (destructure (third pat) (rest seq))))
           (append bindings1 bindings2)))
+     ;; Symbolic literal patterns like 'Foo
+     ((and (pair? pat)
+           (eq 'quote (car pat))
+           (pair? (cdr pat))
+           (symbol? (second pat)))
+      (if (eq (second pat) seq)
+          (then '())  ; literal symbol match produces no bindings
+          (else (throw* "NuMatchException"
+                        "Failed match of literal symbol #{pat} to #{seq}"))))
      ((pair? pat)
       (let ((bindings1 (destructure (car pat) (car seq)))
             (bindings2 (destructure (cdr pat) (cdr seq))))
           (append bindings1 bindings2)))
-     ((eq pat seq) '())  ; literal match produces no binding
-     (else (throw* "NuDestructuringException"
+     ((eq pat seq) '())  ; literal match produces no bindings
+     (else (throw* "NuMatchException"
                    "pattern is not nil, a symbol or a pair: #{pat}"))))
 
 ;; Makes sure that no key is set to two different values.
 ;; For example (check-bindings '((a 1) (a 1) (b 2))) just returns its argument,
-;; but (check-bindings '((a 1) (a 2) (b 2))) throws a NuDestructuringException.
+;; but (check-bindings '((a 1) (a 2) (b 2))) throws a NuMatchException.
 (function check-bindings (bindings)
     (set dic (dict))
     (bindings each:(do (b) 
@@ -104,7 +113,7 @@
                            (else
                                (if (not (eq val prev-val))
                                    (then 
-                                       (throw* "NuDestructuringException"
+                                       (throw* "NuMatchException"
                                                "Inconsistent bindings #{prev-val} and #{val} for #{key}")))))))
     bindings)
 

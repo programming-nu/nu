@@ -1,9 +1,9 @@
-;; test_destructuring.nu
+;; test_match.nu
 ;;  tests for Nu destructuring macros.
 ;;
 ;;  Copyright (c) 2008 Issac Trotts
 
-(load "destructuring")
+(load "match")
 
 (class TestDestructuring is NuTestCase
 
@@ -51,11 +51,25 @@
                        (match '(1 2 3) 
                               ((a . b) (list a b)))))
 
+     (imethod (id) testSymbolicLiterals is
+         (assert_equal 1 (match 'a ('a 1)))
+         (assert_equal 2 (match '(a 2) (('a x) x)))
+         (assert_throws "NuMatchException" (match '(a 2) (('b x) x)))
+
+         (function to-num (thing)
+             (match thing
+                    ('Baz 7)
+                    (('Foo x) x)
+                    (('Bar x y) (+ x y))))
+         (assert_equal 42 (to-num '(Foo 42)))
+         (assert_equal 9 (to-num '(Bar 4 5)))
+         (assert_equal 7 (to-num 'Baz)))
+
      (imethod (id) testCheckBindings is
          (check-bindings '())  ;; empty set of bindings should not throw
          (check-bindings '((a 1)))
          (check-bindings '((a 1) (a 1)))  ;; consistent
-         (assert_throws "NuDestructuringException"
+         (assert_throws "NuMatchException"
                         (do () (check-bindings '((a 1) (a 2))))))  ;; inconsistent
 
      ;; dbind
@@ -101,7 +115,7 @@
 
          ;; An error occurs if we try to match the same symbol to two different things on
          ;; the right.
-         (assert_throws "NuDestructuringException"
+         (assert_throws "NuMatchException"
                         (dbind (a a) '(1 2)
                                nil)))
 
@@ -132,5 +146,5 @@
          (dset (a b) '(1 (2 3)))
          (assert_equal '(1 (2 3)) (list a b))
 
-         (assert_throws "NuDestructuringException"
+         (assert_throws "NuMatchException"
                         (dset (a a) '(1 2)))))
