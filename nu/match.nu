@@ -118,9 +118,7 @@
     bindings)
 
 ;; Matches an object against some patterns with associated expressions.
-;; TODO
-;; - symbolic literals in patterns
-;; - boolean conditions for patterns (like "when" in ocaml)
+;; TODO(ijt): boolean conditions for patterns (like "when" in ocaml)
 (macro match
     (set __obj (eval (first margs)))
     (set __patterns (rest margs))
