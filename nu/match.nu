@@ -117,29 +117,33 @@
                                                   "Inconsistent bindings #{prev-val} and #{val} for #{key}")))))))
      bindings)
 
-;; Finds the first matching pattern returns its associated expression, evaluated.
-(function _find-first-match (obj patterns)
+;; Finds patterns matching an object's structure
+(function _find-matches (obj patterns)
     (if (not patterns)
-        (then (throw* "NuMatchException" "No match found")))
-    (set pb (car patterns))  ; pattern and body
-    (set pat (first pb))
-    (set body (rest pb))
-    (if (eq pat 'else)
-        (then body)
-        (else
-            (try
-             (set bindings (destructure pat obj))
-             (check-bindings bindings)
-             (set expr (cons 'let (cons bindings body)))
-             expr
-             (catch (exception)
-                 (_find-first-match obj (cdr patterns)))))))
+        (then '())
+        (else 
+          (set pb (car patterns))  ; pattern and body
+          (set pat (first pb))
+          (set body (rest pb))
+          (if (eq pat 'else)
+              (then body)
+              (else
+                  (try
+                   (set bindings (destructure pat obj))
+                   (check-bindings bindings)
+                   (set expr (cons 'let (cons bindings body)))
+                   (cons expr (_find-matches obj (cdr patterns)))
+                   (catch (exception)
+                       (_find-matches obj (cdr patterns)))))))))
 
 ;; Matches an object against some patterns with associated expressions.
 ;; TODO(ijt): boolean conditions for patterns (like "when" in ocaml)
 (macro match
      (set __obj (eval (first margs)))
      (set __patterns (rest margs))
-     (set __expr (_find-first-match __obj __patterns))
+     (set __exprs (_find-matches __obj __patterns))
+     (if (not __exprs)
+        (then throw* "NuMatchException" "No match found"))
+     (set __expr (car __exprs))
      (eval __expr))
 

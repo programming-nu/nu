@@ -9,11 +9,13 @@
      
      (imethod (id) testFindFirstMatch is
          (assert_throws "NuMatchException" (_find-first-match 1 '()))
-         (assert_equal '(let () 2) (_find-first-match 1 '((1 2))))
-         (assert_equal '(let () 4) (_find-first-match 3 '((1 2) (3 4))))
-         (assert_equal '(let () 5) (_find-first-match 'a '((1 2) ('a 5) (3 4))))
-         (assert_equal '(let ((a 1) (b 2)) a)
-                       (_find-first-match '(1 2) '(((a b) a) ((a) a))))
+         (assert_equal '((let () 2)) (_find-matches 1 '((1 2))))
+         (assert_equal '((let () 4) (_find-matches 3 '((1 2) (3 4))))
+         (assert_equal '((let () 5) (_find-matches 'a '((1 2) ('a 5) (3 4))))
+         (assert_equal '((let ((a 1) (b 2)) a))
+                        (_find-matches '(1 2) '(((a b) a) ((a) a))))
+         (assert_equal '((let ((a 1)) 2) (let ((b 1)) 2))
+                        (_find-matches 1 '((a 1) (b 2))))
          )
 
      ;; match
