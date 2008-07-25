@@ -469,7 +469,11 @@
                          (then (set archflags "-arch #{architecture}"))
                          (else (set archflags "")))
                 (ifDarwin
-                         (then (set installnameflag "-install_name #{@framework_executable_name}"))
+                         (then 
+                              (if @framework_install_path
+                                   (then (set framework_install_name "#{@framework_install_path}/#{@framework_executable_name}"))
+                                   (else (set framework_install_name @framework_executable_name)))
+                              (set installnameflag "-install_name #{framework_install_name}"))
                          (else (set installnameflag "")))
                 (ifDarwin
                          (then (set dylibflag "-dynamiclib"))
