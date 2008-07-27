@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #import "macro.h"
+#import "defmacro.h"
 #import "cell.h"
 #import "symbol.h"
 #import "class.h"
@@ -24,7 +25,10 @@ limitations under the License.
 
 extern id Nu__null;
 
-@implementation NuMacro
+
+#define JSBLog	
+
+@implementation NuDefmacro
 
 + (id) macroWithName:(NSString *)n body:(NuCell *)b
 {
@@ -33,57 +37,21 @@ extern id Nu__null;
 
 - (void) dealloc
 {
-    [body release];
     [super dealloc];
-}
-
-- (NSString *) name
-{
-    return name;
-}
-
-- (NuCell *) body
-{
-    return body;
-}
-
-- (NSSet *) gensyms
-{
-    return gensyms;
-}
-
-- (void) collectGensyms:(NuCell *)cell
-{
-    id car = [cell car];
-    if ([car atom]) {
-        if (nu_objectIsKindOfClass(car, [NuSymbol class]) && [car isGensym]) {
-            [gensyms addObject:car];
-        }
-    }
-    else if (car && (car != Nu__null)) {
-        [self collectGensyms:car];
-    }
-    id cdr = [cell cdr];
-    if (cdr && (cdr != Nu__null)) {
-        [self collectGensyms:cdr];
-    }
 }
 
 - (id) initWithName:(NSString *)n body:(NuCell *)b
 {
-    [super init];
-    name = [n retain];
-    body = [b retain];
-    gensyms = [[NSMutableSet alloc] init];
-    [self collectGensyms:body];
+    [super initWithName:n body:b];
     return self;
 }
 
 - (NSString *) stringValue
 {
-    return [NSString stringWithFormat:@"(macro %@ %@)", name, [body stringValue]];
+    return [NSString stringWithFormat:@"(defmacro %@ %@)", name, [body stringValue]];
 }
 
+#if 0
 - (id) body:(NuCell *) oldBody withGensymPrefix:(NSString *) prefix symbolTable:(NuSymbolTable *) symbolTable
 {
     NuCell *newBody = [[[NuCell alloc] init] autorelease];
@@ -144,7 +112,9 @@ extern id Nu__null;
     }
     return newBody;
 }
+#endif
 
+#if 0
 - (id) expandUnquotes:(id) oldBody withContext:(NSMutableDictionary *) context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -171,16 +141,16 @@ extern id Nu__null;
         return newBody;
     }
 }
+#endif
 
 - (id) expand1:(id)cdr context:(NSMutableDictionary*)calling_context
 {
-	NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
-	
+    NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
+    //NSLog(@"macro eval %@", [cdr stringValue]);
+    // save the current value of margs
     id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
-
     // set the arguments to the special variable "margs"
     [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
-
     // evaluate the body of the block in the calling context (implicit progn)
     id value = Nu__null;
 
@@ -192,19 +162,32 @@ extern id Nu__null;
     }
 
     id bodyToEvaluate = (gensymCount == 0)
-        ? (id)body : [self body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
+        ? (id)body : [super body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
 
     // uncomment this to get the old (no gensym) behavior.
-    //bodyToEvaluate = body;
-    //NSLog(@"evaluating %@", [bodyToEvaluate stringValue]);
+    JSBLog(@"macrox evaluating: %@", [bodyToEvaluate stringValue]);
+    JSBLog(@"macrox context: %@", [calling_context stringValue]);
 
     id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
-//	id puts = [symbolTable symbolWithString:@"progn"];
-//	NuCell *newBody = [[[NuCell alloc] init] autorelease];
-//	[newBody setCar:puts];
-//	[newBody setCdr:cursor];
-	return cursor;
+    while (cursor && (cursor != Nu__null)) {
+        value = [[cursor car] evalWithContext:calling_context];
+        cursor = [cursor cdr];
+    }
+
+    // restore the old value of margs
+    if (old_margs == nil) {
+        [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
+    }
+    else {
+        [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
+    }
+
+    JSBLog(@"macrox result is %@", value);
+    return value;
 }
+
+
+
 
 
 - (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context
@@ -229,14 +212,24 @@ extern id Nu__null;
         ? (id)body : [self body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
 
     // uncomment this to get the old (no gensym) behavior.
-    //bodyToEvaluate = body;
-    //NSLog(@"evaluating %@", [bodyToEvaluate stringValue]);
+    JSBLog(@"defmacro evaluating: %@", [bodyToEvaluate stringValue]);
+    JSBLog(@"defmacro context: %@", [calling_context stringValue]);
 
     id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
     while (cursor && (cursor != Nu__null)) {
+		JSBLog(@"defmacro eval cursor(1): %@", [cursor stringValue]);
         value = [[cursor car] evalWithContext:calling_context];
+		JSBLog(@"defmacro eval value: %@", [value stringValue]);
         cursor = [cursor cdr];
+		//JSBLog(@"defmacro eval cursor(3): %@", [cursor stringValue]);
     }
+
+	// if just macro-expanding, stop here...
+	//  ..otherwise eval the outer quote
+    id final_value = [value evalWithContext:calling_context];
+	JSBLog(@"defmacro eval final_value: %@", [final_value stringValue]);
+	
+	
     // restore the old value of margs
     if (old_margs == nil) {
         [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
@@ -244,23 +237,9 @@ extern id Nu__null;
     else {
         [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
     }
-    #if 0
-    // I would like to remove gensym values and symbols at the end of a macro's execution,
-    // but there is a problem with this: the gensym assignments could be used in a closure,
-    // and deleting them would cause that to break. See the testIvarAccessorMacro unit
-    // test for an example of this. So for now, the code below is disabled.
-    //
-    // remove the gensyms from the context; this also releases their assigned values
-    NSArray *gensymArray = [gensyms allObjects];
-    for (int i = 0; i < gensymCount; i++) {
-        NuSymbol *gensymBase = [gensymArray objectAtIndex:i];
-        NuSymbol *gensymSymbol = [symbolTable symbolWithString:[NSString stringWithFormat:@"%@%@", gensymPrefix, [gensymBase stringValue]]];
-        [calling_context removeObjectForKey:gensymSymbol];
-        [symbolTable removeSymbol:gensymSymbol];
-    }
-    #endif
-    // NSLog(@"result is %@", value);
-    return value;
+
+    // JSBLog(@"result is %@", value);
+    return final_value;
 }
 
 @end

@@ -37,10 +37,14 @@ limitations under the License.
     int parens;
     int column;
     int quoting;
+	int backquoting;
+    int bqcommaing;
     int filenum;
     int linenum;
     int parseEscapes;
+	bool backquoteDepth[MAXDEPTH];
     bool quoteDepth[MAXDEPTH];
+    bool bqcommaDepth[MAXDEPTH];
     NuCell *root;
     NuCell *current;
     bool addToCar;

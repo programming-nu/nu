@@ -58,7 +58,9 @@ extern const char *nu_parsedFilename(int i)
 - (void) openList;
 - (void) closeList;
 - (void) addAtom:(id)atom;
--(void) quoteNextElement;
+- (void) quoteNextElement;
+- (void) backquoteNextElement;
+- (void) bqcommaNextElement;
 - (int) interact;
 @end
 
@@ -226,10 +228,14 @@ id regexWithString(NSString *string)
     depth = 0;
     parens = 0;
     quoting = 0;
+	bqcommaing = 0;
     int i;
     for (i = 0; i < MAXDEPTH; i++) {
         quoteDepth[i] = false;
+        backquoteDepth[i] = false;
+        bqcommaDepth[i] = false;
     }
+
     [root release];
     root = current = [[NuCell alloc] init];
     [root setFile:filenum line:linenum];
@@ -287,6 +293,25 @@ id regexWithString(NSString *string)
         [self openList];
         return;
     }
+
+    if (backquoting > 0) {
+        backquoting--;
+        [self openList];
+        backquoteDepth[depth] = true;
+        [self addAtom:[symbolTable symbolWithString:@"backquote"]];
+        [self openList];
+        return;
+    }
+
+	if (bqcommaing > 0) {
+		bqcommaing--;
+        [self openList];
+        bqcommaDepth[depth] = true;
+        [self addAtom:[symbolTable symbolWithString:@"bq-comma"]];
+        [self openList];
+        return;
+	}
+
     depth++;
     NuCell *newCell = [[[NuCell alloc] init] autorelease];
     [newCell setFile:filenum line:linenum];
@@ -316,7 +341,14 @@ id regexWithString(NSString *string)
     if (quoteDepth[depth]) {
         quoteDepth[depth] = false;
         [self closeList];
-    }
+    } else if (backquoteDepth[depth]) {
+		backquoteDepth[depth] = false;
+		[self closeList];
+    } else if (bqcommaDepth[depth]) {
+		bqcommaDepth[depth] = false;
+		[self closeList];
+	}
+
 }
 
 - (void) addAtom:(id)atom
@@ -329,6 +361,25 @@ id regexWithString(NSString *string)
         [self closeList];
         return;
     }
+
+    if (backquoting > 0) {
+        backquoting--;
+        [self openList];
+        [self addAtom:[symbolTable symbolWithString:@"backquote"]];
+        [self addAtom:atom];
+        [self closeList];
+        return;
+    }
+
+	if (bqcommaing > 0) {
+		bqcommaing--;
+		[self openList];
+		[self addAtom:[symbolTable symbolWithString:@"bq-comma"]];
+		[self addAtom:atom];
+		[self closeList];
+		return;
+	}
+	
     NuCell *newCell;
     if (comments) {
         NuCellWithComments *newCellWithComments = [[[NuCellWithComments alloc] init] autorelease];
@@ -355,6 +406,16 @@ id regexWithString(NSString *string)
 -(void) quoteNextElement
 {
     quoting++;
+}
+
+-(void) backquoteNextElement
+{
+    backquoting++;
+}
+
+-(void) bqcommaNextElement
+{
+	bqcommaing++;
 }
 
 static int nu_octal_digit_value(unichar c)
@@ -599,6 +660,16 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         }
                         break;
                     }
+					case '`':
+					{
+						[self backquoteNextElement];
+						break;
+					}
+					case ',':
+					{
+						[self bqcommaNextElement];
+						break;
+					}
                     case '\n':                    // end of line
                         column = 0;
                         linenum++;

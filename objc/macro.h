@@ -63,4 +63,11 @@ limitations under the License.
 - (NSString *) stringValue;
 /*! Evaluate a macro. */
 - (id) evalWithArguments:(id)margs context:(NSMutableDictionary *)calling_context;
+/*! Expand a macro in its context. */
+- (id) expand1:(id)margs context:(NSMutableDictionary *)calling_context;
+/*! Insert unique gensym'd variables. */
+- (id) body:(NuCell *) oldBody withGensymPrefix:(NSString *) prefix symbolTable:(NuSymbolTable *) symbolTable;
+/*! Expand unquotes in macro body. */
+- (id) expandUnquotes:(id) oldBody withContext:(NSMutableDictionary *) context;
+
 @end

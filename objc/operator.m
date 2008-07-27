@@ -23,6 +23,7 @@ limitations under the License.
 #import "symbol.h"
 #import "block.h"
 #import "macro.h"
+#import "defmacro.h"
 #import "class.h"
 #import "objc_runtime.h"
 #import "object.h"
@@ -616,6 +617,183 @@ limitations under the License.
 
 @end
 
+
+@interface Nu_bqcomma_operator : NuOperator {}
+@end
+
+@implementation Nu_bqcomma_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	// bqcomma is handled by Nu_backquote_operator.
+	// If we get here, it means someone called bq_comma
+	// outside of a backquote
+	[NSException raise:@"NuBackquoteCommaOutsideBackquote" 
+				format:@"Comma must be inside a backquote"];
+	
+//	NSLog(@"In bqcomma:callWithArguments");
+//	NSLog(@"cdr: %@", [cdr stringValue]);
+//  id value = [[cdr car] evalWithContext:context];
+//	NSLog(@"value: %@", [value stringValue]);
+
+	// Purely cosmetic...
+    return Nu__null;
+}
+
+@end
+
+@interface Nu_bqcomma_at_operator : NuOperator {}
+@end
+
+@implementation Nu_bqcomma_at_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	// bqcomma-at is handled by Nu_backquote_operator.
+	// If we get here, it means someone called bq_comma
+	// outside of a backquote
+	[NSException raise:@"NuBackquoteCommaAtOutsideBackquote" 
+				format:@"Comma-at must be inside a backquote"];
+	
+	// Purely cosmetic...
+    return Nu__null;
+}
+
+@end
+
+
+
+@interface Nu_backquote_operator : NuOperator {}
+@end
+
+@implementation Nu_backquote_operator
+
+#if 0
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+    id bq_comma = [symbolTable symbolWithString:@"bq-comma"];
+    id bq_comma_at = [symbolTable symbolWithString:@"bq-comma-at"];
+	NSLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
+    id result = Nu__null;
+    id cursor = cdr;  // was cdr
+    id result_cursor = Nu__null;
+    while (cursor && (cursor != Nu__null)) {
+        if (result == Nu__null) {
+            result = [[[NuCell alloc] init] autorelease];
+            result_cursor = result;
+        }
+        else {
+            [result_cursor setCdr:[[[NuCell alloc] init] autorelease]];
+            result_cursor = [result_cursor cdr];
+        }
+		id value = Nu__null;
+		NSLog(@"bq: [cursor car] == %@", [[cursor car] stringValue]);
+		if (cursor && [cursor car] && ([cursor car] == bq_comma)) {
+			NSLog(@"bq: Evaling: [cursor cdr]: %@", [[cursor cdr] stringValue]);
+        	value = [[cursor cdr] evalWithContext:context];
+			cursor = [cursor cdr];  // eat the eval
+			NSLog(@"bq: Value: %@", value);
+			result_cursor = value;
+			return result_cursor;
+		}
+		else {
+			if ([[cursor car] atom])
+			{
+				NSLog(@"bq: Quoting cursor: %@", [[cursor car] stringValue]);
+				// Treat it as a quoted value
+				value = [cursor car];
+			}
+			else
+			{
+				NSLog(@"bq: recursive callWithArguments: %@", [[cursor car] stringValue]);
+				value = [self callWithArguments:[cursor car] context:context];
+			}
+
+			[result_cursor setCar:value];
+		}
+
+		NSLog(@"bq: result_cursor: %@", [result_cursor stringValue]);
+		NSLog(@"bq: result:        %@", [result_cursor stringValue]);
+
+        cursor = [cursor cdr];
+    }
+	NSLog(@"bq: returning result = %@", [result stringValue]);
+    return result;
+}
+#endif
+
+
+#if 1
+
+#define JSBLog
+
+- (id) evalBackquote:(id)cdr context:(NSMutableDictionary *)context
+{
+    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+    id bq_comma = [symbolTable symbolWithString:@"bq-comma"];
+    id bq_comma_at = [symbolTable symbolWithString:@"bq-comma-at"];
+
+	JSBLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
+	
+    id result = Nu__null;
+    id result_cursor = Nu__null;
+    id cursor = cdr;
+
+    while (cursor && (cursor != Nu__null)) {
+        if (result == Nu__null) {
+            result = [[[NuCell alloc] init] autorelease];
+            result_cursor = result;
+        }
+        else {
+            [result_cursor setCdr:[[[NuCell alloc] init] autorelease]];
+            result_cursor = [result_cursor cdr];
+        }
+
+		id value = Nu__null;
+		JSBLog(@"bq: [cursor car] == %@", [[cursor car] stringValue]);
+
+		if (cursor && [cursor car] && ([cursor car] == bq_comma)) {
+			JSBLog(@"bq: Evaling: [cursor cdr]: %@", [[cursor cdr] stringValue]);
+        	value = [[cursor cdr] evalWithContext:context];
+			JSBLog(@"bq: Value: %@", value);
+			return value;
+		}
+		else {
+			if ([[cursor car] atom])
+			{
+				JSBLog(@"bq: Quoting cursor: %@", [[cursor car] stringValue]);
+				// Treat it as a quoted value
+				value = [cursor car];
+			}
+			else
+			{
+				JSBLog(@"bq: recursive callWithArguments: %@", [[cursor car] stringValue]);
+				value = [self evalBackquote:[cursor car] context:context];
+			}
+
+			[result_cursor setCar:value];
+		}
+
+		JSBLog(@"bq: result_cursor: %@", [result_cursor stringValue]);
+		JSBLog(@"bq: result:        %@", [result_cursor stringValue]);
+
+        cursor = [cursor cdr];
+    }
+	JSBLog(@"bq: returning result = %@", [result stringValue]);
+    return result;
+
+}
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	return [[self evalBackquote:cdr context:context] car];
+}
+
+#endif
+
+@end
+
+
+
 @interface Nu_context_operator : NuOperator {}
 @end
 
@@ -768,6 +946,74 @@ limitations under the License.
 }
 
 @end
+
+
+@interface Nu_defmacro_operator : NuOperator {}
+@end
+
+@implementation Nu_defmacro_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    id name = [cdr car];
+    id body = [cdr cdr];
+
+    NuDefmacro *defmacro = [[NuDefmacro alloc] initWithName:name body:body];
+                                                  // this defines the function in the calling context
+    [context setPossiblyNullObject:defmacro forKey:name];
+    return defmacro;
+}
+
+@end
+
+@interface Nu_macrox1_operator : NuOperator {}
+@end
+
+@implementation Nu_macrox1_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	id call = [cdr car];
+	id name = [call car];
+	id margs = [call cdr];
+	
+	NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+	id macro = [context objectForKey:[symbolTable symbolWithString:[name stringValue]]];
+	
+	if (macro == nil)
+	{
+		[NSException raise:@"NuMacrox1WrongType" format:@"macrox1 was called on an object which is not a macro"];
+	}
+	
+	id expanded = [macro expand1:margs context:context];
+	return expanded;
+}
+@end
+
+
+@interface Nu_macrox_operator : NuOperator {}
+@end
+
+@implementation Nu_macrox_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	id call = [cdr car];
+	id name = [call car];
+	id margs = [call cdr];
+	
+	NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+	id macro = [context objectForKey:[symbolTable symbolWithString:[name stringValue]]];
+	
+	if (macro == nil)
+	{
+		[NSException raise:@"NuMacroxWrongType" format:@"macrox was called on an object which is not a macro"];
+	}
+	
+	id expanded = [macro expand1:margs context:context];
+	return expanded;
+}
+@end
+
+
+
 
 @interface Nu_list_operator : NuOperator {}
 @end
@@ -1838,6 +2084,13 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("progn",    Nu_progn_operator);
     install("then",     Nu_progn_operator);
     install("else",     Nu_progn_operator);
+
+	install("defmacro", Nu_defmacro_operator);
+	install("backquote",Nu_backquote_operator);
+	install("bq-comma", Nu_bqcomma_operator);
+	install("bq-comma-at", Nu_bqcomma_at_operator);
+    install("macrox1",  Nu_macrox1_operator);
+    install("macrox",   Nu_macrox_operator);
 
     install("+",        Nu_add_operator);
     install("-",        Nu_subtract_operator);
