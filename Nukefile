@@ -1,6 +1,6 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(global VERSION '(0 3 1)) #(major minor tweak)
+(global VERSION '(0 3 2)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
@@ -132,8 +132,8 @@ END)
                (SH "rm -rf nush #{@framework_dir} doc"))
       ((filelist "^examples/[^/]*$") each:
        (do (example-dir)
-           (puts example-dir)
-           (SH "cd #{example-dir}; nuke clobber"))))
+           (if ((NSFileManager defaultManager) fileExistsAtPath:(+ example-dir "/Nukefile"))
+               (SH "cd #{example-dir}; nuke clobber")))))
 
 (set nush_thin_binaries (NSMutableArray array))
 (@arch each:

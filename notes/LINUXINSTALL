@@ -1,0 +1,78 @@
+To install and build Nu on Linux, follow these steps:
+
+1. First make sure you have installed the following packages (these needed
+   to be installed after creating a standard Ubuntu 8.04 install):
+   git-core
+   Rake
+   build-essential
+   gobjc
+   libffi4-dev
+   libreadline5-dev
+
+2. Use git to clone Jonathan Yedidia's version of nufound using
+
+% git clone git://github.com/jsyedidia/nufound.git
+
+   You need to use Yedidia's version rather than Tim Burks' because Yedidia includes
+   fixes for a couple problems that occur on Ubuntu 8.04.
+   Then install the Foundation framework from nufound using the instructions
+   in nufound/README.
+
+3. Download pcre-7.7.tar.gz from www.pcre.org.
+   Unzip and then build pcre by using (from the pcre-7.7 directory)
+  
+% ./configure --disable-dependency-tracking --enable-utf8
+% make
+% sudo make install
+
+4. From the main Nu directory:
+   
+% sudo mkdir -p /usr/local/share/libNu
+% sudo cp -r nu /usr/local/share/libNu
+
+5. From the main Nu directory, use rake to build mininush, a minimal version of the 
+   Nu shell:
+   
+% rake
+
+6. From the main Nu directory, use mininush to run nuke to complete the Nu build
+   process:
+   
+% ./mininush tools/nuke
+
+INSTALL AND TEST NU
+-------------------
+
+7. Use mininush again to install Nu, nush, and the Nu tools.
+
+% ./mininush tools/nuke install
+
+Since the copying step uses "sudo", you will be prompted for your password.
+
+6. Test your installation.
+
+% nuke test
+
+(At the moment, the Linux version of Nu fails some tests. This will be fixed.
+However, even with the failed tests, Nu appears to be usable on Linux.)
+
+If you modify your version of Nu, either by making your own changes, or by
+pulling in a new version of Nu, you should build the new version using the
+command:
+
+./mininush tools/nuke install
+
+N.B.: This is different from the procedure on Mac OS X, where you use "nuke install".
+
+ADDITIONAL NOTES
+----------------
+On Darwin, Nu is installed as a framework in /Library/Frameworks. On Linux, it is built
+as a dynamic library and installed in /usr/local/lib (or the lib dir of whatever is your 
+desired installation prefix). Because nush is linked against libNu.so,
+running "nuke install" will crash on Linux when the libNu.so is overwritten. So be sure to 
+install with "mininush tools/nuke install".
+
+
+
+
+

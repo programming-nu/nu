@@ -212,7 +212,8 @@
 (function momc-path ()
      (set momc nil)
      ('( "/Library/Application Support/Apple/Developer Tools/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc"
-         "/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc")
+         "/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc"
+         "/Developer/usr/bin/momc")
        each:
        (do (momc-path)
            (if (NSFileManager fileExistsNamed:momc-path)
@@ -392,7 +393,7 @@
                                 "CFBundlePackageType" "APPL"
                                 "CFBundleSignature" @application_creator_code
                                 "CFBundleVersion" "1.0"
-                                "NSHumanReadableCopyright" "Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc."
+                                "NSHumanReadableCopyright" ""
                                 "NSPrincipalClass" "NSApplication")))
            (if @nib_files
                (info set:(NSMainNibFile:"MainMenu")))
@@ -518,13 +519,13 @@
                           (list "CFBundleDevelopmentRegion" "English"
                                 "CFBundleExecutable" @framework
                                 "CFBundleIdentifier" @framework_identifier
-                                "CFBundleGetInfoString" "Nu. Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc."
+                                "CFBundleGetInfoString" ""
                                 "CFBundleInfoDictionaryVersion" "6.0"
                                 "CFBundleName" @framework
                                 "CFBundlePackageType" "FMWK"
                                 "CFBundleSignature" @framework_creator_code
                                 "CFBundleVersion" "0.1"
-                                "NSHumanReadableCopyright" "Nu. Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc."
+                                "NSHumanReadableCopyright" ""
                                 )))
            (if @info (info addEntriesFromDictionary: @info))
            (info writeToFile:(target name) atomically:NO)
@@ -620,6 +621,9 @@
      (unless (and @arch (@arch length))
              (set @arch (list (NSString stringWithShellCommand:"arch"))))
      
+     (unless @library_extras
+             (set @library_extras ""))
+     
      ;; library architecture-specific executable
      (set @library_executables (NSMutableArray array))
      (@arch each:
@@ -627,7 +631,7 @@
                 (set library_executable "build/#{architecture}/#{@library}.a")
                 (@library_executables addObject:library_executable)
                 (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "libtool -static #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} -o '#{(target name)}'")
+                      (set command "libtool -static #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{@library_extras} -o '#{(target name)}'")
                       (SH command))))
      
      ;; library fat archive
@@ -726,7 +730,10 @@
      
      ;; Load and evaluate code from a named file. This is typically used to read a Nukefile.
      (imethod (id) load: (id) filename is
-          (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new)))))
+          (ifLinux
+             (eval (parse (NSString stringWithContentsOfFile:filename)))
+          else
+             (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))
           self))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;

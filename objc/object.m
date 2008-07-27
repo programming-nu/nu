@@ -409,7 +409,7 @@ limitations under the License.
             //NSLog(@"get sparse ivars dictionary: %@", sparseIvars);
             if (!sparseIvars || (sparseIvars == Nu__null)) {
                 //NSLog(@"creating new sparse ivars dictionary");
-                sparseIvars = [[NSMutableDictionary alloc] init];
+                sparseIvars = [[[NSMutableDictionary alloc] init] autorelease];
                 //NSLog(@"setting sparse ivars dictionary: %@", sparseIvars);
                 [self setValue:sparseIvars forIvar:@"__nuivars"];
             }
@@ -432,6 +432,24 @@ limitations under the License.
     }
     set_objc_value_from_nu_value(location, value, ivar_getTypeEncoding(v));
     [self didChangeValueForKey:name];
+}
+
+- (void) nuDealloc
+{
+    NSArray *ivarsToRelease = nu_ivarsToRelease([self class]);
+    if (ivarsToRelease) {
+        int count = [ivarsToRelease count];
+        for (int i = 0; i < count; i++) {
+            NSString *ivarName = [ivarsToRelease objectAtIndex:i];
+            Ivar ivar = class_getInstanceVariable([self class], [ivarName cStringUsingEncoding:NSUTF8StringEncoding]);
+            if (ivar) {
+                // NSLog(@"releasing ivar %@", ivarName);
+                void *location = (void *)&(((char *)self)[ivar_getOffset(ivar)]);
+                [*((id *)location) release];
+            }
+        }
+    }
+    [self nuDealloc];
 }
 
 + (NSArray *) classMethods
@@ -674,6 +692,30 @@ limitations under the License.
     }
 
     return YES;
+}
+
+// Concisely set key-value pairs from a property list.
+- (id) set:(NuCell *) propertyList
+{
+    id cursor = propertyList;
+    while (cursor && (cursor != Nu__null) && ([cursor cdr]) && ([cursor cdr] != Nu__null)) {
+        id key = [cursor car];
+        id value = [[cursor cdr] car];
+        id label = ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) ? [key labelName] : key;
+        if ([label isEqualToString:@"action"] && [self respondsToSelector:@selector(setAction:)]) {
+            #ifdef DARWIN
+            SEL selector = sel_registerName([value cStringUsingEncoding:NSUTF8StringEncoding]);
+            #else
+            SEL selector = sel_register_name([value cStringUsingEncoding:NSUTF8StringEncoding]);
+            #endif
+            [self setAction:selector];
+        }
+        else {
+            [self setValue:value forKey:label];
+        }
+        cursor = [[cursor cdr] cdr];
+    }
+    return self;
 }
 
 @end

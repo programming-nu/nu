@@ -21,6 +21,11 @@ limitations under the License.
 // some extra information in our contexts.
 
 // Use this key to get the symbol table from an execution context.
+
+#ifdef LINUX
+#define bool char
+#endif
+
 #define SYMBOLS_KEY @"symbols"
 
 // Use this key to get the parent context of an execution context.
@@ -28,14 +33,25 @@ limitations under the License.
 
 #import <Foundation/Foundation.h>
 
+/*!
+    @class NuBreakException
+    @abstract Internal class used to implement the Nu break operator.
+ */
 @interface NuBreakException : NSException {}
 @end
 
+/*!
+    @class NuContinueException
+    @abstract Internal class used to implement the Nu continue operator.
+ */
 @interface NuContinueException : NSException {}
 @end
 
-@interface NuReturnException : NSException
-{
+/*!
+    @class NuReturnException
+    @abstract Internal class used to implement the Nu return operator.
+ */
+@interface NuReturnException : NSException {
     id value;
 }
 
@@ -43,3 +59,9 @@ limitations under the License.
 
 // use this to test a value for "truth"
 bool nu_valueIsTrue(id value);
+
+// use this to remember that instance variables created by Nu must be released when their owner is deallocated.
+void nu_registerIvarForRelease(Class c, NSString *name);
+
+// use this to get the instance variables that should be released.
+NSArray *nu_ivarsToRelease(Class c);

@@ -35,6 +35,7 @@ limitations under the License.
 #import "st.h"
 #import "reference.h"
 #import "pointer.h"
+#import "handler.h"
 #import <sys/mman.h>
 
 /* 
@@ -82,7 +83,9 @@ st_table *nu_block_table = NULL;
 #define NSRECT_SIGNATURE1 "{_NSRect=\"origin\"{_NSPoint=\"x\"d\"y\"d}\"size\"{_NSSize=\"width\"d\"height\"d}}"
 #define NSRECT_SIGNATURE2 "{_NSRect}"
 
-#define CGRECT_SIGNATURE "{CGRect={CGPoint=dd}{CGSize=dd}}"
+#define CGRECT_SIGNATURE0 "{CGRect={CGPoint=dd}{CGSize=dd}}"
+#define CGRECT_SIGNATURE1 "{CGRect=\"origin\"{CGPoint=\"x\"d\"y\"d}\"size\"{CGSize=\"width\"d\"height\"d}}"
+#define CGRECT_SIGNATURE2 "{CGRect}"
 
 #define NSRANGE_SIGNATURE "{_NSRange=QQ}"
 #define NSRANGE_SIGNATURE1 "{_NSRange}"
@@ -105,7 +108,9 @@ st_table *nu_block_table = NULL;
 #define NSRECT_SIGNATURE1 "{_NSRect=\"origin\"{_NSPoint=\"x\"f\"y\"f}\"size\"{_NSSize=\"width\"f\"height\"f}}"
 #define NSRECT_SIGNATURE2 "{_NSRect}"
 
-#define CGRECT_SIGNATURE "{CGRect={CGPoint=ff}{CGSize=ff}}"
+#define CGRECT_SIGNATURE0 "{CGRect={CGPoint=ff}{CGSize=ff}}"
+#define CGRECT_SIGNATURE1 "{CGRect=\"origin\"{CGPoint=\"x\"f\"y\"f}\"size\"{CGSize=\"width\"f\"height\"f}}"
+#define CGRECT_SIGNATURE2 "{CGRect}"
 
 #define NSRANGE_SIGNATURE "{_NSRange=II}"
 #define NSRANGE_SIGNATURE1 "{_NSRange}"
@@ -234,7 +239,9 @@ ffi_type *ffi_type_for_objc_type(const char *typeString)
             if (!strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 if (!initialized_ffi_types) initialize_ffi_types();
                 return &ffi_type_nsrect;
@@ -305,7 +312,9 @@ size_t size_of_objc_type(const char *typeString)
             if (!strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 return sizeof(NSRect);
             }
@@ -372,7 +381,9 @@ void *value_buffer_for_objc_type(const char *typeString)
             if (!strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 return malloc(sizeof(NSRect));
             }
@@ -426,34 +437,78 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             return NO;
         }
         case 'I':
+        #ifndef __ppc__
         case 'S':
+        case 'C':
+        #endif
+            {
+                if (nu_value == Nu__null) {
+                    *((unsigned int *) objc_value) = 0;
+                    return NO;
+                }
+                *((unsigned int *) objc_value) = [nu_value unsignedIntValue];
+                return NO;
+            }
+        #ifdef __ppc__
+        case 'S':
+        {
+            if (nu_value == Nu__null) {
+                *((unsigned short *) objc_value) = 0;
+                return NO;
+            }
+            *((unsigned short *) objc_value) = [nu_value unsignedShortValue];
+            return NO;
+        }
         case 'C':
         {
             if (nu_value == Nu__null) {
-                *((unsigned int *) objc_value) = 0;
+                *((unsigned char *) objc_value) = 0;
                 return NO;
             }
-            *((unsigned int *) objc_value) = [nu_value intValue];
+            *((unsigned char *) objc_value) = [nu_value unsignedCharValue];
             return NO;
         }
+        #endif
         case 'i':
+        #ifndef __ppc__
         case 's':
         case 'c':
-        {
-            if (nu_value == [NSNull null]) {
-                *((int *) objc_value) = 0;
+        #endif
+            {
+                if (nu_value == [NSNull null]) {
+                    *((int *) objc_value) = 0;
+                    return NO;
+                }
+                *((int *) objc_value) = [nu_value intValue];
                 return NO;
             }
-            *((int *) objc_value) = [nu_value intValue];
+        #ifdef __ppc__
+        case 's':
+        {
+            if (nu_value == Nu__null) {
+                *((short *) objc_value) = 0;
+                return NO;
+            }
+            *((short *) objc_value) = [nu_value shortValue];
             return NO;
         }
+        case 'c':
+        {
+            if (nu_value == Nu__null) {
+                *((char *) objc_value) = 0;
+                return NO;
+            }
+            *((char *) objc_value) = [nu_value charValue];
+            return NO;
+        }
+        #endif
         case 'L':
         {
             if (nu_value == [NSNull null]) {
                 *((unsigned long *) objc_value) = 0;
                 return NO;
             }
-            *((unsigned long *) objc_value) = [nu_value longValue];
+            *((unsigned long *) objc_value) = [nu_value unsignedLongValue];
             return NO;
         }
         case 'l':
@@ -471,7 +526,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 *((unsigned long long *) objc_value) = 0;
                 return NO;
             }
-            *((unsigned long long *) objc_value) = [nu_value longLongValue];
+            *((unsigned long long *) objc_value) = [nu_value unsignedLongLongValue];
             return NO;
         }
         case 'q':
@@ -524,7 +579,9 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 !strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 NSRect *rect = (NSRect *) objc_value;
                 id cursor = nu_value;
@@ -749,7 +806,9 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
                 !strcmp(typeString, NSRECT_SIGNATURE0) ||
                 !strcmp(typeString, NSRECT_SIGNATURE1) ||
                 !strcmp(typeString, NSRECT_SIGNATURE2) ||
-                !strcmp(typeString, CGRECT_SIGNATURE)
+                !strcmp(typeString, CGRECT_SIGNATURE0) ||
+                !strcmp(typeString, CGRECT_SIGNATURE1) ||
+                !strcmp(typeString, CGRECT_SIGNATURE2)
             ) {
                 NSRect *rect = (NSRect *)objc_value;
                 NuCell *list = [[[NuCell alloc] init] autorelease];
@@ -897,6 +956,7 @@ void nu_note_placeholders()
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableString");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSManagedObjectModel");
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSXMLDocument");
+    placeholderClass[placeholderCount++] = NSClassFromString(@"NSBitmapImageRep");
     #ifdef IPHONE
     placeholderClass[placeholderCount++] = NSClassFromString(@"UINavigationController");
     placeholderClass[placeholderCount++] = NSClassFromString(@"UIWindow");
@@ -1085,24 +1145,48 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     //NSLog(@"in nu method handler, putting result %@ in %x with type %s", [result stringValue], (int) returnvalue, ((char **)userdata)[0]);
     char *resultType = (((char **)userdata)[0])+1;// skip the first character, it's a flag
     set_objc_value_from_nu_value(returnvalue, result, resultType);
+    #ifdef __ppc__
+	// It appears that at least on PowerPC architectures, small values (short, char, ushort, uchar) passed in via 
+	// the ObjC runtime use their actual type while function return values are coerced up to integers. 
+	// I suppose this is because values are passed as arguments in memory and returned in registers.  
+	// This may also be the case on x86 but is unobserved because x86 is little endian.
+    switch (resultType[0]) {
+        case 'C':
+        {
+            *((unsigned int *) returnvalue) = *((unsigned char *) returnvalue);
+            break;
+        }
+        case 'c':
+        {
+            *((int *) returnvalue) = *((char *) returnvalue);
+            break;
+        }
+        case 'S':
+        {
+            *((unsigned int *) returnvalue) = *((unsigned short *) returnvalue);
+            break;
+        }
+        case 's':
+        {
+            *((int *) returnvalue) = *((short *) returnvalue);
+            break;
+        }
+    }
+    #endif
     if (((char **)userdata)[0][0] == '!') {
         //NSLog(@"retaining result for object %@, count = %d", *(id *)returnvalue, [*(id *)returnvalue retainCount]);
         [*((id *)returnvalue) retain];
     }
-
     [arguments release];
-
     [pool release];
 }
 
-IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
+char **generate_userdata(SEL sel, NuBlock *block, const char *signature)
 {
     NSMethodSignature *methodSignature = [NSMethodSignature signatureWithObjCTypes:signature];
     const char *return_type_string = [methodSignature methodReturnType];
-    ffi_type *result_type = ffi_type_for_objc_type(return_type_string);
     int argument_count = [methodSignature numberOfArguments];
-    char **userdata = (char **) malloc ((argument_count+2) * sizeof(char*));
-    ffi_type **argument_types = (ffi_type **) malloc ((argument_count+1) * sizeof(ffi_type *));
+    char **userdata = (char **) malloc ((argument_count+3) * sizeof(char*));
     userdata[0] = (char *) malloc (2 + strlen(return_type_string));
     #ifdef DARWIN
     const char *methodName = sel_getName(sel);
@@ -1110,7 +1194,6 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     const char *methodName = sel_get_name(sel);
     #endif
     BOOL returnsRetainedResult = NO;
-
     if ((!strcmp(methodName, "alloc")) ||
         (!strcmp(methodName, "allocWithZone:")) ||
         (!strcmp(methodName, "copy")) ||
@@ -1124,41 +1207,66 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     else
         sprintf(userdata[0], " %s", return_type_string);
     //NSLog(@"constructing handler for method %s with %d arguments and returnType %s", methodName, argument_count, userdata[0]);
-
     userdata[1] = (char *) block;
     [block retain];
     int i;
     for (i = 0; i < argument_count; i++) {
         const char *argument_type_string = [methodSignature getArgumentTypeAtIndex:i];
         if (i > 1) userdata[i] = strdup(argument_type_string);
-        argument_types[i] = ffi_type_for_objc_type(argument_type_string);
     }
+    userdata[argument_count] = NULL;
+    return userdata;
+}
+
+IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
+{
+    char **userdata = generate_userdata(sel, block, signature);
+    IMP imp = [NuHandlerWarehouse handlerWithSelector:sel block:block signature:signature userdata:userdata];
+    if (imp) {
+        return imp;
+    }
+    int argument_count = 0;
+    while (userdata[argument_count] != 0) argument_count++;
+    #if 0
+    #ifdef DARWIN
+    const char *methodName = sel_getName(sel);
+    #else
+    const char *methodName = sel_get_name(sel);
+    #endif
+    NSLog(@"using libffi to construct handler for method %s with %d arguments and signature %s", methodName, argument_count, signature);
+    #endif
+    ffi_type **argument_types = (ffi_type **) malloc ((argument_count+1) * sizeof(ffi_type *));
+    ffi_type *result_type = ffi_type_for_objc_type(userdata[0]+1);
+    argument_types[0] = ffi_type_for_objc_type("@");
+    argument_types[1] = ffi_type_for_objc_type(":");
+    for (int i = 2; i < argument_count; i++)
+        argument_types[i] = ffi_type_for_objc_type(userdata[i]);
     argument_types[argument_count] = NULL;
     ffi_cif *cif = (ffi_cif *)malloc(sizeof(ffi_cif));
     if (cif == NULL) {
-        NSLog(@"failed to allocate cif structure");
+        NSLog(@"unable to prepare closure for signature %s (could not allocate memory for cif structure)", signature);
         return NULL;
     }
     int status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argument_count, result_type, argument_types);
     if (status != FFI_OK) {
-        NSLog (@"failed to prepare cif structure");
+        NSLog(@"unable to prepare closure for signature %s (ffi_prep_cif failed)", signature);
         return NULL;
     }
     ffi_closure *closure = (ffi_closure *)mmap(NULL, sizeof(ffi_closure), PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
     if (closure == (ffi_closure *) -1) {
-        NSLog(@"error setting up closure");
+        NSLog(@"unable to prepare closure for signature %s (mmap failed with error %d)", signature, errno);
         return NULL;
     }
     if (closure == NULL) {
-        NSLog(@"error allocating closure");
+        NSLog(@"unable to prepare closure for signature %s (could not allocate memory for closure)", signature);
         return NULL;
     }
     if (ffi_prep_closure(closure, cif, objc_calling_nu_method_handler, userdata) != FFI_OK) {
-        NSLog(@"error creating closure");
+        NSLog(@"unable to prepare closure for signature %s (ffi_prep_closure failed)", signature);
         return NULL;
     }
     if (mprotect(closure, sizeof(closure), PROT_READ | PROT_EXEC) == -1) {
-        NSLog(@"error preparing closure");
+        NSLog(@"unable to prepare closure for signature %s (mprotect failed with error %d)", signature, errno);
         return NULL;
     }
     return (IMP) closure;
@@ -1434,7 +1542,7 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
             finished = YES;
         }
         else if ([cursor car] == BOOL_symbol) {
-            [signature appendString:@"c"];
+            [signature appendString:@"C"];
             finished = YES;
         }
         else if ([cursor car] == double_symbol) {

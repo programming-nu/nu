@@ -51,19 +51,6 @@
                             (results addObject:filename)))
                  ((results allObjects) sortedArrayUsingSelector:"compare:"))))
 
-(class NSObject
-     
-     ;; Concisely set key-value pairs from a property list.
-     (- (id) set: (id) propertyList is
-        (propertyList eachPair: (do (key value)
-                                    (let ((label (if (and (key isKindOfClass:NuSymbol) (key isLabel))
-                                                     (then (key labelName))
-                                                     (else key))))
-                                         (if (eq label "action")
-                                             (then (self setAction:value))
-                                             (else (self setValue:value forKey:label))))))
-        self))
-
 (class NSMutableArray
      
      ;; Concisely add objects to arrays using this method, which is equivalent to a call to addObject:.
@@ -85,38 +72,10 @@
          ;; Convert a list into an NSRange.  The list must have at least two elements.
          (- (NSRange) rangeValue is (list (self first) (self second)))))
 
-;; Call this macro in a class declaration to give a class automatic accessors for its instance variables.
-;; Watch out for conflicts with other uses of handleUnknownMessage:withContext:.
+;; Use this macro to create and extend protocols. 
 ;; The odd-looking use of the global operator is to define the macro globally.
 ;; We just use an "_" for the macro name argument because its local name is unimportant.
-(global ivar-accessors
-        (macro _
-             (imethod (id) handleUnknownMessage:(id) message withContext:(id) context is
-                  (case (message length)
-                        (1
-                          ;; try to automatically get an ivar
-                          (try
-                              ;; ivar name is the first (only) token of the message
-                              (self valueForIvar:((message first) stringValue))
-                              (catch (error)
-                                     (super handleUnknownMessage:message withContext:context))))
-                        (2
-                          ;; try to automatically set an ivar
-                          (if (eq (((message first) stringValue) substringWithRange:'(0 3)) "set")
-                              (then
-                                   (try
-                                       (let ((firstArgument ((message first) stringValue)))
-                                            (let ((variableName0 ((firstArgument substringWithRange:'(3 1)) lowercaseString))
-                                                  (variableName1 ((firstArgument substringWithRange:
-                                                                       (list 4 (- (firstArgument length) 5))))))
-                                                 (self setValue:((message second) evalWithContext:context)
-                                                       forIvar: "#{variableName0}#{variableName1}")))
-                                       (catch (error)
-                                              (super handleUnknownMessage:message withContext:context))))
-                              (else (super handleUnknownMessage:message withContext:context))))
-                        (else (super handleUnknownMessage:message withContext:context))))))
-
-;; use this to create and extend protocols
+;; It does not work with the latest (more restrictive) ObjC runtimes from Apple.
 (global protocol
         (macro _
              (set __signatureForIdentifier (NuBridgedFunction functionWithName:"signature_for_identifier" signature:"@@@"))

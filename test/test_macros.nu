@@ -61,7 +61,7 @@
                (_class addInstanceVariable:__name
                        signature:"@")
                (_class addInstanceMethod:__name
-                       signature:"@"
+                       signature:"@@:"
                        body:(do () (self valueForIvar:__name))))
           
           (macro writer
@@ -69,7 +69,7 @@
                (_class addInstanceVariable:__name
                        signature:"@")
                (_class addInstanceMethod:(make-setter-name __name)
-                       signature:"v"
+                       signature:"v@:@"
                        body:(do (new) (self setValue:new forIvar:__name))))
           
           (macro accessor
@@ -77,10 +77,10 @@
                (_class addInstanceVariable:__name
                        signature:"@")
                (_class addInstanceMethod:__name
-                       signature:"@"
+                       signature:"@@:"
                        body:(do () (self valueForIvar:__name)))
                (_class addInstanceMethod:(make-setter-name __name)
-                       signature:"v"
+                       signature:"v@:@"
                        body:(do (new) (self setValue:new forIvar:__name))))
           
           (class SomeObject is NSObject

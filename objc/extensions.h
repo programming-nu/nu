@@ -18,6 +18,7 @@ limitations under the License.
 
 #import <Foundation/Foundation.h>
 @class NuCell;
+@class NuBlock;
 
 #ifdef LINUX
 #define bool char
@@ -33,6 +34,8 @@ limitations under the License.
 - (bool) atom;
 /*! The length of nil is zero. */
 - (int) length;
+/*! count is a synonym for length. */
+- (int) count;
 @end
 
 /*!
@@ -147,6 +150,9 @@ limitations under the License.
 /*! Replace a substring with another. */
 - (NSString *) replaceString:(NSString *) target withString:(NSString *) replacement;
 
+/*! Iterate over each character in a string, evaluating the provided block for each character. */
+- (id) each:(NuBlock *) block;
+
 #ifdef LINUX
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding;
 - (const char *) cStringUsingEncoding:(NSStringEncoding) encoding;
@@ -197,10 +203,24 @@ limitations under the License.
 + (double) sqrt: (double) x;
 /*! Get the square of a number. */
 + (double) square: (double) x;
+/*! Get the cubed root of a number. */
++ (double) cbrt: (double) x;
 /*! Get the cosine of an angle. */
 + (double) cos: (double) x;
 /*! Get the sine of an angle. */
 + (double) sin: (double) x;
+/*! Get the largest integral value that is not greater than x.*/
++ (double) floor: (double) x;
+/*! Get the smallest integral value that is greater than or equal to x.*/
++ (double) ceil: (double) x;
+/*! Get the integral value nearest to x by always rounding half-way cases away from zero. */
++ (double) round: (double) x;
+/*! Raise x to the power of y */
++ (double) raiseNumber: (double) x toPower: (double) y;
+/*! Get the qouteint of x divided by y as an integer */
++ (int) integerDivide:(int) x by:(int) y;
+/*! Get the remainder of x divided by y as an integer */
++ (int) integerMod:(int) x by:(int) y;
 /*! Get a random integer. */
 + (long) random;
 /*! Seed the random number generator. */
@@ -238,7 +258,7 @@ limitations under the License.
     @abstract NSMethodSignature extensions for Nu programming.
  */
 @interface NSMethodSignature (Nu)
-/*! Get the type string for a method signature */
+/*! Get the type string for a method signature. */
 - (NSString *) typeString;
 @end
 
@@ -249,3 +269,16 @@ limitations under the License.
 + (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
 @end
 #endif
+
+/*!
+   @class NuAutomaticIvars
+   @abstract Include this class to get handleUnknownMessage:withContext: to emulate ivar accessors.
+   @discussion This class is used inside Nu to implement the ivars operator.
+ */
+@interface NuAutomaticIvars : NSObject
+{
+}
+
+/*! Attempt to treat unknown messages as ivar accessors. */
+- (id) handleUnknownMessage:(NuCell *) message withContext:(id) context;
+@end

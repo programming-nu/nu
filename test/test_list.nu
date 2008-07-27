@@ -33,7 +33,7 @@
         (assert_equal '(2 3) (rest '(1 2 3)))
         (assert_equal 1 (head '(1 2 3)))
         (assert_equal '(2 3) (tail '(1 2 3))))
-          
+     
      (- testIndexing is
         (set mylist '(1 2 3))
         (assert_equal 1 (mylist 0))
@@ -43,4 +43,12 @@
         (assert_equal 2 (mylist -2))
         (assert_equal 1 (mylist -3))
         (assert_equal nil (mylist 3))
-        (assert_equal nil (mylist -4))))
+        (assert_equal nil (mylist -4)))
+     
+     (- testLength is
+        (set mylist '(1 2 3 4))
+        (assert_equal 4 (mylist length))
+        (assert_equal 4 (mylist count))
+        (set mylist nil)
+        (assert_equal 0 (mylist length))
+        (assert_equal 0 (mylist count))))

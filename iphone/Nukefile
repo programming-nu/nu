@@ -1,19 +1,22 @@
 
-(set platform "iPhone")
+(set platform "iPhoneOS")
 
 ;; source files
 (set @c_files      (filelistWithRoot "^objc/.*\.c$" ".."))
 (set @m_files      (filelistWithRoot "^objc/.*\.m$" ".."))
-(@m_files unionSet:(filelistWithRoot "^baked/.*\.m$" ".."))
 
 (case platform
-      ("iPhone"
-               (set PLATFORM "-isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk")
-               (set @arch '("armv6"))
-               (set @cc "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.0"))
-      ("simulator"
-                  (set PLATFORM "-isysroot /Developer/Platforms/AspenSimulator.platform/Developer/SDKs/AspenSimulator1.2.sdk")
-                  (set @arch '("i386")))
+      
+      ("iPhoneOS"
+                 (set PLATFORM "-isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk")
+                 (set @arch '("armv6"))
+                 (set @cc "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.0")
+                 (set @library_extras "platforms/iPhoneOS/libffi/*.o platforms/iPhoneOS/pcre/*.o"))
+      
+      ("iPhoneSimulator" ;; this is broken, please submit fixes if you make them.
+           (set PLATFORM "-isysroot /Developer/Platforms/AspenSimulator.platform/Developer/SDKs/AspenSimulator1.2.sdk")
+           (set @arch '("i386")))
+      
       (else nil))
 
 (set @cflags "-g -Iinclude -I../include -DDARWIN -DIPHONE -DMACOSX -std=gnu99 #{PLATFORM}  -mmacosx-version-min=10.5")

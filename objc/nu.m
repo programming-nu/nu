@@ -258,6 +258,9 @@ void NuInit()
         [NSSet include: [NuClass classWithClass:[NuEnumerable class]]];
         [pool release];
 
+        [NSObject exchangeInstanceMethod:@selector(dealloc) withMethod:@selector(nuDealloc)];
+
+
         #ifdef DARWIN
         #ifndef IPHONE
         // Copy some useful methods from NSObject to NSProxy.

@@ -28,13 +28,28 @@
           (assert_equal 2 (d "two")))
      
      (imethod (id) testEach is
-          (set d (dict "one" 1 two:2))
+          (set d (dict one:1 two:2 three:3 four:4 five:5 six:6))
+          ;; test each: through everything
           (set count 0)
           (d each:
              (do (k v)
                  (assert_equal (d objectForKey:k) v)
                  (set count (+ count 1))))
-          (assert_equal (d count) count))
+          (assert_equal (d count) count)
+          ;; test each: with break
+          (set count 0)
+          (d each:
+             (do (k v)
+                 (if (eq count 3) (break))
+                 (set count (+ count 1))))
+          (assert_equal 3 count)
+          ;; test each: with continue
+          (set count 0)
+          (d each:
+             (do (k v)
+                 (if (eq v 3) (continue))
+                 (set count (+ count 1))))
+          (assert_equal (- (d count) 1) count))
      
      (imethod (id) testLookupWithDefault is
           (set d (dict "one" 1 two:2))

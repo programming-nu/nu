@@ -42,6 +42,11 @@ extern id Nu__null;
     return 0;
 }
 
+- (int) count
+{
+    return 0;
+}
+
 - (id) stringValue
 {
     return @"()";
@@ -204,9 +209,21 @@ extern id Nu__null;
     NSEnumerator *keyEnumerator = [[self allKeys] objectEnumerator];
     id key;
     while ((key = [keyEnumerator nextObject])) {
-        [args setCar:key];
-        [[args cdr] setCar:[self objectForKey:key]];
-        [block evalWithArguments:args context:Nu__null];
+        @try
+        {
+            [args setCar:key];
+            [[args cdr] setCar:[self objectForKey:key]];
+            [block evalWithArguments:args context:Nu__null];
+        }
+        @catch (NuBreakException *exception) {
+            break;
+        }
+        @catch (NuContinueException *exception) {
+            // do nothing, just continue with the next loop iteration
+        }
+        @catch (id exception) {
+            @throw(exception);
+        }
     }
     [args release];
     return self;
@@ -399,6 +416,29 @@ extern id Nu__null;
     return s;
 }
 
+- (id) each:(NuBlock *) block
+{
+    int count = [self length];
+    NuCell *args = [[NuCell alloc] init];
+    for (int i = 0; i < count; i++) {
+        @try
+        {
+            [args setCar:[NSNumber numberWithInteger:[self characterAtIndex:i]]];
+            [block evalWithArguments:args context:Nu__null];
+        }
+        @catch (NuBreakException *exception) {
+            break;
+        }
+        @catch (NuContinueException *exception) {
+            // do nothing, just continue with the next loop iteration
+        }
+        @catch (id exception) {
+            @throw(exception);
+        }
+    }
+    return self;
+}
+
 #ifdef LINUX
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding
 {
@@ -554,10 +594,19 @@ extern id Nu__null;
 + (double) cos: (double) x {return cos(x);}
 + (double) sin: (double) x {return sin(x);}
 + (double) sqrt: (double) x {return sqrt(x);}
++ (double) cbrt: (double) x {return cbrt(x);}
 + (double) square: (double) x {return x*x;}
 + (double) exp: (double) x {return exp(x);}
++ (double) exp2: (double) x {return exp2(x);}
 + (double) log: (double) x {return log(x);}
++ (double) log2: (double) x {return log2(x);}
++ (double) log10: (double) x {return log10(x);}
 
++ (double) floor: (double) x {return floor(x);}
++ (double) ceil: (double) x {return ceil(x);}
++ (double) round: (double) x {return round(x);}
+
++ (double) raiseNumber: (double) x toPower: (double) y {return pow(x, y);} 
 + (int) integerDivide:(int) x by:(int) y {return x / y;}
 + (int) integerMod:(int) x by:(int) y {return x % y;}
 
@@ -823,3 +872,47 @@ const char *stringValue(id object)
     return [[object stringValue] cString];
 }
 #endif
+
+@implementation NuAutomaticIvars
+
+- (id) handleUnknownMessage:(NuCell *) message withContext:(id) context
+{
+    int message_length = [message length];
+    if (message_length == 1) {
+        // try to automatically get an ivar
+        @try
+        {
+            // ivar name is the first (only) token of the message
+            return [self valueForIvar:[[message car] stringValue]];
+        }
+        @catch (id error) {
+            return [super handleUnknownMessage:message withContext:context];
+        }
+    }
+    else if (message_length == 2) {
+        // try to automatically set an ivar
+        if ([[[[message car] stringValue] substringWithRange:NSMakeRange(0,3)] isEqualToString:@"set"]) {
+            @try
+            {
+                id firstArgument = [[message car] stringValue];
+                id variableName0 = [[firstArgument substringWithRange:NSMakeRange(3,1)] lowercaseString];
+                id variableName1 = [firstArgument substringWithRange:NSMakeRange(4, [firstArgument length] - 5)];
+                [self setValue:[[[message cdr] car] evalWithContext:context]
+                    forIvar:[NSString stringWithFormat:@"%@%@", variableName0, variableName1]];
+                return nil;
+            }
+            @catch (id error) {
+                return [super handleUnknownMessage:message withContext:context];
+            }
+        }
+        else {
+            return [super handleUnknownMessage:message withContext:context];
+        }
+    }
+    else {
+        return [super handleUnknownMessage:message withContext:context];
+    }
+    return nil;
+}
+
+@end
