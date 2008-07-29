@@ -59,8 +59,9 @@ extern const char *nu_parsedFilename(int i)
 - (void) closeList;
 - (void) addAtom:(id)atom;
 - (void) quoteNextElement;
-- (void) backquoteNextElement;
-- (void) bqcommaNextElement;
+- (void) quasiquoteNextElement;
+- (void) quasiquoteEvalNextElement;
+- (void) quasiquoteSpliceNextElement;
 - (int) interact;
 @end
 
@@ -228,12 +229,16 @@ id regexWithString(NSString *string)
     depth = 0;
     parens = 0;
     quoting = 0;
-	bqcommaing = 0;
+	quasiquoting = 0;
+	quasiquoteEvaling = 0;
+	quasiquoteSplicing = 0;
+	
     int i;
     for (i = 0; i < MAXDEPTH; i++) {
         quoteDepth[i] = false;
-        backquoteDepth[i] = false;
-        bqcommaDepth[i] = false;
+        quasiquoteDepth[i] = false;
+        quasiquoteEvalDepth[i] = false;
+        quasiquoteSpliceDepth[i] = false;
     }
 
     [root release];
@@ -294,20 +299,29 @@ id regexWithString(NSString *string)
         return;
     }
 
-    if (backquoting > 0) {
-        backquoting--;
+    if (quasiquoting > 0) {
+        quasiquoting--;
         [self openList];
-        backquoteDepth[depth] = true;
-        [self addAtom:[symbolTable symbolWithString:@"backquote"]];
+        quasiquoteDepth[depth] = true;
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
         [self openList];
         return;
     }
 
-	if (bqcommaing > 0) {
-		bqcommaing--;
+	if (quasiquoteEvaling > 0) {
+		quasiquoteEvaling--;
         [self openList];
-        bqcommaDepth[depth] = true;
-        [self addAtom:[symbolTable symbolWithString:@"bq-comma"]];
+        quasiquoteEvalDepth[depth] = true;
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote-eval"]];
+        [self openList];
+        return;
+	}
+
+	if (quasiquoteSplicing > 0) {
+		quasiquoteSplicing--;
+        [self openList];
+        quasiquoteSpliceDepth[depth] = true;
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote-splice"]];
         [self openList];
         return;
 	}
@@ -341,11 +355,14 @@ id regexWithString(NSString *string)
     if (quoteDepth[depth]) {
         quoteDepth[depth] = false;
         [self closeList];
-    } else if (backquoteDepth[depth]) {
-		backquoteDepth[depth] = false;
+    } else if (quasiquoteDepth[depth]) {
+		quasiquoteDepth[depth] = false;
 		[self closeList];
-    } else if (bqcommaDepth[depth]) {
-		bqcommaDepth[depth] = false;
+    } else if (quasiquoteEvalDepth[depth]) {
+		quasiquoteEvalDepth[depth] = false;
+		[self closeList];
+    } else if (quasiquoteSpliceDepth[depth]) {
+		quasiquoteSpliceDepth[depth] = false;
 		[self closeList];
 	}
 
@@ -362,19 +379,28 @@ id regexWithString(NSString *string)
         return;
     }
 
-    if (backquoting > 0) {
-        backquoting--;
+    if (quasiquoting > 0) {
+        quasiquoting--;
         [self openList];
-        [self addAtom:[symbolTable symbolWithString:@"backquote"]];
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
         [self addAtom:atom];
         [self closeList];
         return;
     }
 
-	if (bqcommaing > 0) {
-		bqcommaing--;
+	if (quasiquoteEvaling > 0) {
+		quasiquoteEvaling--;
 		[self openList];
-		[self addAtom:[symbolTable symbolWithString:@"bq-comma"]];
+		[self addAtom:[symbolTable symbolWithString:@"quasiquote-eval"]];
+		[self addAtom:atom];
+		[self closeList];
+		return;
+	}
+	
+	if (quasiquoteSplicing > 0) {
+		quasiquoteSplicing--;
+		[self openList];
+		[self addAtom:[symbolTable symbolWithString:@"quasiquote-splice"]];
 		[self addAtom:atom];
 		[self closeList];
 		return;
@@ -408,14 +434,19 @@ id regexWithString(NSString *string)
     quoting++;
 }
 
--(void) backquoteNextElement
+-(void) quasiquoteNextElement
 {
-    backquoting++;
+    quasiquoting++;
 }
 
--(void) bqcommaNextElement
+-(void) quasiquoteEvalNextElement
 {
-	bqcommaing++;
+	quasiquoteEvaling++;
+}
+
+-(void) quasiquoteSpliceNextElement
+{
+	quasiquoteSplicing++;
 }
 
 static int nu_octal_digit_value(unichar c)
@@ -662,12 +693,18 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     }
 					case '`':
 					{
-						[self backquoteNextElement];
+						[self quasiquoteNextElement];
 						break;
 					}
 					case ',':
 					{
-						[self bqcommaNextElement];
+						if ((i + 1 < imax) && ([string characterAtIndex:i+1] == '@')) {
+							[self quasiquoteSpliceNextElement];
+							i = i + 1;
+						}
+						else {
+							[self quasiquoteEvalNextElement];
+						}
 						break;
 					}
                     case '\n':                    // end of line

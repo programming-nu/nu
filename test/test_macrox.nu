@@ -44,5 +44,4 @@
           (assert_equal "(if (== x 0) (then 1) (else (* (mfact (- x 1)) x)))" (newBody stringValue))
           
           (set x 4)
-          (assert_equal 24 (mfact x)))
-     )
+          (assert_equal 24 (mfact x))))

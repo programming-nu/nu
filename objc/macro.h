@@ -18,6 +18,7 @@ limitations under the License.
 #import <Foundation/Foundation.h>
 
 @class NuCell;
+@class NuSymbolTable;
 
 /*!
     @class NuMacro

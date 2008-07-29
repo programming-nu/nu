@@ -618,16 +618,16 @@ limitations under the License.
 @end
 
 
-@interface Nu_bqcomma_operator : NuOperator {}
+@interface Nu_quasiquote_eval_operator : NuOperator {}
 @end
 
-@implementation Nu_bqcomma_operator
+@implementation Nu_quasiquote_eval_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-	// bqcomma is handled by Nu_backquote_operator.
+	// bqcomma is handled by Nu_quasiquote_operator.
 	// If we get here, it means someone called bq_comma
 	// outside of a backquote
-	[NSException raise:@"NuBackquoteCommaOutsideBackquote" 
+	[NSException raise:@"NuQuasiquoteEvalOutsideQuasiquote" 
 				format:@"Comma must be inside a backquote"];
 	
 //	NSLog(@"In bqcomma:callWithArguments");
@@ -641,16 +641,16 @@ limitations under the License.
 
 @end
 
-@interface Nu_bqcomma_at_operator : NuOperator {}
+@interface Nu_quasiquote_splice_operator : NuOperator {}
 @end
 
-@implementation Nu_bqcomma_at_operator
+@implementation Nu_quasiquote_splice_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-	// bqcomma-at is handled by Nu_backquote_operator.
+	// bqcomma-at is handled by Nu_quasiquote_operator.
 	// If we get here, it means someone called bq_comma
 	// outside of a backquote
-	[NSException raise:@"NuBackquoteCommaAtOutsideBackquote" 
+	[NSException raise:@"NuQuasiquoteSpliceOutsideBackquote" 
 				format:@"Comma-at must be inside a backquote"];
 	
 	// Purely cosmetic...
@@ -661,76 +661,59 @@ limitations under the License.
 
 
 
-@interface Nu_backquote_operator : NuOperator {}
+@interface Nu_quasiquote_operator : NuOperator {}
 @end
 
-@implementation Nu_backquote_operator
+@implementation Nu_quasiquote_operator
 
-#if 0
-- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+#define JSBLog(args...)	NSLog(args)
+
+
+- (id) spliceAppend:(id)lhs withList:(id)rhs
 {
-    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    id bq_comma = [symbolTable symbolWithString:@"bq-comma"];
-    id bq_comma_at = [symbolTable symbolWithString:@"bq-comma-at"];
-	NSLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
-    id result = Nu__null;
-    id cursor = cdr;  // was cdr
-    id result_cursor = Nu__null;
-    while (cursor && (cursor != Nu__null)) {
-        if (result == Nu__null) {
-            result = [[[NuCell alloc] init] autorelease];
-            result_cursor = result;
-        }
-        else {
-            [result_cursor setCdr:[[[NuCell alloc] init] autorelease]];
-            result_cursor = [result_cursor cdr];
-        }
-		id value = Nu__null;
-		NSLog(@"bq: [cursor car] == %@", [[cursor car] stringValue]);
-		if (cursor && [cursor car] && ([cursor car] == bq_comma)) {
-			NSLog(@"bq: Evaling: [cursor cdr]: %@", [[cursor cdr] stringValue]);
-        	value = [[cursor cdr] evalWithContext:context];
-			cursor = [cursor cdr];  // eat the eval
-			NSLog(@"bq: Value: %@", value);
-			result_cursor = value;
-			return result_cursor;
+	JSBLog(@"spliceAppend: Entered.  callWithArguments lhs = %@ rhs = %@", [lhs stringValue], [rhs stringValue]);
+
+    id lhs_cursor = lhs;
+
+	while (lhs_cursor && (lhs_cursor != Nu__null) 
+		   && [lhs_cursor cdr] && ([lhs_cursor cdr] != Nu__null) 
+		   && [[lhs_cursor cdr] cdr] && [[lhs_cursor cdr] cdr] != Nu__null) {
+		JSBLog(@"  spliceAppend: Cycling lhs list: %@", [lhs_cursor stringValue]);
+		lhs_cursor = [lhs_cursor cdr];
+		JSBLog(@"  spliceAppend: Cycling new lhs list: %@", [lhs_cursor stringValue]);
+	}
+
+    id cursor = lhs_cursor;
+    id rhs_cursor = rhs;
+	id rhs_item = Nu__null;
+
+	while (rhs_cursor && (rhs_cursor != Nu__null)) {
+		rhs_item = [rhs_cursor car];
+
+		if (lhs_cursor == Nu__null) {
+		    lhs_cursor = [[[NuCell alloc] init] autorelease];
+		    cursor = lhs_cursor;
 		}
 		else {
-			if ([[cursor car] atom])
-			{
-				NSLog(@"bq: Quoting cursor: %@", [[cursor car] stringValue]);
-				// Treat it as a quoted value
-				value = [cursor car];
-			}
-			else
-			{
-				NSLog(@"bq: recursive callWithArguments: %@", [[cursor car] stringValue]);
-				value = [self callWithArguments:[cursor car] context:context];
-			}
-
-			[result_cursor setCar:value];
+		    [cursor setCdr: [[[NuCell alloc] init] autorelease]];
+		    cursor = [cursor cdr];
 		}
+		[cursor setCar: rhs_item];
 
-		NSLog(@"bq: result_cursor: %@", [result_cursor stringValue]);
-		NSLog(@"bq: result:        %@", [result_cursor stringValue]);
+		rhs_cursor = [rhs_cursor cdr];
+	}
 
-        cursor = [cursor cdr];
-    }
-	NSLog(@"bq: returning result = %@", [result stringValue]);
-    return result;
+	// cursor is the last cell in the newly spliced list
+	return cursor;
 }
-#endif
 
 
-#if 1
-
-#define JSBLog
-
-- (id) evalBackquote:(id)cdr context:(NSMutableDictionary *)context
+- (id) evalQuasiquote:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    id bq_comma = [symbolTable symbolWithString:@"bq-comma"];
-    id bq_comma_at = [symbolTable symbolWithString:@"bq-comma-at"];
+
+    id quasiquote_eval = [symbolTable symbolWithString:@"quasiquote-eval"];
+    id quasiquote_splice = [symbolTable symbolWithString:@"quasiquote-splice"];
 
 	JSBLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
 	
@@ -739,6 +722,7 @@ limitations under the License.
     id cursor = cdr;
 
     while (cursor && (cursor != Nu__null)) {
+
         if (result == Nu__null) {
             result = [[[NuCell alloc] init] autorelease];
             result_cursor = result;
@@ -749,46 +733,105 @@ limitations under the License.
         }
 
 		id value = Nu__null;
-		JSBLog(@"bq: [cursor car] == %@", [[cursor car] stringValue]);
+		JSBLog(@"quasiquote: [cursor car] == %@", [[cursor car] stringValue]);
+				
+		if ([cursor atom])
+		{
+			// Not likely to trigger this case...
 
-		if (cursor && [cursor car] && ([cursor car] == bq_comma)) {
-			JSBLog(@"bq: Evaling: [cursor cdr]: %@", [[cursor cdr] stringValue]);
-        	value = [[cursor cdr] evalWithContext:context];
-			JSBLog(@"bq: Value: %@", value);
-			return value;
+			JSBLog(@"quasiquote: Quoting cursor: %@", [cursor stringValue]);
+			// Treat it as a quoted value
+			value = cursor;
 		}
-		else {
-			if ([[cursor car] atom])
-			{
-				JSBLog(@"bq: Quoting cursor: %@", [[cursor car] stringValue]);
+		else
+		{
+			if ([cursor car] == quasiquote_eval) {
+				JSBLog(@"quasiquote-eval: Evaling: [cursor cdr]: %@", [[cursor cdr] stringValue]);
+	        	value = [[cursor cdr] evalWithContext:context];
+				JSBLog(@"  quasiquote-eval: Value: %@", [value stringValue]);
+				return value;
+			}
+			else if ([[cursor car] atom]) {
 				// Treat it as a quoted value
+				JSBLog(@"quasiquote: Quoting cursor car: %@", [[cursor car] stringValue]);
 				value = [cursor car];
 			}
-			else
-			{
-				JSBLog(@"bq: recursive callWithArguments: %@", [[cursor car] stringValue]);
-				value = [self evalBackquote:[cursor car] context:context];
-			}
+			else {
+				if ([[cursor car] car] == quasiquote_splice) {
+					JSBLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@", 
+								[[[cursor car] cdr] stringValue]);
+					value = [[[cursor car] cdr] evalWithContext:context];
+					JSBLog(@"  quasiquote-splice: Value: %@", [value stringValue]);
 
-			[result_cursor setCar:value];
+					id splice_result = [self spliceAppend:result withList:value];
+					JSBLog(@"  quasiquote-splice-append: splice-result: %@", [splice_result stringValue]);
+					JSBLog(@"  quasiquote-splice-append: result: %@", [result stringValue]);
+					
+					result_cursor = splice_result;
+					JSBLog(@"  quasiquote-splice: result_cursor: %@", [result_cursor stringValue]);
+					
+					cursor = [cursor cdr];
+					continue;
+				}
+				else {
+					JSBLog(@"quasiquote: recursive callWithArguments: %@", [[cursor car] stringValue]);
+					value = [self evalQuasiquote:[cursor car] context:context];
+					JSBLog(@"quasiquote: leaving recursive call with value: %@", [value stringValue]);
+				}
+			}
 		}
 
-		JSBLog(@"bq: result_cursor: %@", [result_cursor stringValue]);
-		JSBLog(@"bq: result:        %@", [result_cursor stringValue]);
+
+
+		[result_cursor setCar:value];
+
+		JSBLog(@"quasiquote: result_cursor: %@", [result_cursor stringValue]);
+		JSBLog(@"quasiquote: result:        %@", [result stringValue]);
 
         cursor = [cursor cdr];
     }
-	JSBLog(@"bq: returning result = %@", [result stringValue]);
+	JSBLog(@"quasiquote: returning result = %@", [result stringValue]);
     return result;
 
 }
 
+
+#if 0
+@implementation Nu_append_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-	return [[self evalBackquote:cdr context:context] car];
+    id newList = Nu__null;
+    id cursor = nil;
+    id list_to_append = cdr;
+    while (list_to_append && (list_to_append != Nu__null)) {
+        id item_to_append = [[list_to_append car] evalWithContext:context];
+        while (item_to_append && (item_to_append != Nu__null)) {
+            if (newList == Nu__null) {
+                newList = [[[NuCell alloc] init] autorelease];
+                cursor = newList;
+            }
+            else {
+                [cursor setCdr: [[[NuCell alloc] init] autorelease]];
+                cursor = [cursor cdr];
+            }
+            id item = [item_to_append car];
+            [cursor setCar: item];
+            item_to_append = [item_to_append cdr];
+        }
+        list_to_append = [list_to_append cdr];
+    }
+    return newList;
+}
+@end
+#endif
+
+
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	return [[self evalQuasiquote:cdr context:context] car];
 }
 
-#endif
 
 @end
 
@@ -2125,9 +2168,9 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("else",     Nu_progn_operator);
 
 	install("defmacro", Nu_defmacro_operator);
-	install("backquote",Nu_backquote_operator);
-	install("bq-comma", Nu_bqcomma_operator);
-	install("bq-comma-at", Nu_bqcomma_at_operator);
+	install("quasiquote",Nu_quasiquote_operator);
+	install("quasiquote-eval", Nu_quasiquote_eval_operator);
+	install("quasiquote-splice", Nu_quasiquote_splice_operator);
     install("macrox1",  Nu_macrox1_operator);
     install("macrox",   Nu_macrox_operator);
 
