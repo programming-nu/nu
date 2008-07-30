@@ -666,47 +666,59 @@ limitations under the License.
 
 @implementation Nu_quasiquote_operator
 
-#define JSBLog(args...)	NSLog(args)
+#if 0
+	#define QuasiLog(args...)	NSLog(args)
+#else
+	#define QuasiLog(args...)
+#endif
 
-
+#if 0
 - (id) spliceAppend:(id)lhs withList:(id)rhs
 {
-	JSBLog(@"spliceAppend: Entered.  callWithArguments lhs = %@ rhs = %@", [lhs stringValue], [rhs stringValue]);
+	QuasiLog(@"spliceAppend: Entered.  callWithArguments lhs = %@ rhs = %@", [lhs stringValue], [rhs stringValue]);
 
     id lhs_cursor = lhs;
 
+	if (rhs != Nu__null && [rhs atom]) {
+		[NSException raise:@"NuQuasiquoteSpliceNoListError" 
+					format:@"An atom was passed to Quasiquote splicer.  Splicing can only splice a list."];
+	}
+	
 	while (lhs_cursor && (lhs_cursor != Nu__null) 
-		   && [lhs_cursor cdr] && ([lhs_cursor cdr] != Nu__null) 
-		   && [[lhs_cursor cdr] cdr] && [[lhs_cursor cdr] cdr] != Nu__null) {
-		JSBLog(@"  spliceAppend: Cycling lhs list: %@", [lhs_cursor stringValue]);
+		   && [lhs_cursor cdr] && ([lhs_cursor cdr] != Nu__null))
+	{
+		QuasiLog(@"  spliceAppend: Cycling lhs list: %@", [lhs_cursor stringValue]);
 		lhs_cursor = [lhs_cursor cdr];
-		JSBLog(@"  spliceAppend: Cycling new lhs list: %@", [lhs_cursor stringValue]);
+		QuasiLog(@"  spliceAppend: Cycling new lhs list: %@", [lhs_cursor stringValue]);
 	}
 
-    id cursor = lhs_cursor;
+    id splice_cursor = lhs_cursor;
     id rhs_cursor = rhs;
 	id rhs_item = Nu__null;
 
 	while (rhs_cursor && (rhs_cursor != Nu__null)) {
 		rhs_item = [rhs_cursor car];
-
+		QuasiLog(@"    spliceAppend: rhs_item is %@", [rhs_item stringValue]);
 		if (lhs_cursor == Nu__null) {
+			QuasiLog(@"    spliceAppend: lhs_cursor is Nu__null");
 		    lhs_cursor = [[[NuCell alloc] init] autorelease];
-		    cursor = lhs_cursor;
+		    splice_cursor = lhs_cursor;
 		}
 		else {
-		    [cursor setCdr: [[[NuCell alloc] init] autorelease]];
-		    cursor = [cursor cdr];
+			QuasiLog(@"    spliceAppend: lhs_cursor is not Nu__null");
+		    [splice_cursor setCdr: [[[NuCell alloc] init] autorelease]];
+		    splice_cursor = [splice_cursor cdr];
 		}
-		[cursor setCar: rhs_item];
+		[splice_cursor setCar: rhs_item];
 
 		rhs_cursor = [rhs_cursor cdr];
 	}
 
 	// cursor is the last cell in the newly spliced list
-	return cursor;
+	QuasiLog(@"  spliceAppend: Returning %@", [splice_cursor stringValue]);
+	return splice_cursor;
 }
-
+#endif
 
 - (id) evalQuasiquote:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -715,13 +727,119 @@ limitations under the License.
     id quasiquote_eval = [symbolTable symbolWithString:@"quasiquote-eval"];
     id quasiquote_splice = [symbolTable symbolWithString:@"quasiquote-splice"];
 
-	JSBLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
-	
+	QuasiLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
+
     id result = Nu__null;
     id result_cursor = Nu__null;
     id cursor = cdr;
 
     while (cursor && (cursor != Nu__null)) {
+
+		id value = Nu__null;
+		QuasiLog(@"quasiquote: [cursor car] == %@", [[cursor car] stringValue]);
+
+		if ([cursor atom])
+		{
+			// This case is not likely to be triggered...
+
+			QuasiLog(@"quasiquote: Quoting atom: %@", [cursor stringValue]);
+			// Treat it as a quoted value
+			value = cursor;
+		}
+		else
+		{
+			if ([cursor car] == quasiquote_eval) {
+				QuasiLog(@"quasiquote-eval: Evaling: [cursor cdr]: %@", [[cursor cdr] stringValue]);
+	        	value = [[cursor cdr] evalWithContext:context];
+				QuasiLog(@"  quasiquote-eval: Value: %@", [value stringValue]);
+				
+				// Got into the eval from recursive call, go back now
+				return value;
+			}
+			else if ([[cursor car] atom]) {
+				// Treat it as a quoted value
+				QuasiLog(@"quasiquote: Quoting cursor car: %@", [[cursor car] stringValue]);
+				value = [cursor car];
+			}
+			else {
+				if ([cursor car] == Nu__null) {
+					QuasiLog(@"  quasiquote-null-list");
+					value = Nu__null;
+				}
+				else if ([[cursor car] car] == quasiquote_splice) {
+					QuasiLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@", 
+								[[[cursor car] cdr] stringValue]);
+					value = [[[cursor car] cdr] evalWithContext:context];
+					QuasiLog(@"  quasiquote-splice: Value: %@", [value stringValue]);
+
+					////////////
+
+				    id lhs_cursor = result;
+					id rhs = value;
+					QuasiLog(@"spliceAppend: Entered.  callWithArguments lhs = %@ rhs = %@",
+								[lhs_cursor stringValue], [rhs stringValue]);
+
+					if (rhs != Nu__null && [rhs atom]) {
+						[NSException raise:@"NuQuasiquoteSpliceNoListError" 
+									format:@"An atom was passed to Quasiquote splicer.  Splicing can only splice a list."];
+					}
+
+					while (lhs_cursor && (lhs_cursor != Nu__null) 
+						   && [lhs_cursor cdr] && ([lhs_cursor cdr] != Nu__null))
+					{
+						QuasiLog(@"  spliceAppend: Cycling lhs list: %@", [lhs_cursor stringValue]);
+						lhs_cursor = [lhs_cursor cdr];
+						QuasiLog(@"  spliceAppend: Cycling new lhs list: %@", [lhs_cursor stringValue]);
+					}
+
+				    id splice_cursor = lhs_cursor;
+				    id rhs_cursor = rhs;
+					id rhs_item = Nu__null;
+
+					while (rhs_cursor && (rhs_cursor != Nu__null)) {
+						rhs_item = [rhs_cursor car];
+						QuasiLog(@"    spliceAppend: rhs_item is %@", [rhs_item stringValue]);
+						if (lhs_cursor == Nu__null) {
+							QuasiLog(@"    spliceAppend: lhs_cursor is Nu__null");
+						    lhs_cursor = [[[NuCell alloc] init] autorelease];
+							result = lhs_cursor;
+						    splice_cursor = lhs_cursor;
+						}
+						else {
+							QuasiLog(@"    spliceAppend: lhs_cursor is not Nu__null");
+						    [splice_cursor setCdr: [[[NuCell alloc] init] autorelease]];
+						    splice_cursor = [splice_cursor cdr];
+						}
+						[splice_cursor setCar: rhs_item];
+
+						rhs_cursor = [rhs_cursor cdr];
+					}
+
+					// splice_cursor is the last cell in the newly spliced list
+
+					result_cursor = splice_cursor;
+//					result_cursor = [self spliceAppend:result withList:value];
+					QuasiLog(@"  quasiquote-splice-append: splice-result: %@", [result_cursor stringValue]);
+
+					// Check if this is the first item in the result list
+					if (result == Nu__null) {						
+						result = result_cursor;
+					}
+					QuasiLog(@"  quasiquote-splice-append: result: %@", [result stringValue]);
+
+					cursor = [cursor cdr];
+					
+					// Don't want to do the normal cursor handling at bottom of the loop
+					// in this case as we've already done it in the splicing above...
+					continue;
+				}
+				else {
+					QuasiLog(@"quasiquote: recursive callWithArguments: %@", [[cursor car] stringValue]);
+					value = [self evalQuasiquote:[cursor car] context:context];
+					QuasiLog(@"quasiquote: leaving recursive call with value: %@", [value stringValue]);
+				}
+			}
+		}
 
         if (result == Nu__null) {
             result = [[[NuCell alloc] init] autorelease];
@@ -732,67 +850,15 @@ limitations under the License.
             result_cursor = [result_cursor cdr];
         }
 
-		id value = Nu__null;
-		JSBLog(@"quasiquote: [cursor car] == %@", [[cursor car] stringValue]);
-				
-		if ([cursor atom])
-		{
-			// Not likely to trigger this case...
-
-			JSBLog(@"quasiquote: Quoting cursor: %@", [cursor stringValue]);
-			// Treat it as a quoted value
-			value = cursor;
-		}
-		else
-		{
-			if ([cursor car] == quasiquote_eval) {
-				JSBLog(@"quasiquote-eval: Evaling: [cursor cdr]: %@", [[cursor cdr] stringValue]);
-	        	value = [[cursor cdr] evalWithContext:context];
-				JSBLog(@"  quasiquote-eval: Value: %@", [value stringValue]);
-				return value;
-			}
-			else if ([[cursor car] atom]) {
-				// Treat it as a quoted value
-				JSBLog(@"quasiquote: Quoting cursor car: %@", [[cursor car] stringValue]);
-				value = [cursor car];
-			}
-			else {
-				if ([[cursor car] car] == quasiquote_splice) {
-					JSBLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@", 
-								[[[cursor car] cdr] stringValue]);
-					value = [[[cursor car] cdr] evalWithContext:context];
-					JSBLog(@"  quasiquote-splice: Value: %@", [value stringValue]);
-
-					id splice_result = [self spliceAppend:result withList:value];
-					JSBLog(@"  quasiquote-splice-append: splice-result: %@", [splice_result stringValue]);
-					JSBLog(@"  quasiquote-splice-append: result: %@", [result stringValue]);
-					
-					result_cursor = splice_result;
-					JSBLog(@"  quasiquote-splice: result_cursor: %@", [result_cursor stringValue]);
-					
-					cursor = [cursor cdr];
-					continue;
-				}
-				else {
-					JSBLog(@"quasiquote: recursive callWithArguments: %@", [[cursor car] stringValue]);
-					value = [self evalQuasiquote:[cursor car] context:context];
-					JSBLog(@"quasiquote: leaving recursive call with value: %@", [value stringValue]);
-				}
-			}
-		}
-
-
-
 		[result_cursor setCar:value];
 
-		JSBLog(@"quasiquote: result_cursor: %@", [result_cursor stringValue]);
-		JSBLog(@"quasiquote: result:        %@", [result stringValue]);
+		QuasiLog(@"quasiquote: result_cursor: %@", [result_cursor stringValue]);
+		QuasiLog(@"quasiquote: result:        %@", [result stringValue]);
 
         cursor = [cursor cdr];
     }
-	JSBLog(@"quasiquote: returning result = %@", [result stringValue]);
+	QuasiLog(@"quasiquote: returning result = %@", [result stringValue]);
     return result;
-
 }
 
 
