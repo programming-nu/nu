@@ -14,7 +14,7 @@
           (assert_equal 1 a)
           
           ;; Test the expansion
-          (set newBody (macrox1 (inc! a)))
+          (set newBody (macrox (inc! a)))
           (assert_equal "(set a (+ a 1))" (newBody stringValue)))
      
      (imethod (id) testNestedMacro is
@@ -29,7 +29,7 @@
           (inc2! a)
           (assert_equal 2 a)
           
-          (set newBody (macrox1 (inc2! a)))
+          (set newBody (macrox (inc2! a)))
           (assert_equal "(progn (inc! a) (inc! a))" (newBody stringValue)))
      
      
@@ -40,7 +40,7 @@
                     (then 1)
                     (else (* (mfact (- ,__x 1)) ,__x))))
           
-          (set newBody (macrox1 (mfact x)))
+          (set newBody (macrox (mfact x)))
           (assert_equal "(if (== x 0) (then 1) (else (* (mfact (- x 1)) x)))" (newBody stringValue))
           
           (set x 4)
