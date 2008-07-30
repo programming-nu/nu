@@ -630,11 +630,6 @@ limitations under the License.
 	[NSException raise:@"NuQuasiquoteEvalOutsideQuasiquote" 
 				format:@"Comma must be inside a backquote"];
 	
-//	NSLog(@"In bqcomma:callWithArguments");
-//	NSLog(@"cdr: %@", [cdr stringValue]);
-//  id value = [[cdr car] evalWithContext:context];
-//	NSLog(@"value: %@", [value stringValue]);
-
 	// Purely cosmetic...
     return Nu__null;
 }
@@ -650,7 +645,7 @@ limitations under the License.
 	// bqcomma-at is handled by Nu_quasiquote_operator.
 	// If we get here, it means someone called bq_comma
 	// outside of a backquote
-	[NSException raise:@"NuQuasiquoteSpliceOutsideBackquote" 
+	[NSException raise:@"NuQuasiquoteSpliceOutsideQuasiquote" 
 				format:@"Comma-at must be inside a backquote"];
 	
 	// Purely cosmetic...
@@ -660,65 +655,18 @@ limitations under the License.
 @end
 
 
-
-@interface Nu_quasiquote_operator : NuOperator {}
-@end
-
-@implementation Nu_quasiquote_operator
-
+// Temporary use for debugging quasiquote functions...
 #if 0
 	#define QuasiLog(args...)	NSLog(args)
 #else
 	#define QuasiLog(args...)
 #endif
 
-#if 0
-- (id) spliceAppend:(id)lhs withList:(id)rhs
-{
-	QuasiLog(@"spliceAppend: Entered.  callWithArguments lhs = %@ rhs = %@", [lhs stringValue], [rhs stringValue]);
 
-    id lhs_cursor = lhs;
+@interface Nu_quasiquote_operator : NuOperator {}
+@end
 
-	if (rhs != Nu__null && [rhs atom]) {
-		[NSException raise:@"NuQuasiquoteSpliceNoListError" 
-					format:@"An atom was passed to Quasiquote splicer.  Splicing can only splice a list."];
-	}
-	
-	while (lhs_cursor && (lhs_cursor != Nu__null) 
-		   && [lhs_cursor cdr] && ([lhs_cursor cdr] != Nu__null))
-	{
-		QuasiLog(@"  spliceAppend: Cycling lhs list: %@", [lhs_cursor stringValue]);
-		lhs_cursor = [lhs_cursor cdr];
-		QuasiLog(@"  spliceAppend: Cycling new lhs list: %@", [lhs_cursor stringValue]);
-	}
-
-    id splice_cursor = lhs_cursor;
-    id rhs_cursor = rhs;
-	id rhs_item = Nu__null;
-
-	while (rhs_cursor && (rhs_cursor != Nu__null)) {
-		rhs_item = [rhs_cursor car];
-		QuasiLog(@"    spliceAppend: rhs_item is %@", [rhs_item stringValue]);
-		if (lhs_cursor == Nu__null) {
-			QuasiLog(@"    spliceAppend: lhs_cursor is Nu__null");
-		    lhs_cursor = [[[NuCell alloc] init] autorelease];
-		    splice_cursor = lhs_cursor;
-		}
-		else {
-			QuasiLog(@"    spliceAppend: lhs_cursor is not Nu__null");
-		    [splice_cursor setCdr: [[[NuCell alloc] init] autorelease]];
-		    splice_cursor = [splice_cursor cdr];
-		}
-		[splice_cursor setCar: rhs_item];
-
-		rhs_cursor = [rhs_cursor cdr];
-	}
-
-	// cursor is the last cell in the newly spliced list
-	QuasiLog(@"  spliceAppend: Returning %@", [splice_cursor stringValue]);
-	return splice_cursor;
-}
-#endif
+@implementation Nu_quasiquote_operator
 
 - (id) evalQuasiquote:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -734,111 +682,65 @@ limitations under the License.
     id cursor = cdr;
 
     while (cursor && (cursor != Nu__null)) {
-
 		id value = Nu__null;
 		QuasiLog(@"quasiquote: [cursor car] == %@", [[cursor car] stringValue]);
 
-		if ([cursor atom])
-		{
-			// This case is not likely to be triggered...
-
-			QuasiLog(@"quasiquote: Quoting atom: %@", [cursor stringValue]);
+		if ([[cursor car] atom]) {
 			// Treat it as a quoted value
-			value = cursor;
+			QuasiLog(@"quasiquote: Quoting cursor car: %@", [[cursor car] stringValue]);
+			value = [cursor car];
 		}
-		else
-		{
-			if ([cursor car] == quasiquote_eval) {
-				QuasiLog(@"quasiquote-eval: Evaling: [cursor cdr]: %@", [[cursor cdr] stringValue]);
-	        	value = [[cursor cdr] evalWithContext:context];
-				QuasiLog(@"  quasiquote-eval: Value: %@", [value stringValue]);
-				
-				// Got into the eval from recursive call, go back now
-				return value;
+		else if ([cursor car] == Nu__null) {
+			QuasiLog(@"  quasiquote: null-list");
+			value = Nu__null;
+		}
+		else if ([[cursor car] car] == quasiquote_eval) {
+			QuasiLog(@"quasiquote-eval: Evaling: [[cursor car] cdr]: %@", [[[cursor car] cdr] stringValue]);
+        	value = [[[cursor car] cdr] evalWithContext:context];
+			QuasiLog(@"  quasiquote-eval: Value: %@", [value stringValue]);
+		}
+		else if ([[cursor car] car] == quasiquote_splice) {
+			QuasiLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@", 
+						[[[cursor car] cdr] stringValue]);
+			value = [[[cursor car] cdr] evalWithContext:context];
+			QuasiLog(@"  quasiquote-splice: Value: %@", [value stringValue]);
+
+			if (value != Nu__null && [value atom]) {
+				[NSException raise:@"NuQuasiquoteSpliceNoListError" 
+							format:@"An atom was passed to Quasiquote splicer.  Splicing can only splice a list."];
 			}
-			else if ([[cursor car] atom]) {
-				// Treat it as a quoted value
-				QuasiLog(@"quasiquote: Quoting cursor car: %@", [[cursor car] stringValue]);
-				value = [cursor car];
-			}
-			else {
-				if ([cursor car] == Nu__null) {
-					QuasiLog(@"  quasiquote-null-list");
-					value = Nu__null;
-				}
-				else if ([[cursor car] car] == quasiquote_splice) {
-					QuasiLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@", 
-								[[[cursor car] cdr] stringValue]);
-					value = [[[cursor car] cdr] evalWithContext:context];
-					QuasiLog(@"  quasiquote-splice: Value: %@", [value stringValue]);
 
-					////////////
+			id value_cursor = value;
+			id value_item = Nu__null;
+			
+			while (value_cursor && (value_cursor != Nu__null)) {
+				value_item = [value_cursor car];
 
-				    id lhs_cursor = result;
-					id rhs = value;
-					QuasiLog(@"spliceAppend: Entered.  callWithArguments lhs = %@ rhs = %@",
-								[lhs_cursor stringValue], [rhs stringValue]);
-
-					if (rhs != Nu__null && [rhs atom]) {
-						[NSException raise:@"NuQuasiquoteSpliceNoListError" 
-									format:@"An atom was passed to Quasiquote splicer.  Splicing can only splice a list."];
-					}
-
-					while (lhs_cursor && (lhs_cursor != Nu__null) 
-						   && [lhs_cursor cdr] && ([lhs_cursor cdr] != Nu__null))
-					{
-						QuasiLog(@"  spliceAppend: Cycling lhs list: %@", [lhs_cursor stringValue]);
-						lhs_cursor = [lhs_cursor cdr];
-						QuasiLog(@"  spliceAppend: Cycling new lhs list: %@", [lhs_cursor stringValue]);
-					}
-
-				    id splice_cursor = lhs_cursor;
-				    id rhs_cursor = rhs;
-					id rhs_item = Nu__null;
-
-					while (rhs_cursor && (rhs_cursor != Nu__null)) {
-						rhs_item = [rhs_cursor car];
-						QuasiLog(@"    spliceAppend: rhs_item is %@", [rhs_item stringValue]);
-						if (lhs_cursor == Nu__null) {
-							QuasiLog(@"    spliceAppend: lhs_cursor is Nu__null");
-						    lhs_cursor = [[[NuCell alloc] init] autorelease];
-							result = lhs_cursor;
-						    splice_cursor = lhs_cursor;
-						}
-						else {
-							QuasiLog(@"    spliceAppend: lhs_cursor is not Nu__null");
-						    [splice_cursor setCdr: [[[NuCell alloc] init] autorelease]];
-						    splice_cursor = [splice_cursor cdr];
-						}
-						[splice_cursor setCar: rhs_item];
-
-						rhs_cursor = [rhs_cursor cdr];
-					}
-
-					// splice_cursor is the last cell in the newly spliced list
-
-					result_cursor = splice_cursor;
-//					result_cursor = [self spliceAppend:result withList:value];
-					QuasiLog(@"  quasiquote-splice-append: splice-result: %@", [result_cursor stringValue]);
-
-					// Check if this is the first item in the result list
-					if (result == Nu__null) {						
-						result = result_cursor;
-					}
-					QuasiLog(@"  quasiquote-splice-append: result: %@", [result stringValue]);
-
-					cursor = [cursor cdr];
-					
-					// Don't want to do the normal cursor handling at bottom of the loop
-					// in this case as we've already done it in the splicing above...
-					continue;
+				if (result_cursor == Nu__null) {
+				    result_cursor = [[[NuCell alloc] init] autorelease];
+					result = result_cursor;
 				}
 				else {
-					QuasiLog(@"quasiquote: recursive callWithArguments: %@", [[cursor car] stringValue]);
-					value = [self evalQuasiquote:[cursor car] context:context];
-					QuasiLog(@"quasiquote: leaving recursive call with value: %@", [value stringValue]);
+				    [result_cursor setCdr: [[[NuCell alloc] init] autorelease]];
+				    result_cursor = [result_cursor cdr];
 				}
+
+				[result_cursor setCar: value_item];
+				value_cursor = [value_cursor cdr];
 			}
+
+			QuasiLog(@"  quasiquote-splice-append: result: %@", [result stringValue]);
+
+			cursor = [cursor cdr];
+
+			// Don't want to do the normal cursor handling at bottom of the loop
+			// in this case as we've already done it in the splicing above...
+			continue;
+		}
+		else {
+			QuasiLog(@"quasiquote: recursive callWithArguments: %@", [[cursor car] stringValue]);
+			value = [self evalQuasiquote:[cursor car] context:context];
+			QuasiLog(@"quasiquote: leaving recursive call with value: %@", [value stringValue]);
 		}
 
         if (result == Nu__null) {
@@ -1072,29 +974,6 @@ limitations under the License.
     return defmacro;
 }
 
-@end
-
-@interface Nu_macrox1_operator : NuOperator {}
-@end
-
-@implementation Nu_macrox1_operator
-- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
-{
-	id call = [cdr car];
-	id name = [call car];
-	id margs = [call cdr];
-	
-	NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-	id macro = [context objectForKey:[symbolTable symbolWithString:[name stringValue]]];
-	
-	if (macro == nil)
-	{
-		[NSException raise:@"NuMacrox1WrongType" format:@"macrox1 was called on an object which is not a macro"];
-	}
-	
-	id expanded = [macro expand1:margs context:context];
-	return expanded;
-}
 @end
 
 
@@ -2234,11 +2113,11 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("else",     Nu_progn_operator);
 
 	install("defmacro", Nu_defmacro_operator);
-	install("quasiquote",Nu_quasiquote_operator);
-	install("quasiquote-eval", Nu_quasiquote_eval_operator);
-	install("quasiquote-splice", Nu_quasiquote_splice_operator);
-    install("macrox1",  Nu_macrox1_operator);
     install("macrox",   Nu_macrox_operator);
+
+	install("quasiquote",			Nu_quasiquote_operator);
+	install("quasiquote-eval", 		Nu_quasiquote_eval_operator);
+	install("quasiquote-splice", 	Nu_quasiquote_splice_operator);
 
     install("+",        Nu_add_operator);
     install("-",        Nu_subtract_operator);
