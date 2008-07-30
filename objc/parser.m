@@ -299,15 +299,6 @@ id regexWithString(NSString *string)
         return;
     }
 
-    if (quasiquoting > 0) {
-        quasiquoting--;
-        [self openList];
-        quasiquoteDepth[depth] = true;
-        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
-        [self openList];
-        return;
-    }
-
 	if (quasiquoteEvaling > 0) {
 		quasiquoteEvaling--;
         [self openList];
@@ -325,6 +316,15 @@ id regexWithString(NSString *string)
         [self openList];
         return;
 	}
+
+    if (quasiquoting > 0) {
+        quasiquoting--;
+        [self openList];
+        quasiquoteDepth[depth] = true;
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
+        [self openList];
+        return;
+    }
 
     depth++;
     NuCell *newCell = [[[NuCell alloc] init] autorelease];
@@ -355,17 +355,16 @@ id regexWithString(NSString *string)
     if (quoteDepth[depth]) {
         quoteDepth[depth] = false;
         [self closeList];
-    } else if (quasiquoteDepth[depth]) {
-		quasiquoteDepth[depth] = false;
-		[self closeList];
     } else if (quasiquoteEvalDepth[depth]) {
 		quasiquoteEvalDepth[depth] = false;
 		[self closeList];
     } else if (quasiquoteSpliceDepth[depth]) {
 		quasiquoteSpliceDepth[depth] = false;
 		[self closeList];
+    } else if (quasiquoteDepth[depth]) {
+		quasiquoteDepth[depth] = false;
+		[self closeList];
 	}
-
 }
 
 - (void) addAtom:(id)atom
@@ -374,15 +373,6 @@ id regexWithString(NSString *string)
         quoting--;
         [self openList];
         [self addAtom:[symbolTable symbolWithString:@"quote"]];
-        [self addAtom:atom];
-        [self closeList];
-        return;
-    }
-
-    if (quasiquoting > 0) {
-        quasiquoting--;
-        [self openList];
-        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
         [self addAtom:atom];
         [self closeList];
         return;
@@ -405,6 +395,15 @@ id regexWithString(NSString *string)
 		[self closeList];
 		return;
 	}
+
+    if (quasiquoting > 0) {
+        quasiquoting--;
+        [self openList];
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
+        [self addAtom:atom];
+        [self closeList];
+        return;
+    }
 	
     NuCell *newCell;
     if (comments) {
