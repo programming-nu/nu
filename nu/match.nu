@@ -18,17 +18,13 @@
 ;; Assigns variables in a template to values in a structure matching the template.
 ;; For example
 ;;
-;;  (dbind ((a b) c) '((1 2) (3 4))
+;;  (match-let1 ((a b) c) '((1 2) (3 4))
 ;;         (list a b c))
 ;;
 ;; returns
 ;;
 ;;   (1 2 (3 4))
-;;
-;; The implementation here is very loosely based
-;; on the one on p. 232 of Paul Graham's book On Lisp.
-;; The name is short for "destructuring bind."  Its semantics are similar to "let."
-(macro dbind
+(macro match-let1
      (set __pat (first margs))
      (set __seq (eval (second margs)))
      (set __body (cdr (cdr margs)))
@@ -41,7 +37,7 @@
 ;; For example
 ;;
 ;; (progn
-;;  (dset ((a b) c) '((1 2) (3 4)))
+;;  (match-set ((a b) c) '((1 2) (3 4)))
 ;;  (list a b c))
 ;;
 ;; returns
@@ -49,7 +45,7 @@
 ;;   (1 2 (3 4))
 ;;
 ;; The name is short for "destructuring set."  The semantics are similar to "set."
-(macro dset
+(macro match-set
      (set __pat (first margs))
      (set __seq (eval (second margs)))
      (set __bindings (destructure __pat __seq))
@@ -61,6 +57,8 @@
 
 ;; Given a pattern like '(a (b c)) and a sequence like '(1 (2 3)),
 ;; returns a list of bindings like '((a 1) (b 2) (c 3)).
+;; The implementation here is loosely based on the one on p. 232 of Paul
+;; Graham's book On Lisp.
 (function destructure (pat seq)
      (cond
           ((and (not pat) seq)
@@ -73,6 +71,7 @@
                          (then (list 'quote seq))
                          (else seq)))
                 (list (list pat seq))))
+
           ;; Patterns like (head . tail)
           ((and (pair? pat)
                 (pair? (cdr pat))
@@ -82,6 +81,7 @@
            (let ((bindings1 (destructure (first pat) (first seq)))
                  (bindings2 (destructure (third pat) (rest seq))))
                 (append bindings1 bindings2)))
+
           ;; Symbolic literal patterns like 'Foo
           ((and (pair? pat)
                 (eq 'quote (car pat))
@@ -117,7 +117,7 @@
                                                   "Inconsistent bindings #{prev-val} and #{val} for #{key}")))))))
      bindings)
 
-;; Finds the first matching pattern returns its associated expression, evaluated.
+;; Finds the first matching pattern returns its associated expression.
 (function _find-first-match (obj patterns)
     (if (not patterns)
         (then (throw* "NuMatchException" "No match found")))
