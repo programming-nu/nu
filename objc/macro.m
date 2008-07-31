@@ -176,13 +176,8 @@ extern id Nu__null;
 {
 	NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
 	
-    id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
-
     // set the arguments to the special variable "margs"
     [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
-
-    // evaluate the body of the block in the calling context (implicit progn)
-    id value = Nu__null;
 
     // if the macro contains gensyms, give them a unique prefix
     int gensymCount = [[self gensyms] count];
@@ -194,15 +189,8 @@ extern id Nu__null;
     id bodyToEvaluate = (gensymCount == 0)
         ? (id)body : [self body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
 
-    // uncomment this to get the old (no gensym) behavior.
-    //bodyToEvaluate = body;
-    //NSLog(@"evaluating %@", [bodyToEvaluate stringValue]);
-
     id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
-//	id puts = [symbolTable symbolWithString:@"progn"];
-//	NuCell *newBody = [[[NuCell alloc] init] autorelease];
-//	[newBody setCar:puts];
-//	[newBody setCdr:cursor];
+
 	return cursor;
 }
 
