@@ -18,17 +18,13 @@
 ;; Assigns variables in a template to values in a structure matching the template.
 ;; For example
 ;;
-;;  (dbind ((a b) c) '((1 2) (3 4))
+;;  (match-let1 ((a b) c) '((1 2) (3 4))
 ;;         (list a b c))
 ;;
 ;; returns
 ;;
 ;;   (1 2 (3 4))
-;;
-;; The implementation here is very loosely based
-;; on the one on p. 232 of Paul Graham's book On Lisp.
-;; The name is short for "destructuring bind."  Its semantics are similar to "let."
-(macro dbind
+(macro match-let1
      (set __pat (first margs))
      (set __seq (eval (second margs)))
      (set __body (cdr (cdr margs)))
@@ -41,7 +37,7 @@
 ;; For example
 ;;
 ;; (progn
-;;  (dset ((a b) c) '((1 2) (3 4)))
+;;  (match-set ((a b) c) '((1 2) (3 4)))
 ;;  (list a b c))
 ;;
 ;; returns
@@ -49,7 +45,7 @@
 ;;   (1 2 (3 4))
 ;;
 ;; The name is short for "destructuring set."  The semantics are similar to "set."
-(macro dset
+(macro match-set
      (set __pat (first margs))
      (set __seq (eval (second margs)))
      (set __bindings (destructure __pat __seq))
@@ -61,6 +57,8 @@
 
 ;; Given a pattern like '(a (b c)) and a sequence like '(1 (2 3)),
 ;; returns a list of bindings like '((a 1) (b 2) (c 3)).
+;; The implementation here is loosely based on the one on p. 232 of Paul
+;; Graham's book On Lisp.
 (function destructure (pat seq)
      (cond
           ((and (not pat) seq)
@@ -73,6 +71,7 @@
                          (then (list 'quote seq))
                          (else seq)))
                 (list (list pat seq))))
+
           ;; Patterns like (head . tail)
           ((and (pair? pat)
                 (pair? (cdr pat))
@@ -82,6 +81,7 @@
            (let ((bindings1 (destructure (first pat) (first seq)))
                  (bindings2 (destructure (third pat) (rest seq))))
                 (append bindings1 bindings2)))
+
           ;; Symbolic literal patterns like 'Foo
           ((and (pair? pat)
                 (eq 'quote (car pat))
@@ -117,8 +117,8 @@
                                                   "Inconsistent bindings #{prev-val} and #{val} for #{key}")))))))
      bindings)
 
-;; Finds patterns matching an object's structure
-(function _find-matches (obj patterns)
+;; Finds the first matching pattern returns its associated expression.
+(function _find-first-match (obj patterns)
     (if (not patterns)
         (then '())
         (else 
@@ -132,18 +132,17 @@
                    (set bindings (destructure pat obj))
                    (check-bindings bindings)
                    (set expr (cons 'let (cons bindings body)))
-                   (cons expr (_find-matches obj (cdr patterns)))
+                   expr
                    (catch (exception)
-                       (_find-matches obj (cdr patterns)))))))))
+                       (_find-first-match obj (cdr patterns)))))))))
 
 ;; Matches an object against some patterns with associated expressions.
 ;; TODO(ijt): boolean conditions for patterns (like "when" in ocaml)
 (macro match
      (set __obj (eval (first margs)))
      (set __patterns (rest margs))
-     (set __exprs (_find-matches __obj __patterns))
-     (if (not __exprs)
-        (then throw* "NuMatchException" "No match found"))
-     (set __expr (car __exprs))
+     (set __expr (_find-first-match __obj __patterns))
+     (if (not __expr)
+        (then (throw* "NuMatchException" "No match found")))
      (eval __expr))
 
