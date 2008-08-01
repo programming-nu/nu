@@ -1,7 +1,6 @@
 /*!
-@file macro.m
-@description Nu macros.
-@copyright Copyright (c) 2007 Neon Design Technology, Inc.
+@file defmacro.m
+@description Nu macros with a more Lispy expand/eval cycle.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -54,52 +53,7 @@ extern id Nu__null;
     return [NSString stringWithFormat:@"(defmacro %@ %@)", name, [body stringValue]];
 }
 
-
-- (id) expand1:(id)cdr context:(NSMutableDictionary*)calling_context
-{
-    NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
-
-    // save the current value of margs
-    id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
-    // set the arguments to the special variable "margs"
-    [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
-
-    // evaluate the body of the block in the calling context (implicit progn)
-    id value = Nu__null;
-
-    // if the macro contains gensyms, give them a unique prefix
-    int gensymCount = [[self gensyms] count];
-    id gensymPrefix = nil;
-    if (gensymCount > 0) {
-        gensymPrefix = [NSString stringWithFormat:@"g%ld", [NuMath random]];
-    }
-
-    id bodyToEvaluate = (gensymCount == 0)
-        ? (id)body : [super body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
-
-    DefMacroLog(@"macrox evaluating: %@", [bodyToEvaluate stringValue]);
-    DefMacroLog(@"macrox context: %@", [calling_context stringValue]);
-
-    id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
-    while (cursor && (cursor != Nu__null)) {
-        value = [[cursor car] evalWithContext:calling_context];
-        cursor = [cursor cdr];
-    }
-
-    // restore the old value of margs
-    if (old_margs == nil) {
-        [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
-    }
-    else {
-        [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
-    }
-
-    DefMacroLog(@"macrox result is %@", value);
-    return value;
-}
-
-
-- (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context
+- (id) expandAndEval:(id)cdr context:(NSMutableDictionary*)calling_context evalFlag:(BOOL)evalFlag
 {
     NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
 
@@ -123,18 +77,23 @@ extern id Nu__null;
     DefMacroLog(@"defmacro evaluating: %@", [bodyToEvaluate stringValue]);
     DefMacroLog(@"defmacro context: %@", [calling_context stringValue]);
 
+	// Macro expansion
     id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
     while (cursor && (cursor != Nu__null)) {
 		DefMacroLog(@"defmacro eval cursor: %@", [cursor stringValue]);
         value = [[cursor car] evalWithContext:calling_context];
-		DefMacroLog(@"defmacro eval value: %@", [value stringValue]);
+		DefMacroLog(@"defmacro expand value: %@", [value stringValue]);
         cursor = [cursor cdr];
     }
 
-	// if just macro-expanding, stop here...
-	//  ..otherwise eval the outer quote
-    id final_value = [value evalWithContext:calling_context];
-	DefMacroLog(@"defmacro eval final_value: %@", [final_value stringValue]);
+	// if just macro-expanding, don't do the next step...
+
+	// Macro evaluation
+	if (evalFlag)
+	{
+	    value = [value evalWithContext:calling_context];
+		DefMacroLog(@"defmacro eval value: %@", [value stringValue]);		
+	}
 
     // restore the old value of margs
     if (old_margs == nil) {
@@ -145,7 +104,18 @@ extern id Nu__null;
     }
 
 	DefMacroLog(@"result is %@", value);
-    return final_value;
+    return value;
+}
+
+- (id) expand1:(id)cdr context:(NSMutableDictionary*)calling_context
+{
+	return [self expandAndEval:cdr context:calling_context evalFlag:NO];
+}
+
+
+- (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context
+{
+	return [self expandAndEval:cdr context:calling_context evalFlag:YES];
 }
 
 @end

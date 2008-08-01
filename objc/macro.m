@@ -172,33 +172,11 @@ extern id Nu__null;
     }
 }
 
-- (id) expand1:(id)cdr context:(NSMutableDictionary*)calling_context
-{
-	NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
-	
-    // set the arguments to the special variable "margs"
-    [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
 
-    // if the macro contains gensyms, give them a unique prefix
-    int gensymCount = [[self gensyms] count];
-    id gensymPrefix = nil;
-    if (gensymCount > 0) {
-        gensymPrefix = [NSString stringWithFormat:@"g%ld", [NuMath random]];
-    }
-
-    id bodyToEvaluate = (gensymCount == 0)
-        ? (id)body : [self body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
-
-    id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
-
-	return cursor;
-}
-
-
-- (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context
+- (id) expandAndEval:(id)cdr context:(NSMutableDictionary *)calling_context evalFlag:(BOOL)evalFlag
 {
     NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
-    //NSLog(@"macro eval %@", [cdr stringValue]);
+
     // save the current value of margs
     id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
     // set the arguments to the special variable "margs"
@@ -220,11 +198,18 @@ extern id Nu__null;
     //bodyToEvaluate = body;
     //NSLog(@"evaluating %@", [bodyToEvaluate stringValue]);
 
-    id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
-    while (cursor && (cursor != Nu__null)) {
-        value = [[cursor car] evalWithContext:calling_context];
-        cursor = [cursor cdr];
-    }
+    value = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
+
+	if (evalFlag)
+	{
+		id cursor = value;
+
+	    while (cursor && (cursor != Nu__null)) {
+	        value = [[cursor car] evalWithContext:calling_context];
+	        cursor = [cursor cdr];
+	    }
+	}
+
     // restore the old value of margs
     if (old_margs == nil) {
         [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
@@ -232,6 +217,7 @@ extern id Nu__null;
     else {
         [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
     }
+
     #if 0
     // I would like to remove gensym values and symbols at the end of a macro's execution,
     // but there is a problem with this: the gensym assignments could be used in a closure,
@@ -247,8 +233,19 @@ extern id Nu__null;
         [symbolTable removeSymbol:gensymSymbol];
     }
     #endif
-    // NSLog(@"result is %@", value);
     return value;
+}
+
+
+- (id) expand1:(id)cdr context:(NSMutableDictionary*)calling_context
+{
+	return [self expandAndEval:cdr context:calling_context evalFlag:NO];
+}
+
+
+- (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context
+{
+	return [self expandAndEval:cdr context:calling_context evalFlag:YES];
 }
 
 @end
