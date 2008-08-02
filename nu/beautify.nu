@@ -44,6 +44,10 @@
 (class NuBeautifier is NSObject
      (ivars)
      
+     (cmethod (id) beautify:(id) text is
+          (set b ((NuBeautifier alloc) init))
+          (b beautify:text))
+     
      ;; Beautify a string containing Nu source code.  The method returns a string containing the beautified code.
      (imethod (id) beautify:(id) text is
           (set result "")

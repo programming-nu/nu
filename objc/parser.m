@@ -58,7 +58,10 @@ extern const char *nu_parsedFilename(int i)
 - (void) openList;
 - (void) closeList;
 - (void) addAtom:(id)atom;
--(void) quoteNextElement;
+- (void) quoteNextElement;
+- (void) quasiquoteNextElement;
+- (void) quasiquoteEvalNextElement;
+- (void) quasiquoteSpliceNextElement;
 - (int) interact;
 @end
 
@@ -226,10 +229,18 @@ id regexWithString(NSString *string)
     depth = 0;
     parens = 0;
     quoting = 0;
+	quasiquoting = 0;
+	quasiquoteEvaling = 0;
+	quasiquoteSplicing = 0;
+	
     int i;
     for (i = 0; i < MAXDEPTH; i++) {
         quoteDepth[i] = false;
+        quasiquoteDepth[i] = false;
+        quasiquoteEvalDepth[i] = false;
+        quasiquoteSpliceDepth[i] = false;
     }
+
     [root release];
     root = current = [[NuCell alloc] init];
     [root setFile:filenum line:linenum];
@@ -287,6 +298,34 @@ id regexWithString(NSString *string)
         [self openList];
         return;
     }
+
+	if (quasiquoteEvaling > 0) {
+		quasiquoteEvaling--;
+        [self openList];
+        quasiquoteEvalDepth[depth] = true;
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote-eval"]];
+        [self openList];
+        return;
+	}
+
+	if (quasiquoteSplicing > 0) {
+		quasiquoteSplicing--;
+        [self openList];
+        quasiquoteSpliceDepth[depth] = true;
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote-splice"]];
+        [self openList];
+        return;
+	}
+
+    if (quasiquoting > 0) {
+        quasiquoting--;
+        [self openList];
+        quasiquoteDepth[depth] = true;
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
+        [self openList];
+        return;
+    }
+
     depth++;
     NuCell *newCell = [[[NuCell alloc] init] autorelease];
     [newCell setFile:filenum line:linenum];
@@ -316,7 +355,16 @@ id regexWithString(NSString *string)
     if (quoteDepth[depth]) {
         quoteDepth[depth] = false;
         [self closeList];
-    }
+    } else if (quasiquoteEvalDepth[depth]) {
+		quasiquoteEvalDepth[depth] = false;
+		[self closeList];
+    } else if (quasiquoteSpliceDepth[depth]) {
+		quasiquoteSpliceDepth[depth] = false;
+		[self closeList];
+    } else if (quasiquoteDepth[depth]) {
+		quasiquoteDepth[depth] = false;
+		[self closeList];
+	}
 }
 
 - (void) addAtom:(id)atom
@@ -329,6 +377,34 @@ id regexWithString(NSString *string)
         [self closeList];
         return;
     }
+
+	if (quasiquoteEvaling > 0) {
+		quasiquoteEvaling--;
+		[self openList];
+		[self addAtom:[symbolTable symbolWithString:@"quasiquote-eval"]];
+		[self addAtom:atom];
+		[self closeList];
+		return;
+	}
+	
+	if (quasiquoteSplicing > 0) {
+		quasiquoteSplicing--;
+		[self openList];
+		[self addAtom:[symbolTable symbolWithString:@"quasiquote-splice"]];
+		[self addAtom:atom];
+		[self closeList];
+		return;
+	}
+
+    if (quasiquoting > 0) {
+        quasiquoting--;
+        [self openList];
+        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
+        [self addAtom:atom];
+        [self closeList];
+        return;
+    }
+	
     NuCell *newCell;
     if (comments) {
         NuCellWithComments *newCellWithComments = [[[NuCellWithComments alloc] init] autorelease];
@@ -355,6 +431,21 @@ id regexWithString(NSString *string)
 -(void) quoteNextElement
 {
     quoting++;
+}
+
+-(void) quasiquoteNextElement
+{
+    quasiquoting++;
+}
+
+-(void) quasiquoteEvalNextElement
+{
+	quasiquoteEvaling++;
+}
+
+-(void) quasiquoteSpliceNextElement
+{
+	quasiquoteSplicing++;
 }
 
 static int nu_octal_digit_value(unichar c)
@@ -599,6 +690,22 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         }
                         break;
                     }
+					case '`':
+					{
+						[self quasiquoteNextElement];
+						break;
+					}
+					case ',':
+					{
+						if ((i + 1 < imax) && ([string characterAtIndex:i+1] == '@')) {
+							[self quasiquoteSpliceNextElement];
+							i = i + 1;
+						}
+						else {
+							[self quasiquoteEvalNextElement];
+						}
+						break;
+					}
                     case '\n':                    // end of line
                         column = 0;
                         linenum++;

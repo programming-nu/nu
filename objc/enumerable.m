@@ -38,7 +38,7 @@ limitations under the License.
             @try
             {
                 [args setCar:object];
-                [block evalWithArguments:args context:Nu__null];
+                [callable evalWithArguments:args context:nil];
             }
             @catch (NuBreakException *exception) {
                 break;
@@ -68,7 +68,7 @@ limitations under the License.
             {
                 [args setCar:object];
                 [[args cdr] setCar:[NSNumber numberWithInt:i]];
-                [block evalWithArguments:args context:Nu__null];
+                [block evalWithArguments:args context:nil];
             }
             @catch (NuBreakException *exception) {
                 break;
@@ -229,14 +229,10 @@ limitations under the License.
         NSEnumerator *enumerator = [self reverseObjectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
-<<<<<<< HEAD:objc/enumerable.m
-            [args setCar:object];
-            [callable evalWithArguments:args context:nil];
-=======
             @try
             {
                 [args setCar:object];
-                [block evalWithArguments:args context:Nu__null];
+                [callable evalWithArguments:args context:nil];
             }
             @catch (NuBreakException *exception) {
                 break;
@@ -247,7 +243,6 @@ limitations under the License.
             @catch (id exception) {
                 @throw(exception);
             }
->>>>>>> 630d4cee63f28f5c81fc674a13b4638b7a8e6db7:objc/enumerable.m
         }
     }
     [args release];

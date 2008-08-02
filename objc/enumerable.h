@@ -58,7 +58,7 @@ limitations under the License.
 working from right to left and beginning with the specified inital value. */
 - (id) reduceLeft:(id)callable from:(id) initial;
 /*! Iterate over each member of an array in reverse order and beginning with the lastObject, evaluating the provided block for each member. */
-- (id) eachInReverse:(NuBlock *) block;
+- (id) eachInReverse:(id) callable;
 /*! Return a sorted array using the specified block to compare array elements.
 The block should return -1, 0, or 1. */
 - (NSArray *) sortedArrayUsingBlock:(NuBlock *) block;
