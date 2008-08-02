@@ -100,6 +100,23 @@
           (assert_equal "Banana bunch with 5 bananas"
                (fruit-desc '(BananaBunch 5)))
           (assert_equal "Orange bergamot" (fruit-desc '(Orange "bergamot"))))
+ 
+     (imethod (id) testSymbolicLiteralsInTrees is
+          (assert_equal 1 (match '(a)
+                            ('(a) 1) 
+                            ('a 2)))
+          (assert_equal 3 (match '(a)
+                            ('a 2)
+                            ('(a) 3))))
+
+    (imethod (id) testQuoteLeafSymbols is
+          (assert_equal '() (_quote-leaf-symbols '()))
+          (assert_equal 1 (_quote-leaf-symbols 1))
+          (assert_equal '(1) (_quote-leaf-symbols '(1)))
+          (assert_equal ''a (_quote-leaf-symbols 'a))
+          (assert_equal '( 'a 'b) (_quote-leaf-symbols '(a b)))
+          (assert_equal '(('a 'c) 'b) (_quote-leaf-symbols '((a c) b)))
+          (assert_equal '( 'a ('c 'b)) (_quote-leaf-symbols '(a (c b)))))
 
      (imethod (id) testCheckBindings is
           (check-bindings '())  ;; empty set of bindings should not throw

@@ -60,44 +60,44 @@
 ;; The implementation here is loosely based on the one on p. 232 of Paul
 ;; Graham's book On Lisp.
 (function destructure (pat seq)
-     (cond
-          ((and (not pat) seq)
-           (throw* "NuMatchException"
-                   "Attempt to match empty pattern to non-empty object"))
-          ((not pat) nil)
-          ((eq pat '_) '())  ; wildcard match produces no binding
-          ((symbol? pat)
-           (let (seq (if (or (pair? seq) (symbol? seq))
-                         (then (list 'quote seq))
-                         (else seq)))
-                (list (list pat seq))))
+   (cond
+        ((and (not pat) seq)
+         (throw* "NuMatchException"
+                 "Attempt to match empty pattern to non-empty object"))
+        ((not pat) nil)
+        ((eq pat '_) '())  ; wildcard match produces no binding
+        ((symbol? pat)
+         (let (seq (if (or (pair? seq) (symbol? seq))
+                       (then (list 'quote seq))
+                       (else seq)))
+              (list (list pat seq))))
 
-          ;; Patterns like (head . tail)
-          ((and (pair? pat)
-                (pair? (cdr pat))
-                (eq '. (second pat))
-                (pair? (cdr (cdr pat)))
-                (eq nil (cdr (cdr (cdr pat)))))
-           (let ((bindings1 (destructure (first pat) (first seq)))
-                 (bindings2 (destructure (third pat) (rest seq))))
-                (append bindings1 bindings2)))
+        ;; Patterns like (head . tail)
+        ((and (pair? pat)
+              (pair? (cdr pat))
+              (eq '. (second pat))
+              (pair? (cdr (cdr pat)))
+              (eq nil (cdr (cdr (cdr pat)))))
+         (let ((bindings1 (destructure (first pat) (first seq)))
+               (bindings2 (destructure (third pat) (rest seq))))
+              (append bindings1 bindings2)))
 
-          ;; Symbolic literal patterns like 'Foo
-          ((and (pair? pat)
-                (eq 'quote (car pat))
-                (pair? (cdr pat))
-                (symbol? (second pat)))
-           (if (eq (second pat) seq)
-               (then '())  ; literal symbol match produces no bindings
-               (else (throw* "NuMatchException"
-                             "Failed match of literal symbol #{pat} to #{seq}"))))
-          ((pair? pat)
-           (let ((bindings1 (destructure (car pat) (car seq)))
-                 (bindings2 (destructure (cdr pat) (cdr seq))))
-                (append bindings1 bindings2)))
-          ((eq pat seq) '())  ; literal match produces no bindings
-          (else (throw* "NuMatchException"
-                        "pattern is not nil, a symbol or a pair: #{pat}"))))
+        ;; Symbolic literal patterns like 'Foo
+        ((and (pair? pat)
+              (eq 'quote (car pat))
+              (pair? (cdr pat))
+              (symbol? (second pat)))
+         (if (eq (second pat) seq)
+             (then '())  ; literal symbol match produces no bindings
+             (else (throw* "NuMatchException"
+                           "Failed match of literal symbol #{pat} to #{seq}"))))
+        ((pair? pat)
+         (let ((bindings1 (destructure (car pat) (car seq)))
+               (bindings2 (destructure (cdr pat) (cdr seq))))
+              (append bindings1 bindings2)))
+        ((eq pat seq) '())  ; literal match produces no bindings
+        (else (throw* "NuMatchException"
+                      "pattern is not nil, a symbol or a pair: #{pat}"))))
 
 ;; Makes sure that no key is set to two different values.
 ;; For example (check-bindings '((a 1) (a 1) (b 2))) just returns its argument,
@@ -117,6 +117,15 @@
                                                   "Inconsistent bindings #{prev-val} and #{val} for #{key}")))))))
      bindings)
 
+(function _quote-leaf-symbols (x)
+  (cond 
+    ((pair? x)
+     (cons (_quote-leaf-symbols (car x))
+           (_quote-leaf-symbols (cdr x))))
+    ((symbol? x)
+     (eval (list 'quote (list 'quote x))))
+    (else x)))
+
 ;; Finds the first matching pattern returns its associated expression.
 (function _find-first-match (obj patterns)
     (if (not patterns)
@@ -124,6 +133,12 @@
         (else 
           (set pb (car patterns))  ; pattern and body
           (set pat (first pb))
+
+          ;; Handle quoted list patterns like '(a) or '(a b)
+          (if (and (pair? pat)
+                   (eq 'quote (car pat)))
+              (then (set pat (_quote-leaf-symbols (second pat)))))
+
           (set body (rest pb))
           (if (eq pat 'else)
               (then body)
