@@ -30,6 +30,7 @@
 
 ;;; Code:
 
+(require 'cl)
 (require 'nu)
 (require 'comint)
 
