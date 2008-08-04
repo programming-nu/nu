@@ -77,7 +77,7 @@
 ;; We just use an "_" for the macro name argument because its local name is unimportant.
 ;; It does not work with the latest (more restrictive) ObjC runtimes from Apple.
 (global protocol
-        (macro _
+        (macro-0 _
              (set __signatureForIdentifier (NuBridgedFunction functionWithName:"signature_for_identifier" signature:"@@@"))
              (function __parse_signature (typeSpecifier)
                   (__signatureForIdentifier typeSpecifier (NuSymbolTable sharedSymbolTable)))

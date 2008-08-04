@@ -28,27 +28,27 @@
              (then (meval ((pairs cdr) cdr) (subst (pairs second) (pairs first) code)))
              (else (eval code))))
     
-    (macro class-help-0
+    (macro-0 class-help-0
          (meval (list 'className (margs first)
                       'helpText (margs second))
                 '(class className
                       (imethod (id) help is helpText))))
     
-    (macro class-help-1
+    (macro-0 class-help-1
          (eval (list 'class (margs first)
                      (list 'imethod '(id) 'help 'is (margs second)))))
     
-    (macro class-help-2
+    (macro-0 class-help-2
          (class (unquote (margs first))
               (imethod (id) help is (unquote (margs second)))))
     
     ; we might prefer this when the parser can handle commas.
-    ;(macro class-help-3
+    ;(macro-0 class-help-3
     ;     (class ,(margs first))
     ;          (imethod (id) help is ,(margs second)))
     )
 
-(macro class-help
+(macro-0 class-help
      (class (unquote (margs first))
           (imethod (id) help is (unquote (margs second)))))
 

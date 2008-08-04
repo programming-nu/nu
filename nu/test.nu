@@ -101,7 +101,7 @@
           (set $assertions (+ $assertions @assertions))
           (puts "#{((self class) name)}: completed #{(testcases count)} tests/#{@assertions} assertions/#{@failures} failures/#{@errors} errors")))
 
-(macro assert_equal
+(macro-0 assert_equal
      (set @assertions (+ @assertions 1))
      (set __reference (eval (car margs)))
      (set __actual (eval (car (cdr margs))))
@@ -110,7 +110,7 @@
              (set @failures (+ @failures 1)))
      nil)
 
-(macro assert_not_equal
+(macro-0 assert_not_equal
      (set @assertions (+ @assertions 1))
      (set __reference (eval (car margs)))
      (set __actual (eval (car (cdr margs))))
@@ -119,7 +119,7 @@
              (set @failures (+ @failures 1)))
      nil)
 
-(macro assert_greater_than
+(macro-0 assert_greater_than
      (set @assertions (+ @assertions 1))
      (set __reference (eval (car margs)))
      (set __actual (eval (car (cdr margs))))
@@ -128,7 +128,7 @@
              (set @failures (+ @failures 1)))
      nil)
 
-(macro assert_less_than
+(macro-0 assert_less_than
      (set @assertions (+ @assertions 1))
      (set __reference (eval (car margs)))
      (set __actual (eval (car (cdr margs))))
@@ -137,7 +137,7 @@
              (set @failures (+ @failures 1)))
      nil)
 
-(macro assert_throws
+(macro-0 assert_throws
      (set @assertions (+ @assertions 1))
      (set __desired (eval (car margs)))
      (set __block (cdr margs))
@@ -155,7 +155,7 @@
               (set @failures (+ @failures 1))))
      nil)
 
-(macro assert_in_delta
+(macro-0 assert_in_delta
      (set @assertions (+ @assertions 1))
      (set __reference (eval (car margs)))
      (set __actual (eval (car (cdr (margs)))))
@@ -166,7 +166,7 @@
          (set @failures (+ @failures 1)))
      nil)
 
-(macro assert_true
+(macro-0 assert_true
      (set @assertions (+ @assertions 1))
      (set __actual (eval (car margs)))
      (unless __actual
@@ -174,7 +174,7 @@
              (set @failures (+ @failures 1)))
      nil)
 
-(macro assert_false
+(macro-0 assert_false
      (set @assertions (+ @assertions 1))
      (set __actual (eval (car margs)))
      (if __actual

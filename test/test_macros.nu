@@ -15,7 +15,7 @@
      ;; recursive macro test case done wrong.
      ;; because x is not a gensym it keeps getting redefined in the recursive descent
      (imethod (id) testBrokenFactorialMacro is
-          (macro mfact
+          (macro-0 mfact
                (set x (eval (car margs)))
                (if (== x 0)
                    (then 1)
@@ -25,7 +25,7 @@
      ;; recursive macro test case done right.
      ;; names prefixed with the "__" sigil are gensyms.
      (imethod (id) testFactorialMacro is
-          (macro mfact
+          (macro-0 mfact
                (set __x (eval (car margs)))
                (if (== __x 0)
                    (then 1)
@@ -34,7 +34,7 @@
      
      ;; test string interpolation of gensyms
      (imethod (id) testGensymInterpolation is
-          (macro interpolateGensym
+          (macro-0 interpolateGensym
                (set __x 123)
                (set __y 456)
                "you got #{__x} and #{__y}")
@@ -43,7 +43,7 @@
      ;; test some macro implementation details
      (imethod (id) testMacroImplementation is
           (set s (NuSymbolTable sharedSymbolTable))
-          (macro forty (set __x 22) (set __y (+ __x 18)))
+          (macro-0 forty (set __x 22) (set __y (+ __x 18)))
           (set newBody (send forty body:(send forty body) withGensymPrefix:"g999" symbolTable:s))
           (assert_equal "((set g999__x 22) (set g999__y (+ g999__x 18)))" (newBody stringValue)))
      
@@ -56,7 +56,7 @@
                (newName appendString:":")
                newName)
           
-          (macro reader
+          (macro-0 reader
                (set __name ((car margs) stringValue))
                (_class addInstanceVariable:__name
                        signature:"@")
@@ -64,7 +64,7 @@
                        signature:"@@:"
                        body:(do () (self valueForIvar:__name))))
           
-          (macro writer
+          (macro-0 writer
                (set __name ((car margs) stringValue))
                (_class addInstanceVariable:__name
                        signature:"@")
@@ -72,7 +72,7 @@
                        signature:"v@:@"
                        body:(do (new) (self setValue:new forIvar:__name))))
           
-          (macro accessor
+          (macro-0 accessor
                (set __name ((car margs) stringValue))
                (_class addInstanceVariable:__name
                        signature:"@")

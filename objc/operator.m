@@ -1874,6 +1874,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("def",      Nu_function_operator);
     install("function", Nu_function_operator);
     install("macro",    Nu_macro_operator);
+    install("macro-0",  Nu_macro_operator);
     install("progn",    Nu_progn_operator);
     install("then",     Nu_progn_operator);
     install("else",     Nu_progn_operator);
