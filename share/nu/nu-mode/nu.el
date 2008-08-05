@@ -26,6 +26,9 @@
 ;; at gmail.com.
 
 ;;; History:
+;; 2008-07-13 Aleksandr Skobelev
+;;    - added import keyword
+;;    - updated nu-indent-line to better handle lists with regexp as the first element
 ;; 2008-04-04 Aleksandr Skobelev
 ;;    - fixed bug in NU-FORWARD-SEXP1 and NU-BACKWARD-SEXP1 with skipping closing parens
 ;;      and made them more PAREDIT compatible (signal an error on list bounds);
@@ -304,7 +307,7 @@ See `run-hooks'."
               "synchronized"
 
               ;; System Operators
-              "load" "system"
+              "load" "system" "import"
               ) t)
            "\\>")
           'font-lock-keyword-face)
@@ -830,9 +833,11 @@ See `run-hooks'."
                      is-has-found)
 
                 ;; if lisp-indent is not nil, redefine it only, if the first item in
-                ;; the list is a list
+                ;; the list is a list or regexp
                 (when (or (not lisp-indent)
-                          (= (char-after first-sexp-beg) ?\( ))
+                          (= (char-after first-sexp-beg) ?\( ) ;; list check
+                          (and (= (char-after first-sexp-beg) ?/ ) ;; regexp check
+                               (< 1 (- first-sexp-end first-sexp-beg))))
         
                   (goto-char first-sexp-end)
                   
