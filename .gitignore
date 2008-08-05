@@ -4,3 +4,6 @@ mininush
 nush
 Nu.framework
 libNu.a
+.DS_Store
+doc
+examples/*/*.app
