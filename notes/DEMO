@@ -33,13 +33,11 @@ Here's a short exercise that you can work through in nush.
 % (a map: (do (i) (NuMath sqrt:i)))
 <NSCFArray:15d01da0>
 % ((a map: (do (i) (NuMath sqrt:i))) 5)
-()
+5
 % (a map: (do (i) (NuMath sqrt:i)))
 <NSCFArray:1f7fa0>
 % ((a map: (do (i) (NuMath sqrt:i))) objectAtIndex:5)
-()
-% (NuMath sqrt:25)
-()
+5
 % (NuMath sqrt:25)
 5
 % ((a map: (do (i) (NuMath sqrt:i))) objectAtIndex:5)

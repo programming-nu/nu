@@ -158,7 +158,7 @@ END)
       (SH "ruby -rtest/unit -e0 -- -v --pattern '/test_.*\.rb^/'"))
 
 (task "test" => "framework" "nush" is
-      (SH "nutest test/test_*.nu"))
+      (SH "./nush tools/nutest test/test_*.nu"))
 
 (task "doc" is
       (SH "nudoc"))
