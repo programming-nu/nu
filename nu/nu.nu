@@ -37,11 +37,7 @@
 
 (global atom?
         (do (x)
-            (or (null? x)
-                (number? x)
-                (symbol? x)
-                (string? x)
-                (char? x))))
+            (x atom)))
 
 (global number?
         (do (x)
@@ -64,7 +60,7 @@
 
 (global string?
         (do (x)
-            (eq (x class) NSCFString)))
+            (eq (x class) ("" class))))
 
 (global symbol?
         (do (x)
@@ -91,21 +87,21 @@
 ;; For example (apply + '(1 2)) returns 3.
 (global apply
         (macro _
-          (set __f (eval (car margs)))
-          (set __args (eval (cdr margs)))
-          (eval (cons __f __args))))
+             (set __f (eval (car margs)))
+             (set __args (eval (cdr margs)))
+             (eval (cons __f __args))))
 
 ;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
 ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
 ;; an exception.
 (global assert
         (macro _
-          (set expression (car margs))
-          (if (not (eval expression))
-              (then (throw ((NSException alloc)
-                             initWithName:"NuAssertionFailure"
-                             reason:(expression stringValue)
-                             userInfo:nil))))))
+             (set expression (car margs))
+             (if (not (eval expression))
+                 (then (throw ((NSException alloc)
+                               initWithName:"NuAssertionFailure"
+                               reason:(expression stringValue)
+                               userInfo:nil))))))
 
 ;; Allows mapping a function over multiple lists.
 ;; For example (map + '(1 2) '(3 4)) returns '(4 6).
@@ -113,16 +109,16 @@
 ;; For example (map + '(1 2) '(3)) returns '(4).
 (global map
         (progn
-          (set _map
-            (do (f _lists)
-                (if (_lists select:(do (x) (not x)))
-                  (then '())
-                  (else
-                    (cons
-                      (apply f (_lists map: (do (ls) (first ls))))
-                      (_map f (_lists map: (do (ls) (rest ls)))))))))
-          (do (fun *lists)
-              (_map fun *lists))))
+              (set _map
+                   (do (f _lists)
+                       (if (_lists select:(do (x) (not x)))
+                           (then '())
+                           (else
+                                (cons
+                                     (apply f (_lists map: (do (ls) (first ls))))
+                                     (_map f (_lists map: (do (ls) (rest ls)))))))))
+              (do (fun *lists)
+                  (_map fun *lists))))
 
 ;; Sorts a list.
 (global sort
@@ -134,11 +130,11 @@
 
 ;; Throws an exception.
 ;; This function is more concise and easier to remember than throw.
-(global throw* 
+(global throw*
         (do (type reason)
             (throw ((NSException alloc) initWithName:type
-                                              reason:reason
-                                            userInfo:nil))))
+                    reason:reason
+                    userInfo:nil))))
 
 ;; Returns an array of filenames matching a given pattern.
 ;; the pattern is a string that is converted into a regular expression.
@@ -154,12 +150,12 @@
                  ((results allObjects) sortedArrayUsingSelector:"compare:"))))
 
 (class NSMutableArray
-
+     
      ;; Concisely add objects to arrays using this method, which is equivalent to a call to addObject:.
      (- (void) << (id) object is (self addObject:object)))
 
 (class NSMutableSet
-
+     
      ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
      (- (void) << (id) object is (self addObject:object)))
 
@@ -183,7 +179,7 @@
              (set __signatureForIdentifier (NuBridgedFunction functionWithName:"signature_for_identifier" signature:"@@@"))
              (function __parse_signature (typeSpecifier)
                   (__signatureForIdentifier typeSpecifier (NuSymbolTable sharedSymbolTable)))
-
+             
              (set __name ((margs car) stringValue))
              (unless (set __protocol (Protocol protocolNamed: __name))
                      (set __protocol ((Protocol alloc) initWithName: __name)))
