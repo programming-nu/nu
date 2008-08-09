@@ -19,6 +19,14 @@
 
      ;; match
      (imethod (id) testMatch is
+          (assert_equal 1 (match 1 (x x)))
+          (assert_equal 2 (match 2 (x x) (y (+ y 1))))  ;; First match is used.
+     
+          (assert_equal 'nothing (match nil (0 'zero) (nil 'nothing)))
+
+          ;; Make sure nil doesn't get treated as a pattern name.
+          (assert_equal 'nada (match 0 (nil 'zilch) (x 'nada)))
+
           (assert_equal '(1 2) (match '(1 2) ((a a) a) ((a b) (list a b))))
 
           (function people-to-string (people)
@@ -32,7 +40,7 @@
           (assert_equal "two people: Tim and Matz" (people-to-string '(Tim Matz)))
           (assert_equal "too many people: 3" (people-to-string '(Tim Guido Matz)))
 
-          ;; If there is no else clause then it throws an exception.
+          ;; If there is no else or wildcard (_) clause then it throws an exception.
           (assert_throws "NuMatchException"
                (match '(1 2)
                       (() 'foo)
@@ -101,7 +109,7 @@
                (fruit-desc '(BananaBunch 5)))
           (assert_equal "Orange bergamot" (fruit-desc '(Orange "bergamot"))))
  
-     (imethod (id) testSymbolicLiteralsInTrees is
+    (imethod (id) testSymbolicLiteralsInTrees is
           (assert_equal 1 (match '(a)
                             ('(a) 1) 
                             ('a 2)))
@@ -124,6 +132,45 @@
           (check-bindings '((a 1) (a 1)))  ;; consistent
           (assert_throws "NuMatchException"
                (do () (check-bindings '((a 1) (a 2))))))  ;; inconsistent
+
+     ;; match-do
+     (imethod (id) testMatchDo is
+          (set f (match-do (() 1)))
+          (assert_equal 1 (f))
+          (assert_throws "NuMatchException" (f 'extra_arg))
+          
+          (set f (match-do (() nil) ((a) a)))
+          (assert_equal nil (f))
+          (assert_equal 1 (f 1))
+          (assert_throws "NuMatchException" (f 1 'extra_arg))
+
+          (set f (match-do (((a) b) (list a b)) (_ 'default)))
+          (assert_equal '(1 2) (f '((1) 2)))
+          (assert_equal 'default (f))
+          (assert_equal 'default (f 1))
+          (assert_equal 'default (f 1 2)))
+
+     ;; match-function
+     (imethod (id) testMatchFunction is
+          (match-function f
+            (() 0)
+            ((a) 1)
+            ((a b) 2)
+            (_ 'many))
+          (assert_equal 0 (f))
+          (assert_equal 1 (f 'a))
+          (assert_equal 2 (f 'a 'b))
+          (assert_equal 'many (f 'a 'b 'c))
+
+          (match-function f
+            (((a)) a)
+            ((a (b)) (list b a))
+            ((a (b (c))) (list a b c)))
+          
+          (assert_equal 2 (f '(2)))
+          (assert_equal '(1 3) (f '(3 (1))))
+          (assert_equal '(7 8 9) (f '(7 (8 (9)))))
+          (assert_throws "NuMatchException" (f 1)))
 
      ;; match-let1
      (imethod (id) testMatchLet1 is
