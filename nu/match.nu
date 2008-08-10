@@ -25,9 +25,9 @@
 ;;
 ;;   (1 2 (3 4))
 (macro match-let1
-     (set __pat (first margs))
-     (set __seq (eval (second margs)))
-     (set __body (cdr (cdr margs)))
+     (set __pat (margs 0))
+     (set __seq (eval (margs 1)))
+     (set __body ((margs cdr) cdr))
      (set __bindings (destructure __pat __seq))
      (check-bindings __bindings)
      (set __result (cons 'let (cons __bindings __body)))
@@ -46,13 +46,13 @@
 ;;
 ;; The name is short for "destructuring set."  The semantics are similar to "set."
 (macro match-set
-     (set __pat (first margs))
-     (set __seq (eval (second margs)))
+     (set __pat (margs 0))
+     (set __seq (eval (margs 1)))
      (set __bindings (destructure __pat __seq))
      (check-bindings __bindings)
      (set __set-statements
           (__bindings map:(do (b)
-                              (list 'set (first b) (second b)))))
+                              (list 'set (b 0) (b 1)))))
      (eval (cons 'progn __set-statements)))
 
 ;; Given a pattern like '(a (b c)) and a sequence like '(1 (2 3)),
@@ -88,10 +88,10 @@
 
         ;; Patterns like (head . tail) recurse.
         ((and (pair? pat)
-              (pair? (cdr pat))
+              (pair? (pat cdr))
               (eq '. (second pat))
-              (pair? (cdr (cdr pat)))
-              (eq nil (cdr (cdr (cdr pat)))))
+              (pair? ((pat cdr) cdr))
+              (eq nil (((pat cdr) cdr) cdr)))
          (let ((bindings1 (destructure (pat 0) (seq 0)))
                (bindings2 (destructure (pat 2) (seq cdr))))
               (append bindings1 bindings2)))
@@ -99,8 +99,8 @@
         ;; Symbolic literal patterns like 'Foo match only symbols and produce
         ;; no bindings.
         ((and (pair? pat)
-              (eq 'quote (car pat))
-              (pair? (cdr pat))
+              (eq 'quote (pat 0))
+              (pair? (pat cdr))
               (symbol? (second pat)))
          (if (eq (second pat) seq)
              (then '())  ; literal symbol match produces no bindings
@@ -109,8 +109,8 @@
 
         ;; Pair patterns (including lists) recurse.
         ((pair? pat)
-         (let ((bindings1 (destructure (car pat) (car seq)))
-               (bindings2 (destructure (cdr pat) (cdr seq))))
+         (let ((bindings1 (destructure (pat car) (seq car)))
+               (bindings2 (destructure (pat cdr) (seq cdr))))
               (append bindings1 bindings2)))
 
         ;; Literal matches produce no bindings.
@@ -126,8 +126,8 @@
 (function check-bindings (bindings)
      (set dic (dict))
      (bindings each:(do (b)
-                        (set key (first b))
-                        (set val (second b))
+                        (set key (b 0))
+                        (set val (b 1))
                         (set prev-val (dic key))  ; valueForKey inexplicably rejects symbols
                         (if (eq nil prev-val)
                             (then (dic setValue:val forKey:key))
@@ -141,8 +141,8 @@
 (function _quote-leaf-symbols (x)
   (cond
     ((pair? x)
-     (cons (_quote-leaf-symbols (car x))
-           (_quote-leaf-symbols (cdr x))))
+     (cons (_quote-leaf-symbols (x car))
+           (_quote-leaf-symbols (x cdr))))
     ((symbol? x)
      (eval (list 'quote (list 'quote x))))
     (else x)))
@@ -152,16 +152,16 @@
     (if (not patterns)
         (then '())
         (else
-          (set pb (car patterns))  ; pattern and body
-          (set pat (first pb))
+          (set pb (patterns 0))  ; pattern and body
+          (set pat (pb 0))
 
           ;; Handle quoted list patterns like '(a) or '(a b)
           (if (and (pair? pat)
-                   (eq 'quote (car pat)))
+                   (eq 'quote (pat 0)))
               (then
                 (set pat (_quote-leaf-symbols (pat 1)))))
 
-          (set body (rest pb))
+          (set body (pb cdr))
           (if (eq pat 'else)
               (then body)
               (else
@@ -176,8 +176,8 @@
 ;; Matches an object against some patterns with associated expressions.
 ;; TODO(ijt): boolean conditions for patterns (like "when" in ocaml)
 (macro match
-     (set __obj (eval (first margs)))
-     (set __patterns (rest margs))
+     (set __obj (eval (margs 0)))
+     (set __patterns (margs cdr))
      (set __expr (_find-first-match __obj __patterns))
      (if (not __expr)
         (then (throw* "NuMatchException" "No match found")))
