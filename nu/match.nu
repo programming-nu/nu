@@ -63,7 +63,7 @@
    (cond
         ;; The empty pattern matches the empty sequence.
         ((eq pat '())
-         (if (neq seq '())
+         (if (!= seq '())
              (then 
                (throw* "NuMatchException"
                        "Attempt to match empty pattern to non-empty object"))
@@ -147,7 +147,7 @@
      (eval (list 'quote (list 'quote x))))
     (else x)))
 
-;; Finds the first matching pattern returns its associated expression.
+;; Finds the first matching pattern and returns its associated expression.
 (function _find-first-match (obj patterns)
     (if (not patterns)
         (then '())
@@ -158,7 +158,9 @@
           ;; Handle quoted list patterns like '(a) or '(a b)
           (if (and (pair? pat)
                    (eq 'quote (car pat)))
-              (then (set pat (_quote-leaf-symbols (second pat)))))
+              (then 
+                (puts "quoting leaf symbols: ")
+                (set pat (_quote-leaf-symbols (pat 1)))))
 
           (set body (rest pb))
           (if (eq pat 'else)
@@ -170,7 +172,7 @@
                    (set expr (cons 'let (cons bindings body)))
                    expr
                    (catch (exception)
-                       (_find-first-match obj (cdr patterns)))))))))
+                       (_find-first-match obj (patterns cdr)))))))))
 
 ;; Matches an object against some patterns with associated expressions.
 ;; TODO(ijt): boolean conditions for patterns (like "when" in ocaml)
@@ -211,7 +213,7 @@
 ;; map:
 ;;
 ;; (function slow-map (f lst)
-;;   (match-function loop 
+;;   (match-function loop
 ;;     ((nil) '())
 ;;     (((a . rest))
 ;;      (puts "about to cons #{(f a)} onto recurse on #{rest}")
