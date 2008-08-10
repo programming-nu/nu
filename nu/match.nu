@@ -64,7 +64,7 @@
         ;; The empty pattern matches the empty sequence.
         ((eq pat '())
          (if (!= seq '())
-             (then 
+             (then
                (throw* "NuMatchException"
                        "Attempt to match empty pattern to non-empty object"))
              (else '())))
@@ -139,7 +139,7 @@
      bindings)
 
 (function _quote-leaf-symbols (x)
-  (cond 
+  (cond
     ((pair? x)
      (cons (_quote-leaf-symbols (car x))
            (_quote-leaf-symbols (cdr x))))
@@ -151,15 +151,14 @@
 (function _find-first-match (obj patterns)
     (if (not patterns)
         (then '())
-        (else 
+        (else
           (set pb (car patterns))  ; pattern and body
           (set pat (first pb))
 
           ;; Handle quoted list patterns like '(a) or '(a b)
           (if (and (pair? pat)
                    (eq 'quote (car pat)))
-              (then 
-                (puts "quoting leaf symbols: ")
+              (then
                 (set pat (_quote-leaf-symbols (pat 1)))))
 
           (set body (rest pb))
@@ -184,11 +183,11 @@
         (then (throw* "NuMatchException" "No match found")))
      (eval __expr))
 
-;; Variant of (do (args) body) that gives different results depending 
-;; on the structure of the argument list. For example, here is a 
+;; Variant of (do (args) body) that gives different results depending
+;; on the structure of the argument list. For example, here is a
 ;; function that counts its arguments, up to two:
 ;;
-;; % (set f (match-do (() 0) 
+;; % (set f (match-do (() 0)
 ;;                    ((a) 1)
 ;;                    ((a b) 2)))
 ;; (do (*args) ((match *args (() 0) ((a) 1) ((a b) 2))))
@@ -208,11 +207,11 @@
                  (append (list 'match '*args)
                          margs))))
 
-;; Variant of (function name (args) body) that gives different results depending 
+;; Variant of (function name (args) body) that gives different results depending
 ;; on the structure of the argument list. For example, here is a way to implement
 ;; map:
 ;;
-;; (function slow-map (f lst)
+;; % (function slow-map (f lst)
 ;;   (match-function loop
 ;;     ((nil) '())
 ;;     (((a . rest))
@@ -220,9 +219,11 @@
 ;;      (cons (f a) (loop rest)))
 ;;     (etc (puts "misc: #{etc}")))
 ;;   (loop lst))
-;; ;;
-;; (macro match-function
-;;   (eval (list 'set (margs 0) 
-;;                    (cons 'match-do (margs cdr)))))
+;; % (slow-map cos '(3.14 0))
+;; (-0.9999987317275395 1)
+;;
+(macro match-function
+  (eval (list 'set (margs 0)
+                   (cons 'match-do (margs cdr)))))
 
 
