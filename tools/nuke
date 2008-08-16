@@ -135,7 +135,6 @@
      (imethod (id) initWithName:(id) name is
           (super init)
           (set @name name)
-          (set @taskDescription "")
           (set @isFile 1)
           (set @dependencies ((NSMutableArray alloc) init))
           self)
@@ -148,6 +147,9 @@
      
      ;; Get the array containing the task's dependencies.
      (imethod (id) dependencies is @dependencies)
+     
+     ;; Set the description of a task.
+     (imethod (void) setTaskDescription:(id) taskDescription is (set @taskDescription taskDescription))
      
      ;; Set the action of a task to a specified block.
      (imethod (void) setAction:(id) action is (set @action action))
@@ -191,19 +193,36 @@
      (set __dependency nil)
      (set __action nil)
      (set __taskName (eval (car margs)))
-     (set __cursor (cdr margs))
+     (set __taskDescription nil)
+     
+     ;; if task contains description, get it. otherwise move on
+     (if (and (> ((cdr margs) length) 0) (eq : (car (cdr margs))))
+         (then
+              (set __taskDescription (car (cdr (cdr margs))))
+              (set __cursor (cdr (cdr (cdr margs)))))
+         (else
+              (set __cursor (cdr margs))))
+     
      ;; get dependencies
      (if (and __cursor (eq (car __cursor) (quote =>)))
-         (set __cursor (cdr __cursor))
-         (while (and __cursor (!= (car __cursor) (quote is)))
-                (set __dependency (eval (car __cursor)))
-                (self addDependency:__taskName on:__dependency)
-                (set __cursor (cdr __cursor))))
+         (then
+              (set __cursor (cdr __cursor))
+              (while (and __cursor (!= (car __cursor) (quote is)))
+                     (set __dependency (eval (car __cursor)))
+                     (self addDependency:__taskName on:__dependency)
+                     (set __cursor (cdr __cursor)))))
+     
      ;; get action
      (if (and __cursor (eq (car __cursor) (quote is)))
-         (set __action (cdr __cursor))
-         (set __block (eval (append '(do (target)) __action)))
-         (self addTask:__taskName action:__block))
+         (then
+              (set __action (cdr __cursor))
+              (set __block (eval (append '(do (target)) __action)))
+              (if __taskDescription
+                  (then
+                       (self addTask:__taskName description:__taskDescription action:__block))
+                  (else
+                       (self addTask:__taskName action:__block)))))
+     
      ;; return the name of the task
      __taskName)
 
@@ -716,6 +735,16 @@
           (mytask setAction:action)
           mytask)
      
+     ;; Add a new task by to a project.
+     ;; The new task is specified by its name.
+     ;; The task description is a string describing what it does.
+     ;; The task action should be specified as a block.
+     (imethod (id) addTask:(id) taskName description:(id) description action:(id) action is
+          (set mytask (self taskNamed:taskName))
+          (mytask setTaskDescription:description)
+          (mytask setAction:action)
+          mytask)
+     
      ;; Add a dependency between named tasks.
      (imethod (void) addDependency:(id) taskName on:(id) dependency is
           (if (eq YES (dependency isKindOfClass:NSString))
@@ -792,12 +821,25 @@
            (exit -1)))
 
 (if $printTasks
+    (set longestTaskNameLength 0)
     (puts "")
+    ((((project tasks) allKeys) sort) each:
+     (do (key)
+         (set mytask ((project tasks) objectForKey:key))
+         (if (not (mytask isFile))
+             (if (> (key length) longestTaskNameLength)
+                 (set longestTaskNameLength (key length))))))
+    
     ((((project tasks) allKeys) sort) each:
      (do (key)
          (set task ((project tasks) objectForKey:key))
          (if (not (task isFile))
-             (puts "nuke #{key}"))))
+             (set spacesToDescription (NSString spaces:(+ (- longestTaskNameLength ((task name) length)) 2)))
+             (if (task taskDescription)
+                 (then
+                      (puts "nuke #{key}#{spacesToDescription}# #{(task taskDescription)}"))
+                 (else
+                      (puts "nuke #{key}#{spacesToDescription}#"))))))
     (puts "")
     (exit 0))
 
