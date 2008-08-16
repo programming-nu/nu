@@ -822,6 +822,7 @@
 
 (if $printTasks
     (set longestTaskNameLength 0)
+    (set maxDescriptionLength 40)
     (puts "")
     ((((project tasks) allKeys) sort) each:
      (do (key)
@@ -837,7 +838,12 @@
              (set spacesToDescription (NSString spaces:(+ (- longestTaskNameLength ((task name) length)) 2)))
              (if (task taskDescription)
                  (then
-                      (puts "nuke #{key}#{spacesToDescription}# #{(task taskDescription)}"))
+                      (if (> ((task taskDescription) length) maxDescriptionLength)
+                          (then
+                               (set taskDescription "#{((task taskDescription) substringToIndex:maxDescriptionLength)}..."))
+                          (else
+                               (set taskDescription (task taskDescription))))
+                      (puts "nuke #{key}#{spacesToDescription}# #{taskDescription}"))
                  (else
                       (puts "nuke #{key}#{spacesToDescription}#"))))))
     (puts "")
