@@ -826,15 +826,15 @@
     (puts "")
     ((((project tasks) allKeys) sort) each:
      (do (key)
-         (set mytask ((project tasks) objectForKey:key))
-         (if (not (mytask isFile))
+         (set task ((project tasks) objectForKey:key))
+         (if (and (!= "default" (task name)) (not (task isFile)))
              (if (> (key length) longestTaskNameLength)
                  (set longestTaskNameLength (key length))))))
     
     ((((project tasks) allKeys) sort) each:
      (do (key)
          (set task ((project tasks) objectForKey:key))
-         (if (not (task isFile))
+         (if (and (!= "default" (task name)) (not (task isFile)))
              (set spacesToDescription (NSString spaces:(+ (- longestTaskNameLength ((task name) length)) 2)))
              (if (task taskDescription)
                  (then
@@ -847,6 +847,11 @@
                  (else
                       (puts "nuke #{key}#{spacesToDescription}#"))))))
     (puts "")
+     
+    (set defaultTask ((project tasks) objectForKey:"default"))
+    (if (!= nil defaultTask)
+        (puts "default task => #{(((task dependencies) 0) name)}")
+        (puts ""))
     (exit 0))
 
 (if $verbose
