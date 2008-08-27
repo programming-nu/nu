@@ -805,6 +805,8 @@
            ("--verbose" (set $verbose YES))
            ("-f" (set Nukefile (argv (set i (+ i 1)))))
            ("--nukefile" (set Nukefile (argv (set i (+ i 1)))))
+           ("-V" (system "nush -v") (exit 0))
+           ("--version" (system "nush -v") (exit 0))
            (else (set target argi))))
 
 (unless (or $printTasks $printDependencies)
