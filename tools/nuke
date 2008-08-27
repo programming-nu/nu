@@ -890,7 +890,7 @@
     (puts "")
     
     (set defaultTask ((project tasks) objectForKey:"default"))
-    (if (!= nil defaultTask)
+    (if (and defaultTask ((task dependencies) count))
         (puts "default task => #{(((task dependencies) 0) name)}")
         (puts ""))
     (exit 0))
