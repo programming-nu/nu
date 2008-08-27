@@ -776,6 +776,13 @@
                   (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))
           self))
 
+;; Helper functions
+(function printDependencies (task)
+)
+
+(function includedInOutput (task)
+     (and (!= "default" (task name)) (not (task isFile))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; main program
 ;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -791,13 +798,14 @@
 (for ((set i 0) (< i (argv count)) (set i (+ i 1)))
      (case (set argi (argv i))
            ("-t" (set $printTasks YES))
+           ("-d" (set $printDependencies YES))
            ("-v" (set $verbose YES))
            ("-f" (set Nukefile (argv (set i (+ i 1)))))
            (else (set target argi))))
 
-(if $printTasks
-    (then (puts "Using #{Nukefile}."))
-    (else (puts "Using #{Nukefile} with target #{target}.")))
+(unless (or $printTasks $printDependencies)
+    (then (puts "Using #{Nukefile} with target #{target}."))
+    (else (puts "Using #{Nukefile}.")))
 
 ;; We expect there to be a Nukefile in the current directory
 ;; or in one of its containing directories
@@ -827,14 +835,14 @@
     ((((project tasks) allKeys) sort) each:
      (do (key)
          (set task ((project tasks) objectForKey:key))
-         (if (and (!= "default" (task name)) (not (task isFile)))
+         (if (includedInOutput (task))
              (if (> (key length) longestTaskNameLength)
                  (set longestTaskNameLength (key length))))))
     
     ((((project tasks) allKeys) sort) each:
      (do (key)
          (set task ((project tasks) objectForKey:key))
-         (if (and (!= "default" (task name)) (not (task isFile)))
+         (if (includedInOutput (task))
              (set spacesToDescription (NSString spaces:(+ (- longestTaskNameLength ((task name) length)) 2)))
              (if (task taskDescription)
                  (then
@@ -852,6 +860,20 @@
     (if (!= nil defaultTask)
         (puts "default task => #{(((task dependencies) 0) name)}")
         (puts ""))
+    (exit 0))
+
+(if $printDependencies
+    (puts "")
+    ((((project tasks) allKeys) sort) each:
+     (do (key)
+         (set task ((project tasks) objectForKey:key))
+         (if (includedInOutput (task))
+             (puts "nuke #{(task name)}")
+             ((task dependencies) each:
+              (do (dependency)
+                  (if (and (!= "default" (dependency name)) (not (dependency isFile)))
+                      (puts "     => #{(dependency name)}")))))))
+    (puts "")
     (exit 0))
 
 (if $verbose
