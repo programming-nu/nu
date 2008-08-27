@@ -778,7 +778,7 @@
 
 ;; Helper functions
 (function printDependencies (task)
-)
+     )
 
 (function includedInOutput (task)
      (and (!= "default" (task name)) (not (task isFile))))
@@ -797,21 +797,48 @@
 (set argv ((NuApplication sharedApplication) arguments))
 (for ((set i 0) (< i (argv count)) (set i (+ i 1)))
      (case (set argi (argv i))
-           ("-T" (set $printTasks YES))
-           ("--tasks" (set $printTasks YES))
-           ("-d" (set $printDependencies YES))
            ("--dependencies" (set $printDependencies YES))
-           ("-v" (set $verbose YES))
-           ("--verbose" (set $verbose YES))
-           ("-f" (set Nukefile (argv (set i (+ i 1)))))
+           ("-d" (set $printDependencies YES))
+           ("--describe" (set $printTaskDescriptions YES))
+           ("-D" (set $printTaskDescriptions YES))
+           ("--help" (set $printHelp YES))
+           ("-h" (set $printHelp YES))
            ("--nukefile" (set Nukefile (argv (set i (+ i 1)))))
-           ("-V" (system "nush -v") (exit 0))
+           ("-f" (set Nukefile (argv (set i (+ i 1)))))
+           ("--tasks" (set $printTasks YES))
+           ("-T" (set $printTasks YES))
+           ("--verbose" (set $verbose YES))
+           ("-v" (set $verbose YES))
            ("--version" (system "nush -v") (exit 0))
+           ("-V" (system "nush -v") (exit 0))
            (else (set target argi))))
 
-(unless (or $printTasks $printDependencies)
-    (then (puts "Using #{Nukefile} with target #{target}."))
-    (else (puts "Using #{Nukefile}.")))
+(if $printHelp
+    (puts "")
+    (puts "Usage: nuke [-f nukefile] {options} target")
+    (puts "")
+    (puts "Options include:")
+    (puts "")
+    (puts "  --dependencies   (-d)")
+    (puts "      Display all tasks with their dependencies, then exit")
+    (puts "  --describe       (-D)")
+    (puts "      Display all tasks with their descriptions, then exit")
+    (puts "  --help           (-h)")
+    (puts "      Display program help")
+    (puts "  --nukefile FILE  (-f)")
+    (puts "      use FILE as the nukefile")
+    (puts "  --tasks          (-T)")
+    (puts "      Display list of available tasks, then exit")
+    (puts "  --verbose        (-v)")
+    (puts "      Log message to standard output")
+    (puts "  --version        (-V)")
+    (puts "      Display the program version")
+    (puts "")
+    (exit 0))
+
+(unless (or $printTasks (or $printTaskDescriptions $printDependencies))
+        (then (puts "Using #{Nukefile} with target #{target}."))
+        (else (puts "Using #{Nukefile}.")))
 
 ;; We expect there to be a Nukefile in the current directory
 ;; or in one of its containing directories
@@ -861,11 +888,24 @@
                  (else
                       (puts "nuke #{key}#{spacesToDescription}#"))))))
     (puts "")
-     
+    
     (set defaultTask ((project tasks) objectForKey:"default"))
     (if (!= nil defaultTask)
         (puts "default task => #{(((task dependencies) 0) name)}")
         (puts ""))
+    (exit 0))
+
+(if $printTaskDescriptions
+    (puts "")
+    ((((project tasks) allKeys) sort) each:
+     (do (key)
+         (set task ((project tasks) objectForKey:key))
+         (set taskDescription (task taskDescription))
+         (if (includedInOutput (task))
+             (puts "nuke #{(task name)}")
+             (if taskDescription
+                 (puts "    #{taskDescription}"))
+             (puts ""))))
     (exit 0))
 
 (if $printDependencies
