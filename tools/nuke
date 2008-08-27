@@ -798,9 +798,13 @@
 (for ((set i 0) (< i (argv count)) (set i (+ i 1)))
      (case (set argi (argv i))
            ("-T" (set $printTasks YES))
+           ("--tasks" (set $printTasks YES))
            ("-d" (set $printDependencies YES))
+           ("--dependencies" (set $printDependencies YES))
            ("-v" (set $verbose YES))
+           ("--verbose" (set $verbose YES))
            ("-f" (set Nukefile (argv (set i (+ i 1)))))
+           ("--file" (set Nukefile (argv (set i (+ i 1)))))
            (else (set target argi))))
 
 (unless (or $printTasks $printDependencies)
