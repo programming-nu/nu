@@ -797,7 +797,7 @@
 (set argv ((NuApplication sharedApplication) arguments))
 (for ((set i 0) (< i (argv count)) (set i (+ i 1)))
      (case (set argi (argv i))
-           ("-t" (set $printTasks YES))
+           ("-T" (set $printTasks YES))
            ("-d" (set $printDependencies YES))
            ("-v" (set $verbose YES))
            ("-f" (set Nukefile (argv (set i (+ i 1)))))
