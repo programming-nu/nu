@@ -804,7 +804,7 @@
            ("-v" (set $verbose YES))
            ("--verbose" (set $verbose YES))
            ("-f" (set Nukefile (argv (set i (+ i 1)))))
-           ("--file" (set Nukefile (argv (set i (+ i 1)))))
+           ("--nukefile" (set Nukefile (argv (set i (+ i 1)))))
            (else (set target argi))))
 
 (unless (or $printTasks $printDependencies)
