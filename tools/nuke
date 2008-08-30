@@ -777,9 +777,6 @@
           self))
 
 ;; Helper functions
-(function printDependencies (task)
-     )
-
 (function includedInOutput (task)
      (and (!= "default" (task name)) (not (task isFile))))
 
