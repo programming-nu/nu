@@ -18,6 +18,7 @@
 #   limitations under the License.
 
 (load "Nu:beautify")
+(load "Nu:doc")
 
 ;; basic declarations that allow nuke to run in mininush
 (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
@@ -808,7 +809,12 @@
            ("-v" (set $verbose YES))
            ("--version" (system "nush -v") (exit 0))
            ("-V" (system "nush -v") (exit 0))
-           (else (set target argi))))
+           (else 
+               (if ((argi beginsWithString:"-"))
+                (puts "nuke: invalid option: #{argi}")
+                (exit -1)
+            (else
+                (set target argi))))))
 
 (if $printHelp
     (puts "")
