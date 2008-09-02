@@ -17,9 +17,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-(load "Nu:beautify")
-(load "Nu:doc")
-
 ;; basic declarations that allow nuke to run in mininush
 (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
 (set NSUTF8StringEncoding 4)
@@ -777,9 +774,28 @@
                   (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))
           self))
 
-;; Helper functions
+;; Helper functions & extensions
 (function includedInOutput (task)
      (and (!= "default" (task name)) (not (task isFile))))
+
+(class NSString
+     ;; Create a string consisting of the specified number of spaces.
+     (cmethod (id) spaces: (id) count is
+          (unless $spaces (set $spaces (NSMutableDictionary dictionary)))
+          (unless (set spaces ($spaces objectForKey:count))
+                  (set spaces "")
+                  (set c count)
+                  (unless c (set c 0))
+                  (while (> c 0)
+                         (spaces appendString:" ")
+                         (set c (- c 1)))
+                  ($spaces setObject:spaces forKey:count))
+          (NSMutableString stringWithString:spaces))
+     
+     ;; Test to see whether a string begins with a specified substring.
+     (imethod (id) beginsWithString:(id) string is
+          (set range (self rangeOfString:string))
+          (and range (eq (range first) 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; main program
@@ -809,12 +825,12 @@
            ("-v" (set $verbose YES))
            ("--version" (system "nush -v") (exit 0))
            ("-V" (system "nush -v") (exit 0))
-           (else 
-               (if ((argi beginsWithString:"-"))
-                (puts "nuke: invalid option: #{argi}")
-                (exit -1)
-            (else
-                (set target argi))))))
+           (else
+                (if ((argi beginsWithString:"-"))
+                    (puts "nuke: invalid option: #{argi}")
+                    (exit -1)
+                    (else
+                         (set target argi))))))
 
 (if $printHelp
     (puts "")
