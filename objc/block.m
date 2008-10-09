@@ -35,6 +35,7 @@ extern id Nu__null;
     [body release];
     [context release];
     [super dealloc];
+    [[NSGarbageCollector defaultCollector] enableCollectorForPointer: self];
 }
 
 - (id) initWithParameters:(NuCell *)p body:(NuCell *)b context:(NSMutableDictionary *)c
@@ -49,6 +50,7 @@ extern id Nu__null;
     [context setPossiblyNullObject:c forKey:PARENT_KEY];
     [context setPossiblyNullObject:[c objectForKey:SYMBOLS_KEY] forKey:SYMBOLS_KEY];
     #endif
+    [[NSGarbageCollector defaultCollector] disableCollectorForPointer: self];
     return self;
 }
 

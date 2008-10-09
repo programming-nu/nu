@@ -56,6 +56,8 @@ static NuSymbolTable *sharedSymbolTable = 0;
     // If not, create it. Don't autorelease it; it is owned by the table.
     symbol = [[NuSymbol alloc] init];             // keep construction private
     symbol->string = strdup(string);
+    // the symbol table does not use strong refs so make one here for each symbol
+    [[NSGarbageCollector defaultCollector] disableCollectorForPointer:symbol];
     int len = strlen(string);
     symbol->isLabel = (string[len - 1] == ':');
     symbol->isGensym = (len > 2) && (string[0] == '_') && (string[1] == '_');
@@ -115,6 +117,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 {
     free(string);
     [super dealloc];
+    [[NSGarbageCollector defaultCollector] enableCollectorForPointer:self];
 }
 
 - (BOOL) isEqual: (NuSymbol *)other
