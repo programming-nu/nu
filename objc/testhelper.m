@@ -20,7 +20,7 @@ limitations under the License.
 #import <Foundation/Foundation.h>
 #import <Nu/Nu.h>
 
-static BOOL verbose_helper = false;
+static BOOL verbose_helper = true;
 
 @interface NuTestHelper : NSObject
 {
@@ -62,13 +62,23 @@ static int deallocationCount = 0;
     [super dealloc];
 }
 
+- (void) finalize
+{
+    if (verbose_helper)
+        NSLog(@"(NuTestHelper finalize)");
+    deallocationCount++;
+    [super finalize];
+}
+
 + (void) resetDeallocationCount
 {
+	[[NSGarbageCollector defaultCollector] collectExhaustively];
     deallocationCount = 0;
 }
 
 + (int) deallocationCount
 {
+	[[NSGarbageCollector defaultCollector] collectExhaustively];
     return deallocationCount;
 }
 
