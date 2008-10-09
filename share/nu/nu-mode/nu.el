@@ -26,9 +26,13 @@
 ;; at gmail.com.
 
 ;;; History:
+;; 2008-09-16 Aleksandr Skobelev
+;;    - added (required 'cl)
+;;
 ;; 2008-07-13 Aleksandr Skobelev
 ;;    - added import keyword
 ;;    - updated nu-indent-line to better handle lists with regexp as the first element
+;;
 ;; 2008-04-04 Aleksandr Skobelev
 ;;    - fixed bug in NU-FORWARD-SEXP1 and NU-BACKWARD-SEXP1 with skipping closing parens
 ;;      and made them more PAREDIT compatible (signal an error on list bounds);
@@ -77,11 +81,12 @@
 
 (require 'cl)
 (require 'lisp-mode)
+(require 'cl)
 
 (autoload 'run-nush "nush" "Run an inferior Nush process." t)
 (autoload 'switch-to-nush "nush" "Switch to an inferior Nush process." t)
 
-(defconst nu-version "2008-04-04"
+(defconst nu-version "2008-09-16"
   "Nu Mode version number.")
 
 (defgroup nu nil
