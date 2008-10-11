@@ -1296,6 +1296,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     if (!nu_block_table) nu_block_table = st_init_numtable();
     // watch for problems caused by these ugly casts...
     st_insert(nu_block_table, (long) imp, (long) block);
+    [[NSGarbageCollector defaultCollector] disableCollectorForPointer: block];
 
     // insert the method handler in the class method table
     nu_class_replaceMethod(c, selector, imp, signature_str);

@@ -84,7 +84,7 @@ END)
 
 (ifDarwin
          (then (set @cflags "-Wall -g -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
-               (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
+               (set @mflags "-fobjc-exceptions -fobjc-gc")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
          (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
                (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")))
 
