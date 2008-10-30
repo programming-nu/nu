@@ -338,6 +338,7 @@
                               (unless (@parser incomplete)
                                       (set @insertionPoint @startOfInput)
                                       (set result (@parser eval: code))
+                                      (((@parser symbolTable) symbolWithString: "!!") setValue: result)
                                       (if (send result respondsToSelector:"escapedStringRepresentation")
                                           (then (set stringToDisplay (send result escapedStringRepresentation)))
                                           (else (set stringToDisplay (send result stringValue))))
