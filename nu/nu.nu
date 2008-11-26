@@ -159,6 +159,23 @@
      ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
      (- (void) << (id) object is (self addObject:object)))
 
+(class NSObject
+     
+     ;; Write objects as XML property lists (only for NSData, NSString, NSNumber, NSDate, NSArray, and NSDictionary objects)
+     (- writeToPropertyList:name is
+        (set xmlData (NSPropertyListSerialization dataFromPropertyList:self
+                          format:100 ;; NSPropertyListXMLFormat_v1_0
+                          errorDescription:(set error (NuReference new))))
+        (if xmlData (xmlData writeToFile:name atomically:YES)
+            (else (puts ((error value) description)))))
+     
+     ;; Read objects from property lists
+     (+ readFromPropertyList:name is
+        (NSPropertyListSerialization propertyListFromData:(NSData dataWithContentsOfFile:name)
+             mutabilityOption:0 ;; NSPropertyListImmutable
+             format:nil
+             errorDescription:nil)))
+
 (if (eq (uname) "Darwin")
     (class NuCell
          ;; Convert a list into an NSRect. The list must have at least four elements.
