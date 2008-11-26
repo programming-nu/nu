@@ -20,7 +20,7 @@ limitations under the License.
 #import <Foundation/Foundation.h>
 #import <Nu/Nu.h>
 
-static BOOL verbose_helper = true;
+static BOOL verbose_helper = false;
 
 @interface NuTestHelper : NSObject
 {

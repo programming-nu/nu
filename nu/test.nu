@@ -86,7 +86,7 @@
           (testcases each:
                (do (test)
                    (set $tests (+ $tests 1))
-                   (puts "--- #{(test name)}")
+                   (print "--- #{(test name)}")
                    (self setup)
                    (set command (list self (((NuSymbolTable sharedSymbolTable) symbolWithString:(test name)))))
                    (try
