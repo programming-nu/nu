@@ -1,6 +1,6 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(global VERSION '(0 3 2)) #(major minor tweak)
+(global VERSION '(0 3 3)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
@@ -230,7 +230,7 @@ END)
 ;; Create a tgz file of the Nu sources.
 (task "archive" is
       (SH <<-END
-git-archive --format=tar --prefix=Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}/ HEAD |\
+git archive --format=tar --prefix=Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}/ HEAD |\
 gzip -c > Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}.tgz
 END))
 
