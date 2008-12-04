@@ -34,54 +34,54 @@
 
 (class NSString
      ;; Change the extension at the end of a file name to a new specified value.
-     (imethod (id) stringByReplacingPathExtensionWith:(id) newExtension is
-          ((self stringByDeletingPathExtension) stringByAppendingPathExtension:newExtension))
+     (- (id) stringByReplacingPathExtensionWith:(id) newExtension is
+        ((self stringByDeletingPathExtension) stringByAppendingPathExtension:newExtension))
      
      ;; Get the directory name component of a file name.
-     (imethod (id) dirName is
-          (set components (self componentsSeparatedByString:"/"))
-          (set result ((NSMutableString alloc) init))
-          ((- (components count) 1) times:
-           (do (n)
-               (result appendString:(components objectAtIndex:n))
-               (result appendString:"/")))
-          result)
+     (- (id) dirName is
+        (set components (self componentsSeparatedByString:"/"))
+        (set result ((NSMutableString alloc) init))
+        ((- (components count) 1) times:
+         (do (n)
+             (result appendString:(components objectAtIndex:n))
+             (result appendString:"/")))
+        result)
      
      ;; Get the file name component of a file name.
-     (imethod (id) fileName is
-          (set components (self componentsSeparatedByString:"/"))
-          (components objectAtIndex:(- (components count) 1))))
+     (- (id) fileName is
+        (set components (self componentsSeparatedByString:"/"))
+        (components objectAtIndex:(- (components count) 1))))
 
 (class NSDictionary
      ;; Create a dictionary from a list.
-     (cmethod (id) dictionaryWithList: (id) l is
-          (set dict ((NSMutableDictionary alloc) init))
-          (l eachPair: (do (key object) (dict setObject:object forKey:key)))
-          dict))
+     (+ (id) dictionaryWithList: (id) l is
+        (set dict ((NSMutableDictionary alloc) init))
+        (l eachPair: (do (key object) (dict setObject:object forKey:key)))
+        dict))
 
 (class NSArray
      ;; Create an array from a list.
-     (cmethod (id) arrayWithList:(id) list is
-          (set l ((NSMutableArray alloc) init))
-          (list each: (do (item) (if item (l addObject:item))))
-          l)
+     (+ (id) arrayWithList:(id) list is
+        (set l ((NSMutableArray alloc) init))
+        (list each: (do (item) (if item (l addObject:item))))
+        l)
      
      ;; Join the non-null members of an array into a string with array elements separated by spaces.
-     (imethod (id) join is
-          ((self select:(do (x) x)) componentsJoinedByString:" "))
+     (- (id) join is
+        ((self select:(do (x) x)) componentsJoinedByString:" "))
      
      ;; Get the element of an array with the maximum value (as obtained using the specified block).
-     (imethod (id) maximum:(id)block from:(id)initial is
-          (self reduce:
-                (do (max d)
-                    (set value (block d))
-                    (if (> value max) (then value) (else max)))
-                from: initial)))
+     (- (id) maximum:(id)block from:(id)initial is
+        (self reduce:
+              (do (max d)
+                  (set value (block d))
+                  (if (> value max) (then value) (else max)))
+              from: initial)))
 
 (class NuCell
      ;; Join the elements of a list into a string with list elements separated by spaces.
-     (imethod (id) join is
-          ((NSArray arrayWithList:self) join)))
+     (- (id) join is
+        ((NSArray arrayWithList:self) join)))
 
 ;; creates a named directory if it does not already exist
 (function make-directory (dir)
@@ -130,61 +130,61 @@
      (ivar (id) result)			 ;; the result of executing the task
      
      ;; @discussion Create a task with a specified name.
-     (imethod (id) initWithName:(id) name is
-          (super init)
-          (set @name name)
-          (set @isFile 1)
-          (set @dependencies ((NSMutableArray alloc) init))
-          self)
+     (- (id) initWithName:(id) name is
+        (super init)
+        (set @name name)
+        (set @isFile 1)
+        (set @dependencies ((NSMutableArray alloc) init))
+        self)
      
      ;; Get a task's name.
-     (imethod (id) name is @name)
+     (- (id) name is @name)
      
      ;; Get a task's description.
-     (imethod (id) taskDescription is @taskDescription)
+     (- (id) taskDescription is @taskDescription)
      
      ;; Get the array containing the task's dependencies.
-     (imethod (id) dependencies is @dependencies)
+     (- (id) dependencies is @dependencies)
      
      ;; Set the description of a task.
-     (imethod (void) setTaskDescription:(id) taskDescription is (set @taskDescription taskDescription))
+     (- (void) setTaskDescription:(id) taskDescription is (set @taskDescription taskDescription))
      
      ;; Set the action of a task to a specified block.
-     (imethod (void) setAction:(id) action is (set @action action))
+     (- (void) setAction:(id) action is (set @action action))
      
      ;; Indicate whether or not a task is a file creation task.
-     (imethod (void) setIsFile:(int) f is (set @isFile f))
+     (- (void) setIsFile:(int) f is (set @isFile f))
      
      ;; Determine whether or not a task is a file creation task.
-     (imethod (int) isFile is @isFile)
+     (- (int) isFile is @isFile)
      
      ;; Get a time stamp for the target of a task.
-     (imethod (id) timestamp is
-          (set date (NSFileManager creationTimeForFileNamed:@name))
-          (cond ((eq @isFile 0) 0)
-                (date           ((NSFileManager modificationTimeForFileNamed:@name) timeIntervalSinceReferenceDate))
-                (else           0)))
+     (- (id) timestamp is
+        (set date (NSFileManager creationTimeForFileNamed:@name))
+        (cond ((eq @isFile 0) 0)
+              (date           ((NSFileManager modificationTimeForFileNamed:@name) timeIntervalSinceReferenceDate))
+              (else           0)))
      
      ;; Attempt to update a task, first by updating all its dependencies,
      ;; then, if no errors occurred, by performing the the action of a task.
-     (imethod (id) update is
-          (unless @result
-                  ;; first update all dependencies
-                  (set @result (@dependencies reduceLeft: (do (r d) (+ r (d update))) from:0))
-                  
-                  ;; continue only if there were no errors
-                  (if (eq @result 0)
-                      ;; then get the largest timestamp -- it represents the newest dependency
-                      (set dependency-timestamp
-                           (@dependencies maximum:(do (d) (d timestamp)) from:0))
-                      ;; if the largest timestamp is greater than or equal to this task's timestamp, perform the task's action
-                      (if (or (eq (self timestamp) 0) (> dependency-timestamp (self timestamp)))
-                          ;;(puts "task #{@name} dependency #{dependency-timestamp} self #{(self timestamp)}")
-                          (set @result (@action self))
-                          (unless @result (set @result 0))
-                          nil))
-                  (if $verbose (puts "task #{@name} result is #{@result}")))
-          @result))
+     (- (id) update is
+        (unless @result
+                ;; first update all dependencies
+                (set @result (@dependencies reduceLeft: (do (r d) (+ r (d update))) from:0))
+                
+                ;; continue only if there were no errors
+                (if (eq @result 0)
+                    ;; then get the largest timestamp -- it represents the newest dependency
+                    (set dependency-timestamp
+                         (@dependencies maximum:(do (d) (d timestamp)) from:0))
+                    ;; if the largest timestamp is greater than or equal to this task's timestamp, perform the task's action
+                    (if (or (eq (self timestamp) 0) (> dependency-timestamp (self timestamp)))
+                        ;;(puts "task #{@name} dependency #{dependency-timestamp} self #{(self timestamp)}")
+                        (set @result (@action self))
+                        (unless @result (set @result 0))
+                        nil))
+                (if $verbose (puts "task #{@name} result is #{@result}")))
+        @result))
 
 ;; do not use this directly. It is common code extracted from the file and task macros.
 (macro task-helper
@@ -456,6 +456,44 @@
            (system "rm -rf dmg")))
 
 
+;; use this to create all the linking and assembly tasks to build a standalone "tool" executable
+(macro tool-tasks
+     (unless (and @arch (@arch length))
+             (set @arch (list (NSString stringWithShellCommand:"arch"))))
+     
+     (unless @ldflags (set @ldflags ""))
+     (unless @tool_extras (set @tool_extras ""))
+     
+     ;; executable architecture-specific executable
+     (set @tool_executables (NSMutableArray array))
+     (@arch each:
+            (do (architecture)
+                (set tool_executable "build/#{architecture}/#{@tool}")
+                (@tool_executables addObject:tool_executable)
+                (file tool_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                      (set command "gcc #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{@tool_extras} #{@ldflags} -o '#{(target name)}'")
+                      (SH command))))
+     
+     ;; tool fat archive
+     (set @tool_executable_name "#{@tool}")
+     (file @tool_executable_name => @tool_executables is
+           (if (> (@tool_executables count) 1)
+               (then (set command "lipo -create #{(@tool_executables join)} -output '#{@tool_executable_name}'"))
+               (else (set command "cp '#{(@tool_executables objectAtIndex:0)}' '#{@tool_executable_name}'")))
+           (SH command))
+     
+     (task "tool" => @tool_executable_name)
+     
+     (task "run" => "tool" is
+           (SH @tool))
+     
+     (task "gdb" => "tool" is
+           (SH  "gdb '#{@tool}'"))
+     
+     (task "clobber" => "clean" is
+           (system "rm -rf '#{@tool}'")))
+
+
 ;; use this to create all the linking and assembly tasks to build a Cocoa framework
 (macro framework-tasks
      (unless (and @arch (@arch length))
@@ -571,7 +609,11 @@
                    (SH "cd #{@framework_dir}; ln -sf Versions/Current/#{@framework} #{@framework}"))
            0)
      
-     (task "framework" => @framework_executable_name @framework_headers_dir "framework_resources" framework_infoplist "framework_links"))
+     (task "framework" => @framework_executable_name @framework_headers_dir "framework_resources" framework_infoplist "framework_links")
+     
+     (task "clobber" => "clean" is
+           (system "rm -rf '#{@framework_dir}'")))
+
 
 ;; use this to create all the linking and assembly tasks to build a Cocoa bundle
 (macro bundle-tasks
@@ -642,7 +684,11 @@
      (file bundle_pkginfo => @bundle_contents_dir is
            (SH "echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
      
-     (task "bundle" => @bundle_executable_name "bundle_resources" bundle_infoplist bundle_pkginfo))
+     (task "bundle" => @bundle_executable_name "bundle_resources" bundle_infoplist bundle_pkginfo)
+     
+     (task "clobber" => "clean" is
+           (system "rm -rf '#{@bundle_dir}'")))
+
 
 ;; use this to create all the linking and assembly tasks to build a statically-linkable library
 (macro library-tasks
@@ -670,7 +716,11 @@
                (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
            (SH command))
      
-     (task "library" => @library_executable_name))
+     (task "library" => @library_executable_name)
+     
+     (task "clobber" => "clean" is
+           (system "rm -rf '#{@library_executable_name}'")))
+
 
 ;; use this to create all the linking and assembly tasks to build a dynamically-linkable library
 (macro dylib-tasks
@@ -702,7 +752,10 @@
                     (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
            (SH command))
      
-     (task "dylib" => @library_executable_name))
+     (task "dylib" => @library_executable_name)
+     
+     (task "clobber" => "clean" is
+           (system "rm -rf '#{@library_executable_name}'")))
 
 
 ;; @abstract A project consisting of an interrelated set of NukeTasks.
@@ -715,64 +768,64 @@
      (ivars)
      
      ;; Get the dictionary of tasks managed by a project.
-     (imethod (id) tasks is @tasks)
+     (- (id) tasks is @tasks)
      
      ;; Get a task by its name.
-     (imethod (id) taskNamed:(id) taskName is
-          (set mytask (@tasks objectForKey:taskName))
-          (if (eq mytask nil)
-              (set mytask ((NukeTask alloc) initWithName:taskName))
-              (@tasks setObject:mytask forKey:taskName))
-          mytask)
+     (- (id) taskNamed:(id) taskName is
+        (set mytask (@tasks objectForKey:taskName))
+        (if (eq mytask nil)
+            (set mytask ((NukeTask alloc) initWithName:taskName))
+            (@tasks setObject:mytask forKey:taskName))
+        mytask)
      
      ;; Add a new task by to a project.
      ;; The new task is specified by its name.
      ;; The task action should be specified as a block.
-     (imethod (id) addTask:(id) taskName action:(id) action is
-          (set mytask (self taskNamed:taskName))
-          (mytask setAction:action)
-          mytask)
+     (- (id) addTask:(id) taskName action:(id) action is
+        (set mytask (self taskNamed:taskName))
+        (mytask setAction:action)
+        mytask)
      
      ;; Add a new task by to a project.
      ;; The new task is specified by its name.
      ;; The task description is a string describing what it does.
      ;; The task action should be specified as a block.
-     (imethod (id) addTask:(id) taskName description:(id) description action:(id) action is
-          (set mytask (self taskNamed:taskName))
-          (mytask setTaskDescription:description)
-          (mytask setAction:action)
-          mytask)
+     (- (id) addTask:(id) taskName description:(id) description action:(id) action is
+        (set mytask (self taskNamed:taskName))
+        (mytask setTaskDescription:description)
+        (mytask setAction:action)
+        mytask)
      
      ;; Add a dependency between named tasks.
-     (imethod (void) addDependency:(id) taskName on:(id) dependency is
-          (if (eq YES (dependency isKindOfClass:NSString))
-              (then
-                   (((self taskNamed:taskName) dependencies) addObject: (self taskNamed:dependency)))
-              (else ;; if it's not a string, the dependency must be enumerable
-                    (dependency each:
-                         (do (element)
-                             (self addDependency:taskName on:element))))))
+     (- (void) addDependency:(id) taskName on:(id) dependency is
+        (if (eq YES (dependency isKindOfClass:NSString))
+            (then
+                 (((self taskNamed:taskName) dependencies) addObject: (self taskNamed:dependency)))
+            (else ;; if it's not a string, the dependency must be enumerable
+                  (dependency each:
+                       (do (element)
+                           (self addDependency:taskName on:element))))))
      
      ;; Perform the tasks needed to complete a named target task.
-     (imethod (void) nuke:(id) targetName is
-          (set target (@tasks objectForKey:targetName))
-          (if target
-              (then (target update))
-              (else (puts "error, unknown target: #{targetName}"))))
+     (- (void) nuke:(id) targetName is
+        (set target (@tasks objectForKey:targetName))
+        (if target
+            (then (target update))
+            (else (puts "error, unknown target: #{targetName}"))))
      
      ;; Initialize a NukeProject.
-     (imethod (id) init is
-          (super init)
-          (set @tasks ((NSMutableDictionary alloc) init))
-          self)
+     (- (id) init is
+        (super init)
+        (set @tasks ((NSMutableDictionary alloc) init))
+        self)
      
      ;; Load and evaluate code from a named file. This is typically used to read a Nukefile.
-     (imethod (id) load: (id) filename is
-          (ifLinux
-                  (eval (parse (NSString stringWithContentsOfFile:filename)))
-                  else
-                  (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))
-          self))
+     (- (id) load: (id) filename is
+        (ifLinux
+                (eval (parse (NSString stringWithContentsOfFile:filename)))
+                else
+                (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))
+        self))
 
 ;; Helper functions & extensions
 (function includedInOutput (task)
@@ -780,22 +833,22 @@
 
 (class NSString
      ;; Create a string consisting of the specified number of spaces.
-     (cmethod (id) spaces: (id) count is
-          (unless $spaces (set $spaces (NSMutableDictionary dictionary)))
-          (unless (set spaces ($spaces objectForKey:count))
-                  (set spaces "")
-                  (set c count)
-                  (unless c (set c 0))
-                  (while (> c 0)
-                         (spaces appendString:" ")
-                         (set c (- c 1)))
-                  ($spaces setObject:spaces forKey:count))
-          (NSMutableString stringWithString:spaces))
+     (+ (id) spaces: (id) count is
+        (unless $spaces (set $spaces (NSMutableDictionary dictionary)))
+        (unless (set spaces ($spaces objectForKey:count))
+                (set spaces "")
+                (set c count)
+                (unless c (set c 0))
+                (while (> c 0)
+                       (spaces appendString:" ")
+                       (set c (- c 1)))
+                ($spaces setObject:spaces forKey:count))
+        (NSMutableString stringWithString:spaces))
      
      ;; Test to see whether a string begins with a specified substring.
-     (imethod (id) beginsWithString:(id) string is
-          (set range (self rangeOfString:string))
-          (and range (eq (range first) 0))))
+     (- (id) beginsWithString:(id) string is
+        (set range (self rangeOfString:string))
+        (and range (eq (range first) 0))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; main program
