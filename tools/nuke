@@ -570,6 +570,18 @@
                     0)
               (task "framework_resources" => "#{@framework_resource_localized_dir}/#{g}")))
      
+     ;; copy filelist defined in @public_headers into the framework
+     (task "copy_framework_headers" => @framework_headers_dir)
+     (@public_headers each:
+          (do (h)
+              (set baseName (h lastPathComponent))
+              (set targetFile (@framework_headers_dir stringByAppendingPathComponent:baseName))
+              (set sourceFile h)
+              (file targetFile => h is
+                    (SH "cp -p '#{sourceFile}' '#{targetFile}'"))
+              (task "copy_framework_headers" => targetFile @framework_headers_dir)))
+     (task "framework" => "copy_framework_headers")
+     
      ;; copy datamodels into the framework
      (@datamodels each:
           (do (model)

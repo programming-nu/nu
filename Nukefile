@@ -84,7 +84,7 @@ END)
 
 (ifDarwin
          (then (set @cflags "-Wall -g -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
-               (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
+               (set @mflags "-fobjc-exceptions ")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
          (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
                (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")))
 
@@ -114,18 +114,16 @@ END)
                           ((@frameworks map: (do (framework) " -framework #{framework}")) join)
                           ((@libs map: (do (lib) " -l#{lib}")) join))
                      join))))
+
+(ifDarwin
+         (set @public_headers (filelist "include/Nu/Nu.h")))
+
 ;; Setup the tasks for compilation and framework-building.
 ;; These are defined in the nuke application source file.
 (compilation-tasks)
 (ifDarwin
          (then (framework-tasks))
          (else (dylib-tasks)))
-
-(task "framework" => "#{@framework_headers_dir}/Nu.h")
-
-(ifDarwin
-         (file "#{@framework_headers_dir}/Nu.h" => "objc/Nu.h" @framework_headers_dir is
-               (SH "cp include/Nu/Nu.h #{@framework_headers_dir}")))
 
 (task "clobber" => "clean" is
       (ifDarwin
