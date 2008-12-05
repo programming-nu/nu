@@ -104,9 +104,9 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 
 - (void) removeSymbol:(NuSymbol *) symbol
 {
-    //NSLog(@"removing symbol %@ from table", [symbol stringValue]);
     st_delete(symbol_table, (st_data_t *) &(symbol->string), 0);
     [symbol release]; // on behalf of the table
+    [[NSGarbageCollector defaultCollector] enableCollectorForPointer: symbol];
 }
 
 @end
@@ -117,7 +117,6 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 {
     free(string);
     [super dealloc];
-    [[NSGarbageCollector defaultCollector] enableCollectorForPointer:self];
 }
 
 - (BOOL) isEqual: (NuSymbol *)other

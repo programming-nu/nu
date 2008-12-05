@@ -646,7 +646,6 @@ limitations under the License.
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
         id object = [context lookupObjectForKey:[symbolTable symbolWithCString:"self"]];
         id ivar = [[symbol stringValue] substringFromIndex:1];
-        //NSLog(@"setting value for ivar %@ to %@", ivar, result);
         [object setValue:result forIvar:ivar];
     }
     else {
