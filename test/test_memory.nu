@@ -5,6 +5,7 @@
 
 (class TestMemory is NuTestCase
      
+(unless ((NSGarbageCollector defaultCollector) isEnabled)
      (- testCreationInObjCUsingObjC is
         (NuTestHelper resetDeallocationCount)
         (5 times:
@@ -58,7 +59,7 @@
              (f setZ:(f x))
              (set f nil))
         (assert_equal 3 (NuTestHelper deallocationCount))
-        (assert_equal 3 (IvarReleaseHelper myDeallocationCount))))
+        (assert_equal 3 (IvarReleaseHelper myDeallocationCount)))))
 
 (class NuTestHelper
      (+ new is
