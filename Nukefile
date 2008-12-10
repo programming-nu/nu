@@ -1,6 +1,6 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(global VERSION '(0 3 3)) #(major minor tweak)
+(global VERSION '(0 4 0)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))

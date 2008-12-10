@@ -6,7 +6,7 @@
 (class TestMacrox is NuTestCase
      
      (imethod (id) testIncMacro is
-          (defmacro inc! `(set ,(car margs) (+ ,(car margs) 1)))
+          (macro inc! `(set ,(car margs) (+ ,(car margs) 1)))
           
           ;; Test the macro evaluation
           (set a 0)
@@ -18,9 +18,9 @@
           (assert_equal "(set a (+ a 1))" (newBody stringValue)))
      
      (imethod (id) testNestedMacro is
-          (defmacro inc! `(set ,(car margs) (+ ,(car margs) 1)))
+          (macro inc! `(set ,(car margs) (+ ,(car margs) 1)))
           
-          (defmacro inc2!
+          (macro inc2!
                `(progn
                       (inc! ,(car margs))
                       (inc! ,(car margs))))
@@ -34,7 +34,7 @@
      
      
      (imethod (id) testFactorialMacro is
-          (defmacro mfact
+          (macro mfact
                (set __x (car margs))
                `(if (== ,__x 0)
                     (then 1)

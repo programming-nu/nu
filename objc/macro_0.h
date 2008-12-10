@@ -1,6 +1,6 @@
 /*!
-@header macro.h
-@discussion Declarations for the NuMacro class.
+@header macro_0.h
+@discussion Declarations for the NuMacro_0 class.
 @copyright Copyright (c) 2007 Neon Design Technology, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@ limitations under the License.
 @class NuSymbolTable;
 
 /*!
-    @class NuMacro
+    @class NuMacro_0
     @abstract The Nu implementation of macros.
     @discussion Macros allow Nu programmers to arbitrarily extend the Nu language.
 
@@ -44,7 +44,7 @@ limitations under the License.
 	that are guaranteed to be unique. In Lisp terminology, these generated
 	symbols are called "gensyms".   
  */
-@interface NuMacro : NSObject
+@interface NuMacro_0 : NSObject
 {
     NSString *name;
     NuCell *body;

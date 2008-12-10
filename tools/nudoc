@@ -19,7 +19,7 @@
 
 (load "doc")
 
-(macro increment (eval '(set (unquote (margs car)) (+ (unquote (margs car)) 1))))
+(macro-0 increment (eval '(set (unquote (margs car)) (+ (unquote (margs car)) 1))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; main program

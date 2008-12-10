@@ -22,8 +22,8 @@ limitations under the License.
 #import "bridge.h"
 #import "symbol.h"
 #import "block.h"
-#import "macro.h"
-#import "defmacro.h"
+#import "macro_0.h"
+#import "macro_1.h"
 #import "class.h"
 #import "objc_runtime.h"
 #import "object.h"
@@ -941,16 +941,16 @@ limitations under the License.
 
 @end
 
-@interface Nu_macro_operator : NuOperator {}
+@interface Nu_macro_0_operator : NuOperator {}
 @end
 
-@implementation Nu_macro_operator
+@implementation Nu_macro_0_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id name = [cdr car];
     id body = [cdr cdr];
 
-    NuMacro *macro = [[NuMacro alloc] initWithName:name body:body];
+    NuMacro_0 *macro = [[NuMacro_0 alloc] initWithName:name body:body];
                                                   // this defines the function in the calling context
     [context setPossiblyNullObject:macro forKey:name];
     return macro;
@@ -959,19 +959,19 @@ limitations under the License.
 @end
 
 
-@interface Nu_defmacro_operator : NuOperator {}
+@interface Nu_macro_1_operator : NuOperator {}
 @end
 
-@implementation Nu_defmacro_operator
+@implementation Nu_macro_1_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id name = [cdr car];
     id body = [cdr cdr];
 
-    NuDefmacro *defmacro = [[NuDefmacro alloc] initWithName:name body:body];
+    NuMacro_1 *macro = [[NuMacro_1 alloc] initWithName:name body:body];
                                                   // this defines the function in the calling context
-    [context setPossiblyNullObject:defmacro forKey:name];
-    return defmacro;
+    [context setPossiblyNullObject:macro forKey:name];
+    return macro;
 }
 
 @end
@@ -2107,13 +2107,13 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("def",      Nu_function_operator);
     install("function", Nu_function_operator);
-    install("macro",    Nu_macro_operator);
-    install("macro-0",  Nu_macro_operator);
     install("progn",    Nu_progn_operator);
     install("then",     Nu_progn_operator);
     install("else",     Nu_progn_operator);
 
-	install("defmacro", Nu_defmacro_operator);
+    install("macro-0",	Nu_macro_0_operator);
+	install("macro-1",	Nu_macro_1_operator);
+    install("macro",    Nu_macro_1_operator);
     install("macrox",   Nu_macrox_operator);
 
 	install("quasiquote",			Nu_quasiquote_operator);

@@ -24,7 +24,7 @@
 ;; returns
 ;;
 ;;   (1 2 (3 4))
-(macro match-let1
+(macro-0 match-let1
      (set __pat (first margs))
      (set __seq (eval (second margs)))
      (set __body (cdr (cdr margs)))
@@ -45,7 +45,7 @@
 ;;   (1 2 (3 4))
 ;;
 ;; The name is short for "destructuring set."  The semantics are similar to "set."
-(macro match-set
+(macro-0 match-set
      (set __pat (first margs))
      (set __seq (eval (second margs)))
      (set __bindings (destructure __pat __seq))
@@ -153,7 +153,7 @@
 
 ;; Matches an object against some patterns with associated expressions.
 ;; TODO(ijt): boolean conditions for patterns (like "when" in ocaml)
-(macro match
+(macro-0 match
      (set __obj (eval (first margs)))
      (set __patterns (rest margs))
      (set __expr (_find-first-match __obj __patterns))

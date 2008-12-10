@@ -1,5 +1,5 @@
 /*!
-@file macro.m
+@file macro_0.m
 @description Nu macros.
 @copyright Copyright (c) 2007 Neon Design Technology, Inc.
 
@@ -15,7 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#import "macro.h"
+#import "macro_0.h"
 #import "cell.h"
 #import "symbol.h"
 #import "class.h"
@@ -24,7 +24,7 @@ limitations under the License.
 
 extern id Nu__null;
 
-@implementation NuMacro
+@implementation NuMacro_0
 
 + (id) macroWithName:(NSString *)n body:(NuCell *)b
 {
@@ -81,7 +81,7 @@ extern id Nu__null;
 
 - (NSString *) stringValue
 {
-    return [NSString stringWithFormat:@"(macro %@ %@)", name, [body stringValue]];
+    return [NSString stringWithFormat:@"(macro-0 %@ %@)", name, [body stringValue]];
 }
 
 - (id) body:(NuCell *) oldBody withGensymPrefix:(NSString *) prefix symbolTable:(NuSymbolTable *) symbolTable

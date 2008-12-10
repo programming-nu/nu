@@ -1,5 +1,5 @@
 /*!
-@file defmacro.m
+@file macro_1.m
 @description Nu macros with a more Lispy expand/eval cycle.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#import "macro.h"
-#import "defmacro.h"
+#import "macro_0.h"
+#import "macro_1.h"
 #import "cell.h"
 #import "symbol.h"
 #import "class.h"
@@ -30,7 +30,7 @@ extern id Nu__null;
 #define DefMacroLog(arg...)
 #endif
 
-@implementation NuDefmacro
+@implementation NuMacro_1
 
 + (id) macroWithName:(NSString *)n body:(NuCell *)b
 {
@@ -50,7 +50,7 @@ extern id Nu__null;
 
 - (NSString *) stringValue
 {
-    return [NSString stringWithFormat:@"(defmacro %@ %@)", name, [body stringValue]];
+    return [NSString stringWithFormat:@"(macro %@ %@)", name, [body stringValue]];
 }
 
 - (id) expandAndEval:(id)cdr context:(NSMutableDictionary*)calling_context evalFlag:(BOOL)evalFlag
@@ -74,15 +74,15 @@ extern id Nu__null;
     id bodyToEvaluate = (gensymCount == 0)
         ? (id)body : [self body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
 
-    DefMacroLog(@"defmacro evaluating: %@", [bodyToEvaluate stringValue]);
-    DefMacroLog(@"defmacro context: %@", [calling_context stringValue]);
+    DefMacroLog(@"macro evaluating: %@", [bodyToEvaluate stringValue]);
+    DefMacroLog(@"macro context: %@", [calling_context stringValue]);
 
 	// Macro expansion
     id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
     while (cursor && (cursor != Nu__null)) {
-		DefMacroLog(@"defmacro eval cursor: %@", [cursor stringValue]);
+		DefMacroLog(@"macro eval cursor: %@", [cursor stringValue]);
         value = [[cursor car] evalWithContext:calling_context];
-		DefMacroLog(@"defmacro expand value: %@", [value stringValue]);
+		DefMacroLog(@"macro expand value: %@", [value stringValue]);
         cursor = [cursor cdr];
     }
 
@@ -92,7 +92,7 @@ extern id Nu__null;
 	if (evalFlag)
 	{
 	    value = [value evalWithContext:calling_context];
-		DefMacroLog(@"defmacro eval value: %@", [value stringValue]);		
+		DefMacroLog(@"macro eval value: %@", [value stringValue]);		
 	}
 
     // restore the old value of margs
@@ -103,7 +103,7 @@ extern id Nu__null;
         [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
     }
 
-	DefMacroLog(@"result is %@", value);
+	DefMacroLog(@"macro result: %@", value);
     return value;
 }
 
