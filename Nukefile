@@ -1,6 +1,6 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(global VERSION '(0 3 2)) #(major minor tweak)
+(global VERSION '(0 3 3)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
@@ -84,7 +84,7 @@ END)
 
 (ifDarwin
          (then (set @cflags "-Wall -g -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
-               (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
+               (set @mflags "-fobjc-exceptions -fobjc-gc")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
          (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
                (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")))
 
@@ -114,18 +114,16 @@ END)
                           ((@frameworks map: (do (framework) " -framework #{framework}")) join)
                           ((@libs map: (do (lib) " -l#{lib}")) join))
                      join))))
+
+(ifDarwin
+         (set @public_headers (filelist "include/Nu/Nu.h")))
+
 ;; Setup the tasks for compilation and framework-building.
 ;; These are defined in the nuke application source file.
 (compilation-tasks)
 (ifDarwin
          (then (framework-tasks))
          (else (dylib-tasks)))
-
-(task "framework" => "#{@framework_headers_dir}/Nu.h")
-
-(ifDarwin
-         (file "#{@framework_headers_dir}/Nu.h" => "objc/Nu.h" @framework_headers_dir is
-               (SH "cp include/Nu/Nu.h #{@framework_headers_dir}")))
 
 (task "clobber" => "clean" is
       (ifDarwin
@@ -158,7 +156,7 @@ END)
       (SH "ruby -rtest/unit -e0 -- -v --pattern '/test_.*\.rb^/'"))
 
 (task "test" => "framework" "nush" is
-      (SH "nutest test/test_*.nu"))
+      (SH "./nush tools/nutest test/test_*.nu"))
 
 (task "doc" is
       (SH "nudoc"))
@@ -175,7 +173,7 @@ END)
 (set @installprefix "#{@destdir}#{@prefix}")
 
 (task "install" => "nush" is
-      ('("nuke" "nubile" "nutemplate" "nutest" "nudoc" "nubake") each:
+      ('("nuke" "nubile" "nutemplate" "nutest" "nudoc" "nubake" "nutmbundle") each:
         (do (program)
             (SH "sudo cp tools/#{program} #{@installprefix}/bin")))
       (SH "sudo cp nush #{@installprefix}/bin")
@@ -232,7 +230,7 @@ END)
 ;; Create a tgz file of the Nu sources.
 (task "archive" is
       (SH <<-END
-git-archive --format=tar --prefix=Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}/ HEAD |\
+git archive --format=tar --prefix=Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}/ HEAD |\
 gzip -c > Nu-#{(VERSION first)}.#{(VERSION second)}.#{(VERSION third)}.tgz
 END))
 

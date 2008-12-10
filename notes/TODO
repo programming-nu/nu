@@ -52,7 +52,6 @@ macros, and methods.
 
 * (maybe) replace st.[hc] with NSHashTables and NSMapTables.
 
-
 COMPLETED
 ---------
 
@@ -107,3 +106,4 @@ COMPLETED
 
 * nuke builds for apps with spaces in their names.
 
+* ocaml-like pattern matching, a.k.a. destructuring-bind, in destructuring.nu as dbind, dset, and match.

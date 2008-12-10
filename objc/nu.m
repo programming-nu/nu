@@ -140,6 +140,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 }
                 else if (!strcmp(argv[i], "-v")) {
                     printf("Nu %s (%s)\n", NU_VERSION, NU_RELEASE_DATE);
+                    didSomething = true;
                 }
                 else if (!strcmp(argv[i], "-i")) {
                     goInteractive = true;

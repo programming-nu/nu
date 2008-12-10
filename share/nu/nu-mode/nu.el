@@ -26,6 +26,13 @@
 ;; at gmail.com.
 
 ;;; History:
+;; 2008-09-16 Aleksandr Skobelev
+;;    - added (required 'cl)
+;;
+;; 2008-07-13 Aleksandr Skobelev
+;;    - added import keyword
+;;    - updated nu-indent-line to better handle lists with regexp as the first element
+;;
 ;; 2008-04-04 Aleksandr Skobelev
 ;;    - fixed bug in NU-FORWARD-SEXP1 and NU-BACKWARD-SEXP1 with skipping closing parens
 ;;      and made them more PAREDIT compatible (signal an error on list bounds);
@@ -72,12 +79,14 @@
 
 ;;; Code:
 
+(require 'cl)
 (require 'lisp-mode)
+(require 'cl)
 
 (autoload 'run-nush "nush" "Run an inferior Nush process." t)
 (autoload 'switch-to-nush "nush" "Switch to an inferior Nush process." t)
 
-(defconst nu-version "2008-04-04"
+(defconst nu-version "2008-09-16"
   "Nu Mode version number.")
 
 (defgroup nu nil
@@ -304,7 +313,7 @@ See `run-hooks'."
               "synchronized"
 
               ;; System Operators
-              "load" "system"
+              "load" "system" "import"
               ) t)
            "\\>")
           'font-lock-keyword-face)
@@ -734,6 +743,10 @@ See `run-hooks'."
                       (backward-char)
                       (nu-backward-sexp1)) )))))))))
 
+;; incf is not defined in GNU Emacs 22.1.1 (mac-apple-darwin, Carbon Version 1.6.0)
+;; and possibly elsewhere.
+(defmacro incf (x)
+  `(setq ,x (+ ,x 1)))
 
 ;; FORWARD-SEXP ----------------------------------------------------------------
 (defun nu-forward-sexp (&optional arg)
@@ -830,9 +843,11 @@ See `run-hooks'."
                      is-has-found)
 
                 ;; if lisp-indent is not nil, redefine it only, if the first item in
-                ;; the list is a list
+                ;; the list is a list or regexp
                 (when (or (not lisp-indent)
-                          (= (char-after first-sexp-beg) ?\( ))
+                          (= (char-after first-sexp-beg) ?\( ) ;; list check
+                          (and (= (char-after first-sexp-beg) ?/ ) ;; regexp check
+                               (< 1 (- first-sexp-end first-sexp-beg))))
         
                   (goto-char first-sexp-end)
                   

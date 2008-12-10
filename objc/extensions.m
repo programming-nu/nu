@@ -34,7 +34,7 @@ extern id Nu__null;
 @implementation NSNull(Nu)
 - (bool) atom
 {
-    return false;
+    return true;
 }
 
 - (int) length

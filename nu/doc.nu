@@ -178,7 +178,7 @@
      (imethod (void) addClass: (id) class is (@classes addObject:class)))
 
 ;; Extract information from one line of class and method comments.
-(macro parseClassAndMethodCommentLine
+(macro-0 parseClassAndMethodCommentLine
      (cond ((line beginsWithString:"@class")
             (set @class (line substringFromIndex:(+ 1 ("@class" length)))))
            ((line beginsWithString:"@category") ;; category is an alias for class
@@ -197,7 +197,7 @@
                 (@discussion appendString:line))))
 
 ;; Extract documentation information from class and method comments.
-(macro parseClassAndMethodComments
+(macro-0 parseClassAndMethodComments
      (set @discussion (NSMutableString string))
      (if @comments
          (if (set match (objc-comment-pattern findInString:@comments))
@@ -469,7 +469,7 @@ END))
                                              (set $comments "#{(match groupAtIndex:0)}"))
                         (else nil)))))
 
-(macro site-header
+(macro-0 site-header
      (if (eq $sitename "programming.nu")
          (then <<-END
 <div style="float:left; margin-right:10px">
@@ -790,7 +790,7 @@ END))
 ;;
 ;; Main program starts here
 ;;
-(macro nudoc
+(macro-0 nudoc
      (set $classes (NSMutableDictionary dictionary))
      (set $files (NSMutableDictionary dictionary))
      

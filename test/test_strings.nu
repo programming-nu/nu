@@ -17,6 +17,15 @@
           (assert_equal 34 ("\"" characterAtIndex:0))
           (assert_equal 92 ("\\" characterAtIndex:0)))
      
+     (imethod (id) testInterpolation is
+          (set x "")
+          (assert_equal "" "#{x}")
+
+          (set x "blueberry")
+          (assert_equal "blueberry pancakes" "#{x} pancakes")
+
+          (assert_equal "24" "#{(* 6 4)}"))
+
      (imethod (id) testOctalEscapedStrings is
           (if (eq (uname) "Darwin") ;; requires UTF-8
               (assert_equal 0 ("\000" characterAtIndex:0)))

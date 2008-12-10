@@ -62,13 +62,23 @@ static int deallocationCount = 0;
     [super dealloc];
 }
 
+- (void) finalize
+{
+    if (verbose_helper)
+        NSLog(@"(NuTestHelper finalize %p)", self);
+    deallocationCount++;
+    [super finalize];
+}
+
 + (void) resetDeallocationCount
 {
+	[[NSGarbageCollector defaultCollector] collectExhaustively];
     deallocationCount = 0;
 }
 
 + (int) deallocationCount
 {
+	[[NSGarbageCollector defaultCollector] collectExhaustively];
     return deallocationCount;
 }
 

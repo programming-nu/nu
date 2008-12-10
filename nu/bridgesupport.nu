@@ -21,13 +21,13 @@
                             functions:(dict)))	;; for each function, remember its signature
 
 (global import
-        (macro _ 
+        (macro-0 _ 
              (NuBridgeSupport importFramework:((margs car) stringValue) 
                   fromPath:(if (margs cdr) (then (eval ((margs cdr) car))) (else nil)) 
                   intoDictionary:BridgeSupport)))
 
 (global import-system 
-        (macro _
+        (macro-0 _
              (((NSString stringWithShellCommand:"ls /System/Library/Frameworks") lines) each: 
               (do (line)
                   (set name ((line componentsSeparatedByString:".") 0))
