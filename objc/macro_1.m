@@ -84,6 +84,7 @@ extern id Nu__null;
     NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
 
 	
+	// Get the unevaluated values of the macro's parameter list
 	id plist = parameters;
 	id vlist = cdr;
 
@@ -91,20 +92,50 @@ extern id Nu__null;
 
 	while (plist && (plist != Nu__null))
 	{
-		// jsb TODO: "auto-gensym" these parameters
-		id param = [plist car];
-		id value = [vlist car];
-		
-		id pvalue = [calling_context objectForKey:param];
-		
+		id parameter = [plist car];
+
+		// Save the values of any variables in the calling context that are 
+		// masked by the macro arguments.
+		id pvalue = [calling_context objectForKey:parameter];
+
 		if (pvalue)
 		{
-			[maskedVariables setPossiblyNullObject:pvalue forKey:param];
+			[maskedVariables setPossiblyNullObject:pvalue forKey:parameter];
 		}
 
-		[calling_context setPossiblyNullObject:value forKey:param];
-		plist = [plist cdr];
-		vlist = [vlist cdr];
+
+        if ([[parameter stringValue] characterAtIndex:0] == '*')
+		{
+            id varargs = [[[NuCell alloc] init] autorelease];
+            id cursor = varargs;
+            while (vlist != Nu__null) {
+                [cursor setCdr:[[[NuCell alloc] init] autorelease]];
+                cursor = [cursor cdr];
+                id value = [vlist car];
+                [cursor setCar:value];
+                vlist = [vlist cdr];
+            }
+
+            [calling_context setPossiblyNullObject:[varargs cdr] forKey:parameter];
+            plist = [plist cdr];
+
+            // this must be the last element in the parameter list
+            if (plist != Nu__null)
+			{
+                [NSException raise:@"NuBadParameterList"
+                    format:@"Variable argument list must be the last parameter in the parameter list: %@",
+                    [parameters stringValue]];
+            }
+        }
+        else 
+		{
+            id value = [vlist car];
+
+			[calling_context setPossiblyNullObject:value forKey:parameter];
+
+            plist = [plist cdr];
+            vlist = [vlist cdr];
+        }
 	}
 
 
