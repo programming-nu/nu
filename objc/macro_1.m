@@ -39,12 +39,14 @@ extern id Nu__null;
 
 - (void) dealloc
 {
+	[parameters release];
     [super dealloc];
 }
 
-- (id) initWithName:(NSString *)n body:(NuCell *)b
+- (id) initWithName:(NSString *)n parameters:(NuCell *)p body:(NuCell *)b
 {
     [super initWithName:n body:b];
+	parameters = [p retain];
     return self;
 }
 
@@ -55,12 +57,64 @@ extern id Nu__null;
 
 - (id) expandAndEval:(id)cdr context:(NSMutableDictionary*)calling_context evalFlag:(BOOL)evalFlag
 {
+	int numberOfArguments = [cdr length];
+	int numberOfParameters = [parameters length];
+	if (numberOfArguments != numberOfParameters)
+	{
+       // is the last parameter a variable argument? if so, it's ok, and we allow it to have zero elements.
+        id lastParameter = [parameters lastObject];
+        if (lastParameter && ([[lastParameter stringValue] characterAtIndex:0] == '*')) {
+            if (numberOfArguments < (numberOfParameters - 1)) {
+                [NSException raise:@"NuIncorrectNumberOfArguments"
+                    format:@"Incorrect number of arguments to macro. Received %d but expected %d or more: %@",
+                    numberOfArguments,
+                    numberOfParameters - 1,
+                    [parameters stringValue]];
+            }
+        }
+        else {
+            [NSException raise:@"NuIncorrectNumberOfArguments"
+                format:@"Incorrect number of arguments to macro. Received %d but expected %d: %@",
+                numberOfArguments,
+                numberOfParameters,
+                [parameters stringValue]];
+        }
+	}
+
     NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
 
+	
+	id plist = parameters;
+	id vlist = cdr;
+
+	NSMutableDictionary* maskedVariables = [[NSMutableDictionary alloc] init];
+
+	while (plist && (plist != Nu__null))
+	{
+		// jsb TODO: "auto-gensym" these parameters
+		id param = [plist car];
+		id value = [vlist car];
+		
+		id pvalue = [calling_context objectForKey:param];
+		
+		if (pvalue)
+		{
+			[maskedVariables setPossiblyNullObject:pvalue forKey:param];
+		}
+
+		[calling_context setPossiblyNullObject:value forKey:param];
+		plist = [plist cdr];
+		vlist = [vlist cdr];
+	}
+
+
+#ifdef USE_MARGS
     // save the current value of margs
     id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
     // set the arguments to the special variable "margs"
     [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
+#endif
+
     // evaluate the body of the block in the calling context (implicit progn)
     id value = Nu__null;
 
@@ -95,6 +149,28 @@ extern id Nu__null;
 		DefMacroLog(@"macro eval value: %@", [value stringValue]);		
 	}
 
+
+	// Restore the masked calling context variables
+	plist = parameters;
+	while (plist && (plist != Nu__null))
+	{
+		id param = [plist car];
+		
+		[calling_context removeObjectForKey:param];
+		
+		id pvalue = [maskedVariables objectForKey:param];
+		
+		if (pvalue)
+		{
+			[calling_context setPossiblyNullObject:pvalue forKey:param];
+		}
+		
+		plist = [plist cdr];
+	}
+	
+	[maskedVariables release];
+
+#ifdef USE_MARGS
     // restore the old value of margs
     if (old_margs == nil) {
         [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
@@ -102,6 +178,7 @@ extern id Nu__null;
     else {
         [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
     }
+#endif
 
 	DefMacroLog(@"macro result: %@", value);
     return value;

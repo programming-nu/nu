@@ -47,12 +47,13 @@ limitations under the License.
  */
 @interface NuMacro_1 : NuMacro_0
 {
+	NuCell *parameters;
 }
 
 /*! Construct a macro. */
 + (id) macroWithName:(NSString *)name body:(NuCell *)body;
 /*! Initialize a macro. */
-- (id) initWithName:(NSString *)name body:(NuCell *)body;
+- (id) initWithName:(NSString *)name parameters:(NuCell *)args body:(NuCell *)body;
 /*! Get a string representation of a macro. */
 - (NSString *) stringValue;
 /*! Evaluate a macro. */

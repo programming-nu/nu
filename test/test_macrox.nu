@@ -6,7 +6,8 @@
 (class TestMacrox is NuTestCase
      
      (imethod (id) testIncMacro is
-          (macro inc! `(set ,(car margs) (+ ,(car margs) 1)))
+          (macro inc! (n)
+               `(set ,n (+ ,n 1)))
           
           ;; Test the macro evaluation
           (set a 0)
@@ -18,12 +19,13 @@
           (assert_equal "(set a (+ a 1))" (newBody stringValue)))
      
      (imethod (id) testNestedMacro is
-          (macro inc! `(set ,(car margs) (+ ,(car margs) 1)))
+          (macro inc! (n)
+               `(set ,n (+ ,n 1)))
           
-          (macro inc2!
+          (macro inc2! (n)
                `(progn
-                      (inc! ,(car margs))
-                      (inc! ,(car margs))))
+                      (inc! ,n)
+                      (inc! ,n)))
           
           (set a 0)
           (inc2! a)
@@ -34,14 +36,24 @@
      
      
      (imethod (id) testFactorialMacro is
-          (macro mfact
-               (set __x (car margs))
-               `(if (== ,__x 0)
+          (macro mfact (n)
+               `(if (== ,n 0)
                     (then 1)
-                    (else (* (mfact (- ,__x 1)) ,__x))))
+                    (else (* (mfact (- ,n 1)) ,n))))
           
           (set newBody (macrox (mfact x)))
           (assert_equal "(if (== x 0) (then 1) (else (* (mfact (- x 1)) x)))" (newBody stringValue))
           
           (set x 4)
-          (assert_equal 24 (mfact x))))
+          
+          (assert_equal 24 (mfact x)))
+     
+     (imethod (id) testCallingContextForMacro is
+          ;; Make sure we didn't ruin our calling context
+          (macro mfact (n)
+               `(if (== ,n 0)
+                    (then 1)
+                    (else (* (mfact (- ,n 1)) ,n))))
+          (set n 10)
+          (mfact 4)
+          (assert_equal n 10)))

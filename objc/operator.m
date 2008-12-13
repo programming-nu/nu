@@ -966,9 +966,10 @@ limitations under the License.
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id name = [cdr car];
-    id body = [cdr cdr];
+	id args = [[cdr cdr] car];
+    id body = [[cdr cdr] cdr];
 
-    NuMacro_1 *macro = [[NuMacro_1 alloc] initWithName:name body:body];
+    NuMacro_1 *macro = [[NuMacro_1 alloc] initWithName:name parameters:args body:body];
                                                   // this defines the function in the calling context
     [context setPossiblyNullObject:macro forKey:name];
     return macro;
