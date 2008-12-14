@@ -37,22 +37,26 @@ limitations under the License.
 
 // it seems that in the GNU runtime, this function is supposed to get the metaclass,
 // but in the NeXT runtime, it gets the class.
+/*
 Method_t class_getClassMethod (MetaClass class, SEL op)
 {
     return class_get_class_method(class->class_pointer, op);
 }
+*/
 
 Class objc_getClass (const char *name)
 {
     return objc_lookup_class(name);
 }
 
+/*
 void class_add_method_list (Class class, MethodList_t list);
 
 void class_addMethods(Class cls, struct objc_method_list *methods)
 {
     class_add_method_list(cls, methods);
 }
+*/
 
 BOOL class_addProtocol(Class cls, Protocol *protocol)
 {
@@ -69,10 +73,12 @@ Protocol **class_copyProtocolList(Class cls, unsigned int *outCount)
     return 0;
 }
 
+/*
 Method_t class_getInstanceMethod(Class cls, SEL name)
 {
     return class_get_instance_method(cls, name);
 }
+*/
 
 Ivar_t class_getInstanceVariable(Class cls, const char *name)
 {
@@ -95,6 +101,7 @@ Ivar_t class_getInstanceVariable(Class cls, const char *name)
         return NULL;
 }
 
+/*
 struct objc_method_list *class_nextMethodList(Class cls, void **methodList)
 {
     if (!(*methodList)) {
@@ -105,6 +112,7 @@ struct objc_method_list *class_nextMethodList(Class cls, void **methodList)
     }
     return *methodList;
 }
+*/
 
 char *method_get_nth_argument (struct objc_method *m, arglist_t argframe, int arg, const char **type);
 

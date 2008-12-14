@@ -15,8 +15,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#import "symbol.h"
 #import "st.h"
+#import "symbol.h"
 #import "class.h"
 #import "object.h"
 #import "extensions.h"
@@ -57,7 +57,9 @@ static NuSymbolTable *sharedSymbolTable = 0;
     symbol = [[NuSymbol alloc] init];             // keep construction private
     symbol->string = strdup(string);
     // the symbol table does not use strong refs so make one here for each symbol
+#ifdef DARWIN
     [[NSGarbageCollector defaultCollector] disableCollectorForPointer:symbol];
+#endif
     int len = strlen(string);
     symbol->isLabel = (string[len - 1] == ':');
     symbol->isGensym = (len > 2) && (string[0] == '_') && (string[1] == '_');
@@ -107,7 +109,9 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
     //NSLog(@"removing symbol %@ from table", [symbol stringValue]);
     st_delete(symbol_table, (st_data_t *) &(symbol->string), 0);
     [symbol release]; // on behalf of the table
+#ifdef DARWIN
     [[NSGarbageCollector defaultCollector] enableCollectorForPointer:self];    
+#endif
 }
 
 @end

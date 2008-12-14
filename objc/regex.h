@@ -15,6 +15,7 @@
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSRange.h>
+#import <Foundation/NSEnumerator.h>
 
 @class NuRegex, NSArray, NSString;
 

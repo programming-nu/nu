@@ -15,6 +15,8 @@
 ;;   See the License for the specific language governing permissions and
 ;;   limitations under the License.
 
+(global NSLog (NuBridgedFunction functionWithName:"NSLog" signature:"v@"))
+
 ;; Warning! I want to deprecate these.
 (global second  (do (my-list) (car (cdr my-list))))
 (global third   (do (my-list) (car (cdr (cdr my-list)))))
@@ -91,18 +93,6 @@
              (set __args (eval (cdr margs)))
              (eval (cons __f __args))))
 
-;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
-;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
-;; an exception.
-(global assert
-        (macro _
-             (set expression (car margs))
-             (if (not (eval expression))
-                 (then (throw ((NSException alloc)
-                               initWithName:"NuAssertionFailure"
-                               reason:(expression stringValue)
-                               userInfo:nil))))))
-
 ;; Allows mapping a function over multiple lists.
 ;; For example (map + '(1 2) '(3 4)) returns '(4 6).
 ;; The length of the result is the same as that of the shortest list passed in.
@@ -128,13 +118,34 @@
                            (else (do (a b) (a compare:b)))))
             (((apply array ls) sortedArrayUsingBlock:block) list)))
 
+(if (eq (uname) "Darwin") ;; throw is currently only available with the Darwin runtime
+(then
+;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
+;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
+;; an exception.
+(global assert
+        (macro _
+             (set expression (car margs))
+             (if (not (eval expression))
+                 (then (throw ((NSException alloc)
+                               initWithName:"NuAssertionFailure"
+                               reason:(expression stringValue)
+                               userInfo:nil))))))
+
 ;; Throws an exception.
 ;; This function is more concise and easier to remember than throw.
 (global throw*
         (do (type reason)
             (throw ((NSException alloc) initWithName:type
                     reason:reason
-                    userInfo:nil))))
+                    userInfo:nil)))))
+(else
+(global assert (macro _ (NSLog "warning: assert is unavailable")))
+(global throw* (macro _ (NSLog "warning: throw* is unavailable")))
+(global throw  (macro _ (NSLog "warning: throw is unavailable")))))
+
+
+
 
 ;; Returns an array of filenames matching a given pattern.
 ;; the pattern is a string that is converted into a regular expression.

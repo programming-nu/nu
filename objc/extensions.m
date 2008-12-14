@@ -262,7 +262,7 @@ extern id Nu__null;
 
 - (NSString *) escapedStringRepresentation
 {
-    NSMutableString *result = [NSMutableString stringWithString:@"\""];
+    NSMutableString *result = [[NSMutableString stringWithString:@"\""] retain]; // not right
     int length = [self length];
     for (int i = 0; i < length; i++) {
         unichar c = [self characterAtIndex:i];
@@ -423,7 +423,7 @@ extern id Nu__null;
     for (int i = 0; i < count; i++) {
         @try
         {
-            [args setCar:[NSNumber numberWithInteger:[self characterAtIndex:i]]];
+            [args setCar:[[[NSNumber alloc] initWithInt:[self characterAtIndex:i]] autorelease]];
             [block evalWithArguments:args context:Nu__null];
         }
         @catch (NuBreakException *exception) {
@@ -440,6 +440,7 @@ extern id Nu__null;
 }
 
 #ifdef LINUX
+/*
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding
 {
     return [[[NSString alloc] initWithCString:cString] autorelease];
@@ -449,19 +450,15 @@ extern id Nu__null;
 {
     return [self cString];
 }
+*/
 #endif
 @end
 
 @implementation NSMutableString(Nu)
 - (void) appendCharacter:(unichar) c
 {
-    #ifdef DARWIN
     [self appendFormat:@"%C", c];
-    #else
-    [self appendFormat:@"%c", (char) c];
-    #endif
 }
-
 @end
 
 @implementation NSData(Nu)
@@ -799,7 +796,8 @@ extern id Nu__null;
     }
     return result;
     #else
-    return [NSString stringWithCString:types];
+    //return [NSString stringWithCString:types];
+    return [NSString stringWithCString:_methodTypes];
     #endif
 }
 

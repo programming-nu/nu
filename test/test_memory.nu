@@ -5,7 +5,8 @@
 
 (class TestMemory is NuTestCase
      
-(unless ((NSGarbageCollector defaultCollector) isEnabled)
+(unless (and (eq (uname) "Darwin") 
+             ((NSGarbageCollector defaultCollector) isEnabled))
      (- testCreationInObjCUsingObjC is
         (NuTestHelper resetDeallocationCount)
         (5 times:

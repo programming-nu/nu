@@ -137,6 +137,8 @@
              (set @failures (+ @failures 1)))
      nil)
 
+(if (eq (uname) "Darwin")
+(then 
 (macro-0 assert_throws
      (set @assertions (+ @assertions 1))
      (set __desired (eval (car margs)))
@@ -153,7 +155,9 @@
          (else
               (puts "failure: exception #{__desired} was not thrown")
               (set @failures (+ @failures 1))))
-     nil)
+     nil))
+(else ;; unfortunately, we can only throw exceptions with the Darwin runtime
+(macro-0 assert_throws nil)))
 
 (macro-0 assert_in_delta
      (set @assertions (+ @assertions 1))

@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+#import "st.h"
 #ifdef LINUX
 #define __USE_GNU
 #endif
@@ -32,7 +33,6 @@ limitations under the License.
 #import "operator.h"
 #import "bridge.h"
 #import "extensions.h"
-#import "st.h"
 #import "reference.h"
 #import "pointer.h"
 #import "handler.h"
@@ -1053,15 +1053,26 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
         }
         if (success) {
             result = get_nu_value_from_objc_value(result_value, &return_type_buffer[0]);
+	    // NSLog(@"result is %@", result);
+	    // NSLog(@"retain count %d", [result retainCount]);
             // Return values should not require a release.
             // Either they are owned by an existing object or are autoreleased.
             // Since these methods create new objects that aren't autoreleased, we autorelease them.
             // But we must never release placeholders.
+#ifdef DARWIN
             bool already_retained =               // see Anguish/Buck/Yacktman, p. 104
                 (s == @selector(alloc)) || (s == @selector(allocWithZone:))
                 || (s == @selector(copy)) || (s == @selector(copyWithZone:))
                 || (s == @selector(mutableCopy)) || (s == @selector(mutableCopyWithZone:))
                 || (s == @selector(new));
+#else
+            bool already_retained =               // see Anguish/Buck/Yacktman, p. 104
+                sel_eq(s, @selector(alloc)) || sel_eq(s, @selector(allocWithZone:))
+                || sel_eq(s, @selector(copy)) || sel_eq(s, @selector(copyWithZone:))
+                || sel_eq(s, @selector(mutableCopy)) || sel_eq(s, @selector(mutableCopyWithZone:))
+                || sel_eq(s, @selector(new));
+#endif
+            //NSLog(@"already retained? %d", already_retained);
             if (already_retained) {
                 // Make sure this isn't an instance of a placeholder class.
                 // We should never release instances of placeholder classes;
@@ -1296,7 +1307,9 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     if (!nu_block_table) nu_block_table = st_init_numtable();
     // watch for problems caused by these ugly casts...
     st_insert(nu_block_table, (long) imp, (long) block);
+#ifdef DARWIN
     [[NSGarbageCollector defaultCollector] disableCollectorForPointer: block];
+#endif
 
     // insert the method handler in the class method table
     nu_class_replaceMethod(c, selector, imp, signature_str);

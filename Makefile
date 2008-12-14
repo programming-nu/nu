@@ -39,10 +39,10 @@ ifeq ($(SYSTEM), Darwin)
 		LIBDIRS += -L$(PREFIX)/lib
 	endif
 else
-	INCLUDES += -I/usr/local/include
+	INCLUDES += -I/usr/include/GNUstep/Headers
 	FRAMEWORKS =
-	LIBS = -lm -lpcre -lreadline
-	LIBDIRS =
+	LIBS = -lm -lpcre -lreadline -lgnustep-base
+	LIBDIRS += -L/usr/lib/GNUstep/System/Library/Libraries
 endif
 
 C_FILES = $(wildcard objc/*.c)
@@ -67,7 +67,7 @@ LDFLAGS += $(LIBDIRS)
 LDFLAGS += $(FFI_LIB)
 
 ifeq ($(SYSTEM), Linux)
-	LDFLAGS += -lobjc -lNuFound
+	LDFLAGS += -lobjc 
 	LDFLAGS += -Wl,--rpath -Wl,/usr/local/lib
 endif
 

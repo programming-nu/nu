@@ -125,8 +125,8 @@ END)
           (assert_equal "\"~\\x7f\"" ("\x7e\x7f" escapedStringRepresentation))
           ;; verify escaping of higher-valued one-byte characters
           (assert_equal "\"\\xe0\\xf0\"" ("\xE0\xf0" escapedStringRepresentation))
-          ;; verify escaping of unicode characters
-          (assert_equal "\"\\u0100\\uffff\"" ("\u0100\uffFF" escapedStringRepresentation)))
+          ;; verify escaping of unicode characters (\ufffe and \uffff are not valid characters)
+          (assert_equal "\"\\u0100\\ufffd\"" ("\u0100\uffFD" escapedStringRepresentation)))
      
      (imethod (id) testStringEach is
           (set start "hello, world")

@@ -366,7 +366,7 @@ static int nu_octal_digit_value(unichar c)
     return 0;
 }
 
-static int nu_hex_digit_value(unichar c)
+static unichar nu_hex_digit_value(unichar c)
 {
     int x = (c - '0');
     if ((x >= 0) && (x <= 9))
@@ -393,7 +393,8 @@ static unichar nu_hex_digits_to_unichar(unichar c1, unichar c2)
 
 static unichar nu_unicode_digits_to_unichar(unichar c1, unichar c2, unichar c3, unichar c4)
 {
-    return nu_hex_digit_value(c1)*4096 + nu_hex_digit_value(c2)*256 + nu_hex_digit_value(c3)*16 + nu_hex_digit_value(c4);
+    unichar value = nu_hex_digit_value(c1)*4096 + nu_hex_digit_value(c2)*256 + nu_hex_digit_value(c3)*16 + nu_hex_digit_value(c4);
+    return value;
 }
 
 static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutableString *partial)

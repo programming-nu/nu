@@ -18,9 +18,7 @@
               (finally (set z 99)))
           (assert_equal "this should always be set" before)
           (assert_equal nil after)
-          (if (eq (uname) "Darwin")
-              (then (assert_equal "NSRangeException" name))
-              (else (assert_equal "Index out of range" name)))
+          (assert_equal "NSRangeException" name)
           (assert_equal 99 z))
      
      (imethod (id) testUserRaisedException is

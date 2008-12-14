@@ -39,15 +39,17 @@ END)
                (set @libs       '("edit" "ffi" ))
                (set @lib_dirs   (NSMutableArray arrayWithObject:"/usr/lib")))
          (else (set @frameworks nil)
-               (set @libs       (list "readline" "ffi" "m" ))
-               (set @lib_dirs   (NSMutableArray arrayWithList:(list "../lib")))))
+               (set @libs       (list "readline" "ffi" "m" "gnustep-base" ))
+               (set @lib_dirs   (NSMutableArray arrayWithList:(list "/usr/lib/GNUstep/System/Library/Libraries")))))
 
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/lib") (@lib_dirs addObject:"#{@prefix}/lib"))
 
 ;; includes
 (ifDarwin
          (then (set @includes " -I ./include -I ./include/Nu "))
-         (else (set @includes " -I ./include -I ./include/Nu -I /usr/local/include")))
+         (else (set @includes " -I ./include -I ./include/Nu -I /usr/local/include -I /usr/include/GNUstep/Headers")))
+
+;; cc main.m -fobjc-exceptions -fconstant-string-class=NSConstantString -L/usr/local/lib -lobjc -Wl,--rpath -Wl,/usr/local/lib -I /usr/include/GNUstep/Headers -L/usr/lib/GNUstep/System/Library/Libraries/ -lgnustep-base
 
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@includes appendString:" -I #{@prefix}/include"))
 
@@ -106,7 +108,7 @@ END)
                      join)))
          (else (set @ldflags
                     ((list
-                          "-lNuFound -L/usr/local/lib -lobjc -Wl,--rpath -Wl,/usr/local/lib"
+                          "-lgnustep-base -L /usr/lib/GNUstep/System/Library/Libraries -L/usr/local/lib -lobjc -Wl,--rpath -Wl,/usr/lib/GNUstep/System/Library/Libraries -Wl,--rpath -Wl,/usr/local/lib"
                           (cond  ;; statically link in pcre since most people won't have it..
                                  ((NSFileManager fileExistsNamed:"/usr/lib/libpcre.a") "/usr/lib/libpcre.a")
                                  ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") ("#{@prefix}/lib/libpcre.a"))
@@ -185,8 +187,9 @@ END)
           ;; install the dynamic library
           (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib")
           ;; copy the headers
-          (SH "sudo rm -rf /usr/local/include/Nu")
-          (SH "sudo cp -rp include/Nu /usr/local/include"))
+          (SH "sudo rm -rf #{@installprefix}/include/Nu")
+          (SH "sudo cp -rp include/Nu #{@installprefix}/include")
+	  (SH "sudo cp -rp nu/ #{@installprefix}/share/libNu"))
       (SH "sudo mkdir -p #{@installprefix}/share")
       (SH "sudo rm -rf #{@installprefix}/share/nu")
       (SH "sudo cp -rp share/nu #{@installprefix}/share/nu")

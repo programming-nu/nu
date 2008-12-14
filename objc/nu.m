@@ -294,7 +294,10 @@ void NuInit()
         #endif
 
         #else
+	// Non-Apple platforms
+        #ifndef MININUSH
         [[Nu parser] parseEval:@"(load \"nu\")"];
+        #endif
         #endif
     }
 }
