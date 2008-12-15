@@ -21,11 +21,13 @@ limitations under the License.
 #import "class.h"
 #import "extensions.h"
 #import "objc_runtime.h"
+#import "match.h"
+#import "Nu.h"
 
 extern id Nu__null;
 
 #if 0
-#define DefMacroLog(arg...)	NSLog(args)
+#define DefMacroLog(arg...) NSLog(arg)
 #else
 #define DefMacroLog(arg...)
 #endif
@@ -52,11 +54,73 @@ extern id Nu__null;
 
 - (NSString *) stringValue
 {
-    return [NSString stringWithFormat:@"(macro %@ %@)", name, [body stringValue]];
+    return [NSString stringWithFormat:@"(macro %@ (%@) %@)", name, [parameters stringValue], [body stringValue]];
 }
+
+
+
+- (void) dumpContext:(NSMutableDictionary*)context
+{
+	NSArray* keys = [context allKeys];
+	for (id key in keys)
+	{
+		DefMacroLog(@"contextdump: %@  =  %@  [%@]", key, 
+			[[context objectForKey:key] stringValue],
+			[[context objectForKey:key] class]);
+	}
+}
+
 
 - (id) expandAndEval:(id)cdr context:(NSMutableDictionary*)calling_context evalFlag:(BOOL)evalFlag
 {
+    NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
+
+	NSMutableDictionary* maskedVariables = [[NSMutableDictionary alloc] init];
+
+	id plist;
+
+	DefMacroLog(@"Dumping context:");
+	DefMacroLog(@"---------------:");
+	[self dumpContext:calling_context];
+
+#if 0		// Destructuring Bind
+
+	static BOOL	loadedMatch = NO;
+
+	// The destructure code is written in Nu and is in the file match.nu
+	if (!loadedMatch)
+	{
+		id parser = [Nu parser];
+		id script = [parser parse:@"(load \"match\")"];
+		[parser eval:script];
+		
+		loadedMatch = YES;
+	}
+
+	// Destructure the arguments
+	Class NuMatch = NSClassFromString(@"NuMatch");
+	id destructure = [NuMatch mdestructure:parameters withSequence:cdr];
+	
+	id b = destructure;
+	while (b && (b != Nu__null))
+	{
+		id parameter = [[b car] car];
+		id value = [[b car] cdr];
+		DefMacroLog(@"Destructure: %@ = %@", [parameter stringValue], [value stringValue]);
+		
+		id pvalue = [calling_context objectForKey:parameter];
+		
+		if (pvalue)
+		{
+			[maskedVariables setPossiblyNullObject:pvalue forKey:parameter];
+		}
+
+		[calling_context setPossiblyNullObject:value forKey:parameter];
+		
+		b = [b cdr];
+	}
+	
+#else
 	int numberOfArguments = [cdr length];
 	int numberOfParameters = [parameters length];
 	if (numberOfArguments != numberOfParameters)
@@ -81,14 +145,10 @@ extern id Nu__null;
         }
 	}
 
-    NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
-
 	
 	// Get the unevaluated values of the macro's parameter list
-	id plist = parameters;
+	plist = parameters;
 	id vlist = cdr;
-
-	NSMutableDictionary* maskedVariables = [[NSMutableDictionary alloc] init];
 
 	while (plist && (plist != Nu__null))
 	{
@@ -138,6 +198,12 @@ extern id Nu__null;
         }
 	}
 
+#endif
+
+	DefMacroLog(@"Dumping context (after destructure):");
+	DefMacroLog(@"-----------------------------------:");
+	[self dumpContext:calling_context];
+
 
 #ifdef USE_MARGS
     // save the current value of margs
@@ -159,8 +225,8 @@ extern id Nu__null;
     id bodyToEvaluate = (gensymCount == 0)
         ? (id)body : [self body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
 
-    DefMacroLog(@"macro evaluating: %@", [bodyToEvaluate stringValue]);
-    DefMacroLog(@"macro context: %@", [calling_context stringValue]);
+	// DefMacroLog(@"macro evaluating: %@", [bodyToEvaluate stringValue]);
+	// DefMacroLog(@"macro context: %@", [calling_context stringValue]);
 
 	// Macro expansion
     id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
@@ -171,25 +237,18 @@ extern id Nu__null;
         cursor = [cursor cdr];
     }
 
-	// if just macro-expanding, don't do the next step...
 
-	// Macro evaluation
-	if (evalFlag)
-	{
-	    value = [value evalWithContext:calling_context];
-		DefMacroLog(@"macro eval value: %@", [value stringValue]);		
-	}
-
-
-	// Restore the masked calling context variables
+	// Now that macro expansion is done, restore the masked calling context variables
 	plist = parameters;
 	while (plist && (plist != Nu__null))
 	{
 		id param = [plist car];
-		
-		[calling_context removeObjectForKey:param];
-		
+
+		[calling_context removeObjectForKey:param];		
 		id pvalue = [maskedVariables objectForKey:param];
+		
+		DefMacroLog(@"restoring calling context for: %@, value: %@",
+			[param stringValue], [pvalue stringValue]);
 		
 		if (pvalue)
 		{
@@ -199,7 +258,26 @@ extern id Nu__null;
 		plist = [plist cdr];
 	}
 	
+	DefMacroLog(@"var = %@", [[calling_context objectForKey:@"var"] stringValue]);
+
+
+	// if just macro-expanding, don't do the next step...
+
+	// Macro evaluation
+	if (evalFlag)
+	{
+		DefMacroLog(@"About to execute: %@", [value stringValue]);
+	    value = [value evalWithContext:calling_context];
+		DefMacroLog(@"macro eval value: %@", [value stringValue]);		
+	}
+
+
+	
 	[maskedVariables release];
+
+	DefMacroLog(@"Dumping context at end:");
+	DefMacroLog(@"----------------------:");
+	[self dumpContext:calling_context];
 
 #ifdef USE_MARGS
     // restore the old value of margs

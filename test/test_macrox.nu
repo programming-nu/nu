@@ -56,4 +56,23 @@
                     (else (* (mfact (- ,n 1)) ,n))))
           (set n 10)
           (mfact 4)
-          (assert_equal n 10)))
+          (assert_equal n 10))
+
+
+	(imethod (id) testRestMacro is
+		(macro myfor (var start stop *body)
+			`(let ((,var ,start))
+				(while (<= ,var ,stop)
+					,@*body
+					(set ,var (+ ,var 1)))))
+		
+		(set var 0)
+		(myfor i 1 10
+			(set var (+ var i)))
+		(assert_equal var 55)
+		
+		;; Make sure we didn't pollute our context
+		(assert_throws "NuUndefinedSymbol"
+			(puts "#{i}"))
+		)
+)
