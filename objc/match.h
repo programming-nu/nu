@@ -23,6 +23,7 @@ limitations under the License.
 
 + (id) matchLet:(id) pattern withSequence:(id) sequence forBody:(id) body;
 + (id) matchSet:(id) pattern withSequence:(id) sequence forBody:(id) body;
++ (id) mdestructure:(id) pattern withSequence:(id) sequence;
 + (id) destructure:(id) pattern withSequence:(id) sequence;
 + (id) checkBindings:(id) bindings;
 + (BOOL) match:(id) pattern withSequence:(id) sequence;

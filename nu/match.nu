@@ -101,6 +101,72 @@
           (else (throw* "NuMatchException"
                         "pattern is not nil, a symbol or a pair: #{pat}"))))
 
+
+;; mdestructure is based on the destructure function right above,
+;; but is modified to destructure macro arguments.  As these arguments
+;; are not evaluated as in a standard operator, we needed to turn
+;; off quoting.
+;;
+;; Additionally, we allow any parameter in the pattern list whose
+;; name starts with '*' to capture the remaining sequence.
+;;
+;; This function is called from macro_1.m in the Nu core.
+
+(function mdestructure (pat seq)
+     (cond
+          ((and (not pat) seq)
+           (throw* "NuMatchException"
+                   "Attempt to match empty pattern to non-empty object"))
+
+          ((not pat) nil)
+
+          ((eq pat '_) '())  ; wildcard match produces no binding
+	
+          ((symbol? pat)
+           ;(puts "mdest: symbol?:  #{pat}  #{seq}")
+           (let (seq (if (eq ((pat stringValue) characterAtIndex:0) '*')
+                         (then (list seq))
+                         (else seq)))
+                (list (list pat seq))))
+
+          ;; Patterns like (head . tail)
+          ((and (pair? pat)
+                (pair? (cdr pat))
+                (eq '. (second pat))
+                (pair? (cdr (cdr pat)))
+                (eq nil (cdr (cdr (cdr pat)))))
+           ;(puts "mdest: (h . t):  #{pat}  #{seq}")
+           (let ((bindings1 (mdestructure (first pat) (first seq)))
+                 (bindings2 (mdestructure (third pat) (rest seq))))
+                (append bindings1 bindings2)))
+
+          ;; Symbolic literal patterns like 'Foo
+          ((and (pair? pat)
+                (eq 'quote (car pat))
+                (pair? (cdr pat))
+                (symbol? (second pat)))
+           ;(puts "mdest: 'Literal:  #{pat}  #{seq}")
+           (if (eq (second pat) seq)
+               (then '())  ; literal symbol match produces no bindings
+               (else (throw* "NuMatchException"
+                             "Failed match of literal symbol #{pat} to #{seq}"))))
+
+          ((pair? pat)
+           ;(puts "mdest: pair?:  #{pat}  #{seq}")
+           (if (and (symbol? (car pat))
+                    (eq (((car pat) stringValue) characterAtIndex:0) '*'))
+               (then (list (list (car pat) seq)))
+               (else ((let ((bindings1 (mdestructure (car pat) (car seq)))
+                            (bindings2 (mdestructure (cdr pat) (cdr seq))))
+                           (append bindings1 bindings2))))))
+
+          ((eq pat seq)
+           ;(puts "mdest: literal match:  #{pat}  #{seq}")
+           '())  ; literal match produces no bindings
+          (else (throw* "NuMatchException"
+                        "pattern is not nil, a symbol or a pair: #{pat}"))))
+
+
 ;; Makes sure that no key is set to two different values.
 ;; For example (check-bindings '((a 1) (a 1) (b 2))) just returns its argument,
 ;; but (check-bindings '((a 1) (a 2) (b 2))) throws a NuMatchException.
@@ -173,6 +239,9 @@
      
      (+ (id) matchSet:(id) pattern withSequence:(id) sequence forBody:(id) body is
         (match-set pattern sequencebody))
+     
+     (+ (id) mdestructure:(id) pattern withSequence:(id) sequence is
+        (mdestructure pattern sequence))
      
      (+ (id) destructure:(id) pattern withSequence:(id) sequence is
         (destructure pattern sequence))
