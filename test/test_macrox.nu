@@ -60,14 +60,14 @@
 
 
 	(imethod (id) testRestMacro is
-		(macro myfor (var start stop *body)
+		(macro myfor ((var start stop) *body)
 			`(let ((,var ,start))
 				(while (<= ,var ,stop)
 					,@*body
 					(set ,var (+ ,var 1)))))
 		
 		(set var 0)
-		(myfor i 1 10
+		(myfor (i 1 10)
 			(set var (+ var i)))
 		(assert_equal var 55)
 		
