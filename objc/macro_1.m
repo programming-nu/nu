@@ -22,9 +22,11 @@ limitations under the License.
 #import "extensions.h"
 #import "objc_runtime.h"
 #import "match.h"
-#import "Nu.h"
 
+@class Nu;
 extern id Nu__null;
+
+#define USE_DESTRUCTURING_BIND	1
 
 #if 0
 #define DefMacroLog(arg...) NSLog(arg)
@@ -83,7 +85,7 @@ extern id Nu__null;
 	DefMacroLog(@"---------------:");
 	[self dumpContext:calling_context];
 
-#if 0		// Destructuring Bind
+#ifdef USE_DESTRUCTURING_BIND
 
 	static BOOL	loadedMatch = NO;
 
@@ -101,23 +103,26 @@ extern id Nu__null;
 	Class NuMatch = NSClassFromString(@"NuMatch");
 	id destructure = [NuMatch mdestructure:parameters withSequence:cdr];
 	
-	id b = destructure;
-	while (b && (b != Nu__null))
+	plist = destructure;
+	while (plist && (plist != Nu__null))
 	{
-		id parameter = [[b car] car];
-		id value = [[b car] cdr];
+		id parameter = [[plist car] car];
+		id value = [[[plist car] cdr] car];
 		DefMacroLog(@"Destructure: %@ = %@", [parameter stringValue], [value stringValue]);
 		
 		id pvalue = [calling_context objectForKey:parameter];
 		
 		if (pvalue)
 		{
+			DefMacroLog(@"  Saving context: %@ = %@", 
+					[parameter stringValue],
+					[pvalue stringValue]);
 			[maskedVariables setPossiblyNullObject:pvalue forKey:parameter];
 		}
 
 		[calling_context setPossiblyNullObject:value forKey:parameter];
 		
-		b = [b cdr];
+		plist = [plist cdr];
 	}
 	
 #else
@@ -239,10 +244,19 @@ extern id Nu__null;
 
 
 	// Now that macro expansion is done, restore the masked calling context variables
+#ifdef USE_DESTRUCTURING_BIND
+	plist = destructure;
+#else
 	plist = parameters;
+#endif
+
 	while (plist && (plist != Nu__null))
 	{
+#ifdef USE_DESTRUCTURING_BIND
+		id param = [[plist car] car];
+#else
 		id param = [plist car];
+#endif
 
 		[calling_context removeObjectForKey:param];		
 		id pvalue = [maskedVariables objectForKey:param];
