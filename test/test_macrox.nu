@@ -6,7 +6,7 @@
 (class TestMacrox is NuTestCase
      
      (imethod (id) testIncMacro is
-          (macro inc! (n)
+          (macro-1 inc! (n)
                `(set ,n (+ ,n 1)))
           
           ;; Test the macro evaluation
@@ -19,10 +19,10 @@
           (assert_equal "(set a (+ a 1))" (newBody stringValue)))
      
      (imethod (id) testNestedMacro is
-          (macro inc! (n)
+          (macro-1 inc! (n)
                `(set ,n (+ ,n 1)))
           
-          (macro inc2! (n)
+          (macro-1 inc2! (n)
                `(progn
                       (inc! ,n)
                       (inc! ,n)))
@@ -36,7 +36,7 @@
      
      
      (imethod (id) testFactorialMacro is
-          (macro mfact (n)
+          (macro-1 mfact (n)
                `(if (== ,n 0)
                     (then 1)
                     (else (* (mfact (- ,n 1)) ,n))))
@@ -50,7 +50,7 @@
      
      (imethod (id) testCallingContextForMacro is
           ;; Make sure we didn't ruin our calling context
-          (macro mfact (n)
+          (macro-1 mfact (n)
                `(if (== ,n 0)
                     (then 1)
                     (else (* (mfact (- ,n 1)) ,n))))
@@ -60,7 +60,7 @@
 
 
 	(imethod (id) testRestMacro is
-		(macro myfor ((var start stop) *body)
+		(macro-1 myfor ((var start stop) *body)
 			`(let ((,var ,start))
 				(while (<= ,var ,stop)
 					,@*body
