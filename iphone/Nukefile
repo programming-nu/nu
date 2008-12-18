@@ -1,21 +1,24 @@
-
 (set platform "iPhoneOS")
 
 ;; source files
 (set @c_files      (filelistWithRoot "^objc/.*\.c$" ".."))
 (set @m_files      (filelistWithRoot "^objc/.*\.m$" ".."))
 
+(set sdk_version "2.0")
+
 (case platform
       
       ("iPhoneOS"
-                 (set PLATFORM "-isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS2.0.sdk")
+                 (set PLATFORM "-isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS#{sdk_version}.sdk")
                  (set @arch '("armv6"))
                  (set @cc "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.0")
                  (set @library_extras "platforms/iPhoneOS/libffi/*.o platforms/iPhoneOS/pcre/*.o"))
       
-      ("iPhoneSimulator" ;; this is broken, please submit fixes if you make them.
-           (set PLATFORM "-isysroot /Developer/Platforms/AspenSimulator.platform/Developer/SDKs/AspenSimulator1.2.sdk")
-           (set @arch '("i386")))
+      ("iPhoneSimulator"
+           (set PLATFORM "-isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#{sdk_version}.sdk")
+           (set @arch '("i386"))
+           (set @cc "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.0")
+           (set @library_extras "platforms/iPhoneSimulator/lib/libpcre.a"))
       
       (else nil))
 
