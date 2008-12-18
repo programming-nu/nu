@@ -51,7 +51,7 @@ limitations under the License.
 }
 
 /*! Construct a macro. */
-+ (id) macroWithName:(NSString *)name body:(NuCell *)body;
++ (id) macroWithName:(NSString *)name parameters:(NuCell*)args body:(NuCell *)body;
 /*! Initialize a macro. */
 - (id) initWithName:(NSString *)name parameters:(NuCell *)args body:(NuCell *)body;
 /*! Get a string representation of a macro. */

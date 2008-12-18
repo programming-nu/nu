@@ -23,22 +23,24 @@ limitations under the License.
 #import "objc_runtime.h"
 #import "match.h"
 
-@class Nu;
 extern id Nu__null;
 
 #define USE_DESTRUCTURING_BIND	1
+//#define MACRO1_DEBUG	1
 
-#if 0
-#define DefMacroLog(arg...) NSLog(arg)
+// Following  debug output on and off for this file only
+#ifdef MACRO1_DEBUG
+#define Macro1Debug(arg...) NSLog(arg)
 #else
-#define DefMacroLog(arg...)
+#define Macro1Debug(arg...)
 #endif
+
 
 @implementation NuMacro_1
 
-+ (id) macroWithName:(NSString *)n body:(NuCell *)b
++ (id) macroWithName:(NSString *)n parameters:(NuCell*)p body:(NuCell *)b
 {
-    return [[[self alloc] initWithName:n body:b] autorelease];
+    return [[[self alloc] initWithName:n parameters:p body:b] autorelease];
 }
 
 - (void) dealloc
@@ -47,16 +49,35 @@ extern id Nu__null;
     [super dealloc];
 }
 
+
 - (id) initWithName:(NSString *)n parameters:(NuCell *)p body:(NuCell *)b
 {
     [super initWithName:n body:b];
 	parameters = [p retain];
+
+	id match = [NuMatch matcher];
+
+	if (([parameters length] == 1) 
+		&& ([[[parameters car] stringValue] isEqualToString:@"*args"]))
+	{
+		// Skip the check
+	}
+	else
+	{
+		id foundArgs = [match findAtom:@"*args" inSequence:parameters];
+
+		if (foundArgs && (foundArgs != Nu__null))
+		{
+			printf("Warning: Overriding implicit variable '*args'.\n");
+		}
+	}
+
     return self;
 }
 
 - (NSString *) stringValue
 {
-    return [NSString stringWithFormat:@"(macro %@ (%@) %@)", name, [parameters stringValue], [body stringValue]];
+    return [NSString stringWithFormat:@"(macro %@ %@ %@)", name, [parameters stringValue], [body stringValue]];
 }
 
 
@@ -66,7 +87,7 @@ extern id Nu__null;
 	NSArray* keys = [context allKeys];
 	for (id key in keys)
 	{
-		DefMacroLog(@"contextdump: %@  =  %@  [%@]", key, 
+		Macro1Debug(@"contextdump: %@  =  %@  [%@]", key, 
 			[[context objectForKey:key] stringValue],
 			[[context objectForKey:key] class]);
 	}
@@ -81,40 +102,32 @@ extern id Nu__null;
 
 	id plist;
 
-	DefMacroLog(@"Dumping context:");
-	DefMacroLog(@"---------------:");
+	Macro1Debug(@"Dumping context:");
+	Macro1Debug(@"---------------:");
 	[self dumpContext:calling_context];
+
+    id old_args = [calling_context objectForKey:[symbolTable symbolWithCString:"*args"]];
+	[calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
 
 #ifdef USE_DESTRUCTURING_BIND
 
-	static BOOL	loadedMatch = NO;
-
-	// The destructure code is written in Nu and is in the file match.nu
-	if (!loadedMatch)
-	{
-		id parser = [Nu parser];
-		id script = [parser parse:@"(load \"match\")"];
-		[parser eval:script];
-		
-		loadedMatch = YES;
-	}
+	id match = [NuMatch matcher];
 
 	// Destructure the arguments
-	Class NuMatch = NSClassFromString(@"NuMatch");
-	id destructure = [NuMatch mdestructure:parameters withSequence:cdr];
+	id destructure = [match mdestructure:parameters withSequence:cdr];
 	
 	plist = destructure;
 	while (plist && (plist != Nu__null))
 	{
 		id parameter = [[plist car] car];
 		id value = [[[plist car] cdr] car];
-		DefMacroLog(@"Destructure: %@ = %@", [parameter stringValue], [value stringValue]);
-		
+		Macro1Debug(@"Destructure: %@ = %@", [parameter stringValue], [value stringValue]);
+			
 		id pvalue = [calling_context objectForKey:parameter];
 		
 		if (pvalue)
 		{
-			DefMacroLog(@"  Saving context: %@ = %@", 
+			Macro1Debug(@"  Saving context: %@ = %@", 
 					[parameter stringValue],
 					[pvalue stringValue]);
 			[maskedVariables setPossiblyNullObject:pvalue forKey:parameter];
@@ -205,17 +218,10 @@ extern id Nu__null;
 
 #endif
 
-	DefMacroLog(@"Dumping context (after destructure):");
-	DefMacroLog(@"-----------------------------------:");
+	Macro1Debug(@"Dumping context (after destructure):");
+	Macro1Debug(@"-----------------------------------:");
 	[self dumpContext:calling_context];
 
-
-#ifdef USE_MARGS
-    // save the current value of margs
-    id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
-    // set the arguments to the special variable "margs"
-    [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
-#endif
 
     // evaluate the body of the block in the calling context (implicit progn)
     id value = Nu__null;
@@ -230,15 +236,15 @@ extern id Nu__null;
     id bodyToEvaluate = (gensymCount == 0)
         ? (id)body : [self body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
 
-	// DefMacroLog(@"macro evaluating: %@", [bodyToEvaluate stringValue]);
-	// DefMacroLog(@"macro context: %@", [calling_context stringValue]);
+	// Macro1Debug(@"macro evaluating: %@", [bodyToEvaluate stringValue]);
+	// Macro1Debug(@"macro context: %@", [calling_context stringValue]);
 
 	// Macro expansion
     id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
     while (cursor && (cursor != Nu__null)) {
-		DefMacroLog(@"macro eval cursor: %@", [cursor stringValue]);
+		Macro1Debug(@"macro eval cursor: %@", [cursor stringValue]);
         value = [[cursor car] evalWithContext:calling_context];
-		DefMacroLog(@"macro expand value: %@", [value stringValue]);
+		Macro1Debug(@"macro expand value: %@", [value stringValue]);
         cursor = [cursor cdr];
     }
 
@@ -261,7 +267,7 @@ extern id Nu__null;
 		[calling_context removeObjectForKey:param];		
 		id pvalue = [maskedVariables objectForKey:param];
 		
-		DefMacroLog(@"restoring calling context for: %@, value: %@",
+		Macro1Debug(@"restoring calling context for: %@, value: %@",
 			[param stringValue], [pvalue stringValue]);
 		
 		if (pvalue)
@@ -272,7 +278,7 @@ extern id Nu__null;
 		plist = [plist cdr];
 	}
 	
-	DefMacroLog(@"var = %@", [[calling_context objectForKey:@"var"] stringValue]);
+	Macro1Debug(@"var = %@", [[calling_context objectForKey:@"var"] stringValue]);
 
 
 	// if just macro-expanding, don't do the next step...
@@ -280,30 +286,28 @@ extern id Nu__null;
 	// Macro evaluation
 	if (evalFlag)
 	{
-		DefMacroLog(@"About to execute: %@", [value stringValue]);
+		Macro1Debug(@"About to execute: %@", [value stringValue]);
 	    value = [value evalWithContext:calling_context];
-		DefMacroLog(@"macro eval value: %@", [value stringValue]);		
+		Macro1Debug(@"macro eval value: %@", [value stringValue]);		
 	}
 
 
 	
 	[maskedVariables release];
 
-	DefMacroLog(@"Dumping context at end:");
-	DefMacroLog(@"----------------------:");
+	Macro1Debug(@"Dumping context at end:");
+	Macro1Debug(@"----------------------:");
 	[self dumpContext:calling_context];
 
-#ifdef USE_MARGS
     // restore the old value of margs
-    if (old_margs == nil) {
-        [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
+    if (old_args == nil) {
+        [calling_context removeObjectForKey:[symbolTable symbolWithCString:"*args"]];
     }
     else {
-        [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
+        [calling_context setPossiblyNullObject:old_args forKey:[symbolTable symbolWithCString:"*args"]];
     }
-#endif
 
-	DefMacroLog(@"macro result: %@", value);
+	Macro1Debug(@"macro result: %@", value);
     return value;
 }
 
