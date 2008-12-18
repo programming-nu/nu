@@ -233,8 +233,6 @@
 ;; Looks for an occurrence of item in the list l.
 (function find-atom (item l)
      (cond
-;		  ((not (symbol? item))
-;			nil)
           ((eq item nil)
            nil)
           ((eq l nil)
