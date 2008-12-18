@@ -1,5 +1,5 @@
 /*!
-@file match.h
+@file match.m
 @description Class wrapper for Nu's match functions.
 @copyright Copyright (c) 2008 Jeff Buck
 
@@ -15,18 +15,32 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#import <Foundation/Foundation.h>
+#import "match.h"
+#import "parser.h"
 
-@interface NuMatch : NSObject
+// Declare Nu class to avoid compiler warning when loading match.nu
+@interface Nu {}
++ (id) parser;
+@end
+
+@implementation NuMatch
+
+static BOOL	g_loadedMatch = NO;
+
++ (id) matcher
 {
+	// The destructure code is written in Nu and is in the file match.nu
+	if (!g_loadedMatch)
+	{
+		id parser = [Nu parser];
+		id script = [parser parse:@"(load \"match\")"];
+		[parser eval:script];
+		
+		g_loadedMatch = YES;
+	}
+	
+	Class NuMatch = NSClassFromString(@"NuMatch");
+	return NuMatch;
 }
-+ (id) matcher;
 
-+ (id) matchLet:(id) pattern withSequence:(id) sequence forBody:(id) body;
-+ (id) matchSet:(id) pattern withSequence:(id) sequence forBody:(id) body;
-+ (id) mdestructure:(id) pattern withSequence:(id) sequence;
-+ (id) destructure:(id) pattern withSequence:(id) sequence;
-+ (id) checkBindings:(id) bindings;
-+ (BOOL) match:(id) pattern withSequence:(id) sequence;
-+ (id) findAtom:(NSString*) item inSequence:(id) sequence;
 @end

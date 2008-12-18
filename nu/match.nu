@@ -117,18 +117,18 @@
           ((and (not pat) seq)
            (throw* "NuMatchException"
                    "Attempt to match empty pattern to non-empty object"))
-
+          
           ((not pat) nil)
-
+          
           ((eq pat '_) '())  ; wildcard match produces no binding
-	
+          
           ((symbol? pat)
            ;(puts "mdest: symbol?:  #{pat}  #{seq}")
            (let (seq (if (eq ((pat stringValue) characterAtIndex:0) '*')
                          (then (list seq))
                          (else seq)))
                 (list (list pat seq))))
-
+          
           ;; Patterns like (head . tail)
           ((and (pair? pat)
                 (pair? (cdr pat))
@@ -139,7 +139,7 @@
            (let ((bindings1 (mdestructure (first pat) (first seq)))
                  (bindings2 (mdestructure (third pat) (rest seq))))
                 (append bindings1 bindings2)))
-
+          
           ;; Symbolic literal patterns like 'Foo
           ((and (pair? pat)
                 (eq 'quote (car pat))
@@ -150,7 +150,7 @@
                (then '())  ; literal symbol match produces no bindings
                (else (throw* "NuMatchException"
                              "Failed match of literal symbol #{pat} to #{seq}"))))
-
+          
           ((pair? pat)
            ;(puts "mdest: pair?:  #{pat}  #{seq}")
            (if (and (symbol? (car pat))
@@ -159,7 +159,7 @@
                (else ((let ((bindings1 (mdestructure (car pat) (car seq)))
                             (bindings2 (mdestructure (cdr pat) (cdr seq))))
                            (append bindings1 bindings2))))))
-
+          
           ((eq pat seq)
            ;(puts "mdest: literal match:  #{pat}  #{seq}")
            '())  ; literal match produces no bindings
@@ -230,6 +230,21 @@
      (eval __expr))
 
 
+;; Looks for an occurrence of item in the list l.
+(function find-atom (item l)
+     (cond
+		  ((not (symbol? item))
+			nil)
+          ((eq item nil)
+           nil)
+          ((eq l nil)
+           nil)
+          (((item stringValue) isEqualToString:(l stringValue))
+           item)
+          ((pair? l)
+           (or (find-atom item (car l))
+               (find-atom item (cdr l))))))
+
 
 ;; Class definition to make it easier to bridge to ObjC (jsb)
 
@@ -250,5 +265,8 @@
         (check-bindings bindings))
      
      (+ (BOOL) match:(id) pattern withSequence:(id) sequence is
-        (match pattern sequence)))
+        (match pattern sequence))
+     
+     (+ (id) findAtom:(id) a inSequence:(id) sequence is
+        (find-atom a sequence)))
 
