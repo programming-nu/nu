@@ -233,13 +233,13 @@
 ;; Looks for an occurrence of item in the list l.
 (function find-atom (item l)
      (cond
-		  ((not (symbol? item))
-			nil)
+;		  ((not (symbol? item))
+;			nil)
           ((eq item nil)
            nil)
           ((eq l nil)
            nil)
-          (((item stringValue) isEqualToString:(l stringValue))
+          ((eq item (l stringValue))
            item)
           ((pair? l)
            (or (find-atom item (car l))
