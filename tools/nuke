@@ -591,23 +591,36 @@
               (task "framework" => "framework_#{modelName}")))
      
      ;; framework_infoplist
-     (set framework_infoplist "#{@framework_resource_dir}/Info.plist")
-     (file framework_infoplist => @framework_resource_dir is
-           (set info (NSDictionary dictionaryWithList:
-                          (list "CFBundleDevelopmentRegion" "English"
-                                "CFBundleExecutable" @framework
-                                "CFBundleIdentifier" @framework_identifier
-                                "CFBundleGetInfoString" ""
-                                "CFBundleInfoDictionaryVersion" "6.0"
-                                "CFBundleName" @framework
-                                "CFBundlePackageType" "FMWK"
-                                "CFBundleSignature" @framework_creator_code
-                                "CFBundleVersion" "0.1"
-                                "NSHumanReadableCopyright" ""
-                                )))
-           (if @info (info addEntriesFromDictionary: @info))
-           (info writeToFile:(target name) atomically:NO)
-           0)
+     (ifDarwin
+               (then (set framework_infoplist "#{@framework_resource_dir}/Info.plist")
+                     (file framework_infoplist => @framework_resource_dir is
+                           (set info (NSDictionary dictionaryWithList:
+                                          (list "CFBundleDevelopmentRegion" "English"
+                                                "CFBundleExecutable" @framework
+                                                "CFBundleIdentifier" @framework_identifier
+                                                "CFBundleGetInfoString" ""
+                                                "CFBundleInfoDictionaryVersion" "6.0"
+                                                "CFBundleName" @framework
+                                                "CFBundlePackageType" "FMWK"
+                                                "CFBundleSignature" @framework_creator_code
+                                                "CFBundleVersion" "0.1"
+                                                "NSHumanReadableCopyright" ""
+                                                )))
+                           (if @info (info addEntriesFromDictionary: @info))
+                           (info writeToFile:(target name) atomically:NO))
+                       0)
+               (else (set framework_infoplist "#{@framework_resource_dir}/Info-gnustep.plist")
+                     (file framework_infoplist => @framework_resource_dir is
+                           (set info <<-END
+{
+  NOTE = "Automatically generated, do not edit!";
+  NSExecutable = "#{@framework}";
+  NSMainNibFile = "";
+  NSPrincipalClass = "#{@framework}";
+}
+END)
+                     (info writeToFile:framework_infoplist atomically:NO)
+                     0)))
      
      ;; framework_links
      (task "framework_links" => @framework_versions_dir @framework_dir is
@@ -621,7 +634,7 @@
                    (SH "cd #{@framework_dir}; ln -sf Versions/Current/#{@framework} #{@framework}"))
            0)
      
-     (task "framework" => @framework_executable_name @framework_headers_dir "framework_resources" framework_infoplist "framework_links")
+     (task "framework" => @framework_executable_name @framework_headers_dir "framework_resources" "framework_links" framework_infoplist)
      
      (task "clobber" => "clean" is
            (system "rm -rf '#{@framework_dir}'")))
