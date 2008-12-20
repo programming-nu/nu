@@ -77,7 +77,7 @@ extern id Nu__null;
 
 - (NSString *) stringValue
 {
-    return [NSString stringWithFormat:@"(macro %@ %@ %@)", name, [parameters stringValue], [body stringValue]];
+    return [NSString stringWithFormat:@"(macro-1 %@ %@ %@)", name, [parameters stringValue], [body stringValue]];
 }
 
 
