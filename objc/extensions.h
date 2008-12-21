@@ -135,6 +135,9 @@ limitations under the License.
 + (NSString *) stringWithShellCommand:(NSString *) command;
 #endif
 
+/*! If the last character is a newline, return a new string without it. */
+- (NSString *) chomp;
+
 /*! Create a string from a specified character */
 + (NSString *) stringWithCharacter:(unichar) c;
 
