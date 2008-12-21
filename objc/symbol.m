@@ -58,7 +58,9 @@ static NuSymbolTable *sharedSymbolTable = 0;
     symbol->string = strdup(string);
     // the symbol table does not use strong refs so make one here for each symbol
 #ifdef DARWIN
+#ifndef IPHONE
     [[NSGarbageCollector defaultCollector] disableCollectorForPointer:symbol];
+#endif
 #endif
     int len = strlen(string);
     symbol->isLabel = (string[len - 1] == ':');
@@ -110,7 +112,9 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
     st_delete(symbol_table, (st_data_t *) &(symbol->string), 0);
     [symbol release]; // on behalf of the table
 #ifdef DARWIN
+#ifndef IPHONE
     [[NSGarbageCollector defaultCollector] enableCollectorForPointer:self];    
+#endif
 #endif
 }
 

@@ -1308,7 +1308,9 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     // watch for problems caused by these ugly casts...
     st_insert(nu_block_table, (long) imp, (long) block);
 #ifdef DARWIN
+#ifndef IPHONE
     [[NSGarbageCollector defaultCollector] disableCollectorForPointer: block];
+#endif
 #endif
 
     // insert the method handler in the class method table
