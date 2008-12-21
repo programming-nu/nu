@@ -5,6 +5,7 @@
 (set @nu_files 	  (filelist "^nu/.*\.nu$"))
 (set @frameworks  '("Cocoa" "Nu" "Carbon"))
 
+(set @cflags " -fobjc-gc -g")
 (set @ldflags " -framework Cocoa -framework Nu -framework Carbon -linject -L../libinject ")
 (set @includes " -I../libinject/objc")
 

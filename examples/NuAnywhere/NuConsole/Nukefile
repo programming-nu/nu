@@ -6,6 +6,7 @@
 (set @nu_files 	  (filelist "^nu/.*\.nu$"))
 (set @frameworks  '("Cocoa" "Nu" "Carbon" ))
 
+(set @cflags " -g -fobjc-gc")
 (set @ldflags " -framework Cocoa -framework Nu -framework Carbon -linject -L../libinject -all_load ")
 
 ;; bundle description
