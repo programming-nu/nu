@@ -59,6 +59,8 @@ limitations under the License.
     @abstract NSMutableArray extensions for Nu programming.
  */
 @interface NSMutableArray(Nu)
+/*! Add the objects from the specified list to the array. */
+- (void) addObjectsFromList:(id)list;
 /*! Add an object to an array, automatically converting nil into [NSNull null]. */
 - (void) addPossiblyNullObject:(id)anObject;
 /*! Insert an object into an array, automatically converting nil into [NSNull null]. */

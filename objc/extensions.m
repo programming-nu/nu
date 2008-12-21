@@ -125,6 +125,11 @@ extern id Nu__null;
 
 @implementation NSMutableArray(Nu)
 
+- (void) addObjectsFromList:(id)list
+{
+    [self addObjectsFromArray:[NSArray arrayWithList:list]];
+}
+
 - (void) addPossiblyNullObject:(id)anObject
 {
     [self addObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
