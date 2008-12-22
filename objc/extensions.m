@@ -719,7 +719,7 @@ extern id Nu__null;
     }
 
     // first try the current directory
-    framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"%@.framework", frameworkName]];
+    framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"%@/%@.framework", [[NSFileManager defaultManager] currentDirectoryPath], frameworkName]];
 
     // then /Library/Frameworks
     if (!framework)
