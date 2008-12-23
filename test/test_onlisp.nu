@@ -90,11 +90,31 @@
         (myfor (i 1 (inc! n))
                (set var (+ var i)))
         (assert_equal 55 var))
-
-     (imethod (id) testOurApply is
-          (macro-1 our-apply (f *data)
-               `(eval (cons ,f ,@*data)))
-          
-          (assert_equal 6 (our-apply + '(1 2 3))))
      
-     )
+     (- (id) testOurApply is
+        (macro-1 our-apply (f *data)
+             `(eval (cons ,f ,@*data)))
+        
+        (assert_equal 6 (our-apply + '(1 2 3))))
+     
+     (- (id) testOurLet is
+        (macro-1 mylet (bindings *body)
+             `((do ,(bindings map:
+                         (do (x) (car x)))
+                   ,@*body)
+               ,@(bindings map:
+                 (do (x) (second x)))))
+        
+        (assert_equal 3
+             (mylet ((x 1) (y 2))
+                    (+ x y))))
+     
+     (- (id) testNumericIf is
+		(macro-1 numeric-if (expr pos zero neg)
+			`(let ((__expr ,expr))
+				(cond
+					((> __expr 0) ,pos)
+					((eq __expr 0) ,zero)
+					(t ,neg))))
+		(assert_equal '(p z n)
+			('(1 0 -1) map: (do (n) (numeric-if n 'p 'z 'n))))))
