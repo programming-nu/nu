@@ -38,9 +38,7 @@ static BOOL	g_loadedMatch = NO;
 		
 		g_loadedMatch = YES;
 	}
-	
-	Class NuMatch = NSClassFromString(@"NuMatch");
-	return NuMatch;
+        return self;	
 }
 
 @end
