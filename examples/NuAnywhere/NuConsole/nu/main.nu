@@ -2,7 +2,7 @@
 ;; this file gets evaluated when the bundle is injected
 ;;
 (unless $console ;; guard against multiple injection        
-        (load "console")        
+        (load "console")     
         (set $console ((NuConsoleWindowController alloc) init))
         (if (set appName (((NSBundle mainBundle) localizedInfoDictionary) objectForKey:"CFBundleName"))
             (($console window) setTitle:"Nu Console (#{appName})"))

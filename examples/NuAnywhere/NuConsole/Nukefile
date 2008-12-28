@@ -8,6 +8,7 @@
 
 (set @cflags " -g -fobjc-gc")
 (set @ldflags " -framework Cocoa -framework Nu -framework Carbon -linject -L../libinject -all_load ")
+(set @mflags " -fobjc-gc ")
 
 ;; bundle description
 (set @bundle "NuConsole")

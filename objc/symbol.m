@@ -108,12 +108,11 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 
 - (void) removeSymbol:(NuSymbol *) symbol
 {
-    //NSLog(@"removing symbol %@ from table", [symbol stringValue]);
     st_delete(symbol_table, (st_data_t *) &(symbol->string), 0);
     [symbol release]; // on behalf of the table
 #ifdef DARWIN
 #ifndef IPHONE
-    [[NSGarbageCollector defaultCollector] enableCollectorForPointer:self];    
+    [[NSGarbageCollector defaultCollector] enableCollectorForPointer:symbol];    
 #endif
 #endif
 }

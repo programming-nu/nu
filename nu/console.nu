@@ -126,6 +126,7 @@
                    (w makeKeyAndOrderFront:self)))
           
           (@console setFonts) ;; apparently this must be done AFTER the window is brought onscreen
+          (@console loadFile:"~/.nu")
           self)
      
      ;; When a window resizes, move the cursor to the end of the input.
@@ -176,7 +177,12 @@
 ;; It controls a Cocoa text view containing an interactive Nu console.
 (class NuConsoleViewController is NSObject
      (ivar (id) textview (id) startOfInput (id) insertionPoint (id) parser (id) history (id) index (id) count (id) chunk)
-     
+
+     (imethod (id) loadFile:(id)file is
+         ((_parser parse: (NSString stringWithContentsOfFile:
+										(file stringByResolvingSymlinksInPath)))
+             evalWithContext: (_parser context)))
+
      ;; Initialize a controller with a specified frame.
      (imethod (id) initWithFrame:(NSRect) frame is
           (super init)
@@ -338,6 +344,7 @@
                               (unless (@parser incomplete)
                                       (set @insertionPoint @startOfInput)
                                       (set result (@parser eval: code))
+                                      (((@parser symbolTable) symbolWithString: "!!") setValue: result)
                                       (if (send result respondsToSelector:"escapedStringRepresentation")
                                           (then (set stringToDisplay (send result escapedStringRepresentation)))
                                           (else (set stringToDisplay (send result stringValue))))
