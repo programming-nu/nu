@@ -26,9 +26,9 @@
 ;;
 ;;   (1 2 (3 4))
 (macro-0 match-let1
-     (set __pat (first margs))
-     (set __seq (eval (second margs)))
-     (set __body (cdr (cdr margs)))
+     (set __pat (margs 0))
+     (set __seq (eval (margs 1)))
+     (set __body ((margs cdr) cdr))
      (set __bindings (destructure __pat __seq))
      (check-bindings __bindings)
      (set __result (cons 'let (cons __bindings __body)))
@@ -47,13 +47,13 @@
 ;;
 ;; The name is short for "destructuring set."  The semantics are similar to "set."
 (macro-0 match-set
-     (set __pat (first margs))
-     (set __seq (eval (second margs)))
+     (set __pat (margs 0))
+     (set __seq (eval (margs 1)))
      (set __bindings (destructure __pat __seq))
      (check-bindings __bindings)
      (set __set-statements
           (__bindings map:(do (b)
-                              (list 'set (first b) (second b)))))
+                              (list 'set (b 0) (b 1)))))
      (eval (cons 'progn __set-statements)))
 
 
@@ -63,44 +63,64 @@
 ;; Graham's book On Lisp.
 (function destructure (pat seq)
      (cond
-          ((and (not pat) seq)
-           (throw* "NuMatchException"
-                   "Attempt to match empty pattern to non-empty object"))
-          ((not pat) nil)
-          ((eq pat '_) '())  ; wildcard match produces no binding
+          ;; The empty pattern matches the empty sequence.
+          ((eq pat '())
+           (if (!= seq '())
+               (then
+                    (throw* "NuMatchException"
+                            "Attempt to match empty pattern to non-empty object"))
+               (else '())))
+          
+          ;; The pattern nil matches the object nil.
+          ((eq pat 'nil)
+           (if (eq seq nil)
+               (then nil)  ; matched nil with nil, producing no binding
+               (else throw* "NuMatchException"
+                     "nil does not match #{seq}")))
+          
+          ;; Wildcard _ matches everything and produces no binding.
+          ((eq pat '_) '())
+          
+          ;; Symbol patterns match everything and produce bindings.
           ((symbol? pat)
            (let (seq (if (or (pair? seq) (symbol? seq))
                          (then (list 'quote seq))
                          (else seq)))
                 (list (list pat seq))))
           
-          ;; Patterns like (head . tail)
+          ;; Patterns like (head . tail) recurse.
           ((and (pair? pat)
-                (pair? (cdr pat))
+                (pair? (pat cdr))
                 (eq '. (second pat))
-                (pair? (cdr (cdr pat)))
-                (eq nil (cdr (cdr (cdr pat)))))
-           (let ((bindings1 (destructure (first pat) (first seq)))
-                 (bindings2 (destructure (third pat) (rest seq))))
+                (pair? ((pat cdr) cdr))
+                (eq nil (((pat cdr) cdr) cdr)))
+           (let ((bindings1 (destructure (pat 0) (seq 0)))
+                 (bindings2 (destructure (pat 2) (seq cdr))))
                 (append bindings1 bindings2)))
           
-          ;; Symbolic literal patterns like 'Foo
+          ;; Symbolic literal patterns like 'Foo match only symbols and produce
+          ;; no bindings.
           ((and (pair? pat)
-                (eq 'quote (car pat))
-                (pair? (cdr pat))
+                (eq 'quote (pat 0))
+                (pair? (pat cdr))
                 (symbol? (second pat)))
            (if (eq (second pat) seq)
                (then '())  ; literal symbol match produces no bindings
                (else (throw* "NuMatchException"
                              "Failed match of literal symbol #{pat} to #{seq}"))))
+          
+          ;; Pair patterns (including lists) recurse.
           ((pair? pat)
-           (let ((bindings1 (destructure (car pat) (car seq)))
-                 (bindings2 (destructure (cdr pat) (cdr seq))))
+           (let ((bindings1 (destructure (pat car) (seq car)))
+                 (bindings2 (destructure (pat cdr) (seq cdr))))
                 (append bindings1 bindings2)))
-          ((eq pat seq) '())  ; literal match produces no bindings
+          
+          ;; Literal matches produce no bindings.
+          ((eq pat seq) '())
+          
+          ;; Everything else is rejected.
           (else (throw* "NuMatchException"
-                        "pattern is not nil, a symbol or a pair: #{pat}"))))
-
+                        "Could not destructure sequence #{seq} with pattern #{pat}"))))
 
 ;; mdestructure is based on the destructure function right above,
 ;; but is modified to destructure macro arguments.  As these arguments
@@ -166,15 +186,14 @@
           (else (throw* "NuMatchException"
                         "pattern is not nil, a symbol or a pair: #{pat}"))))
 
-
 ;; Makes sure that no key is set to two different values.
 ;; For example (check-bindings '((a 1) (a 1) (b 2))) just returns its argument,
 ;; but (check-bindings '((a 1) (a 2) (b 2))) throws a NuMatchException.
 (function check-bindings (bindings)
      (set dic (dict))
      (bindings each:(do (b)
-                        (set key (first b))
-                        (set val (second b))
+                        (set key (b 0))
+                        (set val (b 1))
                         (set prev-val (dic key))  ; valueForKey inexplicably rejects symbols
                         (if (eq nil prev-val)
                             (then (dic setValue:val forKey:key))
@@ -194,20 +213,21 @@
            (eval (list 'quote (list 'quote x))))
           (else x)))
 
-;; Finds the first matching pattern returns its associated expression.
+;; Finds the first matching pattern and returns its associated expression.
 (function _find-first-match (obj patterns)
      (if (not patterns)
          (then '())
          (else
-              (set pb (car patterns))  ; pattern and body
-              (set pat (first pb))
+              (set pb (patterns 0))  ; pattern and body
+              (set pat (pb 0))
               
               ;; Handle quoted list patterns like '(a) or '(a b)
               (if (and (pair? pat)
-                       (eq 'quote (car pat)))
-                  (then (set pat (_quote-leaf-symbols (second pat)))))
+                       (eq 'quote (pat 0)))
+                  (then
+                       (set pat (_quote-leaf-symbols (pat 1)))))
               
-              (set body (rest pb))
+              (set body (pb cdr))
               (if (eq pat 'else)
                   (then body)
                   (else
@@ -217,18 +237,60 @@
                            (set expr (cons 'let (cons bindings body)))
                            expr
                            (catch (exception)
-                                  (_find-first-match obj (cdr patterns)))))))))
+                                  (_find-first-match obj (patterns cdr)))))))))
 
 ;; Matches an object against some patterns with associated expressions.
 ;; TODO(ijt): boolean conditions for patterns (like "when" in ocaml)
 (macro-0 match
-     (set __obj (eval (first margs)))
-     (set __patterns (rest margs))
+     (set __obj (eval (margs 0)))
+     (set __patterns (margs cdr))
      (set __expr (_find-first-match __obj __patterns))
      (if (not __expr)
          (then (throw* "NuMatchException" "No match found")))
      (eval __expr))
 
+;; Variant of (do (args) body) that gives different results depending
+;; on the structure of the argument list. For example, here is a
+;; function that counts its arguments, up to two:
+;;
+;; % (set f (match-do (() 0)
+;;                    ((a) 1)
+;;                    ((a b) 2)))
+;; (do (*args) ((match *args (() 0) ((a) 1) ((a b) 2))))
+;; % (f)
+;; 0
+;; % (f 'x)
+;; 1
+;; % (f 'y)
+;; 1
+;; % (f 'x 'y)
+;; 2
+;; % (f 'x 'y 'z)
+;; NuMatchException: No match found
+;;
+(macro match-do
+     (eval (list 'do '(*args)
+                 (append (list 'match '*args)
+                         margs))))
+
+;; Variant of (function name (args) body) that gives different results depending
+;; on the structure of the argument list. For example, here is a way to implement
+;; map:
+;;
+;; % (function slow-map (f lst)
+;;   (match-function loop
+;;     ((nil) '())
+;;     (((a . rest))
+;;      (puts "about to cons #{(f a)} onto recurse on #{rest}")
+;;      (cons (f a) (loop rest)))
+;;     (etc (puts "misc: #{etc}")))
+;;   (loop lst))
+;; % (slow-map cos '(3.14 0))
+;; (-0.9999987317275395 1)
+;;
+(macro match-function
+     (eval (list 'set (margs 0)
+                 (cons 'match-do (margs cdr)))))
 
 ;; Looks for an occurrence of item in the list l.
 (function find-atom (item l)
@@ -267,4 +329,3 @@
      
      (+ (id) findAtom:(id) a inSequence:(id) sequence is
         (find-atom a sequence)))
-
