@@ -92,8 +92,10 @@ END)
          (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
                (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")))
 
+(ifDarwin
+         (then (set @arch '("ppc" "i386")))) ;; build a universal binary
 ;; or set this to just build for your chosen platform
-(set @arch '("i386"))
+;;(set @arch '("i386"))
 
 (set @includes
      ((@inc_dirs map: (do (inc) " -I#{inc}")) join))
