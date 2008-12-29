@@ -184,7 +184,7 @@ This operator creates a named function in the current evaluation
 context. It expects three arguments: the function name,
 a list of function parameters, and the body of the function.END)
 
-(class-help Nu_macro_operator <<-END
+(class-help Nu_macro_1_operator <<-END
 This operator creates a named macro  in the current evaluation 
 context. It expects two arguments: the macro name, followed by
 the body of the macro.END)

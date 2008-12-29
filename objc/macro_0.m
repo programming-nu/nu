@@ -1,5 +1,5 @@
 /*!
-@file macro.m
+@file macro_0.m
 @description Nu macros.
 @copyright Copyright (c) 2007 Neon Design Technology, Inc.
 
@@ -15,7 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#import "macro.h"
+#import "macro_0.h"
 #import "cell.h"
 #import "symbol.h"
 #import "class.h"
@@ -24,7 +24,7 @@ limitations under the License.
 
 extern id Nu__null;
 
-@implementation NuMacro
+@implementation NuMacro_0
 
 + (id) macroWithName:(NSString *)n body:(NuCell *)b
 {
@@ -81,7 +81,7 @@ extern id Nu__null;
 
 - (NSString *) stringValue
 {
-    return [NSString stringWithFormat:@"(macro %@ %@)", name, [body stringValue]];
+    return [NSString stringWithFormat:@"(macro-0 %@ %@)", name, [body stringValue]];
 }
 
 - (id) body:(NuCell *) oldBody withGensymPrefix:(NSString *) prefix symbolTable:(NuSymbolTable *) symbolTable
@@ -172,10 +172,11 @@ extern id Nu__null;
     }
 }
 
-- (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context
+
+- (id) expandAndEval:(id)cdr context:(NSMutableDictionary *)calling_context evalFlag:(BOOL)evalFlag
 {
     NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
-    //NSLog(@"macro eval %@", [cdr stringValue]);
+
     // save the current value of margs
     id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
     // set the arguments to the special variable "margs"
@@ -197,11 +198,18 @@ extern id Nu__null;
     //bodyToEvaluate = body;
     //NSLog(@"evaluating %@", [bodyToEvaluate stringValue]);
 
-    id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
-    while (cursor && (cursor != Nu__null)) {
-        value = [[cursor car] evalWithContext:calling_context];
-        cursor = [cursor cdr];
-    }
+    value = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
+
+	if (evalFlag)
+	{
+		id cursor = value;
+
+	    while (cursor && (cursor != Nu__null)) {
+	        value = [[cursor car] evalWithContext:calling_context];
+	        cursor = [cursor cdr];
+	    }
+	}
+
     // restore the old value of margs
     if (old_margs == nil) {
         [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
@@ -209,6 +217,7 @@ extern id Nu__null;
     else {
         [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
     }
+
     #if 0
     // I would like to remove gensym values and symbols at the end of a macro's execution,
     // but there is a problem with this: the gensym assignments could be used in a closure,
@@ -224,8 +233,19 @@ extern id Nu__null;
         [symbolTable removeSymbol:gensymSymbol];
     }
     #endif
-    // NSLog(@"result is %@", value);
     return value;
+}
+
+
+- (id) expand1:(id)cdr context:(NSMutableDictionary*)calling_context
+{
+	return [self expandAndEval:cdr context:calling_context evalFlag:NO];
+}
+
+
+- (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context
+{
+	return [self expandAndEval:cdr context:calling_context evalFlag:YES];
 }
 
 @end

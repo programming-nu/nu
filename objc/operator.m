@@ -22,7 +22,8 @@ limitations under the License.
 #import "bridge.h"
 #import "symbol.h"
 #import "block.h"
-#import "macro.h"
+#import "macro_0.h"
+#import "macro_1.h"
 #import "class.h"
 #import "objc_runtime.h"
 #import "object.h"
@@ -616,6 +617,194 @@ limitations under the License.
 
 @end
 
+
+@interface Nu_quasiquote_eval_operator : NuOperator {}
+@end
+
+@implementation Nu_quasiquote_eval_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	// bqcomma is handled by Nu_quasiquote_operator.
+	// If we get here, it means someone called bq_comma
+	// outside of a backquote
+	[NSException raise:@"NuQuasiquoteEvalOutsideQuasiquote" 
+				format:@"Comma must be inside a backquote"];
+	
+	// Purely cosmetic...
+    return Nu__null;
+}
+
+@end
+
+@interface Nu_quasiquote_splice_operator : NuOperator {}
+@end
+
+@implementation Nu_quasiquote_splice_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	// bqcomma-at is handled by Nu_quasiquote_operator.
+	// If we get here, it means someone called bq_comma
+	// outside of a backquote
+	[NSException raise:@"NuQuasiquoteSpliceOutsideQuasiquote" 
+				format:@"Comma-at must be inside a backquote"];
+	
+	// Purely cosmetic...
+    return Nu__null;
+}
+
+@end
+
+
+// Temporary use for debugging quasiquote functions...
+#if 0
+	#define QuasiLog(args...)	NSLog(args)
+#else
+	#define QuasiLog(args...)
+#endif
+
+
+@interface Nu_quasiquote_operator : NuOperator {}
+@end
+
+@implementation Nu_quasiquote_operator
+
+- (id) evalQuasiquote:(id)cdr context:(NSMutableDictionary *)context
+{
+    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+
+    id quasiquote_eval = [symbolTable symbolWithString:@"quasiquote-eval"];
+    id quasiquote_splice = [symbolTable symbolWithString:@"quasiquote-splice"];
+
+	QuasiLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
+
+    id result = Nu__null;
+    id result_cursor = Nu__null;
+    id cursor = cdr;
+
+    while (cursor && (cursor != Nu__null)) {
+		id value = Nu__null;
+		QuasiLog(@"quasiquote: [cursor car] == %@", [[cursor car] stringValue]);
+
+		if ([[cursor car] atom]) {
+			// Treat it as a quoted value
+			QuasiLog(@"quasiquote: Quoting cursor car: %@", [[cursor car] stringValue]);
+			value = [cursor car];
+		}
+		else if ([cursor car] == Nu__null) {
+			QuasiLog(@"  quasiquote: null-list");
+			value = Nu__null;
+		}
+		else if ([[cursor car] car] == quasiquote_eval) {
+			QuasiLog(@"quasiquote-eval: Evaling: [[cursor car] cdr]: %@", [[[cursor car] cdr] stringValue]);
+        	value = [[[cursor car] cdr] evalWithContext:context];
+			QuasiLog(@"  quasiquote-eval: Value: %@", [value stringValue]);
+		}
+		else if ([[cursor car] car] == quasiquote_splice) {
+			QuasiLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@", 
+						[[[cursor car] cdr] stringValue]);
+			value = [[[cursor car] cdr] evalWithContext:context];
+			QuasiLog(@"  quasiquote-splice: Value: %@", [value stringValue]);
+
+			if (value != Nu__null && [value atom]) {
+				[NSException raise:@"NuQuasiquoteSpliceNoListError" 
+							format:@"An atom was passed to Quasiquote splicer.  Splicing can only splice a list."];
+			}
+
+			id value_cursor = value;
+			id value_item = Nu__null;
+			
+			while (value_cursor && (value_cursor != Nu__null)) {
+				value_item = [value_cursor car];
+
+				if (result_cursor == Nu__null) {
+				    result_cursor = [[[NuCell alloc] init] autorelease];
+					result = result_cursor;
+				}
+				else {
+				    [result_cursor setCdr: [[[NuCell alloc] init] autorelease]];
+				    result_cursor = [result_cursor cdr];
+				}
+
+				[result_cursor setCar: value_item];
+				value_cursor = [value_cursor cdr];
+			}
+
+			QuasiLog(@"  quasiquote-splice-append: result: %@", [result stringValue]);
+
+			cursor = [cursor cdr];
+
+			// Don't want to do the normal cursor handling at bottom of the loop
+			// in this case as we've already done it in the splicing above...
+			continue;
+		}
+		else {
+			QuasiLog(@"quasiquote: recursive callWithArguments: %@", [[cursor car] stringValue]);
+			value = [self evalQuasiquote:[cursor car] context:context];
+			QuasiLog(@"quasiquote: leaving recursive call with value: %@", [value stringValue]);
+		}
+
+        if (result == Nu__null) {
+            result = [[[NuCell alloc] init] autorelease];
+            result_cursor = result;
+        }
+        else {
+            [result_cursor setCdr:[[[NuCell alloc] init] autorelease]];
+            result_cursor = [result_cursor cdr];
+        }
+
+		[result_cursor setCar:value];
+
+		QuasiLog(@"quasiquote: result_cursor: %@", [result_cursor stringValue]);
+		QuasiLog(@"quasiquote: result:        %@", [result stringValue]);
+
+        cursor = [cursor cdr];
+    }
+	QuasiLog(@"quasiquote: returning result = %@", [result stringValue]);
+    return result;
+}
+
+
+#if 0
+@implementation Nu_append_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    id newList = Nu__null;
+    id cursor = nil;
+    id list_to_append = cdr;
+    while (list_to_append && (list_to_append != Nu__null)) {
+        id item_to_append = [[list_to_append car] evalWithContext:context];
+        while (item_to_append && (item_to_append != Nu__null)) {
+            if (newList == Nu__null) {
+                newList = [[[NuCell alloc] init] autorelease];
+                cursor = newList;
+            }
+            else {
+                [cursor setCdr: [[[NuCell alloc] init] autorelease]];
+                cursor = [cursor cdr];
+            }
+            id item = [item_to_append car];
+            [cursor setCar: item];
+            item_to_append = [item_to_append cdr];
+        }
+        list_to_append = [list_to_append cdr];
+    }
+    return newList;
+}
+@end
+#endif
+
+
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	return [[self evalQuasiquote:cdr context:context] car];
+}
+
+
+@end
+
+
+
 @interface Nu_context_operator : NuOperator {}
 @end
 
@@ -752,22 +941,68 @@ limitations under the License.
 
 @end
 
-@interface Nu_macro_operator : NuOperator {}
+@interface Nu_macro_0_operator : NuOperator {}
 @end
 
-@implementation Nu_macro_operator
+@implementation Nu_macro_0_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     id name = [cdr car];
     id body = [cdr cdr];
 
-    NuMacro *macro = [[NuMacro alloc] initWithName:name body:body];
+    NuMacro_0 *macro = [[NuMacro_0 alloc] initWithName:name body:body];
                                                   // this defines the function in the calling context
     [context setPossiblyNullObject:macro forKey:name];
     return macro;
 }
 
 @end
+
+
+@interface Nu_macro_1_operator : NuOperator {}
+@end
+
+@implementation Nu_macro_1_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    id name = [cdr car];
+	id args = [[cdr cdr] car];
+    id body = [[cdr cdr] cdr];
+
+    NuMacro_1 *macro = [[NuMacro_1 alloc] initWithName:name parameters:args body:body];
+                                                  // this defines the function in the calling context
+    [context setPossiblyNullObject:macro forKey:name];
+    return macro;
+}
+
+@end
+
+
+@interface Nu_macrox_operator : NuOperator {}
+@end
+
+@implementation Nu_macrox_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	id call = [cdr car];
+	id name = [call car];
+	id margs = [call cdr];
+	
+	NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+	id macro = [context objectForKey:[symbolTable symbolWithString:[name stringValue]]];
+	
+	if (macro == nil)
+	{
+		[NSException raise:@"NuMacroxWrongType" format:@"macrox was called on an object which is not a macro"];
+	}
+	
+	id expanded = [macro expand1:margs context:context];
+	return expanded;
+}
+@end
+
+
+
 
 @interface Nu_list_operator : NuOperator {}
 @end
@@ -1873,11 +2108,18 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("def",      Nu_function_operator);
     install("function", Nu_function_operator);
-    install("macro",    Nu_macro_operator);
-    install("macro-0",  Nu_macro_operator);
     install("progn",    Nu_progn_operator);
     install("then",     Nu_progn_operator);
     install("else",     Nu_progn_operator);
+
+    install("macro-0",	Nu_macro_0_operator);
+	install("macro-1",	Nu_macro_1_operator);
+    install("macro",    Nu_macro_0_operator);
+    install("macrox",   Nu_macrox_operator);
+
+	install("quasiquote",			Nu_quasiquote_operator);
+	install("quasiquote-eval", 		Nu_quasiquote_eval_operator);
+	install("quasiquote-splice", 	Nu_quasiquote_splice_operator);
 
     install("+",        Nu_add_operator);
     install("-",        Nu_subtract_operator);

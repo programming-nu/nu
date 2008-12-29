@@ -49,6 +49,27 @@ extern id Nu__null;
     [context setPossiblyNullObject:c forKey:PARENT_KEY];
     [context setPossiblyNullObject:[c objectForKey:SYMBOLS_KEY] forKey:SYMBOLS_KEY];
     #endif
+
+	// Check for the presence of "*args" in parameter list
+	id plist = parameters;
+	
+	if (!(   ([parameters length] == 1)
+		  && ([[[parameters car] stringValue] isEqualToString:@"*args"])))
+	{
+		while (plist && (plist != Nu__null)) 
+		{
+			id parameter = [plist car];
+		
+			if ([[parameter stringValue] isEqualToString:@"*args"])
+			{
+				printf("Warning: Overriding implicit variable '*args'.\n");
+				return self;
+			}
+			
+			plist = [plist cdr];
+		}
+	}
+
     return self;
 }
 
@@ -61,6 +82,7 @@ extern id Nu__null;
 {
     int numberOfArguments = [cdr length];
     int numberOfParameters = [parameters length];
+
     if (numberOfArguments != numberOfParameters) {
         // is the last parameter a variable argument? if so, it's ok, and we allow it to have zero elements.
         id lastParameter = [parameters lastObject];
@@ -86,6 +108,11 @@ extern id Nu__null;
     id plist = parameters;
     id vlist = cdr;
     id evaluation_context = [context mutableCopy];
+
+	// Insert the implicit variable "*args".  It contains the entire parameter list.
+	NuSymbolTable *symbolTable = [evaluation_context objectForKey:SYMBOLS_KEY];
+	[evaluation_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
+
     //    NSLog(@"after copying, evaluation context %@ retain count %d", evaluation_context, [evaluation_context retainCount]);
     while (plist && (plist != Nu__null)) {
         id parameter = [plist car];
