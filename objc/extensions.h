@@ -59,6 +59,8 @@ limitations under the License.
     @abstract NSMutableArray extensions for Nu programming.
  */
 @interface NSMutableArray(Nu)
+/*! Add the objects from the specified list to the array. */
+- (void) addObjectsFromList:(id)list;
 /*! Add an object to an array, automatically converting nil into [NSNull null]. */
 - (void) addPossiblyNullObject:(id)anObject;
 /*! Insert an object into an array, automatically converting nil into [NSNull null]. */
@@ -134,6 +136,9 @@ limitations under the License.
 /*! Run a shell command and return its results in a string. */
 + (NSString *) stringWithShellCommand:(NSString *) command;
 #endif
+
+/*! If the last character is a newline, return a new string without it. */
+- (NSString *) chomp;
 
 /*! Create a string from a specified character */
 + (NSString *) stringWithCharacter:(unichar) c;

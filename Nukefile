@@ -29,39 +29,41 @@ END)
 (set @c_files     (filelist "^objc/.*\.c$"))
 (set @m_files     (filelist "^objc/.*\.m$"))
 (@m_files unionSet:(filelist "^baked/.*\.m$"))
-(set @nu_files 	  (filelist "^nu/.*\.nu$"))
+(set @nu_files    (filelist "^nu/.*\.nu$"))
 (set @icon_files  (filelist "^lib/.*\.icns$"))
 (set @nib_files   '("share/nu/resources/English.lproj/MainMenu.nib"))
 
 ;; libraries
-(ifDarwin
-         (then (set @frameworks '("Cocoa"))
-               (set @libs       '("edit" "ffi" ))
-               (set @lib_dirs   (NSMutableArray arrayWithObject:"/usr/lib")))
-         (else (set @frameworks nil)
-               (set @libs       (list "readline" "ffi" "m" "gnustep-base" ))
-               (set @lib_dirs   (NSMutableArray arrayWithList:(list "/usr/lib/GNUstep/System/Library/Libraries")))))
+(set @frameworks (NSMutableArray array))
+(set @inc_dirs   (NSMutableArray arrayWithList:(list "/usr/include")))
+(set @lib_dirs   (NSMutableArray arrayWithList:(list "/usr/lib")))
+(set @libs       (NSMutableArray arrayWithList:(list "objc" "ffi" "pcre")))
 
+(@inc_dirs addObjectsFromList:(list "./include" "./include/Nu"))
+(ifDarwin
+         (then (@frameworks addObject:"Cocoa")
+               (@libs       addObject:"edit"))
+         (else (@libs       addObjectsFromList:(list "readline" "m" "gnustep-base"))
+               (@inc_dirs   addObject:"/usr/include/GNUstep/Headers")
+               (@lib_dirs   addObject:"/usr/lib/GNUstep/System/Library/Libraries")))
+
+(if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@inc_dirs addObject:"#{@prefix}/include"))
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/lib") (@lib_dirs addObject:"#{@prefix}/lib"))
-
-;; includes
-(ifDarwin
-         (then (set @includes " -I ./include -I ./include/Nu "))
-         (else (set @includes " -I ./include -I ./include/Nu -I /usr/local/include -I /usr/include/GNUstep/Headers")))
-
-;; cc main.m -fobjc-exceptions -fconstant-string-class=NSConstantString -L/usr/local/lib -lobjc -Wl,--rpath -Wl,/usr/local/lib -I /usr/include/GNUstep/Headers -L/usr/lib/GNUstep/System/Library/Libraries/ -lgnustep-base
-
-(if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@includes appendString:" -I #{@prefix}/include"))
 
 (ifDarwin
          (then (if (NSFileManager fileExistsNamed:"/usr/lib/libffi.dylib")
                    (then ;; Use the libffi that ships with OS X.
-                         (@includes appendString:" -I /usr/include"))
+                         (@inc_dirs addObject:"/usr/include/ffi"))
                    (else ;; Use the libffi that is distributed with Nu.
-                         (@includes appendString:" -I ./libffi/include")
-                         (@lib_dirs addObject:"./libffi"))))
-         (else ;; Use the libffi that ships with Linux
-               (@includes appendString:" -I /usr/include")))
+                         (@inc_dirs addObject:"./libffi/include")
+                         (@lib_dirs addObject:"./libffi")))))
+
+(set @pcre_prefix "")
+(let ((pcre_config ((NSString stringWithShellCommand:"which pcre-config 2>/dev/null") chomp)))
+     (if pcre_config
+         (then (set @pcre_prefix ((NSString stringWithShellCommand:"#{pcre_config} --prefix") chomp))
+               (@inc_dirs addObject:"#{@pcre_prefix}/include")
+               (@lib_dirs addObject:"#{@pcre_prefix}/lib"))))
 
 ;; framework description
 (set @framework "Nu")
@@ -81,7 +83,7 @@ END)
             (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__")
             ("-isysroot /Developer/SDKs/MacOSX10.5.sdk"))
            ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk")
-            (" -isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
+            ("-isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
            (else "")))
 
 (ifDarwin
@@ -96,26 +98,23 @@ END)
 ;; or set this to just build for your chosen platform
 ;; (set @arch '("i386"))
 
-(ifDarwin
-         (then (set @ldflags
-                    ((list
-                          (cond  ;; statically link in pcre since most people won't have it..
-                                 ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") ("#{@prefix}/lib/libpcre.a"))
-                                 (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
-                          ((@frameworks map: (do (framework) " -framework #{framework}")) join)
-                          ((@libs map: (do (lib) " -l#{lib}")) join)
-                          ((@lib_dirs map: (do (libdir) " -L#{libdir}")) join))
-                     join)))
-         (else (set @ldflags
-                    ((list
-                          "-lgnustep-base -L /usr/lib/GNUstep/System/Library/Libraries -L/usr/local/lib -lobjc -Wl,--rpath -Wl,/usr/lib/GNUstep/System/Library/Libraries -Wl,--rpath -Wl,/usr/local/lib"
-                          (cond  ;; statically link in pcre since most people won't have it..
-                                 ((NSFileManager fileExistsNamed:"/usr/lib/libpcre.a") "/usr/lib/libpcre.a")
-                                 ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") ("#{@prefix}/lib/libpcre.a"))
-                                 (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
-                          ((@frameworks map: (do (framework) " -framework #{framework}")) join)
-                          ((@libs map: (do (lib) " -l#{lib}")) join))
-                     join))))
+(set @includes
+     ((@inc_dirs map: (do (inc) " -I#{inc}")) join))
+(set @ldflags
+     ((list
+           (cond  ;; statically link in pcre since most people won't have it..
+                  ((NSFileManager fileExistsNamed:"#{@pcre_prefix}/lib/libpcre.a") "#{@pcre_prefix}/lib/libpcre.a")
+                  ((NSFileManager fileExistsNamed:"/usr/lib/libpcre.a") "/usr/lib/libpcre.a")
+                  ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") "#{@prefix}/lib/libpcre.a")
+                  (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
+           ((@frameworks map: (do (framework) " -framework #{framework}")) join)
+           ((@libs map: (do (lib) " -l#{lib}")) join)
+           (ifDarwin
+                    (then ((@lib_dirs map:
+                        (do (libdir) " -L#{libdir}")) join))
+                    (else ((@lib_dirs map:
+                        (do (libdir) " -L#{libdir} -Wl,--rpath #{libdir}")) join))))
+     join))
 
 (ifDarwin
          (set @public_headers (filelist "include/Nu/Nu.h")))
