@@ -3,6 +3,7 @@ build
 mininush
 nush
 Nu.framework
+doc
 .DS_Store
 libNu.a
 .DS_Store

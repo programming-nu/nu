@@ -28,17 +28,17 @@ limitations under the License.
 
 @implementation NuEnumerable
 
-- (id) each:(NuBlock *) block
+- (id) each:(id) callable
 {
     id args = [[NuCell alloc] init];
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
             @try
             {
                 [args setCar:object];
-                [block evalWithArguments:args context:Nu__null];
+                [callable evalWithArguments:args context:nil];
             }
             @catch (NuBreakException *exception) {
                 break;
@@ -68,7 +68,7 @@ limitations under the License.
             {
                 [args setCar:object];
                 [[args cdr] setCar:[NSNumber numberWithInt:i]];
-                [block evalWithArguments:args context:Nu__null];
+                [block evalWithArguments:args context:nil];
             }
             @catch (NuBreakException *exception) {
                 break;
@@ -124,16 +124,16 @@ limitations under the License.
     return Nu__null;
 }
 
-- (NSArray *) map:(NuBlock *) block
+- (NSArray *) map:(id) callable
 {
     NSMutableArray *results = [[NSMutableArray alloc] init];
     id args = [[NuCell alloc] init];
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
             [args setCar:object];
-            [results addObject:[block evalWithArguments:args context:Nu__null]];
+            [results addObject:[callable evalWithArguments:args context:nil]];
         }
     }
     [args release];
@@ -152,18 +152,18 @@ limitations under the License.
     return results;
 }
 
-- (id) reduce:(NuBlock *) block from:(id) initial
+- (id) reduce:(id) callable from:(id) initial
 {
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
     id result = initial;
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
             [args setCar:result];
             [[args cdr] setCar: object];
-            result = [block evalWithArguments:args context:Nu__null];
+            result = [callable evalWithArguments:args context:nil];
         }
     }
     [args release];
@@ -204,35 +204,35 @@ limitations under the License.
 
 @implementation NSArray (Enumeration)
 
-- (id) reduceLeft:(NuBlock *) block from:(id) initial
+- (id) reduceLeft:(id)callable from:(id) initial
 {
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
     id result = initial;
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         int i;
         for (i = [self count] - 1; i >= 0; i--) {
             id object = [self objectAtIndex:i];
             [args setCar:result];
             [[args cdr] setCar: object];
-            result = [block evalWithArguments:args context:Nu__null];
+            result = [callable evalWithArguments:args context:nil];
         }
     }
     [args release];
     return result;
 }
 
-- (id) eachInReverse:(NuBlock *) block
+- (id) eachInReverse:(id) callable
 {
     id args = [[NuCell alloc] init];
-    if (nu_objectIsKindOfClass(block, [NuBlock class])) {
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         NSEnumerator *enumerator = [self reverseObjectEnumerator];
         id object;
         while ((object = [enumerator nextObject])) {
             @try
             {
                 [args setCar:object];
-                [block evalWithArguments:args context:Nu__null];
+                [callable evalWithArguments:args context:nil];
             }
             @catch (NuBreakException *exception) {
                 break;

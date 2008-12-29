@@ -380,6 +380,11 @@ static NuRegex *backrefPattern;
 
 - (const pcre *)pcre { return regex; }
 
+- (BOOL)isEqual:(NuRegex *)other
+{
+    return (([pattern isEqualToString: [other pattern]]) && (options == [other options]));
+}
+
 @end
 
 @implementation NuRegexMatch
