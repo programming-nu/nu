@@ -57,22 +57,65 @@
           (set n 10)
           (mfact 4)
           (assert_equal n 10))
-
-
-	(imethod (id) testRestMacro is
-		(macro-1 myfor ((var start stop) *body)
-			`(let ((,var ,start))
-				(while (<= ,var ,stop)
-					,@*body
-					(set ,var (+ ,var 1)))))
-		
-		(set var 0)
-		(myfor (i 1 10)
-			(set var (+ var i)))
-		(assert_equal var 55)
-		
-		;; Make sure we didn't pollute our context
-		(assert_throws "NuUndefinedSymbol"
-			(puts "#{i}"))
-		)
-)
+     
+     
+     (imethod (id) testRestMacro is
+          (macro-1 myfor ((var start stop) *body)
+               `(let ((,var ,start))
+                     (while (<= ,var ,stop)
+                            ,@*body
+                            (set ,var (+ ,var 1)))))
+          
+          (set var 0)
+          (myfor (i 1 10)
+                 (set var (+ var i)))
+          (assert_equal var 55)
+          
+          ;; Make sure we didn't pollute our context
+          (assert_throws "NuUndefinedSymbol"
+               (puts "#{i}")))
+     
+     (imethod (id) testNullArgMacro is
+          ;; Make sure *args is set correctly with a null arg macro
+          (macro-1 concat ()
+               `(cons + *args))
+          
+          ;(concat 1 2 3)
+          )
+     
+     (imethod (id) testRestoreImplicitArgsExceptionMacro is
+          (macro-1 concat ()
+               (cons '+ *args))
+          
+          (assert_throws "NuMatchException" (concat 1 2 3))
+          
+          ;; We're in a block, so *args is defined
+          ;; but should be nil since our block takes
+          ;; no arguments...
+          (assert_equal nil *args))
+     
+     (imethod (id) testRestoreArgsExceptionMacro is
+          ;; Intentionally refer to undefined symbol
+          (macro-1 x (a b)
+               c)
+          
+          (set a 0)
+          (assert_throws "NuUndefinedSymbol" (x 1 2))
+          (assert_equal nil *args)
+          (assert_equal 0 a)
+          (assert_throws "NuUndefinedSymbol" b))
+     
+     (imethod (id) testMaskedVariablesMacro is
+          (macro-1 x (a b)
+               `(+ ,a ,b))
+          
+          (set a 1)
+          (assert_equal 5 (x 2 3))
+          (assert_equal 1 a))
+     
+     (imethod (id) testDisruptCallingContextMacro is
+          (macro-1 leaky-macro (a b)
+               `(set c (+ ,a ,b)))
+          
+          (assert_equal 5 (leaky-macro 2 3))
+          (assert_equal 5 c)))
