@@ -616,6 +616,7 @@
   NOTE = "Automatically generated, do not edit!";
   NSExecutable = "#{@framework}";
   NSMainNibFile = "";
+  CFBundleIdentifier = "#{@framework_identifier}";
   NSPrincipalClass = "#{@framework}";
 }
 END)
