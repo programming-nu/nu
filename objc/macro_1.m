@@ -25,7 +25,6 @@ limitations under the License.
 
 extern id Nu__null;
 
-#define USE_DESTRUCTURING_BIND	1
 //#define MACRO1_DEBUG	1
 
 // Following  debug output on and off for this file only
@@ -82,8 +81,10 @@ extern id Nu__null;
 - (void) dumpContext:(NSMutableDictionary*)context
 {
 	NSArray* keys = [context allKeys];
-	for (id key in keys)
-	{
+	int count = [keys count];
+	
+	for (int i = 0; i < count; i++) {
+		id key = [keys objectAtIndex:i];
 		Macro1Debug(@"contextdump: %@  =  %@  [%@]", key, 
 			[[context objectForKey:key] stringValue],
 			[[context objectForKey:key] class]);
