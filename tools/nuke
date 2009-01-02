@@ -471,7 +471,7 @@
                 (set tool_executable "build/#{architecture}/#{@tool}")
                 (@tool_executables addObject:tool_executable)
                 (file tool_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "gcc #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{@tool_extras} #{@ldflags} -o '#{(target name)}'")
+                      (set command "#{@cc} -arch #{architecture} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{@tool_extras} #{@ldflags} -o '#{(target name)}'")
                       (SH command))))
      
      ;; tool fat archive
