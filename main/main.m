@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#if defined(DARWIN) && !defined(IPHONE)
+#if defined(DARWIN) 
 int NuMain(int argc, const char *argv[]);
 
 int main(int argc, const char *argv[])

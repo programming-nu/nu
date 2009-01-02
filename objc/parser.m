@@ -968,16 +968,21 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     return result;
 }
 
-#ifndef IPHONE
 - (int) interact
 {
     printf("Nu Shell.\n");
     do {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         char *prompt = ([self incomplete] ? "- " : "% ");
+		#ifdef IPHONENOREADLINE
+		puts(prompt);
+		char line[1024]; // careful
+		int count = gets(line);
+		#else
         char *line = readline(prompt);
         if (line && *line)
             add_history (line);
+		#endif
         if(!line || !strcmp(line, "quit")) {
             break;
         }
@@ -1068,5 +1073,5 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     [pool release];
     return result;
 }
-#endif
+
 @end

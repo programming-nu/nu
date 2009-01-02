@@ -89,6 +89,9 @@ int NuMain(int argc, const char *argv[])
 int NuMain(int argc, const char *argv[], const char *envp[])
 #endif
 {
+	#ifdef IPHONE
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	#endif
 
     #ifdef LINUX
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -208,6 +211,10 @@ int NuMain(int argc, const char *argv[], const char *envp[])
         #ifdef LINUX
         [pool release];
     #endif
+
+	#ifdef IPHONE
+    [pool release];
+	#endif
     return 0;
 }
 

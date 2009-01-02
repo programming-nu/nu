@@ -8,21 +8,21 @@
 
 (case platform
       
-      ("iPhoneOS"
-                 (set PLATFORM "-isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS#{sdk_version}.sdk")
-                 (set @arch '("armv6"))
-                 (set @cc "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.0")
-                 (set @library_extras "platforms/iPhoneOS/libffi/*.o platforms/iPhoneOS/pcre/*.o"))
+      ( "iPhoneOS"
+        (set PLATFORM "-isysroot /Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS#{sdk_version}.sdk")
+        (set @arch '("armv6"))
+        (set @cc "/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.0")
+        (set @library_extras "platforms/iPhoneOS/libffi/*.o platforms/iPhoneOS/pcre/*.o"))
       
-      ("iPhoneSimulator"
-           (set PLATFORM "-isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#{sdk_version}.sdk")
-           (set @arch '("i386"))
-           (set @cc "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.0")
-           (set @library_extras "platforms/iPhoneSimulator/lib/libpcre.a"))
+      ( "iPhoneSimulator"
+        (set PLATFORM "-isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator#{sdk_version}.sdk")
+        (set @arch '("i386"))
+        (set @cc "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/gcc-4.0")
+        (set @library_extras "platforms/iPhoneSimulator/lib/libpcre.a"))
       
       (else nil))
 
-(set @cflags "-g -Iinclude -I../include -DDARWIN -DIPHONE -DMACOSX -std=gnu99 #{PLATFORM}  -mmacosx-version-min=10.5")
+(set @cflags "-g -Iinclude -I../include -DMININUSH -DDARWIN -DIPHONE -DMACOSX -std=gnu99 #{PLATFORM}  ")
 
 ;; library description
 (set @library "libNu")
@@ -30,7 +30,13 @@
 (compilation-tasks)
 (library-tasks)
 
-(task "default" => "library")
+(file "build/armv6/nush" => "library" "build/armv6/main.o" is
+      (SH "#{@cc} #{@cflags} #{@mflags} #{PLATFORM} -ObjC libNu.a ../main/main.m -framework Foundation -arch armv6 -o #{(target name)} -ledit")
+      (SH "CODESIGN_ALLOCATE=/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/codesign_allocate codesign -fs 'iPhone Developer' #{(target name)}"))
+
+(task "nush" => "build/armv6/nush")
+
+(task "default" => "nush")
 
 (task "clobber" => "clean" is
-      (SH "rm -rf libNu.a"))
+      (SH "rm -rf libNu.a build/armv6/nush"))
