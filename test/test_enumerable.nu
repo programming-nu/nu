@@ -10,8 +10,10 @@
         ((array 100 200 300) each:
          (do (n) (set sum (+ sum n))))
         (assert_equal 600 sum)
-        ;; I'm not sure how to test this, unless there was an assert_printed macro.
-        ((array 100 200 300) each:puts))
+	(set sum "")
+        (function append-to-sum (x) (set sum (+ sum x)))
+        ((array 100 200 300) each:append-to-sum)
+        (assert_equal "100200300" sum))
      
      (- testEachWithIndex is
         (set sum 0)
@@ -72,8 +74,10 @@
          ((array "the" "girl" "from" "ipanema") eachInReverse:
           (do (n) (set title (+ title n))))
          (assert_equal title "ipanemafromgirlthe")
-         ;; Again, I'm not sure how to test this, unless there was an assert_printed macro.
-         ((array 100 200 300) eachInReverse:puts))
+	 (set sum "")
+         (function append-to-sum (x) (set sum (+ sum x)))
+         ((array 100 200 300) eachInReverse:append-to-sum)
+         (assert_equal "300200100" sum))
      
      (- testMapSelector is
         (assert_equal 3 ((((array 100 200 300) mapSelector:"stringValue") 1) length))))
