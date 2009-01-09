@@ -130,31 +130,55 @@ extern id Nu__null;
 }
 
 
+- (id) destructuringListAppend:(id)lhs withList:(id)rhs
+{
+	Macro1Debug(@"Append: lhs = %@  rhs = %@", [lhs stringValue], [rhs stringValue]);
+
+	if (lhs == nil || lhs == Nu__null)
+		return rhs;
+
+	if (rhs == nil || rhs == Nu__null)
+		return lhs;
+
+	id cursor = lhs;
+
+	while (   cursor 
+	       && (cursor != Nu__null)
+	       && [cursor cdr]
+	       && ([cursor cdr] != Nu__null)) 
+	{
+		cursor = [cursor cdr];
+	}
+
+	[cursor setCdr:rhs];
+
+	Macro1Debug(@"Append: result = %@", [lhs stringValue]);
+
+	return lhs;
+}
+
+
 - (id) mdestructure:(id)pattern withSequence:(id)sequence
 {
 	Macro1Debug(@"mdestructure: pat: %@  seq: %@", [pattern stringValue], [sequence stringValue]);
 
 	// ((and (not pat) seq)
 	if (   ((pattern == nil) || (pattern == Nu__null)) 
-	    && (sequence != Nu__null))
-	{
+	    && (sequence != Nu__null)) {
         [NSException raise:@"NuDestructureException"
             format:@"Attempt to match empty pattern to non-empty object"];
 	}
 	// ((not pat) nil)
-	else if ((pattern == nil) || (pattern == Nu__null))
-	{
+	else if ((pattern == nil) || (pattern == Nu__null)) {
 		return nil;
 	}
 	else if (   (pattern && (pattern != Nu__null))
-	         && (sequence == nil || sequence == Nu__null))
-	{
+	         && (sequence == nil || sequence == Nu__null)) {
         [NSException raise:@"NuDestructureException"
             format:@"Attempt to match non-empty pattern to empty object"];		
 	}
 	// ((eq pat '_) '())  ; wildcard match produces no binding
-	else if ([[pattern stringValue] isEqualToString:@"_"])
-	{
+	else if ([[pattern stringValue] isEqualToString:@"_"]) {
 		return nil;
 	}
 	// ((symbol? pat)
@@ -162,19 +186,16 @@ extern id Nu__null;
     //                 (then (list seq))
 	//                 (else seq)))
 	//        (list (list pat seq))))
-	else if ([pattern class] == [NuSymbol class])
-	{
+	else if ([pattern class] == [NuSymbol class]) {
 		id result;
 
-		if ([[pattern stringValue] characterAtIndex:0] == '*')
-		{
+		if ([[pattern stringValue] characterAtIndex:0] == '*') {
 			// List-ify sequence
 			id l = [[[NuCell alloc] init] autorelease];
 			[l setCar:sequence];
 			result = l;
 		}
-		else
-		{
+		else {
 			result = sequence;
 		}
 		
@@ -199,11 +220,10 @@ extern id Nu__null;
 	//       (else ((let ((bindings1 (mdestructure (car pat) (car seq)))
 	//                    (bindings2 (mdestructure (cdr pat) (cdr seq))))
 	//                (append bindings1 bindings2))))))
-	else if ([pattern class] == [NuCell class])
-	{
+	else if ([pattern class] == [NuCell class])	{
 		if (   ([[pattern car] class] == [NuSymbol class])
-		    && ([[[pattern car] stringValue] characterAtIndex:0] == '*'))
-		{
+		    && ([[[pattern car] stringValue] characterAtIndex:0] == '*')) {
+			
 			id l1 = [[[NuCell alloc] init] autorelease];
 			id l2 = [[[NuCell alloc] init] autorelease];
 			id l3 = [[[NuCell alloc] init] autorelease];
@@ -214,46 +234,13 @@ extern id Nu__null;
 			
 			return l3;
 		}
-		else
-		{
+		else {
 			id b1 = [self mdestructure:[pattern car] withSequence:[sequence car]];
 			id b2 = [self mdestructure:[pattern cdr] withSequence:[sequence cdr]];
 
-			// (append b1 b2)
-		    id newList = Nu__null;
-		    id cursor = nil;
-		    id item_to_append = b1;
+			id newList = [self destructuringListAppend:b1 withList:b2];
 
-	        while (item_to_append && (item_to_append != Nu__null)) {
-	            if (newList == Nu__null) {
-	                newList = [[[NuCell alloc] init] autorelease];
-	                cursor = newList;
-	            }
-	            else {
-	                [cursor setCdr: [[[NuCell alloc] init] autorelease]];
-	                cursor = [cursor cdr];
-	            }
-	            id item = [item_to_append car];
-	            [cursor setCar: item];
-	            item_to_append = [item_to_append cdr];
-	        }
-
-			item_to_append = b2;
-	        while (item_to_append && (item_to_append != Nu__null)) {
-	            if (newList == Nu__null) {
-	                newList = [[[NuCell alloc] init] autorelease];
-	                cursor = newList;
-	            }
-	            else {
-	                [cursor setCdr: [[[NuCell alloc] init] autorelease]];
-	                cursor = [cursor cdr];
-	            }
-	            id item = [item_to_append car];
-	            [cursor setCar: item];
-	            item_to_append = [item_to_append cdr];
-	        }
-
-		    return newList;
+			return newList;
 		}
 	}
 	// (else (throw* "NuMatchException"
@@ -267,6 +254,7 @@ extern id Nu__null;
 	// Just for aesthetics...
 	return nil;
 }
+
 
 
 - (id) expandAndEval:(id)cdr context:(NSMutableDictionary*)calling_context evalFlag:(BOOL)evalFlag
