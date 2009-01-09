@@ -25,7 +25,7 @@ limitations under the License.
 
 @implementation NuMatch
 
-static BOOL	g_loadedMatch = NO;
+static BOOL	g_loadedMatch = YES; // originally this was NO, but it's now unnecessary
 
 + (id) matcher
 {
