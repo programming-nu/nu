@@ -21,11 +21,14 @@ limitations under the License.
 #import "class.h"
 #import "extensions.h"
 #import "objc_runtime.h"
+#import "operator.h"
 #import "match.h"
 
 extern id Nu__null;
 
 //#define MACRO1_DEBUG	1
+//#define USE_NU_DESTRUCTURE 1
+
 
 // Following  debug output on and off for this file only
 #ifdef MACRO1_DEBUG
@@ -127,6 +130,145 @@ extern id Nu__null;
 }
 
 
+- (id) mdestructure:(id)pattern withSequence:(id)sequence
+{
+	Macro1Debug(@"mdestructure: pat: %@  seq: %@", [pattern stringValue], [sequence stringValue]);
+
+	// ((and (not pat) seq)
+	if (   ((pattern == nil) || (pattern == Nu__null)) 
+	    && (sequence != Nu__null))
+	{
+        [NSException raise:@"NuDestructureException"
+            format:@"Attempt to match empty pattern to non-empty object"];
+	}
+	// ((not pat) nil)
+	else if ((pattern == nil) || (pattern == Nu__null))
+	{
+		return nil;
+	}
+	else if (   (pattern && (pattern != Nu__null))
+	         && (sequence == nil || sequence == Nu__null))
+	{
+        [NSException raise:@"NuDestructureException"
+            format:@"Attempt to match non-empty pattern to empty object"];		
+	}
+	// ((eq pat '_) '())  ; wildcard match produces no binding
+	else if ([[pattern stringValue] isEqualToString:@"_"])
+	{
+		return nil;
+	}
+	// ((symbol? pat)
+    //   (let (seq (if (eq ((pat stringValue) characterAtIndex:0) '*')
+    //                 (then (list seq))
+	//                 (else seq)))
+	//        (list (list pat seq))))
+	else if ([pattern class] == [NuSymbol class])
+	{
+		id result;
+
+		if ([[pattern stringValue] characterAtIndex:0] == '*')
+		{
+			// List-ify sequence
+			id l = [[[NuCell alloc] init] autorelease];
+			[l setCar:sequence];
+			result = l;
+		}
+		else
+		{
+			result = sequence;
+		}
+		
+		// (list pattern sequence)
+		id p = [[[NuCell alloc] init] autorelease];
+		id s = [[[NuCell alloc] init] autorelease];
+		
+		[p setCar:pattern];
+		[p setCdr:s];
+		[s setCar:result];
+		
+		// (list (list pattern sequence))
+		id l = [[[NuCell alloc] init] autorelease];
+		[l setCar:p];
+	
+		return l;
+	}
+	// ((pair? pat)
+	//   (if (and (symbol? (car pat))
+	//       (eq (((car pat) stringValue) characterAtIndex:0) '*'))
+	//       (then (list (list (car pat) seq)))
+	//       (else ((let ((bindings1 (mdestructure (car pat) (car seq)))
+	//                    (bindings2 (mdestructure (cdr pat) (cdr seq))))
+	//                (append bindings1 bindings2))))))
+	else if ([pattern class] == [NuCell class])
+	{
+		if (   ([[pattern car] class] == [NuSymbol class])
+		    && ([[[pattern car] stringValue] characterAtIndex:0] == '*'))
+		{
+			id l1 = [[[NuCell alloc] init] autorelease];
+			id l2 = [[[NuCell alloc] init] autorelease];
+			id l3 = [[[NuCell alloc] init] autorelease];
+			[l1 setCar:[pattern car]];
+			[l1 setCdr:l2];
+			[l2 setCar:sequence];
+			[l3 setCar:l1];
+			
+			return l3;
+		}
+		else
+		{
+			id b1 = [self mdestructure:[pattern car] withSequence:[sequence car]];
+			id b2 = [self mdestructure:[pattern cdr] withSequence:[sequence cdr]];
+
+			// (append b1 b2)
+		    id newList = Nu__null;
+		    id cursor = nil;
+		    id item_to_append = b1;
+
+	        while (item_to_append && (item_to_append != Nu__null)) {
+	            if (newList == Nu__null) {
+	                newList = [[[NuCell alloc] init] autorelease];
+	                cursor = newList;
+	            }
+	            else {
+	                [cursor setCdr: [[[NuCell alloc] init] autorelease]];
+	                cursor = [cursor cdr];
+	            }
+	            id item = [item_to_append car];
+	            [cursor setCar: item];
+	            item_to_append = [item_to_append cdr];
+	        }
+
+			item_to_append = b2;
+	        while (item_to_append && (item_to_append != Nu__null)) {
+	            if (newList == Nu__null) {
+	                newList = [[[NuCell alloc] init] autorelease];
+	                cursor = newList;
+	            }
+	            else {
+	                [cursor setCdr: [[[NuCell alloc] init] autorelease]];
+	                cursor = [cursor cdr];
+	            }
+	            id item = [item_to_append car];
+	            [cursor setCar: item];
+	            item_to_append = [item_to_append cdr];
+	        }
+
+		    return newList;
+		}
+	}
+	// (else (throw* "NuMatchException"
+	//               "pattern is not nil, a symbol or a pair: #{pat}"))))
+	else
+	{
+        [NSException raise:@"NuDestructureException"
+			format:@"Pattern is not nil, a symbol or a pair: %@", [pattern stringValue]];
+	}
+
+	// Just for aesthetics...
+	return nil;
+}
+
+
 - (id) expandAndEval:(id)cdr context:(NSMutableDictionary*)calling_context evalFlag:(BOOL)evalFlag
 {
     NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
@@ -142,7 +284,10 @@ extern id Nu__null;
     id old_args = [calling_context objectForKey:[symbolTable symbolWithCString:"*args"]];
 	[calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
 
+#ifdef USE_NU_DESTRUCTURE
 	id match = [NuMatch matcher];
+#endif
+
 	id destructure;
 
 	#ifdef DARWIN
@@ -152,7 +297,12 @@ extern id Nu__null;
 		#endif
 	{
 		// Destructure the arguments
+#ifdef USE_NU_DESTRUCTURE
 		destructure = [match mdestructure:parameters withSequence:cdr];
+#else
+		destructure = [self mdestructure:parameters withSequence:cdr];
+#endif
+
 	}
 	#ifdef DARWIN
 	@catch (id exception)
