@@ -56,7 +56,7 @@
                     (else (* (mfact (- ,n 1)) ,n))))
           (set n 10)
           (mfact 4)
-          (assert_equal n 10))
+          (assert_equal 10 n))
      
      
      (imethod (id) testRestMacro is
@@ -69,7 +69,7 @@
           (set var 0)
           (myfor (i 1 10)
                  (set var (+ var i)))
-          (assert_equal var 55)
+          (assert_equal 55 var)
           
           ;; Make sure we didn't pollute our context
           (assert_throws "NuUndefinedSymbol"
@@ -77,22 +77,61 @@
      
      (imethod (id) testNullArgMacro is
           ;; Make sure *args is set correctly with a null arg macro
-          (macro-1 concat ()
-               `(cons + *args))
+          (macro-1 set-a-to-1 ()
+               (set a 1))
           
-          ;(concat 1 2 3)
-          )
+          (set-a-to-1)
+          (assert_equal 1 a))
      
+     (imethod (id) testBadArgsNullMacro is
+          (macro-1 nullargs ()
+               nil)
+          
+          (assert_throws "NuDestructureException" (nullargs 1 2)))
+     
+     (imethod (id) testNoBindingsMacro is
+          (macro-1 no-bindings (_)
+               nil)
+          
+          (assert_equal nil (no-bindings 1)))
+     
+     (imethod (id) testMissingSequenceArgument is
+          (macro-1 missing-sequence (_ b)
+               b)
+          
+          (assert_throws "NuDestructureException" (missing-sequence 1)))
+     
+     (imethod (id) testSkipBindingsMacro is
+          (macro-1 skip-bindings (_ b)
+               b)
+          
+          (assert_equal 2 (skip-bindings 1 2)))
+     
+     (imethod (id) testSingleCatchAllArgMacro is
+          (macro-1 single-arg (*rest)
+               (cons '+ *rest))
+          
+          (assert_equal 6 (single-arg 1 2 3)))
+
+     (imethod (id) testDoubleCatchAllArgMacro is
+		(macro-1 double-catch-all ((a *b) (c *d))
+			`(append (quote ,*b) (quote ,*d)))
+			
+			(assert_equal '(2 3 4 12 13 14) (double-catch-all (1 2 3 4) (11 12 13 14))))
+
      (imethod (id) testRestoreImplicitArgsExceptionMacro is
           (macro-1 concat ()
                (cons '+ *args))
           
-          (assert_throws "NuMatchException" (concat 1 2 3))
+          (assert_throws "NuDestructureException" (concat 1 2 3))
           
           ;; We're in a block, so *args is defined
           ;; but should be nil since our block takes
-          ;; no arguments...
-          (assert_equal nil *args))
+          ;; no arguments.
+          
+          ;; Don't pass *args to another macro
+          (set defaultargs *args)
+          (assert_equal nil defaultargs))
      
      (imethod (id) testRestoreArgsExceptionMacro is
           ;; Intentionally refer to undefined symbol
@@ -101,7 +140,10 @@
           
           (set a 0)
           (assert_throws "NuUndefinedSymbol" (x 1 2))
-          (assert_equal nil *args)
+          
+          ;; Don't pass *args to another macro
+          (set defaultargs *args)
+          (assert_equal nil defaultargs)
           (assert_equal 0 a)
           (assert_throws "NuUndefinedSymbol" b))
      
