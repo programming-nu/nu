@@ -22,7 +22,7 @@ limitations under the License.
 #import "extensions.h"
 #import "objc_runtime.h"
 #import "operator.h"
-#import "match.h"
+//#import "match.h"
 
 extern id Nu__null;
 
@@ -52,19 +52,38 @@ extern id Nu__null;
 }
 
 
+
+- (BOOL) findAtom:(id)atom inSequence:(id)sequence
+{
+	if (atom == nil || atom == Nu__null)
+		return NO;
+		
+	if (sequence == nil || sequence == Nu__null)
+		return NO;
+
+	if ([[atom stringValue] isEqualToString:[sequence stringValue]])
+		return YES;
+	
+	if ([sequence class] == [NuCell class]) {
+		return (   [self findAtom:atom inSequence:[sequence car]]
+		        || [self findAtom:atom inSequence:[sequence cdr]]);
+	}
+	
+	return NO;
+}
+
+
 - (id) initWithName:(NSString *)n parameters:(NuCell *)p body:(NuCell *)b
 {
     [super initWithName:n body:b];
 	parameters = [p retain];
-
-	id match = [NuMatch matcher];
 
 	if (([parameters length] == 1) 
 		&& ([[[parameters car] stringValue] isEqualToString:@"*args"])) {
 		// Skip the check
 	}
 	else {
-		id foundArgs = [match findAtom:@"*args" inSequence:parameters];
+		id foundArgs = [self findAtom:@"*args" inSequence:parameters];
 
 		if (foundArgs && (foundArgs != Nu__null)) {
 			printf("Warning: Overriding implicit variable '*args'.\n");
