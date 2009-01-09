@@ -112,13 +112,13 @@
                (cons '+ *rest))
           
           (assert_equal 6 (single-arg 1 2 3)))
-
+     
      (imethod (id) testDoubleCatchAllArgMacro is
-		(macro-1 double-catch-all ((a *b) (c *d))
-			`(append (quote ,*b) (quote ,*d)))
-			
-			(assert_equal '(2 3 4 12 13 14) (double-catch-all (1 2 3 4) (11 12 13 14))))
-
+          (macro-1 double-catch-all ((a *b) (c *d))
+               `(append (quote ,*b) (quote ,*d)))
+          
+          (assert_equal '(2 3 4 12 13 14) (double-catch-all (1 2 3 4) (11 12 13 14))))
+     
      (imethod (id) testRestoreImplicitArgsExceptionMacro is
           (macro-1 concat ()
                (cons '+ *args))
