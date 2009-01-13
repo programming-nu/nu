@@ -35,6 +35,17 @@ limitations under the License.
 static char *filenames[MAX_FILES];
 static int filecount = 0;
 
+
+// Turn debug output on and off for this file only
+//#define PARSER_DEBUG 1
+
+#ifdef PARSER_DEBUG
+#define ParserDebug(arg...) NSLog(arg)
+#else
+#define ParserDebug(arg...)
+#endif
+
+
 extern const char *nu_parsedFilename(int i)
 {
     return filenames[i];
@@ -44,6 +55,7 @@ extern const char *nu_parsedFilename(int i)
 #include <readline/readline.h>
 #include <readline/history.h>
 #endif
+
 
 @interface NuParser(Internal)
 - (int) depth;
@@ -228,17 +240,12 @@ id regexWithString(NSString *string)
     partial = [NSMutableString string];
     depth = 0;
     parens = 0;
-    quoting = 0;
-	quasiquoting = 0;
-	quasiquoteEvaling = 0;
-	quasiquoteSplicing = 0;
-	
+
+	[readerMacroStack removeAllObjects];
+
     int i;
     for (i = 0; i < MAXDEPTH; i++) {
-        quoteDepth[i] = false;
-        quasiquoteDepth[i] = false;
-        quasiquoteEvalDepth[i] = false;
-        quasiquoteSpliceDepth[i] = false;
+		readerMacroDepth[i] = 0;
     }
 
     [root release];
@@ -265,8 +272,11 @@ id regexWithString(NSString *string)
     // create top-level context
     context = [[NSMutableDictionary alloc] init];
 
+	readerMacroStack = [[NSMutableArray alloc] init];
+
     [context setPossiblyNullObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
     [context setPossiblyNullObject:symbolTable forKey:SYMBOLS_KEY];
+
 
     [self reset];
     return self;
@@ -288,123 +298,10 @@ id regexWithString(NSString *string)
     [super dealloc];
 }
 
-- (void) openList
+- (void) addAtomCell:(id)atom
 {
-    if (quoting > 0) {
-        quoting--;
-        [self openList];
-        quoteDepth[depth] = true;
-        [self addAtom:[symbolTable symbolWithString:@"quote"]];
-        [self openList];
-        return;
-    }
+	ParserDebug(@"addAtomCell: depth = %d  atom = %@", depth, [atom stringValue]);
 
-	if (quasiquoteEvaling > 0) {
-		quasiquoteEvaling--;
-        [self openList];
-        quasiquoteEvalDepth[depth] = true;
-        [self addAtom:[symbolTable symbolWithString:@"quasiquote-eval"]];
-        [self openList];
-        return;
-	}
-
-	if (quasiquoteSplicing > 0) {
-		quasiquoteSplicing--;
-        [self openList];
-        quasiquoteSpliceDepth[depth] = true;
-        [self addAtom:[symbolTable symbolWithString:@"quasiquote-splice"]];
-        [self openList];
-        return;
-	}
-
-    if (quasiquoting > 0) {
-        quasiquoting--;
-        [self openList];
-        quasiquoteDepth[depth] = true;
-        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
-        [self openList];
-        return;
-    }
-
-    depth++;
-    NuCell *newCell = [[[NuCell alloc] init] autorelease];
-    [newCell setFile:filenum line:linenum];
-    if (addToCar) {
-        [current setCar:newCell];
-        [stack push:current];
-    }
-    else {
-        [current setCdr:newCell];
-    }
-    current = newCell;
-
-    addToCar = true;
-}
-
-- (void) closeList
-{
-    depth--;
-    if (addToCar) {
-        [current setCar:[NSNull null]];
-    }
-    else {
-        [current setCdr:[NSNull null]];
-        current = [stack pop];
-    }
-    addToCar = false;
-    if (quoteDepth[depth]) {
-        quoteDepth[depth] = false;
-        [self closeList];
-    } else if (quasiquoteEvalDepth[depth]) {
-		quasiquoteEvalDepth[depth] = false;
-		[self closeList];
-    } else if (quasiquoteSpliceDepth[depth]) {
-		quasiquoteSpliceDepth[depth] = false;
-		[self closeList];
-    } else if (quasiquoteDepth[depth]) {
-		quasiquoteDepth[depth] = false;
-		[self closeList];
-	}
-}
-
-- (void) addAtom:(id)atom
-{
-    if (quoting > 0) {
-        quoting--;
-        [self openList];
-        [self addAtom:[symbolTable symbolWithString:@"quote"]];
-        [self addAtom:atom];
-        [self closeList];
-        return;
-    }
-
-	if (quasiquoteEvaling > 0) {
-		quasiquoteEvaling--;
-		[self openList];
-		[self addAtom:[symbolTable symbolWithString:@"quasiquote-eval"]];
-		[self addAtom:atom];
-		[self closeList];
-		return;
-	}
-	
-	if (quasiquoteSplicing > 0) {
-		quasiquoteSplicing--;
-		[self openList];
-		[self addAtom:[symbolTable symbolWithString:@"quasiquote-splice"]];
-		[self addAtom:atom];
-		[self closeList];
-		return;
-	}
-
-    if (quasiquoting > 0) {
-        quasiquoting--;
-        [self openList];
-        [self addAtom:[symbolTable symbolWithString:@"quasiquote"]];
-        [self addAtom:atom];
-        [self closeList];
-        return;
-    }
-	
     NuCell *newCell;
     if (comments) {
         NuCellWithComments *newCellWithComments = [[[NuCellWithComments alloc] init] autorelease];
@@ -425,27 +322,132 @@ id regexWithString(NSString *string)
     }
     current = newCell;
     [current setCar:atom];
+    addToCar = false;	
+}
+
+
+- (void) openListCell
+{
+	ParserDebug(@"openListCell: depth = %d", depth);
+
+    depth++;
+    NuCell *newCell = [[[NuCell alloc] init] autorelease];
+    [newCell setFile:filenum line:linenum];
+    if (addToCar) {
+        [current setCar:newCell];
+        [stack push:current];
+    }
+    else {
+        [current setCdr:newCell];
+    }
+    current = newCell;
+
+    addToCar = true;
+}
+
+- (void) openList
+{
+	ParserDebug(@"openList: depth = %d", depth);
+
+	int stackCount;
+
+	while ((stackCount = [readerMacroStack count]) > 0) {
+		ParserDebug(@"  openList: readerMacro");
+		[self openListCell];
+		++readerMacroDepth[depth];
+		ParserDebug(@"  openList: ++RMD[%d] = %d", depth, readerMacroDepth[depth]);
+		[self addAtomCell:
+			[symbolTable symbolWithString:
+				[readerMacroStack objectAtIndex:0]]];
+
+		[readerMacroStack removeObjectAtIndex:0];
+	}
+
+	[self openListCell];
+}
+
+
+- (void) addAtom:(id)atom
+{
+	ParserDebug(@"addAtom: depth = %d  atom: %@", depth, [atom stringValue]);
+
+	int stackCount;
+
+	while ((stackCount = [readerMacroStack count]) > 0)	{
+		ParserDebug(@"  addAtom: readerMacro");
+		[self openListCell];
+		++readerMacroDepth[depth];
+		ParserDebug(@"  addAtom: ++RMD[%d] = %d", depth, readerMacroDepth[depth]);
+		[self addAtomCell:
+			[symbolTable symbolWithString:[readerMacroStack objectAtIndex:0]]];
+
+		[readerMacroStack removeObjectAtIndex:0];
+	}
+	
+	[self addAtomCell:atom];
+
+	while (readerMacroDepth[depth] > 0) {
+		--readerMacroDepth[depth];
+		ParserDebug(@"  addAtom: --RMD[%d] = %d", depth, readerMacroDepth[depth]);
+		[self closeList];
+	}
+}
+
+
+- (void) closeListCell
+{	
+	ParserDebug(@"closeListCell: depth = %d", depth);
+
+	--depth;
+
+    if (addToCar) {
+        [current setCar:[NSNull null]];
+    }
+    else {
+        [current setCdr:[NSNull null]];
+        current = [stack pop];
+    }
     addToCar = false;
+
+	while (readerMacroDepth[depth] > 0) {
+		--readerMacroDepth[depth];
+		ParserDebug(@"  closeListCell: --RMD[%d] = %d", depth, readerMacroDepth[depth]);
+		[self closeList];
+	}
+}
+
+- (void) closeList
+{
+	ParserDebug(@"closeList: depth = %d", depth);
+
+	[self closeListCell];
+}
+
+
+
+-(void) openReaderMacro:(NSString*) operator
+{
+	[readerMacroStack addObject:operator];
 }
 
 -(void) quoteNextElement
 {
-    quoting++;
+    [self openReaderMacro:@"quote"];
 }
 
 -(void) quasiquoteNextElement
 {
-    quasiquoting++;
+    [self openReaderMacro:@"quasiquote"];
 }
 
 -(void) quasiquoteEvalNextElement
 {
-	quasiquoteEvaling++;
+    [self openReaderMacro:@"quasiquote-eval"];
 }
 
 -(void) quasiquoteSpliceNextElement
 {
-	quasiquoteSplicing++;
+    [self openReaderMacro:@"quasiquote-splice"];
 }
 
 static int nu_octal_digit_value(unichar c)
@@ -570,7 +572,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
             case PARSE_NORMAL:
                 switch(stri) {
                     case '(':
-                        //	NSLog(@"pushing %d on line %d", column, linenum);
+                        ParserDebug(@"Parser: (  %d on line %d", column, linenum);
                         [opens push:[NSNumber numberWithInt:column]];
                         parens++;
                         if ([partial length] == 0) {
@@ -578,7 +580,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         }
                         break;
                     case ')':
-                        //	NSLog(@"popping");
+                        ParserDebug(@"Parser: )  %d on line %d", column, linenum);
                         [opens pop];
                         parens--;
                         if (parens < 0) parens = 0;
