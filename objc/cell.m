@@ -137,6 +137,22 @@ limitations under the License.
 // When an unknown message is received by a cell, treat it as a call to objectAtIndex:
 - (id) handleUnknownMessage:(NuCell *) method withContext:(NSMutableDictionary *) context
 {
+    if ([[method car] isKindOfClass:[NuSymbol class]]) {
+       NSString *methodName = [[method car] stringValue];
+       int length = [methodName length];
+       if (([methodName characterAtIndex:0] == 'c') && ([methodName characterAtIndex:(length - 1)] == 'r')) {
+          id cursor = self;
+          BOOL valid = YES;
+          for (int i = 1; valid && (i < length - 1); i++) {
+             switch ([methodName characterAtIndex:i]) {
+                case 'd': cursor = [cursor cdr]; break;
+                case 'a': cursor = [cursor car]; break;
+                default:  valid = NO;
+             }
+          }
+          if (valid) return cursor;
+       }
+    }
     id m = [[method car] evalWithContext:context];
     if ([m isKindOfClass:[NSNumber class]]) {
         int mm = [m intValue];

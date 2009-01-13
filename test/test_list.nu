@@ -106,5 +106,11 @@
         (assert_equal '() (map + '() '(1)))
         (assert_equal '(3) (map + '(1) '(2)))
         (assert_equal '(9 12) (map + '(1 2) '(3 4) '(5 6)))
-        (assert_equal '(9) (map + '(1 2) '(3) '(5 6)))))
+        (assert_equal '(9) (map + '(1 2) '(3) '(5 6))))
+
+     (- testImplicitAccessors is
+        (assert_equal '(3 4) ('(1 2 3 4) cddr))
+        (assert_equal 2 ('(1 2 3 4) cdar))
+        (assert_equal '(4) ('(1 2 3 4) cdddr))
+        (assert_equal '4 ('(1 2 3 4) cdddar))))
 
