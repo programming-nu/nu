@@ -71,6 +71,20 @@ limitations under the License.
     cdr = c;
 }
 
+// additional accessors, for efficiency (from Nu)
+- (id) caar {return [car car];}
+- (id) cadr {return [car cdr];}
+- (id) cdar {return [cdr car];}
+- (id) cddr {return [cdr cdr];}
+- (id) caaar {return [[car car] car];}
+- (id) caadr {return [[car car] cdr];}
+- (id) cadar {return [[car cdr] car];}
+- (id) caddr {return [[car cdr] cdr];}
+- (id) cdaar {return [[cdr car] car];}
+- (id) cdadr {return [[cdr car] cdr];}
+- (id) cddar {return [[cdr cdr] car];}
+- (id) cdddr {return [[cdr cdr] cdr];}
+
 - (BOOL) isEqual:(id) other
 {
     if (nu_objectIsKindOfClass(other, [NuCell class])

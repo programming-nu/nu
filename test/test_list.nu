@@ -108,9 +108,24 @@
         (assert_equal '(9 12) (map + '(1 2) '(3 4) '(5 6)))
         (assert_equal '(9) (map + '(1 2) '(3) '(5 6))))
 
+     (- testAccessors is
+        (set x '(((1 2) 3 4) (5 6 7) 8 9)) 
+        (assert_equal '(1 2) (x caar))
+        (assert_equal '(3 4) (x cadr))
+        (assert_equal '(5 6 7) (x cdar))
+        (assert_equal '(8 9) (x cddr))
+        (assert_equal 1 (x caaar))
+        (assert_equal '(2) (x caadr))
+        (assert_equal 3 (x cadar))
+        (assert_equal '(4) (x caddr))
+        (assert_equal 5 (x cdaar))
+        (assert_equal '(6 7) (x cdadr))
+        (assert_equal 8 (x cddar))
+        (assert_equal '(9) (x cdddr)))
+
      (- testImplicitAccessors is
-        (assert_equal '(3 4) ('(1 2 3 4) cddr))
-        (assert_equal 2 ('(1 2 3 4) cdar))
-        (assert_equal '(4) ('(1 2 3 4) cdddr))
-        (assert_equal '4 ('(1 2 3 4) cdddar))))
+        (assert_equal '(6 7) ('(1 2 3 4 5 6 7) cdddddr))
+        (assert_equal 5 ('(1 2 3 4 5 6 7) cddddar))
+        (assert_equal '(7) ('(1 2 3 4 5 6 7) cddddddr))
+        (assert_equal '7 ('(1 2 3 4 5 6 7) cddddddar))))
 
