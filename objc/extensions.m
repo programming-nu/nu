@@ -322,7 +322,10 @@ extern id Nu__null;
             // evaluate each expression
             id value = Nu__null;
             if (expression) {
-                id body = [parser parse:expression];
+                id body;
+                @synchronized(parser) {
+                    body = [parser parse:expression];
+                }
                 value = [body evalWithContext:context];
                 id stringValue = [value stringValue];
                 [result appendString:stringValue];
