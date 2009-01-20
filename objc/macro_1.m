@@ -83,9 +83,9 @@ extern id Nu__null;
 		// Skip the check
 	}
 	else {
-		id foundArgs = [self findAtom:@"*args" inSequence:parameters];
+		BOOL foundArgs = [self findAtom:@"*args" inSequence:parameters];
 
-		if (foundArgs && (foundArgs != Nu__null)) {
+		if (foundArgs) {
 			printf("Warning: Overriding implicit variable '*args'.\n");
 		}
 	}
@@ -191,11 +191,6 @@ extern id Nu__null;
 	else if ((pattern == nil) || (pattern == Nu__null)) {
 		return nil;
 	}
-	else if (   (pattern && (pattern != Nu__null))
-	         && (sequence == nil || sequence == Nu__null)) {
-        [NSException raise:@"NuDestructureException"
-            format:@"Attempt to match non-empty pattern to empty object"];		
-	}
 	// ((eq pat '_) '())  ; wildcard match produces no binding
 	else if ([[pattern stringValue] isEqualToString:@"_"]) {
 		return nil;
@@ -250,15 +245,22 @@ extern id Nu__null;
 			[l1 setCdr:l2];
 			[l2 setCar:sequence];
 			[l3 setCar:l1];
-			
+
 			return l3;
 		}
 		else {
+			if (sequence == nil || sequence == Nu__null)
+			{
+				[NSException raise:@"NuDestructureException"
+					format:@"Attempt to match non-empty pattern to empty object"];
+			}
+
 			id b1 = [self mdestructure:[pattern car] withSequence:[sequence car]];
 			id b2 = [self mdestructure:[pattern cdr] withSequence:[sequence cdr]];
 
 			id newList = [self destructuringListAppend:b1 withList:b2];
 
+			Macro1Debug(@"jsb:   dbind: %@", [newList stringValue]);
 			return newList;
 		}
 	}
