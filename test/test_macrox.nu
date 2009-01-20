@@ -155,6 +155,41 @@
           (assert_equal 5 (x 2 3))
           (assert_equal 1 a))
      
+     (imethod (id) testEmptyListArgsMacro is
+          (macro-1 donothing (a b)
+               b)
+          
+          (assert_equal 2 (donothing 1 2))
+          (assert_equal 2 (donothing () 2))
+          (assert_equal 2 (donothing nil 2)))
+     
+     (imethod (id) testEmptyListArgsRecursiveMacro is
+          (macro-1 let* (bindings *body)
+               (if (null? *body)
+                   (then
+                        (throw* "LetException"
+                                "An empty body was passed to let*")))
+               (if (null? bindings)
+                   (then
+                        `(progn
+                               ,@*body))
+                   (else
+                        (set __nextcall `(let* ,(cdr bindings) ,@*body))
+                        `(let (,(car bindings))
+                              ,__nextcall))))
+          
+          (assert_equal 3
+               (let* ((a 1)
+                      (b (+ a a)))
+                     (+ a b)))
+          
+          (assert_equal 3
+               (let* ()
+                     (+ 2 1)))
+          
+          (assert_throws "LetException"
+               (let* () )))
+     
      (imethod (id) testDisruptCallingContextMacro is
           (macro-1 leaky-macro (a b)
                `(set c (+ ,a ,b)))
