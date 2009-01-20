@@ -47,7 +47,9 @@
           ;; Parse the script into an internal s-expression representation.
           ;; The calling code should evaluate it with (eval code).
           (set script (self scriptForString:template))
-          (set code (((NuParser alloc) init) parse:script))
+          (set parser ((NuParser alloc) init))
+          (set code (parser parse:script))
+          (if (parser incomplete) (NSException raise:"NuTemplateError" format:@"incomplete expression in template"))
           code)
      
      ;; Take a string corresponding to a template and generate a string that can be parsed and evaluated

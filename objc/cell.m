@@ -71,6 +71,20 @@ limitations under the License.
     cdr = c;
 }
 
+// additional accessors, for efficiency (from Nu)
+- (id) caar {return [car car];}
+- (id) cadr {return [car cdr];}
+- (id) cdar {return [cdr car];}
+- (id) cddr {return [cdr cdr];}
+- (id) caaar {return [[car car] car];}
+- (id) caadr {return [[car car] cdr];}
+- (id) cadar {return [[car cdr] car];}
+- (id) caddr {return [[car cdr] cdr];}
+- (id) cdaar {return [[cdr car] car];}
+- (id) cdadr {return [[cdr car] cdr];}
+- (id) cddar {return [[cdr cdr] car];}
+- (id) cdddr {return [[cdr cdr] cdr];}
+
 - (BOOL) isEqual:(id) other
 {
     if (nu_objectIsKindOfClass(other, [NuCell class])
@@ -137,6 +151,22 @@ limitations under the License.
 // When an unknown message is received by a cell, treat it as a call to objectAtIndex:
 - (id) handleUnknownMessage:(NuCell *) method withContext:(NSMutableDictionary *) context
 {
+    if ([[method car] isKindOfClass:[NuSymbol class]]) {
+       NSString *methodName = [[method car] stringValue];
+       int length = [methodName length];
+       if (([methodName characterAtIndex:0] == 'c') && ([methodName characterAtIndex:(length - 1)] == 'r')) {
+          id cursor = self;
+          BOOL valid = YES;
+          for (int i = 1; valid && (i < length - 1); i++) {
+             switch ([methodName characterAtIndex:i]) {
+                case 'd': cursor = [cursor cdr]; break;
+                case 'a': cursor = [cursor car]; break;
+                default:  valid = NO;
+             }
+          }
+          if (valid) return cursor;
+       }
+    }
     id m = [[method car] evalWithContext:context];
     if ([m isKindOfClass:[NSNumber class]]) {
         int mm = [m intValue];
