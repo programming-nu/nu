@@ -372,6 +372,11 @@ extern id Nu__null;
 }
 #endif
 
+// Read the contents of standard input into a string.
++ (NSString *) stringWithStandardInput {
+    return [[[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding] autorelease];
+}
+
 // If the last character is a newline, delete it.
 - (NSString *) chomp
 {
