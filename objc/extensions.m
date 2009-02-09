@@ -352,22 +352,26 @@ extern id Nu__null;
 // Read the text output of a shell command into a string and return the string.
 + (NSString *) stringWithShellCommand:(NSString *) command
 {
-    NSTask *task = [NSTask new];
+    NSTask *task = [[NSTask alloc] init];
     [task setLaunchPath:@"/bin/sh"];
     #ifdef DARWIN
-    NSPipe *input = [NSPipe new];
-    [task setStandardInput:input];
-    NSPipe *output = [NSPipe new];
+    NSPipe *input = [[NSPipe alloc] init];
+    NSPipe *output = [[NSPipe alloc] init];
     #else
     NSPipe *input = [NSPipe pipe];
-    [task setStandardInput:input];
     NSPipe *output = [NSPipe pipe];
     #endif
+    [task setStandardInput:input];
     [task setStandardOutput:output];
     [task launch];
     [[input fileHandleForWriting] writeData:[command dataUsingEncoding:NSUTF8StringEncoding]];
     [[input fileHandleForWriting] closeFile];
     NSData *data = [[[task standardOutput] fileHandleForReading] readDataToEndOfFile];
+    [task release];
+    #ifdef DARWIN
+    [input release];
+    [output release];
+    #endif
     return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
 }
 #endif
