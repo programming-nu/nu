@@ -101,8 +101,7 @@
                (m setTarget: self)
                (m bind:"title" toObject:self withKeyPath:"showConsole"
                   options:(NSMutableDictionary dictionaryWithList:'("NSValueTransformerName" "NuConsoleShowHideTransformer")))
-               (let (windowMenu (((NSApplication sharedApplication) mainMenu) onlyMatchingChild:
-                                 (do (x) (and (eq (x className) "NSMenu") (eq (x title) "Window")))))
+               (let (windowMenu ((NSApplication sharedApplication) windowsMenu))
                     (if windowMenu (windowMenu insertItem:m atIndex:0)))))
      
      ;; Initialize a console.
