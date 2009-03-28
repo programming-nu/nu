@@ -136,7 +136,7 @@
 ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
 ;; an exception.
 (global assert
-        (macro _
+        (macro-0 _
              (set expression (car margs))
              (if (not (eval expression))
                  (then (throw ((NSException alloc)
@@ -152,9 +152,9 @@
                     reason:reason
                     userInfo:nil)))))
 (else
-(global assert (macro _ (NSLog "warning: assert is unavailable")))
-(global throw* (macro _ (NSLog "warning: throw* is unavailable")))
-(global throw  (macro _ (NSLog "warning: throw is unavailable")))))
+(global assert (macro-0 _ (NSLog "warning: assert is unavailable")))
+(global throw* (macro-0 _ (NSLog "warning: throw* is unavailable")))
+(global throw  (macro-0 _ (NSLog "warning: throw is unavailable")))))
 
 
 

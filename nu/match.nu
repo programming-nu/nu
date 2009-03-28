@@ -268,7 +268,7 @@
 ;; % (f 'x 'y 'z)
 ;; NuMatchException: No match found
 ;;
-(macro match-do
+(macro-0 match-do
      (eval (list 'do '(*args)
                  (append (list 'match '*args)
                          margs))))
@@ -288,7 +288,7 @@
 ;; % (slow-map cos '(3.14 0))
 ;; (-0.9999987317275395 1)
 ;;
-(macro match-function
+(macro-0 match-function
      (eval (list 'set (margs 0)
                  (cons 'match-do (margs cdr)))))
 
