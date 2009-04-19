@@ -151,7 +151,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 else {
                     // collect the command-line arguments
                     [[NuApplication sharedApplication] setArgc:argc argv:argv startingAtIndex:i+1];
-                    id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
+                    id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding error:NULL];
                     if (string) {
                         id script = [parser parse:string asIfFromFilename:argv[i]];
                         [parser eval:script];
