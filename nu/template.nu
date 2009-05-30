@@ -75,7 +75,7 @@
                  (text replaceCharactersInRange:(match range)
                        withString:<<-END-TEMPLATE
 #{tagName})
-(#{resultName} appendString:(#{(match groupAtIndex:1)} stringValue))
+(#{resultName} appendString:(or (#{(match groupAtIndex:1)} stringValue) ""))
 (#{resultName} appendString:<<-#{tagName}
 END-TEMPLATE))
           
