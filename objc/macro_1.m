@@ -133,6 +133,9 @@ extern id Nu__null;
 	
 	while (plist && (plist != Nu__null)) {
 		id param = [[plist car] car];
+		
+		Macro1Debug(@"restoring bindings: looking up key: %@",
+			[param stringValue]);
 
 		[calling_context removeObjectForKey:param];		
 		id pvalue = [maskedVariables objectForKey:param];
@@ -309,7 +312,7 @@ extern id Nu__null;
 #ifdef USE_NU_DESTRUCTURE
 		destructure = [match mdestructure:parameters withSequence:cdr];
 #else
-		destructure = [self mdestructure:parameters withSequence:cdr];
+        destructure = [self mdestructure:parameters withSequence:cdr];
 #endif
 
 	}
@@ -394,6 +397,7 @@ extern id Nu__null;
 							fromContext:calling_context];
 
 		[maskedVariables release];
+        maskedVariables = nil;
 
 		// Macro evaluation
 		// If we're just macro-expanding, don't do this step...
@@ -418,13 +422,24 @@ extern id Nu__null;
 		NS_HANDLER
 		#endif
 	{
-		[self restoreBindings:destructure
+	    if (maskedVariables)
+	    {
+		    Macro1Debug(@"Caught exception in macro, restoring bindings");
+
+		    [self restoreBindings:destructure
 							forMaskedVariables:maskedVariables
 							fromContext:calling_context];
+							
+		    Macro1Debug(@"Caught exception in macro, releasing maskedVariables");
 
-		[maskedVariables release];
+		    [maskedVariables release];
+	    }
+							
+		Macro1Debug(@"Caught exception in macro, restoring masked arguments");
 
 		[self restoreArgs:old_args context:calling_context];
+
+		Macro1Debug(@"Caught exception in macro, rethrowing...");
 
 		#ifdef DARWIN
 		@throw;
