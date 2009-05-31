@@ -93,4 +93,15 @@
           (set tester ((SomeObject alloc) init))
           (assert_equal "Hello, there!" (tester greeting))
           (tester setGreeting:"Howdy!")
-          (assert_equal "Howdy!" (tester greeting))))
+          (assert_equal "Howdy!" (tester greeting)))
+     
+     (imethod (id) testExceptionInMacro is
+          # template contains an undefined symbol, watch the exceptions thrown by each macro call
+          (set string "<%= (+ 2 x) %>")
+          (load "template")
+          (assert_throws "NuUndefinedSymbol"
+               (macro-0 undefined0 (eval (NuTemplate codeForString:(eval (margs car)))))
+               (undefined0 string))
+          (assert_throws "NuUndefinedSymbol"
+               (macro-1 undefined1 (string) `(eval (NuTemplate codeForString:,string)))
+               (undefined1 string))))
