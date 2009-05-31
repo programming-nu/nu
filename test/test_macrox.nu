@@ -147,6 +147,13 @@
           (assert_equal 0 a)
           (assert_throws "NuUndefinedSymbol" b))
      
+     (imethod (id) testEvalExceptionMacro is
+          ;; Make sure a runtime exception is properly caught
+          (set code '(+ 2 x))
+          
+          (macro-1 eval-it (sexp) `(eval ,sexp))
+          (assert_throws "NuUndefinedSymbol" (eval-it code)))
+     
      (imethod (id) testMaskedVariablesMacro is
           (macro-1 x (a b)
                `(+ ,a ,b))
