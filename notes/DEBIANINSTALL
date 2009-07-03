@@ -8,6 +8,17 @@ apt-get update
 # for vmtools
 apt-get install linux-headers-$(uname -r)
 
+# Need to build vmtools with the same version of compiler as the kernel 
+# was built with
+export CC=gcc-4.1
+
+# build vmtools...
+
+unset CC
+
+
+# install development environment
+
 apt-get install git-core
 apt-get install subversion
 
@@ -25,6 +36,7 @@ apt-get install libxslt-dev
 apt-get install libgnutls-dev
 apt-get install libssl-dev
 apt-get install libevent-dev
+
 
 # download GNUstep 1.18.0 from gnustep.org
 ./configure --enable-ffi
