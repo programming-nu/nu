@@ -49,6 +49,16 @@ make
 sudo make install
 
 
+# 'gnustep-config --objc-flags' should look something like this (without the /home/jsb prefix):
+
+-MMD -MP -DGNUSTEP -DGNUSTEP_BASE_LIBRARY=1 -DGNU_RUNTIME=1 -DGNUSTEP_BASE_LIBRARY=1 -D_REENTRANT -fPIC -g -Wall -DDEBUG -fno-omit-frame-pointer -DGSWARN -DGSDIAGNOSE -Wno-import -g -fno-strict-aliasing -fexceptions -fobjc-exceptions -D_NATIVE_OBJC_EXCEPTIONS -fgnu-runtime -fconstant-string-class=NSConstantString -I. -I/home/jsb/GNUstep/Library/Headers -I/usr/local/include/GNUstep -I/usr/include/GNUstep
+
+
+# 'gnustep-config --base-libs' should look something like this:
+
+-rdynamic -shared-libgcc -fexceptions -fgnu-runtime -L/home/jsb/GNUstep/Library/Libraries -L/usr/local/lib -L/usr/lib -lgnustep-base -lpthread -lobjc -lm
+
+
 # Now build Nu
 rake
 ./mininush tools/nuke
