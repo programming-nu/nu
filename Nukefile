@@ -45,7 +45,9 @@ END)
                (@libs       addObject:"edit"))
          (else (@libs       addObjectsFromList:(list "readline" "m" "gnustep-base"))
                (@inc_dirs   addObject:"/usr/include/GNUstep/Headers")
-               (@lib_dirs   addObject:"/usr/lib/GNUstep/System/Library/Libraries")))
+               ;; this will be set by gnustep-config:
+               ;; (@lib_dirs   addObject:"/usr/lib/GNUstep/System/Library/Libraries")
+               ))
 
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@inc_dirs addObject:"#{@prefix}/include"))
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/lib") (@lib_dirs addObject:"#{@prefix}/lib"))
@@ -88,9 +90,10 @@ END)
 
 (ifDarwin
          (then (set @cflags "-Wall -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
-               (set @mflags "-fobjc-exceptions -fobjc-gc")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
+               (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
          (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
-               (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")))
+               ;; (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")
+               (set @mflags ((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
 
 (ifDarwin
          (then (set @arch '("ppc" "i386")))) ;; build a universal binary
@@ -133,6 +136,10 @@ END)
            (if ((NSFileManager defaultManager) fileExistsAtPath:(+ example-dir "/Nukefile"))
                (SH "cd #{example-dir}; nuke clobber")))))
 
+(ifLinux
+      (set @gnustep_flags ((NSString stringWithShellCommand:"gnustep-config --base-libs") chomp)))
+
+
 (set nush_thin_binaries (NSMutableArray array))
 (@arch each:
        (do (architecture)
@@ -144,7 +151,7 @@ END)
                                (SH "#{@cc} #{@cflags} #{@mflags} main/main.m -arch #{architecture} -F. -framework Nu #{@ldflags} -o #{(target name)}")))
                     (else
                          (file nush_thin_binary => "dylib" (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                               (SH "#{@cc} #{@cflags} #{@mflags} main/main.m #{@library_executable_name} #{@ldflags} -o #{(target name)}"))))))
+                               (SH "#{@cc} #{@cflags} #{@mflags} main/main.m #{@library_executable_name} #{@ldflags} #{@gnustep_flags} -o #{(target name)}"))))))
 
 (file "nush" => "framework" nush_thin_binaries is
       (ifDarwin

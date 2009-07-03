@@ -151,7 +151,11 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 else {
                     // collect the command-line arguments
                     [[NuApplication sharedApplication] setArgc:argc argv:argv startingAtIndex:i+1];
+#ifdef DARWIN
                     id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding error:NULL];
+#else
+                    id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
+#endif
                     if (string) {
                         id script = [parser parse:string asIfFromFilename:argv[i]];
                         [parser eval:script];
