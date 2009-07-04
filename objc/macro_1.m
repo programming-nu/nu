@@ -27,7 +27,6 @@ limitations under the License.
 extern id Nu__null;
 
 //#define MACRO1_DEBUG	1
-//#define USE_NU_DESTRUCTURE 1
 
 
 // Following  debug output on and off for this file only
@@ -296,21 +295,12 @@ extern id Nu__null;
     id old_args = [calling_context objectForKey:[symbolTable symbolWithCString:"*args"]];
 	[calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
 
-#ifdef USE_NU_DESTRUCTURE
-	id match = [NuMatch matcher];
-#endif
-
 	id destructure;
 
 	@try
 	{
 		// Destructure the arguments
-#ifdef USE_NU_DESTRUCTURE
-		destructure = [match mdestructure:parameters withSequence:cdr];
-#else
         destructure = [self mdestructure:parameters withSequence:cdr];
-#endif
-
 	}
 	@catch (id exception)
 	{
