@@ -302,11 +302,7 @@ extern id Nu__null;
 
 	id destructure;
 
-	#ifdef DARWIN
 	@try
-		#else
-		NS_DURING
-		#endif
 	{
 		// Destructure the arguments
 #ifdef USE_NU_DESTRUCTURE
@@ -316,24 +312,13 @@ extern id Nu__null;
 #endif
 
 	}
-	#ifdef DARWIN
 	@catch (id exception)
-		#else
-		NS_HANDLER
-		#endif
 	{
 		// Destructure failed...restore/remove *args
 		[self restoreArgs:old_args context:calling_context];
 
-		#ifdef DARWIN
 		@throw;
-			#else
-			[localException raise];
-			#endif
 	}
-	#ifndef DARWIN
-	NS_ENDHANDLER
-    	#endif
 
 	plist = destructure;
 	while (plist && (plist != Nu__null)) {
@@ -376,11 +361,7 @@ extern id Nu__null;
 	// Macro1Debug(@"macro evaluating: %@", [bodyToEvaluate stringValue]);
 	// Macro1Debug(@"macro context: %@", [calling_context stringValue]);
 
-	#ifdef DARWIN
 	@try
-		#else
-		NS_DURING
-		#endif
 	{
 		// Macro expansion
 	    id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
@@ -416,11 +397,7 @@ extern id Nu__null;
 
 		Macro1Debug(@"macro result: %@", value);
 	}
-	#ifdef DARWIN
 	@catch (id exception)
-		#else
-		NS_HANDLER
-		#endif
 	{
 	    if (maskedVariables)
 	    {
@@ -441,15 +418,8 @@ extern id Nu__null;
 
 		Macro1Debug(@"Caught exception in macro, rethrowing...");
 
-		#ifdef DARWIN
 		@throw;
-			#else
-			[localException raise];
-			#endif
 	}
-	#ifndef DARWIN
-	NS_ENDHANDLER
-    	#endif
 
     return value;
 }

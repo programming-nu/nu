@@ -100,11 +100,8 @@ int NuMain(int argc, const char *argv[], const char *envp[])
 
     void NuInit();
     NuInit();
-    #ifdef DARWIN
+
     @try
-        #else
-        NS_DURING
-        #endif
     {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -196,24 +193,14 @@ int NuMain(int argc, const char *argv[], const char *envp[])
             }
         }
     }
-    #ifdef DARWIN
     @catch (id exception)
-        #else
-        NS_HANDLER
-        #endif
     {
-        #ifndef DARWIN
-        id exception = localException;
-        #endif
         NSLog(@"Terminating due to uncaught exception (below):");
         NSLog(@"%@: %@", [exception name], [exception reason]);
     }
-    #ifndef DARWIN
-    NS_ENDHANDLER
-        #endif
 
-        #ifdef LINUX
-        [pool release];
+    #ifdef LINUX
+    [pool release];
     #endif
 
 	#ifdef IPHONE
@@ -400,11 +387,8 @@ id _nulist(id firstObject, ...)
     else {
         if ([bundleIdentifier isEqual:@"nu.programming.framework"]) {
             // try to read it if it's baked in
-            #ifdef DARWIN
+
             @try
-                #else
-                NS_DURING
-                #endif
             {
                 id baked_function = [NuBridgedFunction functionWithName:[NSString stringWithFormat:@"baked_%@", fileName] signature:@"@"];
                 id baked_code = [baked_function evalWithArguments:nil context:nil];
@@ -415,21 +399,10 @@ id _nulist(id firstObject, ...)
                 [baked_code evalWithContext:context];
                 success = YES;
             }
-            #ifdef DARWIN
             @catch (id exception)
-                #else
-                NS_HANDLER
-                #endif
             {
-                #ifndef DARWIN
-                //unused
-                //id exception = localException;
-                #endif
                 success = NO;
             }
-            #ifndef DARWIN
-            NS_ENDHANDLER
-                #endif
         }
         else {
             success = NO;
