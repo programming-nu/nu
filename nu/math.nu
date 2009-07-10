@@ -80,3 +80,8 @@
         (do (x)
             (NuMath round:x)))
 
+;; Returns x raised to the power of y.
+(global pow
+        (do (x y)
+            (NuMath raiseNumber:x toPower:y)))
+

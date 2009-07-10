@@ -62,7 +62,8 @@ if SYSTEM == "Darwin"
   @mflags = "-fobjc-exceptions"
 else
   @cflags = "-g -O2 -Wall -DLINUX -DMININUSH -std=gnu99 #{@leopard_cflags}"
-  @mflags = "-fobjc-exceptions -fconstant-string-class=NSConstantString"
+  # @mflags = "-fobjc-exceptions -fconstant-string-class=NSConstantString"
+  @mflags = `gnustep-config --objc-flags`.chomp
 end
 
 @cflags += @inc_dirs.map {|inc| " -I#{inc}"}.join
@@ -70,7 +71,9 @@ end
 @ldflags += @libs.map {|lib| " -l#{lib}"}.join
 @ldflags += @lib_dirs.map {|libdir| " -L#{libdir}"}.join 
 if SYSTEM == "Linux"
-  @ldflags += " -lobjc -lNuFound"
+  # @ldflags += " -lobjc -lNuFound"
+  @ldflags += " "
+  @ldflags += `gnustep-config --base-libs`.chomp
   @ldflags += " -Wl,--rpath -Wl,/usr/local/lib"
 end
 

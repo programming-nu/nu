@@ -27,7 +27,6 @@ limitations under the License.
 extern id Nu__null;
 
 //#define MACRO1_DEBUG	1
-//#define USE_NU_DESTRUCTURE 1
 
 
 // Following  debug output on and off for this file only
@@ -296,44 +295,20 @@ extern id Nu__null;
     id old_args = [calling_context objectForKey:[symbolTable symbolWithCString:"*args"]];
 	[calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
 
-#ifdef USE_NU_DESTRUCTURE
-	id match = [NuMatch matcher];
-#endif
-
 	id destructure;
 
-	#ifdef DARWIN
 	@try
-		#else
-		NS_DURING
-		#endif
 	{
 		// Destructure the arguments
-#ifdef USE_NU_DESTRUCTURE
-		destructure = [match mdestructure:parameters withSequence:cdr];
-#else
         destructure = [self mdestructure:parameters withSequence:cdr];
-#endif
-
 	}
-	#ifdef DARWIN
 	@catch (id exception)
-		#else
-		NS_HANDLER
-		#endif
 	{
 		// Destructure failed...restore/remove *args
 		[self restoreArgs:old_args context:calling_context];
 
-		#ifdef DARWIN
 		@throw;
-			#else
-			[localException raise];
-			#endif
 	}
-	#ifndef DARWIN
-	NS_ENDHANDLER
-    	#endif
 
 	plist = destructure;
 	while (plist && (plist != Nu__null)) {
@@ -376,11 +351,7 @@ extern id Nu__null;
 	// Macro1Debug(@"macro evaluating: %@", [bodyToEvaluate stringValue]);
 	// Macro1Debug(@"macro context: %@", [calling_context stringValue]);
 
-	#ifdef DARWIN
 	@try
-		#else
-		NS_DURING
-		#endif
 	{
 		// Macro expansion
 	    id cursor = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
@@ -416,11 +387,7 @@ extern id Nu__null;
 
 		Macro1Debug(@"macro result: %@", value);
 	}
-	#ifdef DARWIN
 	@catch (id exception)
-		#else
-		NS_HANDLER
-		#endif
 	{
 	    if (maskedVariables)
 	    {
@@ -441,15 +408,8 @@ extern id Nu__null;
 
 		Macro1Debug(@"Caught exception in macro, rethrowing...");
 
-		#ifdef DARWIN
 		@throw;
-			#else
-			[localException raise];
-			#endif
 	}
-	#ifndef DARWIN
-	NS_ENDHANDLER
-    	#endif
 
     return value;
 }

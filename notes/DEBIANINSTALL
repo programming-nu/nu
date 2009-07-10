@@ -1,0 +1,73 @@
+Start with a clean Debian system:
+
+# started with Debian5 net install
+#  System and Desktop options
+
+apt-get update
+
+# for vmtools
+apt-get install linux-headers-$(uname -r)
+
+# Need to build vmtools with the same version of compiler as the kernel 
+# was built with
+export CC=gcc-4.1
+
+# build vmtools...
+
+unset CC
+
+
+# install development environment
+
+apt-get install git-core
+apt-get install subversion
+
+apt-get install rake
+apt-get install build-essential
+apt-get install gobjc
+apt-get install libreadline5-dev
+apt-get install libgnustep-base-dev
+apt-get install gdb
+
+apt-get install libffi-dev
+apt-get install gnustep-make
+apt-get install libxml2-dev
+apt-get install libxslt-dev
+apt-get install libgnutls-dev
+apt-get install libssl-dev
+apt-get install libevent-dev
+
+
+# download GNUstep 1.18.0 from gnustep.org
+./configure --enable-ffi
+make
+sudo make install
+
+# download pcre 7.9 from www.pcre.org
+./configure --disable-dependency-tracking --enable-utf8
+make
+sudo make install
+
+
+# 'gnustep-config --objc-flags' should look something like this (without the /home/jsb prefix):
+
+-MMD -MP -DGNUSTEP -DGNUSTEP_BASE_LIBRARY=1 -DGNU_RUNTIME=1 -DGNUSTEP_BASE_LIBRARY=1 -D_REENTRANT -fPIC -g -Wall -DDEBUG -fno-omit-frame-pointer -DGSWARN -DGSDIAGNOSE -Wno-import -g -fno-strict-aliasing -fexceptions -fobjc-exceptions -D_NATIVE_OBJC_EXCEPTIONS -fgnu-runtime -fconstant-string-class=NSConstantString -I. -I/home/jsb/GNUstep/Library/Headers -I/usr/local/include/GNUstep -I/usr/include/GNUstep
+
+
+# 'gnustep-config --base-libs' should look something like this:
+
+-rdynamic -shared-libgcc -fexceptions -fgnu-runtime -L/home/jsb/GNUstep/Library/Libraries -L/usr/local/lib -L/usr/lib -lgnustep-base -lpthread -lobjc -lm
+
+
+# Now build Nu
+rake
+./mininush tools/nuke
+./mininush tools/nuke install
+nuke
+nuke install
+
+# can't copy over running image in Linux
+sudo cp libNu.so /usr/local/lib
+sudo cp nush /usr/local/bin
+
+

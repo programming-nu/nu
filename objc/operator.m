@@ -481,11 +481,8 @@ limitations under the License.
     id catchSymbol = [symbolTable symbolWithCString:"catch"];
     id finallySymbol = [symbolTable symbolWithCString:"finally"];
     id result = Nu__null;
-    #ifdef DARWIN
+
     @try
-        #else
-        NS_DURING
-        #endif
     {
         // evaluate all the expressions that are outside catch and finally blocks
         id expressions = cdr;
@@ -502,15 +499,8 @@ limitations under the License.
             expressions = [expressions cdr];
         }
     }
-    #ifdef DARWIN
     @catch (id thrownObject)
-        #else
-        NS_HANDLER
-        #endif
     {
-        #ifndef DARWIN
-        id thrownObject = localException;
-        #endif
         // evaluate all the expressions that are in catch blocks
         id expressions = cdr;
         while (expressions && (expressions != Nu__null)) {
@@ -534,11 +524,7 @@ limitations under the License.
             expressions = [expressions cdr];
         }
     }
-    #ifdef DARWIN
     @finally
-        #else
-        NS_ENDHANDLER
-        #endif
     {
         // evaluate all the expressions that are in finally blocks
         id expressions = cdr;
@@ -563,7 +549,7 @@ limitations under the License.
 
 @end
 
-#ifdef DARWIN
+
 @interface Nu_throw_operator : NuOperator {}
 @end
 
@@ -576,9 +562,9 @@ limitations under the License.
 }
 
 @end
-#endif
 
-#ifdef DARWIN
+
+
 @interface Nu_synchronized_operator : NuOperator {}
 @end
 
@@ -603,7 +589,7 @@ limitations under the License.
 }
 
 @end
-#endif
+
 
 @interface Nu_quote_operator : NuOperator {}
 @end
@@ -2091,10 +2077,9 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("return",   Nu_return_operator);
 
     install("try",      Nu_try_operator);
-    #ifdef DARWIN
+
     install("throw",    Nu_throw_operator);
     install("synchronized", Nu_synchronized_operator);
-    #endif
 
     install("quote",    Nu_quote_operator);
     install("eval",     Nu_eval_operator);
