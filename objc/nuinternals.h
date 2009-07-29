@@ -54,7 +54,7 @@ limitations under the License.
 @interface NuReturnException : NSException {
     id value;
 }
-
+- (id) value;
 @end
 
 // use this to test a value for "truth"

@@ -899,10 +899,12 @@ limitations under the License.
     id args = [[cdr cdr] car];
     id body = [[cdr cdr] cdr];
     NuBlock *block = [[NuBlock alloc] initWithParameters:args body:body context:context];
-                                                  // this defines the function in the calling context
+    // this defines the function in the calling context, lexical closures make recursion possible
     [context setPossiblyNullObject:block forKey:symbol];
-                                                  // this defines the function in the block context, which allows recursion
+#ifdef CLOSE_ON_VALUES
+    // in this case, we don't have closures, so we set this to allow recursion (but it creates a retain cycle)
     [[block context] setPossiblyNullObject:block forKey:symbol];
+#endif
     return block;
 }
 
