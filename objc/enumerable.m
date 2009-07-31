@@ -47,6 +47,7 @@ limitations under the License.
                 // do nothing, just continue with the next loop iteration
             }
             @catch (id exception) {
+                [args release];
                 @throw(exception);
             }
         }
@@ -77,6 +78,7 @@ limitations under the License.
                 // do nothing, just continue with the next loop iteration
             }
             @catch (id exception) {
+                [args release];
                 @throw(exception);
             }
             i++;
@@ -88,7 +90,7 @@ limitations under the License.
 
 - (NSArray *) select:(NuBlock *) block
 {
-    NSMutableArray *selected = [[NSMutableArray alloc] init];
+    NSMutableArray *selected = [NSMutableArray array];
     id args = [[NuCell alloc] init];
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self objectEnumerator];
@@ -126,7 +128,7 @@ limitations under the License.
 
 - (NSArray *) map:(id) callable
 {
-    NSMutableArray *results = [[NSMutableArray alloc] init];
+    NSMutableArray *results = [NSMutableArray array];
     id args = [[NuCell alloc] init];
     if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
         NSEnumerator *enumerator = [self objectEnumerator];
@@ -142,7 +144,7 @@ limitations under the License.
 
 - (NSArray *) mapSelector:(SEL) sel
 {
-    NSMutableArray *results = [[NSMutableArray alloc] init];
+    NSMutableArray *results = [NSMutableArray array];
     NSEnumerator *enumerator = [self objectEnumerator];
     id object;
     while ((object = [enumerator nextObject])) {

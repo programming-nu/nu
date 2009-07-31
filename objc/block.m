@@ -113,7 +113,6 @@ extern id Nu__null;
 	NuSymbolTable *symbolTable = [evaluation_context objectForKey:SYMBOLS_KEY];
 	[evaluation_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
 
-    //    NSLog(@"after copying, evaluation context %@ retain count %d", evaluation_context, [evaluation_context retainCount]);
     while (plist && (plist != Nu__null)) {
         id parameter = [plist car];
         if ([[parameter stringValue] characterAtIndex:0] == '*') {
@@ -163,8 +162,6 @@ extern id Nu__null;
     @catch (id exception) {
         @throw(exception);
     }
-    //    NSLog(@"before releasing, evaluation context %@ retain count %d", evaluation_context, [evaluation_context retainCount]);
-    //    NSLog(@"before releasing, value %@ retain count %d", value, [value retainCount]);
     [value retain];
     [value autorelease];
     [evaluation_context release];

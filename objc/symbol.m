@@ -146,12 +146,16 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 
 - (NSString *) description
 {
-    return [NSString stringWithCString:string encoding:NSUTF8StringEncoding];
+    if (!stringValue)
+        stringValue = [[NSString alloc] initWithCString:string encoding:NSUTF8StringEncoding];
+    return stringValue;
 }
 
 - (NSString *) stringValue
 {
-    return [NSString stringWithCString:string encoding:NSUTF8StringEncoding];
+    if (!stringValue)
+        stringValue = [[NSString alloc] initWithCString:string encoding:NSUTF8StringEncoding];
+    return stringValue;
 }
 
 - (int) intValue

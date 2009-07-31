@@ -462,6 +462,11 @@ extern char *nu_parsedFilename(int i);
 
 @implementation NuCellWithComments
 
+- (void) dealloc {
+  [comments release];
+  [super dealloc];
+}
+
 - (id) comments {return comments;}
 
 - (void) setComments:(id) c

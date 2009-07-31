@@ -688,7 +688,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
 
         case '*':
         {
-            *((char **) objc_value) = strdup([[nu_value stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
+            *((char **) objc_value) = [[nu_value stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
             return NO;
         }
 
@@ -997,7 +997,9 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
         int argc = [args count];
         int i;
         for (i = 0; i < argc; i++) {
-            [cursor setCdr:[[[NuCell alloc] init] autorelease]];
+            NuCell *nextCell = [[NuCell alloc] init];
+            [cursor setCdr:nextCell];
+            [nextCell release];
             cursor = [cursor cdr];
             [cursor setCar:[args objectAtIndex:i]];
         }
@@ -1147,7 +1149,9 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     id cursor = arguments;
     int i;
     for (i = 0; i < argc; i++) {
-        [cursor setCdr:[[[NuCell alloc] init] autorelease]];
+        NuCell *nextCell = [[NuCell alloc] init];
+        [cursor setCdr:nextCell];
+        [nextCell release];
         cursor = [cursor cdr];
         id value = get_nu_value_from_objc_value(args[i+2], ((char **)userdata)[i+2]);
         [cursor setCar:value];
@@ -1329,6 +1333,12 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 
 @implementation NuBridgedFunction
 
+- (void) dealloc {
+    free(name);
+    free(signature);
+    [super dealloc];
+}
+
 - (NuBridgedFunction *) initWithName:(NSString *)n signature:(NSString *)s
 {
     name = strdup([n cStringUsingEncoding:NSUTF8StringEncoding]);
@@ -1353,7 +1363,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
             "If you are using a release build, try rebuilding with the KEEP_PRIVATE_EXTERNS variable set.",
             "In Xcode, check the 'Preserve Private External Symbols' checkbox."];
     }
-    NuBridgedFunction *wrapper = [[NuBridgedFunction alloc] initWithName:name signature:signature];
+    NuBridgedFunction *wrapper = [[[NuBridgedFunction alloc] initWithName:name signature:signature] autorelease];
     return wrapper;
 }
 
@@ -1383,9 +1393,6 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     id result = [NSNull null];
 
     ffi_cif *cif = (ffi_cif *)malloc(sizeof(ffi_cif));
-
-    // unused
-    //char **argument_userdata = (argument_count == 0) ? NULL : (char **) malloc (argument_count * sizeof(char *));
 
     ffi_type *result_type = ffi_type_for_objc_type(return_type_identifier);
     ffi_type **argument_types = (argument_count == 0) ? NULL : (ffi_type **) malloc (argument_count * sizeof(ffi_type *));
@@ -1418,6 +1425,9 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     }
     free(argument_values);
     free(result_value);
+    free(return_type_identifier);
+    free(argument_types);
+    free(cif);
 
     [result retain];
     [pool release];

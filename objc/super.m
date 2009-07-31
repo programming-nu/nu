@@ -29,8 +29,8 @@ limitations under the License.
 - (NuSuper *) initWithObject:(id) o ofClass:(Class) c
 {
     [super init];
-    object = o;
-    class = c;
+    object = o; // weak reference
+    class = c; // weak reference
     return self;
 }
 

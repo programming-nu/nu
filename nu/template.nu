@@ -51,6 +51,8 @@
                (set parser ((NuParser alloc) init))
                (set code (parser parse:script))
                (if (parser incomplete) (NSException raise:"NuTemplateError" format:@"incomplete expression in template"))
+;; temporary fix for retain cycle in parser. Parser owns context, context references parser.
+((parser context) removeObjectForKey:'_parser)
                code))
      
      ;; Take a string corresponding to a template and generate a string that can be parsed and evaluated
@@ -65,7 +67,7 @@
           (set text (NSMutableString stringWithString:template))
           
           (set seed (NuMath random))
-          (set resultName "result-#{seed}")
+          (set resultName "templateResult")
           (set tagName "EMBEDDED-#{seed}")
           
           ;; first, replace each embedded nu expression with code that
@@ -93,9 +95,9 @@ END-TEMPLATE))
           
           ;; All the text we've processed is now captured in a script.
           ;; This script can be evaluated to produce the desired output text.
-          (set script ((NSMutableString alloc) init))
+          (set script "")
           (script appendString:<<-END-TEMPLATE
-(set #{resultName} ((NSMutableString alloc) init)) 
+(let (#{resultName} "") 
 (#{resultName} appendString:<<-#{tagName}
 END-TEMPLATE)
           (script appendString: text)
@@ -103,6 +105,6 @@ END-TEMPLATE)
           ;(if (final-pattern findInString:script) (script appendString:(NSString carriageReturn)))
           (script appendString:<<-END-TEMPLATE
 #{tagName})
-#{resultName}
+#{resultName})
 END-TEMPLATE)
           script))

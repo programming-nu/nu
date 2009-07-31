@@ -1611,6 +1611,8 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 @implementation Nu_let_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
     id arg_names = [[NuCell alloc] init];
     id arg_values = [[NuCell alloc] init];
 
@@ -1634,13 +1636,13 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
             }
         }
     }
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     id body = [cdr cdr];
     NuBlock *block = [[NuBlock alloc] initWithParameters:arg_names body:body context:context];
     id result = [[block evalWithArguments:arg_values context:context] retain];
+    [block release];
+
     [arg_names release];
     [arg_values release];
-    [block release];
     [pool release];
     [result autorelease];
     return result;

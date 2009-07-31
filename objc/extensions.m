@@ -267,7 +267,7 @@ extern id Nu__null;
 
 - (NSString *) escapedStringRepresentation
 {
-    NSMutableString *result = [[NSMutableString stringWithString:@"\""] retain]; // not right
+    NSMutableString *result = [NSMutableString stringWithString:@"\""]; 
     int length = [self length];
     for (int i = 0; i < length; i++) {
         unichar c = [self characterAtIndex:i];

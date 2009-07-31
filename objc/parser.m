@@ -272,7 +272,7 @@ id regexWithString(NSString *string)
     // create top-level context
     context = [[NSMutableDictionary alloc] init];
 
-	readerMacroStack = [[NSMutableArray alloc] init];
+    readerMacroStack = [[NSMutableArray alloc] init];
 
     [context setPossiblyNullObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
     [context setPossiblyNullObject:symbolTable forKey:SYMBOLS_KEY];
@@ -295,6 +295,9 @@ id regexWithString(NSString *string)
     [symbolTable release];
     [root release];
     [stack release];
+    [comments release];
+    [readerMacroStack release];
+    [pattern release];
     [super dealloc];
 }
 
@@ -307,6 +310,7 @@ id regexWithString(NSString *string)
         NuCellWithComments *newCellWithComments = [[[NuCellWithComments alloc] init] autorelease];
         [newCellWithComments setComments:comments];
         newCell = newCellWithComments;
+        [comments release];
         comments = nil;
     }
     else {
@@ -740,6 +744,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                             while ((j < imax) && ([string characterAtIndex:j] != '\n')) {
                                 j++;
                             }
+                            [pattern release];
                             pattern = [[string substringWithRange:NSMakeRange(i+3, j-(i+3))] retain];
                             //NSLog(@"herestring pattern: %@", pattern);
                             partial = [NSMutableString string];
@@ -761,10 +766,10 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     (i + [pattern length] < imax) &&
                 ([pattern isEqual:[string substringWithRange:NSMakeRange(i, [pattern length])]])) {
                     // everything up to here is the string
-                    NSString *string = [[NSString alloc] initWithString:partial];
+                    NSString *string = [[[NSString alloc] initWithString:partial] autorelease];
                     partial = [NSMutableString string];
                     if (!hereString)
-                        hereString = [[NSMutableString alloc] init];
+                        hereString = [[[NSMutableString alloc] init] autorelease];
                     else
                         [hereString appendString:@"\n"];
                     [hereString appendString:string];
@@ -867,7 +872,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     {
                         if (!comments) comments = [[NSMutableString alloc] init];
                         else [comments appendString:@"\n"];
-                        [comments appendString: [[NSString alloc] initWithString:partial]];
+                        [comments appendString:[[[NSString alloc] initWithString:partial] autorelease]];
                         partial = [NSMutableString string];
                         column = 0;
                         linenum++;
@@ -890,7 +895,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     }
     else if (state == PARSE_COMMENT) {
         if (!comments) comments = [[NSMutableString alloc] init];
-        [comments appendString: [[NSString alloc] initWithString:partial]];
+        [comments appendString:[[[NSString alloc] initWithString:partial] autorelease]];
         partial = [NSMutableString string];
         column = 0;
         linenum++;

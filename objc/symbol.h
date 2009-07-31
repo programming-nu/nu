@@ -71,6 +71,7 @@ limitations under the License.
     char *string;
     bool isLabel;
     bool isGensym;                                // in macro evaluation, symbol is replaced with an automatically-generated unique symbol.
+    NSString *stringValue;			  // let's keep this for efficiency
 }
 
 /*! Get the global value of a symbol. */
