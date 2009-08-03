@@ -104,7 +104,9 @@ extern id Nu__null;
 	NSArray* keys = [context allKeys];
 	int count = [keys count];
 	for (int i = 0; i < count; i++) {
+#ifdef MACRO1_DEBUG
 		id key = [keys objectAtIndex:i];
+#endif
 		Macro1Debug(@"contextdump: %@  =  %@  [%@]", key, 
 			[[context objectForKey:key] stringValue],
 			[[context objectForKey:key] class]);

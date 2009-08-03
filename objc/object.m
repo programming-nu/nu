@@ -21,6 +21,7 @@ limitations under the License.
 #import "objc_runtime.h"
 #import "bridge.h"
 #import "extensions.h"
+#import "enumerable.h"
 
 // use this to look up selectors with symbols
 @interface NuSelectorCache : NSObject
@@ -120,6 +121,7 @@ limitations under the License.
 }
 
 @end
+
 
 @implementation NSObject(Nu)
 - (bool) atom
@@ -491,13 +493,17 @@ limitations under the License.
 + (NSArray *) classMethodNames
 {
     Class c = [self class];
-    return [[c classMethods] mapSelector:@selector(name)];
+    id methods = [c classMethods];
+    return [methods mapSelector:@selector(name)];
+//    return [[c classMethods] mapSelector:@selector(name)];
 }
 
 + (NSArray *) instanceMethodNames
 {
     Class c = [self class];
-    return [[c instanceMethods] mapSelector:@selector(name)];
+    id methods = [c instanceMethods];
+    return [methods mapSelector:@selector(name)];
+//    return [[c instanceMethods] mapSelector:@selector(name)];
 }
 
 + (NSArray *) instanceVariableNames
@@ -695,6 +701,7 @@ limitations under the License.
 }
 
 // Concisely set key-value pairs from a property list.
+
 - (id) set:(NuCell *) propertyList
 {
     id cursor = propertyList;

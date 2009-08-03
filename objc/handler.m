@@ -18,6 +18,8 @@ limitations under the License.
 
 #import "handler.h"
 #import "cell.h"
+#import "bridge.h"
+
 #ifdef IPHONE
 #import <CoreGraphics/CoreGraphics.h>
 #endif
@@ -40,7 +42,9 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
         else if (!strcmp(type, "C")) {
-            unsigned char x = va_arg(ap, unsigned char);
+            // unsigned char is promoted to int in va_arg()
+            //unsigned char x = va_arg(ap, unsigned char);
+            int x = va_arg(ap, int);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
         else if (!strcmp(type, "f")) {

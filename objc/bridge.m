@@ -688,7 +688,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
 
         case '*':
         {
-            *((char **) objc_value) = [[nu_value stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
+            *((char **) objc_value) = (char*)[[nu_value stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
             return NO;
         }
 

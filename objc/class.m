@@ -22,6 +22,7 @@ limitations under the License.
 #import "cell.h"
 #import "object.h"
 #import "extensions.h"
+#import "enumerable.h"
 
 // getting a specific method...
 // (set x (((Convert classMethods) select: (do (m) (eq (m name) "passRect:"))) objectAtIndex:0))
@@ -142,13 +143,15 @@ limitations under the License.
 /*! Get an array containing the names of the class methods of a class. */
 - (NSArray *) classMethodNames
 {
-    return [[self classMethods] mapSelector:@selector(name)];
+    id methods = [self classMethods];
+    return [methods mapSelector:@selector(name)];
 }
 
 /*! Get an array containing the names of the instance methods of a class. */
 - (NSArray *) instanceMethodNames
 {
-    return [[self instanceMethods] mapSelector:@selector(name)];
+    id methods = [self instanceMethods];
+    return [methods mapSelector:@selector(name)];
 }
 
 - (BOOL) isDerivedFromClass:(Class) parent
