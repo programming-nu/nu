@@ -376,6 +376,10 @@ extern id Nu__null;
 }
 #endif
 
++ (NSString *) stringWithData:(NSData *) data encoding:(int) encoding {
+    return [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+}
+
 // Read the contents of standard input into a string.
 + (NSString *) stringWithStandardInput {
     return [[[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding] autorelease];
@@ -516,8 +520,10 @@ extern id Nu__null;
         for (i = 0; i < x; i++) {
             @try
             {
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
                 [args setCar:[NSNumber numberWithInt:i]];
                 [block evalWithArguments:args context:Nu__null];
+                [pool release];
             }
             @catch (NuBreakException *exception) {
                 break;
