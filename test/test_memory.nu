@@ -36,8 +36,9 @@
                (2 times:
                   (do (i)
                       (set x (NuTestHelper helperInObjCUsingNew))
-                      (a << x)))
-               (assert_equal 0 (NuTestHelper deallocationCount))))
+                      (a << x))
+               ;; at the end of each loop iteration, the two NuTestHelpers are deleted with the iteration's autorelease pool 
+               (assert_equal (* 2 j) (NuTestHelper deallocationCount)))))
         (assert_equal 10 (NuTestHelper deallocationCount)))
      
      (- testIvarReleaseOnDealloc is
