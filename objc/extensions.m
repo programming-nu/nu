@@ -267,7 +267,7 @@ extern id Nu__null;
 
 - (NSString *) escapedStringRepresentation
 {
-    NSMutableString *result = [NSMutableString stringWithString:@"\""]; 
+    NSMutableString *result = [NSMutableString stringWithString:@"\""];
     int length = [self length];
     for (int i = 0; i < length; i++) {
         unichar c = [self characterAtIndex:i];
@@ -352,32 +352,24 @@ extern id Nu__null;
 // Read the text output of a shell command into a string and return the string.
 + (NSString *) stringWithShellCommand:(NSString *) command
 {
-    NSTask *task = [[NSTask alloc] init];
-    [task setLaunchPath:@"/bin/sh"];
-    #ifdef DARWIN
-    NSPipe *input = [[NSPipe alloc] init];
-    NSPipe *output = [[NSPipe alloc] init];
-    #else
-    NSPipe *input = [NSPipe pipe];
-    NSPipe *output = [NSPipe pipe];
-    #endif
-    [task setStandardInput:input];
-    [task setStandardOutput:output];
-    [task launch];
-    [[input fileHandleForWriting] writeData:[command dataUsingEncoding:NSUTF8StringEncoding]];
-    [[input fileHandleForWriting] closeFile];
-    NSData *data = [[[task standardOutput] fileHandleForReading] readDataToEndOfFile];
-    [task release];
-    #ifdef DARWIN
-    [input release];
-    [output release];
-    #endif
-    return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+    return [self stringWithShellCommand:command standardInput:nil];
+}
+
++ (NSString *) stringWithShellCommand:(NSString *) command standardInput:(id) input
+{
+    NSData *data = [NSData dataWithShellCommand:command standardInput:input];
+    return data ? [[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease] chomp] : nil;
 }
 #endif
 
++ (NSString *) stringWithData:(NSData *) data encoding:(int) encoding
+{
+    return [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+}
+
 // Read the contents of standard input into a string.
-+ (NSString *) stringWithStandardInput {
++ (NSString *) stringWithStandardInput
+{
     return [[[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding] autorelease];
 }
 
@@ -476,6 +468,7 @@ extern id Nu__null;
 {
     [self appendFormat:@"%C", c];
 }
+
 @end
 
 @implementation NSData(Nu)
@@ -484,23 +477,39 @@ extern id Nu__null;
 // Read the output of a shell command into an NSData object and return the object.
 + (NSData *) dataWithShellCommand:(NSString *) command
 {
-    NSTask *task = [NSTask new];
-    [task setLaunchPath:@"/bin/sh"];
-    #ifdef DARWIN
-    NSPipe *input = [NSPipe new];
-    [task setStandardInput:input];
-    NSPipe *output = [NSPipe new];
-    #else
-    NSPipe *input = [NSPipe pipe];
-    [task setStandardInput:input];
-    NSPipe *output = [NSPipe pipe];
-    #endif
-    [task setStandardOutput:output];
-    [task launch];
-    [[input fileHandleForWriting] writeData:[command dataUsingEncoding:NSUTF8StringEncoding]];
-    [[input fileHandleForWriting] closeFile];
-    NSData *data = [[[task standardOutput] fileHandleForReading] readDataToEndOfFile];
-    return data;
+    return [self dataWithShellCommand:command standardInput:nil];
+}
+
++ (NSData *) dataWithShellCommand:(NSString *) command standardInput:(id) input
+{
+    char *input_template = strdup("/tmp/nuXXXXX");
+    char *input_filename = mktemp(input_template);
+    char *output_template = strdup("/tmp/nuXXXXX");
+    char *output_filename = mktemp(output_template);
+    id returnValue = nil;
+    if (input_filename || output_filename) {
+        NSString *inputFileName = [NSString stringWithCString:input_filename encoding:NSUTF8StringEncoding];
+        NSString *outputFileName = [NSString stringWithCString:output_filename encoding:NSUTF8StringEncoding];
+        NSString *fullCommand;
+        if (input) {
+            if ([input isKindOfClass:[NSData class]])
+                [input writeToFile:inputFileName atomically:NO];
+            else if ([input isKindOfClass:[NSString class]])
+                [input writeToFile:inputFileName atomically:NO encoding:NSUTF8StringEncoding error:nil];
+            else
+                [[input stringValue] writeToFile:inputFileName atomically:NO encoding:NSUTF8StringEncoding error:nil];
+            fullCommand = [NSString stringWithFormat:@"%@ < %@ > %@", command, inputFileName, outputFileName];
+        }
+        else {
+            fullCommand = [NSString stringWithFormat:@"%@ > %@", command, outputFileName];
+        }
+        const char *commandString = [[fullCommand stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
+        int result = system(commandString) >> 8;  // this needs an explanation
+        if (!result)
+            returnValue = [NSData dataWithContentsOfFile:outputFileName];
+        system([[NSString stringWithFormat:@"rm -f %@ %@", inputFileName, outputFileName] cStringUsingEncoding:NSUTF8StringEncoding]);
+    }
+    return returnValue;
 }
 #endif
 @end
@@ -516,8 +525,10 @@ extern id Nu__null;
         for (i = 0; i < x; i++) {
             @try
             {
+                NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
                 [args setCar:[NSNumber numberWithInt:i]];
                 [block evalWithArguments:args context:Nu__null];
+                [pool release];
             }
             @catch (NuBreakException *exception) {
                 break;
@@ -620,7 +631,7 @@ extern id Nu__null;
 + (double) ceil: (double) x {return ceil(x);}
 + (double) round: (double) x {return round(x);}
 
-+ (double) raiseNumber: (double) x toPower: (double) y {return pow(x, y);} 
++ (double) raiseNumber: (double) x toPower: (double) y {return pow(x, y);}
 + (int) integerDivide:(int) x by:(int) y {return x / y;}
 + (int) integerMod:(int) x by:(int) y {return x % y;}
 

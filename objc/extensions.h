@@ -119,6 +119,21 @@ limitations under the License.
 @end
 
 /*!
+    @category NSData(Nu)
+    @abstract NSData extensions for Nu programming.
+    @discussion NSData extensions for Nu programming.
+ */
+@interface NSData(Nu)
+#ifndef IPHONE
+/*! Run a shell command and return the results as data. */
++ (NSData *) dataWithShellCommand:(NSString *) command;
+
+/*! Run a shell command with the specified data or string as standard input and return the results as data. */
++ (NSData *) dataWithShellCommand:(NSString *) command standardInput:(id) input;
+#endif
+@end
+
+/*!
     @category NSString(Nu)
     @abstract NSString extensions for Nu programming.
     @discussion NSString extensions for Nu programming.
@@ -135,6 +150,9 @@ limitations under the License.
 #ifndef IPHONE
 /*! Run a shell command and return its results in a string. */
 + (NSString *) stringWithShellCommand:(NSString *) command;
+
+/*! Run a shell command with the specified data or string as standard input and return the results in a string. */
++ (NSString *) stringWithShellCommand:(NSString *) command standardInput:(id) input;
 #endif
 
 /*! If the last character is a newline, return a new string without it. */
