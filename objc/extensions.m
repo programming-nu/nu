@@ -358,7 +358,7 @@ extern id Nu__null;
 + (NSString *) stringWithShellCommand:(NSString *) command standardInput:(id) input
 {
     NSData *data = [NSData dataWithShellCommand:command standardInput:input];
-    return data ? [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease] : nil;
+    return data ? [[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease] chomp] : nil;
 }
 #endif
 
