@@ -18,7 +18,7 @@ nush -e '(set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))' 
         (set s (NSString stringWithShellCommand:"cat" standardInput:"Hello"))
         (assert_equal "Hello" s)
         (set s (NSString stringWithShellCommand:"echo 'Goodbye'"))
-        (assert_equal "Goodbye\n" s))
+        (assert_equal "Goodbye" s))
      
      (- (id) testDataWithShellCommand is
         (set d (NSData dataWithShellCommand:"cat" standardInput:"Hello"))
