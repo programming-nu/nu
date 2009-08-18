@@ -91,7 +91,7 @@ END)
 (ifDarwin
          (then (set @cflags "-Wall -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
                (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
-         (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
+         (else (set @cflags "-Wall -DLINUX -g -std=gnu99 -fPIC ")
                ;; (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")
                (set @mflags ((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
 
