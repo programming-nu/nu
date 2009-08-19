@@ -15,6 +15,7 @@
 ;;   See the License for the specific language governing permissions and
 ;;   limitations under the License.
 
+(global NSUTF8StringEncoding 4)
 (global NSLog (NuBridgedFunction functionWithName:"NSLog" signature:"v@"))
 
 ;; Warning! I want to deprecate these.

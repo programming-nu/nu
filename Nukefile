@@ -36,15 +36,15 @@ END)
 ;; libraries
 (set @frameworks (NSMutableArray array))
 (set @inc_dirs   (NSMutableArray arrayWithList:(list "/usr/include")))
-(set @lib_dirs   (NSMutableArray arrayWithList:(list "/usr/lib")))
+(set @lib_dirs (array)) ;;  (NSMutableArray arrayWithList:(list "/usr/lib")))
 (set @libs       (NSMutableArray arrayWithList:(list "objc" "ffi" "pcre")))
 
 (@inc_dirs addObjectsFromList:(list "./include" "./include/Nu"))
 (ifDarwin
          (then (@frameworks addObject:"Cocoa")
                (@libs       addObject:"edit"))
-         (else (@libs       addObjectsFromList:(list "readline" "m" "gnustep-base"))
-               (@inc_dirs   addObject:"/usr/include/GNUstep/Headers")
+         (else (@libs       addObjectsFromList:(list "readline" "m" ))
+               ;;(@inc_dirs   addObject:"/usr/include/GNUstep/Headers")
                ;; this will be set by gnustep-config:
                ;; (@lib_dirs   addObject:"/usr/lib/GNUstep/System/Library/Libraries")
                ))
@@ -91,7 +91,7 @@ END)
 (ifDarwin
          (then (set @cflags "-Wall -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
                (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
-         (else (set @cflags "-Wall -DLINUX -g -std=gnu99 ")
+         (else (set @cflags "-Wall -DLINUX -g -std=gnu99 -fPIC")
                ;; (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")
                (set @mflags ((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
 
@@ -105,6 +105,7 @@ END)
 (set @ldflags
      ((list
            (cond  ;; statically link in pcre since most people won't have it..
+(t nil)
                   ((NSFileManager fileExistsNamed:"#{@pcre_prefix}/lib/libpcre.a") "#{@pcre_prefix}/lib/libpcre.a")
                   ((NSFileManager fileExistsNamed:"/usr/lib/libpcre.a") "/usr/lib/libpcre.a")
                   ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") "#{@prefix}/lib/libpcre.a")

@@ -482,9 +482,9 @@ extern id Nu__null;
 
 + (NSData *) dataWithShellCommand:(NSString *) command standardInput:(id) input
 {
-    char *input_template = strdup("/tmp/nuXXXXX");
+    char *input_template = strdup("/tmp/nuXXXXXX");
     char *input_filename = mktemp(input_template);
-    char *output_template = strdup("/tmp/nuXXXXX");
+    char *output_template = strdup("/tmp/nuXXXXXX");
     char *output_filename = mktemp(output_template);
     id returnValue = nil;
     if (input_filename || output_filename) {
@@ -495,9 +495,17 @@ extern id Nu__null;
             if ([input isKindOfClass:[NSData class]])
                 [input writeToFile:inputFileName atomically:NO];
             else if ([input isKindOfClass:[NSString class]])
+#ifdef DARWIN
                 [input writeToFile:inputFileName atomically:NO encoding:NSUTF8StringEncoding error:nil];
+#else
+                [input writeToFile:inputFileName atomically:NO];
+#endif
             else
+#ifdef DARWIN
                 [[input stringValue] writeToFile:inputFileName atomically:NO encoding:NSUTF8StringEncoding error:nil];
+#else
+                [[input stringValue] writeToFile:inputFileName atomically:NO];
+#endif
             fullCommand = [NSString stringWithFormat:@"%@ < %@ > %@", command, inputFileName, outputFileName];
         }
         else {
@@ -509,6 +517,8 @@ extern id Nu__null;
             returnValue = [NSData dataWithContentsOfFile:outputFileName];
         system([[NSString stringWithFormat:@"rm -f %@ %@", inputFileName, outputFileName] cStringUsingEncoding:NSUTF8StringEncoding]);
     }
+    free(input_template);
+    free(output_template);
     return returnValue;
 }
 #endif
