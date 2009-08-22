@@ -978,6 +978,23 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
 - (int) interact
 {
     printf("Nu Shell.\n");
+
+    char* homedir = getenv("HOME");
+    char  history_file[FILENAME_MAX];
+    int   valid_history_file = 0;
+    
+    if (homedir) // Not likely, but could be NULL
+    {
+        // Since we're getting something from the shell environment, 
+        // try to be safe about it
+        int n = snprintf(history_file, FILENAME_MAX, "%s/.nush_history", homedir);
+        if (n <=  FILENAME_MAX)
+        {
+            read_history(history_file);
+            valid_history_file = 1;
+        }
+    }
+
     do {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         char *prompt = ([self incomplete] ? "- " : "% ");
@@ -987,7 +1004,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
 		int count = gets(line);
 		#else
         char *line = readline(prompt);
-        if (line && *line)
+        if (line && *line && strcmp(line, "quit"))
             add_history (line);
 		#endif
         if(!line || !strcmp(line, "quit")) {
@@ -1043,6 +1060,12 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
         }
         [pool release];
     } while(1);
+
+    if (valid_history_file)
+    {
+        write_history(history_file);
+    }
+
     return 0;
 }
 
