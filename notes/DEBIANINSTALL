@@ -1,66 +1,75 @@
-Start with a clean Debian system:
-
-# started with Debian5 net install
-#  System and Desktop options
+# Start with a clean Debian system:
+# I used a Debian5 net install with System and Desktop options
 
 apt-get update
 
 # for vmtools
-apt-get install linux-headers-$(uname -r)
+#	apt-get install linux-headers-$(uname -r)
 
 # Need to build vmtools with the same version of compiler as the kernel 
 # was built with
-export CC=gcc-4.1
-
+#	export CC=gcc-4.1
 # build vmtools...
-
-unset CC
+#	unset CC
 
 
 # install development environment
+mkdir dev
+cd dev
 
-apt-get install git-core
-apt-get install subversion
+apt-get -y install git-core
+apt-get -y install subversion
 
-apt-get install rake
-apt-get install build-essential
-apt-get install gobjc
-apt-get install libreadline5-dev
-apt-get install libgnustep-base-dev
-apt-get install gdb
+apt-get -y install rake
+apt-get -y install build-essential
+apt-get -y install gobjc
+apt-get -y install libreadline5-dev
+apt-get -y install gdb
 
-apt-get install libffi-dev
-apt-get install gnustep-make
-apt-get install libxml2-dev
-apt-get install libxslt-dev
-apt-get install libgnutls-dev
-apt-get install libssl-dev
-apt-get install libevent-dev
+apt-get -y install libffi-dev
+apt-get -y install gnustep-make
+apt-get -y install libxml2-dev
+apt-get -y install libxslt-dev
+apt-get -y install libgnutls-dev
+apt-get -y install libssl-dev
+#apt-get -y install libevent-dev
 
 
 # download GNUstep 1.18.0 from gnustep.org
+wget ftp://ftp.gnustep.org/pub/gnustep/core/gnustep-base-1.19.1.tar.gz
+uncompress gnustep-base-1.19.1.tar.gz
+tar -xvf gnustep-base-1.19.1.tar.gz
+cd gnustep-base-1.19.1
+
 ./configure --enable-ffi
 make
 sudo make install
+cd ..
 
 # download pcre 7.9 from www.pcre.org
+wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.9.tar.gz
+uncompress pcre-7.9.tar.gz
+tar -xvf pcre-7.9.tar
+
+cd pcre-7.9
 ./configure --disable-dependency-tracking --enable-utf8
 make
 sudo make install
-
+cd ..
 
 # 'gnustep-config --objc-flags' should look something like this (without the /home/jsb prefix):
-
--MMD -MP -DGNUSTEP -DGNUSTEP_BASE_LIBRARY=1 -DGNU_RUNTIME=1 -DGNUSTEP_BASE_LIBRARY=1 -D_REENTRANT -fPIC -g -Wall -DDEBUG -fno-omit-frame-pointer -DGSWARN -DGSDIAGNOSE -Wno-import -g -fno-strict-aliasing -fexceptions -fobjc-exceptions -D_NATIVE_OBJC_EXCEPTIONS -fgnu-runtime -fconstant-string-class=NSConstantString -I. -I/home/jsb/GNUstep/Library/Headers -I/usr/local/include/GNUstep -I/usr/include/GNUstep
+#  -MMD -MP -DGNUSTEP -DGNUSTEP_BASE_LIBRARY=1 -DGNU_RUNTIME=1 -DGNUSTEP_BASE_LIBRARY=1 -D_REENTRANT -fPIC -g -Wall -DDEBUG -fno-omit-frame-pointer -DGSWARN -DGSDIAGNOSE -Wno-import -g -fno-strict-aliasing -fexceptions -fobjc-exceptions -D_NATIVE_OBJC_EXCEPTIONS -fgnu-runtime -fconstant-string-class=NSConstantString -I. -I/home/jsb/GNUstep/Library/Headers -I/usr/local/include/GNUstep -I/usr/include/GNUstep
 
 
 # 'gnustep-config --base-libs' should look something like this:
-
--rdynamic -shared-libgcc -fexceptions -fgnu-runtime -L/home/jsb/GNUstep/Library/Libraries -L/usr/local/lib -L/usr/lib -lgnustep-base -lpthread -lobjc -lm
+#  -rdynamic -shared-libgcc -fexceptions -fgnu-runtime -L/home/jsb/GNUstep/Library/Libraries -L/usr/local/lib -L/usr/lib -lgnustep-base -lpthread -lobjc -lm
 
 
 # Now build Nu
-rake
+git clone git://github.com/timburks/nu.git
+cd nu
+
+make
 ./mininush tools/nuke
 ./mininush tools/nuke install
 nuke
@@ -69,5 +78,4 @@ nuke install
 # can't copy over running image in Linux
 sudo cp libNu.so /usr/local/lib
 sudo cp nush /usr/local/bin
-
 
