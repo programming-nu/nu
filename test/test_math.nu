@@ -44,8 +44,8 @@
      (imethod (id) testCbrt is
           (assert_equal 0 (NuMath cbrt:0))
           (assert_equal 0 (cbrt 0))
-          (assert_equal 1.5 (NuMath cbrt:3.375))
-          (assert_equal 1.5 (cbrt 3.375))
+          (assert_in_delta  1.5 (NuMath cbrt:3.375) 0.001)
+          (assert_in_delta  1.5 (cbrt 3.375) 0.001)
           (assert_in_delta 1.587 (NuMath cbrt:4) 0.001))
      
      (imethod (id) testSquare is

@@ -34,15 +34,13 @@ ifeq ($(SYSTEM), Darwin)
 	endif
 	FRAMEWORKS = -framework Cocoa
 	LIBS = -lobjc -lpcre -lreadline
-	LIBDIRS =
 	ifeq ($(shell test -d $(PREFIX)/lib && echo yes), yes)
 		LIBDIRS += -L$(PREFIX)/lib
 	endif
 else
-	INCLUDES += -I/usr/include/GNUstep/Headers
 	FRAMEWORKS =
 	LIBS = -lm -lpcre -lreadline -lgnustep-base
-	LIBDIRS += -L/usr/lib/GNUstep/System/Library/Libraries
+	LIBDIRS =
 endif
 
 C_FILES = $(wildcard objc/*.c)
@@ -58,13 +56,18 @@ ifeq ($(SYSTEM), Darwin)
 	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS)
 else
 	CFLAGS += -DLINUX
-	MFLAGS += -fconstant-string-class=NSConstantString
+#	MFLAGS += -fconstant-string-class=NSConstantString
+	MFLAGS += $(shell gnustep-config --objc-flags)
 endif
 
 LDFLAGS += $(FRAMEWORKS)
 LDFLAGS += $(LIBS)
 LDFLAGS += $(LIBDIRS)
 LDFLAGS += $(FFI_LIB)
+ifeq ($(SYSTEM), Darwin)
+else
+      LDFLAGS += $(shell gnustep-config --base-libs)
+endif
 
 ifeq ($(SYSTEM), Linux)
 	LDFLAGS += -lobjc 

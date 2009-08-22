@@ -1400,13 +1400,15 @@ limitations under the License.
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
         id value = [[cursor car] evalWithContext:context];
-        string = [value stringValue];
-        if (console && (console != Nu__null)) {
-            [console write:string];
-            [console write:[NSString carriageReturn]];
-        }
-        else {
-            printf("%s\n", [string cStringUsingEncoding:NSUTF8StringEncoding]);
+        if (value) {
+            string = [value stringValue];
+            if (console && (console != Nu__null)) {
+                [console write:string];
+                [console write:[NSString carriageReturn]];
+            }
+            else {
+                printf("%s\n", [string cStringUsingEncoding:NSUTF8StringEncoding]);
+            }
         }
         cursor = [cursor cdr];
     }
