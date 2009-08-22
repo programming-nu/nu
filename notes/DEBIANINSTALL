@@ -38,7 +38,7 @@ apt-get -y install libssl-dev
 # download GNUstep 1.18.0 from gnustep.org
 wget ftp://ftp.gnustep.org/pub/gnustep/core/gnustep-base-1.19.1.tar.gz
 uncompress gnustep-base-1.19.1.tar.gz
-tar -xvf gnustep-base-1.19.1.tar.gz
+tar -xvf gnustep-base-1.19.1.tar
 cd gnustep-base-1.19.1
 
 ./configure --enable-ffi
