@@ -41,6 +41,7 @@ struct objc_method_description_list
 #endif
 
 #ifndef IPHONE
+#ifndef __DARWIN_10_6_AND_LATER
 #ifndef __x86_64__
 
 @interface Protocol : NSObject
@@ -343,5 +344,6 @@ void nu_initProtocols()
 }
 
 @end
+#endif
 #endif
 #endif

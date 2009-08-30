@@ -81,7 +81,10 @@ END)
 (set @cc "gcc")
 (set @leopard "")
 (set @sdk
-     (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk")
+     (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.6.sdk")
+            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__")
+            ("-isysroot /Developer/SDKs/MacOSX10.6.sdk"))
+           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk")
             (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__")
             ("-isysroot /Developer/SDKs/MacOSX10.5.sdk"))
            ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk")
@@ -90,7 +93,7 @@ END)
 
 (ifDarwin
          (then (set @cflags "-Wall -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
-               (set @mflags "-fobjc-exceptions")) ;; Want to try Apple's new GC? Add this: "-fobjc-gc"
+               (set @mflags "-fobjc-exceptions")) ;; To use garbage collection, add this flag: "-fobjc-gc"
          (else (set @cflags "-Wall -DLINUX -g -std=gnu99 -fPIC")
                ;; (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")
                (set @mflags ((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
@@ -120,7 +123,7 @@ END)
      join))
 
 (ifDarwin
-         (set @public_headers (filelist "include/Nu/Nu.h")))
+         (set @public_headers (filelist "^include/Nu/Nu.h")))
 
 ;; Setup the tasks for compilation and framework-building.
 ;; These are defined in the nuke application source file.

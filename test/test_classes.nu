@@ -46,8 +46,8 @@
 
 (class TestClassMethodMissing is NuTestCase
      (- (id) testCustomSubclassClassMethodMissing is
-        (assert_equal "Handling message (hello)" (MySampleClass hello) )
-        (assert_equal "Handling message (nu: \"rocks\")" (MySampleClass nu:"rocks") ))
+        (assert_equal "Handling message (hello)" (MySampleClass hello))
+        (assert_equal "Handling message (nu: \"rocks\")" (MySampleClass nu:"rocks")))
      
      (if (eq (uname) "Darwin")
          (- (id) testNSWorkspaceSingletonRemoval is

@@ -1055,25 +1055,25 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
         }
         if (success) {
             result = get_nu_value_from_objc_value(result_value, &return_type_buffer[0]);
-	    // NSLog(@"result is %@", result);
-	    // NSLog(@"retain count %d", [result retainCount]);
+            // NSLog(@"result is %@", result);
+            // NSLog(@"retain count %d", [result retainCount]);
             // Return values should not require a release.
             // Either they are owned by an existing object or are autoreleased.
             // Since these methods create new objects that aren't autoreleased, we autorelease them.
             // But we must never release placeholders.
-#ifdef DARWIN
+            #ifdef DARWIN
             bool already_retained =               // see Anguish/Buck/Yacktman, p. 104
                 (s == @selector(alloc)) || (s == @selector(allocWithZone:))
                 || (s == @selector(copy)) || (s == @selector(copyWithZone:))
                 || (s == @selector(mutableCopy)) || (s == @selector(mutableCopyWithZone:))
                 || (s == @selector(new));
-#else
+            #else
             bool already_retained =               // see Anguish/Buck/Yacktman, p. 104
                 sel_eq(s, @selector(alloc)) || sel_eq(s, @selector(allocWithZone:))
                 || sel_eq(s, @selector(copy)) || sel_eq(s, @selector(copyWithZone:))
                 || sel_eq(s, @selector(mutableCopy)) || sel_eq(s, @selector(mutableCopyWithZone:))
                 || sel_eq(s, @selector(new));
-#endif
+            #endif
             //NSLog(@"already retained? %d", already_retained);
             if (already_retained) {
                 // Make sure this isn't an instance of a placeholder class.
@@ -1115,20 +1115,6 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
     return result;
 }
 
-@interface NSAutoreleasePool (UndocumentedInterface)
-+ (BOOL) autoreleasePoolExists;
-@end
-
-#ifdef LINUX
-@implementation NSAutoreleasePool (UndocumentedInterface)
-+ (BOOL) autoreleasePoolExists
-{
-    return true;                                  // this is wrong. Fix it later.
-}
-
-@end
-#endif
-
 @interface NSMethodSignature (UndocumentedInterface)
 + (id) signatureWithObjCTypes:(const char*)types;
 @end
@@ -1139,9 +1125,10 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     id rcv = *((id*)args[0]);                     // this is the object getting the message
     // unused: SEL sel = *((SEL*)args[1]);
 
-    // we might need an autorelease pool (added for detachNewThreadSelector:toTarget:withObject:)
-    NSAutoreleasePool *pool = [NSAutoreleasePool autoreleasePoolExists] ? 0 : [[NSAutoreleasePool alloc] init];
-
+    // in rare cases, we need an autorelease pool (specifically detachNewThreadSelector:toTarget:withObject:)
+    // previously we used a private api to verify that one existed before creating a new one. Now we just make one. 
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
     NuBlock *block = ((NuBlock **)userdata)[1];
     //NSLog(@"----------------------------------------");
     //NSLog(@"calling block %@", [block stringValue]);
@@ -1161,10 +1148,10 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     char *resultType = (((char **)userdata)[0])+1;// skip the first character, it's a flag
     set_objc_value_from_nu_value(returnvalue, result, resultType);
     #ifdef __ppc__
-	// It appears that at least on PowerPC architectures, small values (short, char, ushort, uchar) passed in via 
-	// the ObjC runtime use their actual type while function return values are coerced up to integers. 
-	// I suppose this is because values are passed as arguments in memory and returned in registers.  
-	// This may also be the case on x86 but is unobserved because x86 is little endian.
+    // It appears that at least on PowerPC architectures, small values (short, char, ushort, uchar) passed in via
+    // the ObjC runtime use their actual type while function return values are coerced up to integers.
+    // I suppose this is because values are passed as arguments in memory and returned in registers.
+    // This may also be the case on x86 but is unobserved because x86 is little endian.
     switch (resultType[0]) {
         case 'C':
         {
@@ -1188,12 +1175,19 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
         }
     }
     #endif
+
     if (((char **)userdata)[0][0] == '!') {
         //NSLog(@"retaining result for object %@, count = %d", *(id *)returnvalue, [*(id *)returnvalue retainCount]);
         [*((id *)returnvalue) retain];
     }
     [arguments release];
-    [pool release];
+    if (pool) {
+        if (resultType[0] == '@')
+            [*((id *)returnvalue) retain];
+        [pool release];
+        if (resultType[0] == '@')
+            [*((id *)returnvalue) autorelease];
+    }
 }
 
 char **generate_userdata(SEL sel, NuBlock *block, const char *signature)
@@ -1311,11 +1305,11 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     if (!nu_block_table) nu_block_table = st_init_numtable();
     // watch for problems caused by these ugly casts...
     st_insert(nu_block_table, (long) imp, (long) block);
-#ifdef DARWIN
-#ifndef IPHONE
+    #ifdef DARWIN
+    #ifndef IPHONE
     [[NSGarbageCollector defaultCollector] disableCollectorForPointer: block];
-#endif
-#endif
+    #endif
+    #endif
     // insert the method handler in the class method table
     nu_class_replaceMethod(c, selector, imp, signature_str);
     #ifdef DARWIN
@@ -1333,7 +1327,8 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 
 @implementation NuBridgedFunction
 
-- (void) dealloc {
+- (void) dealloc
+{
     free(name);
     free(signature);
     [super dealloc];

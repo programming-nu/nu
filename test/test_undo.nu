@@ -45,27 +45,28 @@
             
             ;; tie Shannon's shoes.
             (u beginUndoGrouping)
-            (u prepareWithInvocationTarget:shannon)
-            (u tieShoes)
+            ;; Beginning with Mac OS 10.6, prepareWithInvocationTarget returns a proxy object
+            (set p (u prepareWithInvocationTarget:shannon))
+            (p tieShoes)
             (u endUndoGrouping)
             
             ;; tickle her again.
             (u beginUndoGrouping)
-            (u prepareWithInvocationTarget:shannon)
-            (u tickle:3)
+            (set p (u prepareWithInvocationTarget:shannon))
+            (p tickle:3)
             (u endUndoGrouping)
             
             ;; tickle her.
             (u beginUndoGrouping)
-            (u prepareWithInvocationTarget:shannon)
+            (set p (u prepareWithInvocationTarget:shannon))
             (set one 1)
-            (u tickle:(+ one one one))
+            (p tickle:(+ one one one))
             (u endUndoGrouping)
             
             ;; first, tie Shannon's shoes.
             (u beginUndoGrouping)
-            (u prepareWithInvocationTarget:shannon)
-            (u tieShoes)
+            (set p (u prepareWithInvocationTarget:shannon))
+            (p tieShoes)
             (u endUndoGrouping)
             
             (assert_equal 1 (u canUndo))

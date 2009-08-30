@@ -159,8 +159,9 @@ limitations under the License.
     return Nu__null;
 }
 
+
 - (id) sendMessage:(id)cdr withContext:(NSMutableDictionary *)context
-{
+{   
     // By themselves, Objective-C objects evaluate to themselves.
     if (!cdr || (cdr == Nu__null))
         return self;

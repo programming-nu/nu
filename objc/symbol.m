@@ -205,7 +205,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
     if (valueInContext)
         return valueInContext;
 
-    #if false
+    #if 0
     // if it's not there, try the next context up
     id parentContext = [context objectForKey:@"context"];
     if (parentContext) {
