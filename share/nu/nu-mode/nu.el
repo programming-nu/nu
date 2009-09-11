@@ -26,6 +26,9 @@
 ;; at gmail.com.
 
 ;;; History:
+;; 2009-09-11 Aleksandr Skobelev
+;;    - added (c-subword-mode)
+;;
 ;; 2008-09-16 Aleksandr Skobelev
 ;;    - added (required 'cl)
 ;;
@@ -81,12 +84,11 @@
 
 (require 'cl)
 (require 'lisp-mode)
-(require 'cl)
 
 (autoload 'run-nush "nush" "Run an inferior Nush process." t)
 (autoload 'switch-to-nush "nush" "Switch to an inferior Nush process." t)
 
-(defconst nu-version "2008-09-16"
+(defconst nu-version "2009-09-11"
   "Nu Mode version number.")
 
 (defgroup nu nil
@@ -267,6 +269,7 @@ See `run-hooks'."
   (setq major-mode 'nu-mode)
   (setq mode-name "Nu")
   (nu-mode-variables)
+  (c-subword-mode)
   (run-mode-hooks 'nu-mode-hook))
 
 
@@ -382,7 +385,6 @@ See `run-hooks'."
     ;; REGEXP KEYWORDS
     `(,nu-regexp-re
       (3 font-lock-constant-face t))
-    
     )
   "Expressions to highlight in Nu mode.")
 
@@ -1099,30 +1101,20 @@ If there is no plausible default, return nil."
 (add-to-list 'auto-mode-alist '("Nukefile\\'" . nu-mode))
 (add-to-list 'interpreter-mode-alist '("nush". nu-mode))
 
-(setq elp-function-list
-      '(nu-indent-line
-        nu-skip-space-forward
-        nu-skip-space-backward
-        nu-forward-sexp1
-        nu-backward-sexp1
-        nu-find-heredoc-backward
-        nu-beginning-of-defun
-        nu-end-of-defun
-        syntax-ppss
-        ))
-
-(elp-instrument-list)
-(setq elp-set-master nil)
-
 ;; (setq elp-function-list
-;;       '(nu-skip-space-forward
+;;       '(nu-indent-line
+;;         nu-skip-space-forward
+;;         nu-skip-space-backward
+;;         nu-forward-sexp1
+;;         nu-backward-sexp1
+;;         nu-find-heredoc-backward
+;;         nu-beginning-of-defun
+;;         nu-end-of-defun
 ;;         syntax-ppss
-;;         char-syntax
-;;         char-after
-;;         beginning-of-line
 ;;         ))
+
 ;; (elp-instrument-list)
-;; (setq elp-set-master 'nu-skip-space-forward)
+;; (setq elp-set-master nil)
 
 (provide 'nu)
 ;;; nu.el ends here
