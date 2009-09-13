@@ -26,8 +26,8 @@
 ;; at gmail.com.
 
 ;;; History:
-;; 2009-09-11 Aleksandr Skobelev
-;;    - added (c-subword-mode)
+;; 2009-09-13 Aleksandr Skobelev
+;;    - added (c-subword-mode t)
 ;;
 ;; 2008-09-16 Aleksandr Skobelev
 ;;    - added (required 'cl)
@@ -269,7 +269,7 @@ See `run-hooks'."
   (setq major-mode 'nu-mode)
   (setq mode-name "Nu")
   (nu-mode-variables)
-  (c-subword-mode)
+  (c-subword-mode t)
   (run-mode-hooks 'nu-mode-hook))
 
 

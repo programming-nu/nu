@@ -21,8 +21,8 @@
 ;; 8/88
 
 ;; History:
-;; 2009-09-11 Aleksandr Skobelev
-;;    - added (c-subword-mode)
+;; 2009-09-13 Aleksandr Skobelev
+;;    - added (c-subword-mode t)
 
 ;; 2008-03-22 Aleksandr Skobelev
 ;;    - set COMINT-PROCESS-ECHOES to T
@@ -143,7 +143,7 @@ to continue it."
   (setq comint-prompt-regexp "^\\([%-] \\)+")
   
   (nu-mode-variables)
-  (c-subword-mode)
+  (c-subword-mode t)
   (set-local 'comint-process-echoes t)
   (setq mode-line-process '(":%s"))
   (setq comint-input-filter (function nush-input-filter))
