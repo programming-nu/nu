@@ -767,6 +767,14 @@ extern id Nu__null;
     if (!framework)
         framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"/System/Library/Frameworks/%@.framework", frameworkName]];
 
+    // then /usr/frameworks
+    if (!framework)
+        framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"/usr/frameworks/%@.framework", frameworkName]];
+
+    // then /usr/local/frameworks
+    if (!framework)
+        framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"/usr/local/frameworks/%@.framework", frameworkName]];
+
     if (framework) {
         if ([framework load])
             return framework;
