@@ -17,9 +17,10 @@ limitations under the License.
 */
 
 #ifdef DARWIN
-
 #include <mach/mach.h>
 #include <mach/mach_time.h>
+#endif
+
 #import <Foundation/Foundation.h>
 
 @interface NuProfileStackElement : NSObject
@@ -29,6 +30,7 @@ limitations under the License.
     uint64_t start;
     NuProfileStackElement *parent;
 }
+
 @end
 
 @interface NuProfileTimeSlice : NSObject
@@ -37,6 +39,7 @@ limitations under the License.
     float time;
     int count;
 }
+
 @end
 
 @interface NuProfiler : NSObject
@@ -48,5 +51,3 @@ limitations under the License.
 + (NuProfiler *) defaultProfiler;
 
 @end
-
-#endif

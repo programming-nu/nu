@@ -17,8 +17,6 @@ limitations under the License.
 */
 #import "profiler.h"
 
-#ifdef DARWIN
-
 @implementation NuProfileStackElement
 
 - (NSString *) name {return name;}
@@ -67,7 +65,11 @@ static NuProfiler *defaultProfiler = nil;
 {
     NuProfileStackElement *stackElement = [[NuProfileStackElement alloc] init];
     stackElement->name = [name retain];
+    #ifdef DARWIN
     stackElement->start = mach_absolute_time();
+    #else
+    stackElement->start = 0;
+    #endif
     stackElement->parent = stack;
     stack = stackElement;
 }
@@ -75,11 +77,15 @@ static NuProfiler *defaultProfiler = nil;
 - (void) stop
 {
     if (stack) {
+        #ifdef DARWIN
         uint64_t current_time = mach_absolute_time();
         uint64_t time_delta = current_time - stack->start;
         struct mach_timebase_info info;
         mach_timebase_info(&info);
         float timeDelta = 1e-9 * time_delta * (double) info.numer / info.denom;
+        #else
+        float timeDelta = 1.0;
+        #endif
         NSNumber *delta = [NSNumber numberWithFloat:timeDelta];
         NuProfileTimeSlice *entry = [sections objectForKey:stack->name];
         if (!entry) {
@@ -115,4 +121,3 @@ static NuProfiler *defaultProfiler = nil;
 }
 
 @end
-#endif
