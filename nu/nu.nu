@@ -249,8 +249,9 @@
                     (set __rest (__rest cdr)))))
 
 ;; profiling macro - experimental
-(macro-1 profile (name *body)
-     `(progn ((NuProfiler defaultProfiler) start:,name)
-             (set __result (progn ,@*body))
-             ((NuProfiler defaultProfiler) stop)
-             __result))
+(global profile
+        (macro-1 _ (name *body)
+             `(progn ((NuProfiler defaultProfiler) start:,name)
+                     (set __result (progn ,@*body))
+                     ((NuProfiler defaultProfiler) stop)
+                     __result)))
