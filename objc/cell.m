@@ -429,6 +429,17 @@ extern char *nu_parsedFilename(int i);
     return count;
 }
 
+- (NSMutableArray *) array
+{
+   NSMutableArray *a = [NSMutableArray array];
+   id cursor = self;
+   while (cursor && cursor != Nu__null) {
+      [a addObject:[cursor car]];
+      cursor = [cursor cdr];
+   }
+   return a;
+}
+
 - (int) count
 {
     return [self length];

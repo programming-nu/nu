@@ -36,6 +36,8 @@ limitations under the License.
 - (int) length;
 /*! count is a synonym for length. */
 - (int) count;
+/*! nil converts to an empty array. */
+- (NSMutableArray *) array;
 @end
 
 /*!

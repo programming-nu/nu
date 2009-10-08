@@ -82,6 +82,8 @@ In Nu, nil is represented with the <code>[NSNull null]</code> object.
 - (int) length;
 /*! Get the number of elements in a list. Synonymous with length. */
 - (int) count;
+/*! Get an array containing the elements of a list. */
+- (NSMutableArray *) array;
 
 - (void) setFile:(int) f line:(int) l;
 - (int) file;
