@@ -47,6 +47,11 @@ extern id Nu__null;
     return 0;
 }
 
+- (NSMutableArray *) array 
+{
+   return [NSMutableArray array];
+}
+
 - (id) stringValue
 {
     return @"()";
