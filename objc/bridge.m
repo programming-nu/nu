@@ -21,7 +21,7 @@ limitations under the License.
 #endif
 #import <Foundation/Foundation.h>
 #ifdef IPHONE
-#import <UIKit/UIKit.h>
+#import <CoreGraphics/CoreGraphics.h>
 #define NSRect CGRect
 #define NSPoint CGPoint
 #define NSSize CGSize

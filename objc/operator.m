@@ -2119,7 +2119,7 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("macro-0",  Nu_macro_0_operator);
     install("macro-1",  Nu_macro_1_operator);
-    install("macro",    Nu_macro_0_operator);
+    install("macro",    Nu_macro_1_operator);
     install("macrox",   Nu_macrox_operator);
 
     install("quasiquote",           Nu_quasiquote_operator);
