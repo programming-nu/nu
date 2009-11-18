@@ -3,6 +3,8 @@
 # Use it to build "mininush", a simpler and statically-linked
 # version of nush, the Nu shell.
 #
+# THIS FILE IS DEPRECATED. PLEASE USE make AND THE INCLUDED Makefile instead.
+#
 require 'rake'
 require 'rake/clean'
 

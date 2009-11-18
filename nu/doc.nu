@@ -382,6 +382,12 @@ END))
 
 ;; extract documentation from nu source files
 (function extract-nu (file)
+     ;; is this really a Nu source file?
+     (if (and (NSString stringWithShellCommand:(+ "head -1 " file " | grep '#!'"))
+              (not (NSString stringWithShellCommand:(+ "head -1 " file " | grep 'nush'"))))
+         ;; apparently not.
+         (puts "skipping #{file}")
+         (return))
      (puts "extracting from #{file}")
      (set fileInfo (NuDocFileInfo infoForFileNamed:file))
      (set code (_parser parse:(NSString stringWithContentsOfFile:file)))

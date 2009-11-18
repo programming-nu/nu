@@ -93,7 +93,7 @@ END)
 
 (ifDarwin
          (then (set @cflags "-Wall -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
-               (set @mflags "-fobjc-exceptions")) ;; To use garbage collection, add this flag: "-fobjc-gc"
+               (set @mflags "-fobjc-exceptions -fobjc-gc")) ;; To use garbage collection, add this flag: "-fobjc-gc"
          (else (set @cflags "-Wall -DLINUX -g -std=gnu99 -fPIC")
                ;; (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")
                (set @mflags ((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
@@ -174,7 +174,7 @@ END)
 
 (task "publish-doc" is
       (SH "nudoc -site programming.nu")
-      (SH "scp -r doc programming.nu:/Sites/programming.nu/public/"))
+      (SH "scp -r doc programming.nu:/projects/sites/programming.nu/public/"))
 
 (task "default" => "nush")
 

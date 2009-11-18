@@ -33,9 +33,9 @@ BUILD THE PREREQUISITES
 BUILD NU
 --------
 
-3. Use rake to build mininush, a minimal version of the Nu shell.
+3. Use make to build mininush, a minimal version of the Nu shell.
 
-% rake
+% make
 
 4. Now use mininush to run nuke to complete the Nu build process.
    This builds Nu.framework and nush, the Nu shell.
