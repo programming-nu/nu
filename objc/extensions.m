@@ -208,10 +208,14 @@ extern id Nu__null;
         id key = [cursor car];
         id value = [[cursor cdr] car];
         if ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) {
-            [self setValue:value forKey:[key labelName]];
+            id evaluated_key = [key labelName];
+            id evaluated_value = [value evalWithContext:context];
+            [self setValue:evaluated_value forKey:evaluated_key];
         }
         else {
-            [self setValue:value forKey:key];
+            id evaluated_key = [key evalWithContext:context];
+            id evaluated_value = [value evalWithContext:context];
+            [self setValue:evaluated_value forKey:evaluated_key];
         }
         cursor = [[cursor cdr] cdr];
     }

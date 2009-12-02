@@ -68,5 +68,9 @@
           (assert_equal 89 (d d:))
           (assert_equal 90 (d e:))
           (assert_equal 11 (d a:11 b:22 a:))
-          (assert_equal 22 (d b:))))
+          (assert_equal 22 (d b:))
+          ;; make sure that we properly evaluate key and value arguments
+          (d (+ "a" "a") (+ "b" "b") (+ "c" "c") (+ "d" "d"))
+          (assert_equal "bb" (d (+ "a" "a")))
+          (assert_equal "dd" (d (+ "c" "" "c")))))
 
