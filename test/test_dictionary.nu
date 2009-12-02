@@ -54,5 +54,19 @@
      (imethod (id) testLookupWithDefault is
           (set d (dict "one" 1 two:2))
           (assert_equal 1 (d objectForKey:"one" withDefault:3))
-          (assert_equal 3 (d objectForKey:"three" withDefault:3))))
+          (assert_equal 3 (d objectForKey:"three" withDefault:3)))
+     
+     (imethod (id) testShorthand is
+          (set d (dict a:12 b:23 c:34))
+          (assert_equal 12 (d "a"))
+          (set x "a")
+          (assert_equal 12 (d x))
+          (assert_equal 12 (d a:))
+          (d a:78 d:89 e:90)
+          (assert_equal 5 (d count))
+          (assert_equal 78 (d a:))
+          (assert_equal 89 (d d:))
+          (assert_equal 90 (d e:))
+          (assert_equal 11 (d a:11 b:22 a:))
+          (assert_equal 22 (d b:))))
 
