@@ -661,7 +661,13 @@ extern id Nu__null;
 + (double) exp: (double) x {return exp(x);}
 + (double) exp2: (double) x {return exp2(x);}
 + (double) log: (double) x {return log(x);}
+
+#ifdef BSD
++ (double) log2: (double) x {return log10(x)/log10(2.0);} // not in FreeBSD
+#else
 + (double) log2: (double) x {return log2(x);}
+#endif
+
 + (double) log10: (double) x {return log10(x);}
 
 + (double) floor: (double) x {return floor(x);}

@@ -174,7 +174,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
         }
         // if there's no file, run at the terminal
         else {
-            #ifdef DARWIN
+            #if defined(DARWIN) || defined(BSD)
             if (!isatty(stdin->_file))
             #else
                 if (!isatty(stdin->_fileno))

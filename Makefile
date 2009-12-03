@@ -60,6 +60,10 @@ else
 	MFLAGS += $(shell gnustep-config --objc-flags)
 endif
 
+ifeq ($(SYSTEM), FreeBSD)
+	CFLAGS += -DBSD
+endif
+
 LDFLAGS += $(FRAMEWORKS)
 LDFLAGS += $(LIBS)
 LDFLAGS += $(LIBDIRS)

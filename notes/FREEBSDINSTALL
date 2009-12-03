@@ -1,0 +1,100 @@
+# FreeBSD 7.1
+
+# This assumes you already have a development environment installed
+#  (gcc, git, etc.)
+#
+# You can use portsnap and the distributions under /usr/ports
+# to install the various tools.
+
+# You'll need to do most 'make install' steps with sudo if you don't
+# have permissions to write into the /usr/local tree.
+
+# install libffi
+wget ftp://sourceware.org:/pub/libffi/libffi-3.0.8.tar.gz
+gunzip libffi-3.0.8.tar.gz
+tar -xvf libffi-3.0.8.tar
+cd libffi-3.0.8
+
+./configure
+make
+make install
+cd ..
+
+# gnustep-make
+
+wget ftp://ftp.gnustep.org/pub/gnustep/core/gnustep-make-2.2.0.tar.gz
+gunzip gnustep-make-2.2.0.tar.gz
+tar -xvf gnustep-make-2.2.0.tar
+cd gnustep-make-2.2.0
+
+./configure --enable-native-objc-exceptions
+gmake
+gmake install
+cd ..
+
+# gnustep-base
+wget ftp://ftp.gnustep.org/pub/gnustep/core/gnustep-base-1.19.2.tar.gz
+gunzip gnustep-base-1.19.2.tar.gz
+tar -xvf gnustep-base-1.19.2.tar
+cd gnustep-base-1.19.2
+
+# these are the default GNUstep install paths. You can change them in 
+# the configure steps above.
+export GNUSTEP_MAKEFILES=/usr/local/GNUstep/System/Makefiles
+export GNUSTEP_SYSTEM_ROOT=/usr/local/GNUstep/System
+
+. $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh
+
+./configure --enable-libffi --enable-fake-main
+gmake
+gmake install
+cd ..
+
+# pcre
+wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.9.tar.gz
+uncompress pcre-7.9.tar.gz
+tar -xvf pcre-7.9.tar
+cd pcre-7.9
+
+./configure --disable-dependency-tracking --enable-utf8
+make
+make install
+cd ..
+
+
+# 'gnustep-config --objc-flags' should look something like this on FreeBSD:
+#
+# -MMD -MP -DGNUSTEP -DGNUSTEP_BASE_LIBRARY=1 -DGNU_RUNTIME=1 -DGNUSTEP_BASE_LIBRARY=1 
+# -D_REENTRANT -pthread -fPIC -g -Wall -DDEBUG -fno-omit-frame-pointer -DGSWARN 
+# -DGSDIAGNOSE -Wno-import -g -fno-strict-aliasing -fexceptions -fobjc-exceptions 
+# -D_NATIVE_OBJC_EXCEPTIONS -fgnu-runtime -fconstant-string-class=NSConstantString 
+# -I. -I/usr/local/include -I/usr/GNUstep/Local/Library/Headers 
+# -I/usr/GNUstep/System/Library/Headers
+
+
+# 'gnustep-config --base-libs' should look something like this on FreeBSD:
+# -rdynamic -pthread -shared-libgcc -fexceptions -fgnu-runtime 
+# -L/usr/GNUstep/Local/Library/Libraries -L/usr/GNUstep/System/Library/Libraries 
+# -L/usr/local/lib -lgnustep-base -pthread -lobjc -lm
+
+
+# Now build Nu
+git clone git://github.com/timburks/nu.git
+cd nu
+
+mkdir -p /usr/local/share/libNu
+cp -rp nu/* /usr/local/share/libNu/nu
+
+make
+./mininush tools/nuke
+./mininush tools/nuke install
+
+nuke
+nuke install
+
+cp libNu.so /usr/local/lib
+cp nush /usr/local/bin
+
+# You can run 'nuke test' now to test your installation.
+
+
