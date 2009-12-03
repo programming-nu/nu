@@ -27,7 +27,8 @@
      (set result (system command))
      (if result
          (puts "nuke: terminating on command error (return code #{result})")
-         (exit result)))
+         (exit result))
+     result)
 
 (macro-0 ifDarwin (eval (append '(if (eq (uname) "Darwin")) margs)))
 (macro-0 ifLinux (eval (append '(if (eq (uname) "Linux")) margs)))
@@ -128,12 +129,14 @@
      (ivar (id) action)			 ;; a block which performs the necessary build action
      (ivar (int) isFile)		 ;; if nonzero, task is a file task
      (ivar (id) result)			 ;; the result of executing the task
+     (ivar-accessors)
      
      ;; @discussion Create a task with a specified name.
      (- (id) initWithName:(id) name is
         (super init)
         (set @name name)
         (set @isFile 1)
+        (set @action (do (target) (if $verbose (puts "null action for target #{(target name)}")) 0))
         (set @dependencies ((NSMutableArray alloc) init))
         self)
      
@@ -170,7 +173,13 @@
      (- (id) update is
         (unless @result
                 ;; first update all dependencies
-                (set @result (@dependencies reduceLeft: (do (r d) (+ r (d update))) from:0))
+                (set @result (@dependencies reduceLeft:
+                                  (do (r d)
+                                      (set intermediate (d update))
+                                      (if $verbose (puts "task #{@name} intermediate dependency #{(d name)} result is #{intermediate} accumulating with #{r}"))
+                                      (+ r intermediate))
+                                  from:0))
+                (if $verbose (puts "task #{@name} dependency result is #{@result}"))
                 
                 ;; continue only if there were no errors
                 (if (eq @result 0)
@@ -180,8 +189,10 @@
                     ;; if the largest timestamp is greater than or equal to this task's timestamp, perform the task's action
                     (if (or (eq (self timestamp) 0) (> dependency-timestamp (self timestamp)))
                         ;;(puts "task #{@name} dependency #{dependency-timestamp} self #{(self timestamp)}")
-                        (set @result (@action self))
-                        (unless @result (set @result 0))
+                        (if @action
+                            (then (set @result (@action self))
+                                  (unless @result (set @result 0)))
+                            (else (set @result 0)))
                         nil))
                 (if $verbose (puts "task #{@name} result is #{@result}")))
         @result))
@@ -499,6 +510,9 @@
      (unless (and @arch (@arch length))
              (set @arch (list (NSString stringWithShellCommand:"arch"))))
      
+     (ifDarwin (set FRAMEWORK_ROOT "/Library/Frameworks"))
+     (ifLinux (set FRAMEWORK_ROOT "/usr/local/frameworks"))
+     
      ;; framework directory tasks
      (set @framework_dir                    "#{@framework}.framework")
      (set @framework_versions_dir           "#{@framework_dir}/Versions")
@@ -592,26 +606,27 @@
      
      ;; framework_infoplist
      (ifDarwin
-               (then (set framework_infoplist "#{@framework_resource_dir}/Info.plist")
-                     (file framework_infoplist => @framework_resource_dir is
-                           (set info (NSDictionary dictionaryWithList:
-                                          (list "CFBundleDevelopmentRegion" "English"
-                                                "CFBundleExecutable" @framework
-                                                "CFBundleIdentifier" @framework_identifier
-                                                "CFBundleGetInfoString" ""
-                                                "CFBundleInfoDictionaryVersion" "6.0"
-                                                "CFBundleName" @framework
-                                                "CFBundlePackageType" "FMWK"
-                                                "CFBundleSignature" @framework_creator_code
-                                                "CFBundleVersion" "0.1"
-                                                "NSHumanReadableCopyright" ""
-                                                )))
-                           (if @info (info addEntriesFromDictionary: @info))
-                           (info writeToFile:(target name) atomically:NO))
-                       0)
-               (else (set framework_infoplist "#{@framework_resource_dir}/Info-gnustep.plist")
-                     (file framework_infoplist => @framework_resource_dir is
-                           (set info <<-END
+              (then (set framework_infoplist "#{@framework_resource_dir}/Info.plist")
+                    (file framework_infoplist => @framework_resource_dir is
+                          (set info (NSDictionary dictionaryWithList:
+                                         (list "CFBundleDevelopmentRegion" "English"
+                                               "CFBundleExecutable" @framework
+                                               "CFBundleIdentifier" @framework_identifier
+                                               "CFBundleGetInfoString" ""
+                                               "CFBundleInfoDictionaryVersion" "6.0"
+                                               "CFBundleName" @framework
+                                               "CFBundlePackageType" "FMWK"
+                                               "CFBundleSignature" @framework_creator_code
+                                               "CFBundleVersion" "0.1"
+                                               "NSHumanReadableCopyright" ""
+                                               )))
+                          (if @info (info addEntriesFromDictionary: @info))
+                          (info writeToFile:(target name) atomically:NO)
+                          0)
+                    0)
+              (else (set framework_infoplist "#{@framework_resource_dir}/Info-gnustep.plist")
+                    (file framework_infoplist => @framework_resource_dir is
+                          (set info <<-END
 {
   NOTE = "Automatically generated, do not edit!";
   NSExecutable = "#{@framework}";
@@ -620,8 +635,8 @@
   NSPrincipalClass = "#{@framework}";
 }
 END)
-                     (info writeToFile:framework_infoplist atomically:NO)
-                     0)))
+                          (info writeToFile:framework_infoplist atomically:NO)
+                          0)))
      
      ;; framework_links
      (task "framework_links" => @framework_versions_dir @framework_dir is
@@ -636,6 +651,16 @@ END)
            0)
      
      (task "framework" => @framework_executable_name @framework_headers_dir "framework_resources" "framework_links" framework_infoplist)
+     
+     (task "install" => "framework" is
+           (if @framework_extra_install
+               (@framework_extra_install))
+           (SH "sudo mkdir -p #{FRAMEWORK_ROOT}")
+           (SH "sudo rm -rf #{FRAMEWORK_ROOT}/#{@framework}.framework")
+           (SH "sudo cp -rp #{@framework}.framework #{FRAMEWORK_ROOT}/#{@framework}.framework"))
+     
+     (task "test" => "framework" is
+           (SH "nutest test/test_*.nu"))
      
      (task "clobber" => "clean" is
            (system "rm -rf '#{@framework_dir}'")))
@@ -984,7 +1009,8 @@ END)
                                (set taskDescription (task taskDescription))))
                       (puts "nuke #{key}#{spacesToDescription}# #{taskDescription}"))
                  (else
-                      (puts "nuke #{key}#{spacesToDescription}#"))))))
+                      (puts "nuke #{key}#{spacesToDescription}#")))
+             (if $verbose (puts (send (task action) stringValue))))))
     (puts "")
     
     (set defaultTask ((project tasks) objectForKey:"default"))

@@ -132,30 +132,30 @@
             (((apply array ls) sortedArrayUsingBlock:block) list)))
 
 (if (eq (uname) "Darwin") ;; throw is currently only available with the Darwin runtime
-(then
-;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
-;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
-;; an exception.
-(global assert
-        (macro-0 _
-             (set expression (car margs))
-             (if (not (eval expression))
-                 (then (throw ((NSException alloc)
-                               initWithName:"NuAssertionFailure"
-                               reason:(expression stringValue)
-                               userInfo:nil))))))
-
-;; Throws an exception.
-;; This function is more concise and easier to remember than throw.
-(global throw*
-        (do (type reason)
-            (throw ((NSException alloc) initWithName:type
-                    reason:reason
-                    userInfo:nil)))))
-(else
-(global assert (macro-0 _ (NSLog "warning: assert is unavailable")))
-(global throw* (macro-0 _ (NSLog "warning: throw* is unavailable")))
-(global throw  (macro-0 _ (NSLog "warning: throw is unavailable")))))
+    (then
+         ;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
+         ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
+         ;; an exception.
+         (global assert
+                 (macro-0 _
+                      (set expression (car margs))
+                      (if (not (eval expression))
+                          (then (throw ((NSException alloc)
+                                        initWithName:"NuAssertionFailure"
+                                        reason:(expression stringValue)
+                                        userInfo:nil))))))
+         
+         ;; Throws an exception.
+         ;; This function is more concise and easier to remember than throw.
+         (global throw*
+                 (do (type reason)
+                     (throw ((NSException alloc) initWithName:type
+                             reason:reason
+                             userInfo:nil)))))
+    (else
+         (global assert (macro-0 _ (NSLog "warning: assert is unavailable")))
+         (global throw* (macro-0 _ (NSLog "warning: throw* is unavailable")))
+         (global throw  (macro-0 _ (NSLog "warning: throw is unavailable")))))
 
 
 
@@ -247,3 +247,11 @@
                            (__protocol addClassMethod:__name withSignature:__signature))
                           (else nil))
                     (set __rest (__rest cdr)))))
+
+;; profiling macro - experimental
+(global profile
+        (macro-1 _ (name *body)
+             `(progn ((NuProfiler defaultProfiler) start:,name)
+                     (set __result (progn ,@*body))
+                     ((NuProfiler defaultProfiler) stop)
+                     __result)))

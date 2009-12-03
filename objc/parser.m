@@ -974,7 +974,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     [result autorelease];
     return result;
 }
-
+#ifndef IPHONE
 - (int) interact
 {
     printf("Nu Shell.\n");
@@ -1068,7 +1068,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
 
     return 0;
 }
-
+#endif
 + (int) main
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
