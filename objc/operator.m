@@ -1518,7 +1518,7 @@ limitations under the License.
 @interface Nu_load_operator : NuOperator {}
 @end
 
-#ifdef LINUX
+#ifdef GNUSTEP
 id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable)
 {
     NSString *fullPath = [NSString stringWithFormat:@"/usr/local/share/libNu/nu/%@.nu", nuFileName];
@@ -1552,7 +1552,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     if ([split count] == 2) {
         id frameworkName = [split objectAtIndex:0];
         id nuFileName = [split objectAtIndex:1];
-        #ifdef LINUX
+        #ifdef GNUSTEP
         if ([frameworkName isEqual:@"Nu"]) {
             if (loadNuLibraryFile(nuFileName, parser, context, symbolTable) == nil) {
                 [NSException raise:@"NuLoadFailed" format:@"unable to load %@", nuFileName];
@@ -1604,7 +1604,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         if ([Nu loadNuFile:resourceName fromBundleWithIdentifier:@"nu.programming.framework" withContext:context])
             return [symbolTable symbolWithCString:"t"];
 
-        #ifdef LINUX
+        #ifdef GNUSTEP
         if (loadNuLibraryFile(resourceName, parser, context, symbolTable))
             return [symbolTable symbolWithCString:"t"];
         #endif
@@ -1879,6 +1879,10 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 {
     #if defined DARWIN
     return @"Darwin";
+    #elif defined FREEBSD
+    return @"FreeBSD";
+    #elif defined OPENSOLARIS
+    return @"OpenSolaris";
     #elif defined LINUX
     return @"Linux";
     #else

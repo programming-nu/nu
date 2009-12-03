@@ -16,9 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifdef LINUX
-#define bool char
-#endif
+#import "nutypes.h"
 
 #import <Foundation/Foundation.h>
 #import "nuinternals.h"

@@ -94,9 +94,12 @@ END)
 (ifDarwin
          (then (set @cflags "-Wall -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
                (set @mflags "-fobjc-exceptions -fobjc-gc")) ;; To use garbage collection, add this flag: "-fobjc-gc"
-         (else (set @cflags "-Wall -DLINUX -g -std=gnu99 -fPIC")
-               ;; (set @mflags "-fobjc-exceptions -fconstant-string-class=NSConstantString")
+         (else (set @cflags "-Wall -g -std=gnu99 -fPIC")
                (set @mflags ((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
+
+(ifLinux       (then (set @cflags (+ @cflags " -DLINUX"))))
+(ifFreeBSD     (then (set @cflags (+ @cflags " -DFREEBSD"))))
+(ifOpenSolaris (then (set @cflags (+ @cflags " -DOPENSOLARIS"))))
 
 (ifDarwin
          (then (set @arch '("ppc" "i386")))) ;; build a universal binary
@@ -140,7 +143,7 @@ END)
            (if ((NSFileManager defaultManager) fileExistsAtPath:(+ example-dir "/Nukefile"))
                (SH "cd #{example-dir}; nuke clobber")))))
 
-(ifLinux
+(ifGNUstep
       (set @gnustep_flags ((NSString stringWithShellCommand:"gnustep-config --base-libs") chomp)))
 
 
@@ -192,7 +195,7 @@ END)
                ;; install the framework
                (SH "sudo rm -rf #{@destdir}/Library/Frameworks/#{@framework}.framework")
                (SH "ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
-      (if (eq (uname) "Linux")
+      (ifGNUstep
           ;; install the dynamic library
           (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib")
           ;; copy the headers

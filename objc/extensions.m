@@ -278,7 +278,7 @@ extern id Nu__null;
     [self setObject:((anObject == nil) ? (id)[NSNull null] : anObject) forKey:aKey];
 }
 
-#ifdef LINUX
+#ifdef GNUSTEP
 - (void) setValue:(id) value forKey:(id) key
 {
     [self setObject:value forKey:key];
@@ -475,7 +475,7 @@ extern id Nu__null;
     return self;
 }
 
-#ifdef LINUX
+#ifdef GNUSTEP
 /*
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding
 {
@@ -662,7 +662,7 @@ extern id Nu__null;
 + (double) exp2: (double) x {return exp2(x);}
 + (double) log: (double) x {return log(x);}
 
-#ifdef BSD
+#ifdef FREEBSD
 + (double) log2: (double) x {return log10(x)/log10(2.0);} // not in FreeBSD
 #else
 + (double) log2: (double) x {return log2(x);}
@@ -882,7 +882,7 @@ extern id Nu__null;
 
 @end
 
-#ifdef LINUX
+#ifdef GNUSTEP
 @implementation NXConstantString (extra)
 - (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
 {

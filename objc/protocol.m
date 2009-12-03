@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifdef LINUX
+#ifdef GNUSTEP
 #define true 1
 #define false 0
 #import <objc/objc.h>
@@ -32,7 +32,7 @@ limitations under the License.
 #include "mach_override.h"
 #endif
 
-#ifdef LINUX
+#ifdef GNUSTEP
 struct objc_method_description_list
 {
     int count;

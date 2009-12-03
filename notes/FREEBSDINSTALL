@@ -40,8 +40,8 @@ cd gnustep-base-1.19.2
 
 # these are the default GNUstep install paths. You can change them in 
 # the configure steps above.
-export GNUSTEP_MAKEFILES=/usr/local/GNUstep/System/Makefiles
-export GNUSTEP_SYSTEM_ROOT=/usr/local/GNUstep/System
+export GNUSTEP_MAKEFILES=/usr/GNUstep/System/Makefiles
+export GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System
 
 . $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh
 
@@ -83,15 +83,17 @@ git clone git://github.com/timburks/nu.git
 cd nu
 
 mkdir -p /usr/local/share/libNu
-cp -rp nu/* /usr/local/share/libNu/nu
+cp -rp nu /usr/local/share/libNu
 
 gmake
 ./mininush tools/nuke
 ./mininush tools/nuke install
 
+nuke clean
 nuke
 nuke install
 
+# On Unix environments, you'll get a "text file busy" error when nuke is running
 cp libNu.so /usr/local/lib
 cp nush /usr/local/bin
 
