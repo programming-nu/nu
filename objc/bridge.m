@@ -1021,8 +1021,7 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
 
 //the method_***** functions seems to count c blocks twice, i.e. they separate
 //the @ and ?. Using an NSMethodSignature seems to be an easy way around it.
-//Apple documentation warns (vaguely) about implementation differences
-//with the NSMethodSignature methods
+//However, it appears to have some flaws as it causes 'nuke test' to fail
 #define USE_SIG 1
 
 #if USE_SIG
@@ -1818,7 +1817,6 @@ void *construct_block_handler(NuBlock *block, const char *signature);
 }
 
 @end
-typedef int(*ftype)(size_t,int,int);
 //the caller gets ownership of the block
 static id make_cblock (NuBlock *nuBlock, NSString *signature)
 {
@@ -1827,16 +1825,33 @@ static id make_cblock (NuBlock *nuBlock, NSString *signature)
 
 	void(^cBlock)(void)=^(void){printf("dookie");};
 	#ifdef __x86_64__
-	*((size_t*)(id)cBlock + 2) = (size_t)funcptr;
+	/*  this is what happens when a block is called on x86 64
+	 mov    %rax,-0x18(%rbp)		//the pointer to the block object is in rax
+	 mov    -0x18(%rbp),%rax
+	 mov    0x10(%rax),%rax			//the pointer to the block function is at +0x10 into the block object
+	 mov    -0x18(%rbp),%rdi		//the first argument (this examples has no others) is always the pointer to the block object
+	 callq  *%rax
+	*/
+	//2*(sizeof(void*)) = 0x10
+	*((void **)(id)cBlock + 2) = (void *)funcptr;
 	#else
-	*((size_t*)(id)cBlock + 3) = (size_t)funcptr;
+	/*  this is what happens when a block is called on x86 32
+	 mov    %eax,-0x14(%ebp)		//the pointer to the block object is in eax
+	 mov    -0x14(%ebp),%eax		
+	 mov    0xc(%eax),%eax			//the pointer to the block function is at +0xc into the block object
+	 mov    %eax,%edx
+	 mov    -0x14(%ebp),%eax		//the first argument (this examples has no others) is always the pointer to the block object
+	 mov    %eax,(%esp)
+	 call   *%edx
+	 */
+	//3*(sizeof(void*)) = 0xc
+	*((void **)(id)cBlock + 3) = (void *)funcptr;
 	#endif
 	return cBlock;
 }
 
 static void objc_calling_nu_block_handler(ffi_cif* cif, void* returnvalue, void** args, void* userdata)
 {
-	//Debugger();
     int argc = cif->nargs - 1;
 	//void *ptr = (void*)args[0]  //don't need this first parameter
     // see objc_calling_nu_method_handler
@@ -1908,14 +1923,9 @@ void *construct_block_handler(NuBlock *block, const char *signature)
 {
     char **userdata = generate_block_userdata(block, signature);
     
-	//implement a handlerWarehouse in the future
-	//IMP imp = [NuHandlerWarehouse handlerWithSelector:sel block:block signature:signature userdata:userdata];
-  //  if (imp) {
-   //     return imp;
-    //}
     int argument_count = 0;
     while (userdata[argument_count] != 0) argument_count++;
-	argument_count-=1; //unlike a method call, c blocks have one, not two hidden args
+	argument_count-=1; //unlike a method call, c blocks have one, not two hidden args (see comments in make_cblock()
 #if 0
 	NSLog(@"using libffi to construct handler for nu block with %d arguments and signature %s", argument_count, signature);
 #endif
