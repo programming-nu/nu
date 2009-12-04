@@ -487,6 +487,12 @@ extern id Nu__null;
     return [self cString];
 }
 */
+
+- (NSString *) stringByReplacingOccurrencesOfString:(NSString *) before withString:(NSString *) after 
+{
+    return [self stringByReplacingString:before withString:after];
+}
+
 #endif
 @end
 
