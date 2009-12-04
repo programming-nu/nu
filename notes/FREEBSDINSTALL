@@ -82,6 +82,7 @@ cd ..
 git clone git://github.com/timburks/nu.git
 cd nu
 
+rm -rf /usr/local/share/libNu
 mkdir -p /usr/local/share/libNu
 cp -rp nu /usr/local/share/libNu
 
