@@ -93,7 +93,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	#endif
 
-    #ifdef LINUX
+    #ifdef GNUSTEP
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     [NSProcessInfo initializeWithArguments:(char **) argv count:argc environment:(char **) envp];
     #endif
@@ -174,7 +174,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
         }
         // if there's no file, run at the terminal
         else {
-            #ifdef DARWIN
+            #if defined(DARWIN) || defined(FREEBSD)
             if (!isatty(stdin->_file))
             #else
                 if (!isatty(stdin->_fileno))
@@ -199,7 +199,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
         NSLog(@"%@: %@", [exception name], [exception reason]);
     }
 
-    #ifdef LINUX
+    #ifdef GNUSTEP
     [pool release];
     #endif
 

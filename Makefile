@@ -21,7 +21,7 @@ ifeq ($(SYSTEM), Darwin)
 		LEOPARD_CFLAGS =
 	endif
 
-else # Linux
+else # GNUstep
 	FFI_LIB=-lffi
 	FFI_INCLUDE=
 endif
@@ -55,9 +55,22 @@ MFLAGS = -fobjc-exceptions
 ifeq ($(SYSTEM), Darwin)
 	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS)
 else
-	CFLAGS += -DLINUX
+#	CFLAGS += -DLINUX
 #	MFLAGS += -fconstant-string-class=NSConstantString
 	MFLAGS += $(shell gnustep-config --objc-flags)
+endif
+
+ifeq ($(SYSTEM), Linux)
+	CFLAGS += -DLINUX
+endif
+
+ifeq ($(SYSTEM), FreeBSD)
+	CFLAGS += -DFREEBSD 
+endif
+
+# OpenSolaris "uname" kernel is "SunOS"
+ifeq ($(SYSTEM), SunOS)
+	CFLAGS += -DOPENSOLARIS
 endif
 
 LDFLAGS += $(FRAMEWORKS)
@@ -66,10 +79,7 @@ LDFLAGS += $(LIBDIRS)
 LDFLAGS += $(FFI_LIB)
 ifeq ($(SYSTEM), Darwin)
 else
-      LDFLAGS += $(shell gnustep-config --base-libs)
-endif
-
-ifeq ($(SYSTEM), Linux)
+	LDFLAGS += $(shell gnustep-config --base-libs)
 	LDFLAGS += -lobjc 
 	LDFLAGS += -Wl,--rpath -Wl,/usr/local/lib
 endif

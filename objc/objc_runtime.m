@@ -243,7 +243,7 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
 #endif
     method_list->method_list[0].method_types = strdup(types);
     method_list->method_list[0].method_imp = imp;
-#ifdef LINUX
+#ifdef GNUSTEP
     method_list->method_next = NULL;
 #endif
     class_addMethods(cls, method_list);

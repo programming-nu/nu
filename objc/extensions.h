@@ -20,9 +20,8 @@ limitations under the License.
 @class NuCell;
 @class NuBlock;
 
-#ifdef LINUX
-#define bool char
-#endif
+#import "nutypes.h"
+
 
 /*!
     @category NSNull(Nu)
@@ -115,7 +114,7 @@ limitations under the License.
 - (id) lookupObjectForKey:(id)key;
 /*! Add an object to a dictionary, automatically converting nil into [NSNull null]. */
 - (void) setPossiblyNullObject:(id) anObject forKey:(id) aKey;
-#ifdef LINUX
+#ifdef GNUSTEP
 - (void) setValue:(id) value forKey:(id) key;
 #endif
 @end
@@ -178,7 +177,7 @@ limitations under the License.
 /*! Iterate over each character in a string, evaluating the provided block for each character. */
 - (id) each:(NuBlock *) block;
 
-#ifdef LINUX
+#ifdef GNUSTEP
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding;
 - (const char *) cStringUsingEncoding:(NSStringEncoding) encoding;
 #endif
@@ -287,7 +286,7 @@ limitations under the License.
 - (NSString *) typeString;
 @end
 
-#ifdef LINUX
+#ifdef GNUSTEP
 @interface NSObject (morestuff)
 - (void)willChangeValueForKey:(NSString *)key;
 - (void)didChangeValueForKey:(NSString *)key;

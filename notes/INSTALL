@@ -1,6 +1,9 @@
 INSTALLING NU
 =============
 
+First of all, if you're installed Nu previously using a package manager (e.g. Fink, MacPorts), 
+use the package manager to uninstall the old version.
+
 BUILD THE PREREQUISITES
 -----------------------
 
@@ -33,9 +36,9 @@ BUILD THE PREREQUISITES
 BUILD NU
 --------
 
-3. Use rake to build mininush, a minimal version of the Nu shell.
+3. Use make to build mininush, a minimal version of the Nu shell.
 
-% rake
+% make
 
 4. Now use mininush to run nuke to complete the Nu build process.
    This builds Nu.framework and nush, the Nu shell.

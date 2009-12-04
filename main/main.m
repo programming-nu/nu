@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #if defined(DARWIN) 
+
 int NuMain(int argc, const char *argv[]);
 
 int main(int argc, const char *argv[])
@@ -22,11 +23,18 @@ int main(int argc, const char *argv[])
     return NuMain(argc, argv);
 }
 
-#elif defined(LINUX)
+#else
+
 int NuMain(int argc, const char *argv[], const char *envp[]);
 
+#if defined(FREEBSD)
+#include "GNUstepBase/GSConfig.h"
+int gnustep_base_user_main(int argc, const char* argv[], const char *envp[])
+#else
 int main(int argc, const char *argv[], const char *envp[])
+#endif
 {
     return NuMain(argc, argv, envp);
 }
+
 #endif

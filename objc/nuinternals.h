@@ -22,9 +22,7 @@ limitations under the License.
 
 // Use this key to get the symbol table from an execution context.
 
-#ifdef LINUX
-#define bool char
-#endif
+#import "nutypes.h"
 
 #define SYMBOLS_KEY @"symbols"
 

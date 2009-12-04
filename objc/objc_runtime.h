@@ -133,7 +133,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len);
 // This makes it safe to insert nil into container classes
 void nu_swizzleContainerClasses();
 
-#ifdef LINUX
+#ifdef GNUSTEP
 // defined as a macro in GNUstep
 // Method_t class_getClassMethod (MetaClass class, SEL op);
 #endif

@@ -32,6 +32,9 @@
 
 (macro-0 ifDarwin (eval (append '(if (eq (uname) "Darwin")) margs)))
 (macro-0 ifLinux (eval (append '(if (eq (uname) "Linux")) margs)))
+(macro-0 ifFreeBSD (eval (append '(if (eq (uname) "FreeBSD")) margs)))
+(macro-0 ifOpenSolaris (eval (append '(if (eq (uname) "OpenSolaris")) margs)))
+(macro-0 ifGNUstep (eval (append '(if (not (eq (uname) "Darwin"))) margs)))
 
 (class NSString
      ;; Change the extension at the end of a file name to a new specified value.
@@ -510,8 +513,9 @@
      (unless (and @arch (@arch length))
              (set @arch (list (NSString stringWithShellCommand:"arch"))))
      
-     (ifDarwin (set FRAMEWORK_ROOT "/Library/Frameworks"))
-     (ifLinux (set FRAMEWORK_ROOT "/usr/local/frameworks"))
+     (ifDarwin  
+         (then (set FRAMEWORK_ROOT "/Library/Frameworks"))
+         (else (set FRAMEWORK_ROOT "/usr/local/frameworks")))
      
      ;; framework directory tasks
      (set @framework_dir                    "#{@framework}.framework")
@@ -872,7 +876,7 @@ END)
      
      ;; Load and evaluate code from a named file. This is typically used to read a Nukefile.
      (- (id) load: (id) filename is
-        (ifLinux
+        (ifGNUstep
                 (eval (parse (NSString stringWithContentsOfFile:filename)))
                 else
                 (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))

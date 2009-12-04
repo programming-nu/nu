@@ -208,7 +208,7 @@ limitations under the License.
     #else
     Method_t m = 0;
     #endif
-    #ifdef LINUX
+    #ifdef GNUSTEP
     if (sel) {
         #endif
                                                   // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
@@ -236,7 +236,7 @@ limitations under the License.
             #endif
             if (!m) m = class_getClassMethod(object_getClass(self), sel);
         }
-        #ifdef LINUX
+        #ifdef GNUSTEP
     }
     #endif
     id result = Nu__null;

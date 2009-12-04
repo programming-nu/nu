@@ -16,12 +16,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #import "st.h"
-#ifdef LINUX
+#ifndef DARWIN
 #define __USE_GNU
 #endif
 #import <Foundation/Foundation.h>
 #ifdef IPHONE
-#import <UIKit/UIKit.h>
+#import <CoreGraphics/CoreGraphics.h>
 #define NSRect CGRect
 #define NSPoint CGPoint
 #define NSSize CGSize
@@ -1338,7 +1338,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     return [NSNull null];
 }
 
-#ifdef LINUX
+#ifdef GNUSTEP
 #define __USE_GNU
 #endif
 #include <dlfcn.h>

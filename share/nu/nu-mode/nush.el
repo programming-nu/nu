@@ -21,6 +21,9 @@
 ;; 8/88
 
 ;; History:
+;; 2009-09-13 Aleksandr Skobelev
+;;    - added (c-subword-mode t)
+
 ;; 2008-03-22 Aleksandr Skobelev
 ;;    - set COMINT-PROCESS-ECHOES to T
 ;;    - changed NUSH-SEND-REGION to not send additional "\n"
@@ -49,7 +52,7 @@
   :type 'string
   :group 'nush)
 
-(defconst nush-version "2008-02-21"
+(defconst nush-version "2009-09-11"
   "Nush Mode version number.")
 
 
@@ -140,6 +143,7 @@ to continue it."
   (setq comint-prompt-regexp "^\\([%-] \\)+")
   
   (nu-mode-variables)
+  (c-subword-mode t)
   (set-local 'comint-process-echoes t)
   (setq mode-line-process '(":%s"))
   (setq comint-input-filter (function nush-input-filter))

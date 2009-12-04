@@ -47,9 +47,9 @@ extern id Nu__null;
     return 0;
 }
 
-- (NSMutableArray *) array 
+- (NSMutableArray *) array
 {
-   return [NSMutableArray array];
+    return [NSMutableArray array];
 }
 
 - (id) stringValue
@@ -203,11 +203,33 @@ extern id Nu__null;
 // When an unknown message is received by a dictionary, treat it as a call to objectForKey:
 - (id) handleUnknownMessage:(NuCell *) method withContext:(NSMutableDictionary *) context
 {
-    if ([method length] == 1) {
-        return [self objectForKey:[[method car] evalWithContext: context]];
+    id cursor = method;
+    while (cursor && (cursor != Nu__null) && ([cursor cdr]) && ([cursor cdr] != Nu__null)) {
+        id key = [cursor car];
+        id value = [[cursor cdr] car];
+        if ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) {
+            id evaluated_key = [key labelName];
+            id evaluated_value = [value evalWithContext:context];
+            [self setValue:evaluated_value forKey:evaluated_key];
+        }
+        else {
+            id evaluated_key = [key evalWithContext:context];
+            id evaluated_value = [value evalWithContext:context];
+            [self setValue:evaluated_value forKey:evaluated_key];
+        }
+        cursor = [[cursor cdr] cdr];
+    }
+    if (cursor && (cursor != Nu__null)) {
+        // if the method is a label, use its value as the key.
+        if ([[cursor car] isKindOfClass:[NuSymbol class]] && ([[cursor car] isLabel])) {
+            return [self objectForKey:[[cursor car] labelName]];
+        }
+        else {
+            return [self objectForKey:[[cursor car] evalWithContext:context]];
+        }
     }
     else {
-        return [super handleUnknownMessage:method withContext:context];
+        return nil;
     }
 }
 
@@ -256,7 +278,7 @@ extern id Nu__null;
     [self setObject:((anObject == nil) ? (id)[NSNull null] : anObject) forKey:aKey];
 }
 
-#ifdef LINUX
+#ifdef GNUSTEP
 - (void) setValue:(id) value forKey:(id) key
 {
     [self setObject:value forKey:key];
@@ -453,7 +475,7 @@ extern id Nu__null;
     return self;
 }
 
-#ifdef LINUX
+#ifdef GNUSTEP
 /*
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding
 {
@@ -500,17 +522,17 @@ extern id Nu__null;
             if ([input isKindOfClass:[NSData class]])
                 [input writeToFile:inputFileName atomically:NO];
             else if ([input isKindOfClass:[NSString class]])
-#ifdef DARWIN
+                #ifdef DARWIN
                 [input writeToFile:inputFileName atomically:NO encoding:NSUTF8StringEncoding error:nil];
-#else
-                [input writeToFile:inputFileName atomically:NO];
-#endif
+            #else
+            [input writeToFile:inputFileName atomically:NO];
+            #endif
             else
-#ifdef DARWIN
+            #ifdef DARWIN
                 [[input stringValue] writeToFile:inputFileName atomically:NO encoding:NSUTF8StringEncoding error:nil];
-#else
-                [[input stringValue] writeToFile:inputFileName atomically:NO];
-#endif
+            #else
+            [[input stringValue] writeToFile:inputFileName atomically:NO];
+            #endif
             fullCommand = [NSString stringWithFormat:@"%@ < %@ > %@", command, inputFileName, outputFileName];
         }
         else {
@@ -639,7 +661,13 @@ extern id Nu__null;
 + (double) exp: (double) x {return exp(x);}
 + (double) exp2: (double) x {return exp2(x);}
 + (double) log: (double) x {return log(x);}
+
+#ifdef FREEBSD
++ (double) log2: (double) x {return log10(x)/log10(2.0);} // not in FreeBSD
+#else
 + (double) log2: (double) x {return log2(x);}
+#endif
+
 + (double) log10: (double) x {return log10(x);}
 
 + (double) floor: (double) x {return floor(x);}
@@ -854,7 +882,7 @@ extern id Nu__null;
 
 @end
 
-#ifdef LINUX
+#ifdef GNUSTEP
 @implementation NXConstantString (extra)
 - (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
 {
