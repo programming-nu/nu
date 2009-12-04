@@ -1,10 +1,10 @@
-# FreeBSD 7.1
+# OpenSolaris 10.1
 
 # This assumes you already have a development environment installed
 #  (gcc, git, etc.)
 #
-# You can use portsnap and the distributions under /usr/ports
-# to install the various tools.
+# You can use pkg to install the various tools.
+#  pkg install pkg:/developer/gcc/gcc-432
 
 # You'll need to do most 'make install' steps with sudo if you don't
 # have permissions to write into the /usr/local tree.
@@ -20,7 +20,8 @@ make
 make install
 cd ..
 
-# libffi puts its include files under its lib directory
+# libffi puts its include files under its lib directory.
+# Add some links for sanity of build paths.
 ln -s /usr/local/lib/libffi-3.0.8/include/ffi.h /usr/local/include/ffi.h
 ln -s /usr/local/lib/libffi-3.0.8/include/ffitarget.h /usr/local/include/ffitarget.h
 
@@ -49,21 +50,45 @@ export GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System
 
 . $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh
 
-./configure --enable-libffi --enable-fake-main
+# The openssl libraries on OpenSolaris are in /lib, which isn't in 
+# any search paths.  This will probably be corrected in a future OS release.
+# See 
+#   http://bugs.opensolaris.org/bugdatabase/view_bug.do?bug_id=6842009
+# for details.
+
+export CFLAGS='-I/usr/local/lib/libffi-3.0.8/include -I/usr/include/libxml2'
+export LDFLAGS='-L/lib -L/usr/local/lib'
+export LD_LIBRARY_PATH=/lib:/usr/lib:/usr/local/lib:/export/home/jsb/GNUstep/Library/Libraries:/usr/GNUstep/Local/Library/Libraries:/usr/GNUstep/System/Library/Libraries
+
+# ./configure --enable-libffi --enable-fake-main
+./configure --enable-libffi --with-ffi-include=/usr/local/lib/libffi-3.0.8/include --with-ffi-library=/u/local/lib --with-openssl-library=/lib
 gmake
 gmake install
 cd ..
 
-# pcre
-wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.9.tar.gz
-uncompress pcre-7.9.tar.gz
-tar -xvf pcre-7.9.tar
-cd pcre-7.9
+# readline - not part of OpenSolaris
 
-./configure --disable-dependency-tracking --enable-utf8
+wget ftp://ftp.cwru.edu/pub/bash/readline-6.0.tar.gz
+gunzip readline-6.0.tar.gz
+tar -xvf readline-6.0.tar
+cd readline-6.0
+
+./configure
 make
 make install
 cd ..
+
+
+# pcre with UTF-8 support is already available as a Sun package
+#wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.9.tar.gz
+#gunzip pcre-7.9.tar.gz
+#tar -xvf pcre-7.9.tar
+#cd pcre-7.9
+#
+#./configure --disable-dependency-tracking --enable-utf8
+#make
+#make install
+#cd ..
 
 
 # 'gnustep-config --objc-flags' should look something like this on FreeBSD:

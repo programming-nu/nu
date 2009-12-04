@@ -36,6 +36,13 @@
 (macro-0 ifOpenSolaris (eval (append '(if (eq (uname) "OpenSolaris")) margs)))
 (macro-0 ifGNUstep (eval (append '(if (not (eq (uname) "Darwin"))) margs)))
 
+(function isDarwin () (eq (uname) "Darwin"))
+(function isLinux () (eq (uname) "Linux"))
+(function isFreeBSD () (eq (uname) "FreeBSD"))
+(function isOpenSolaris () (eq (uname) "OpenSolaris"))
+(function isGNUstep () (not (eq (uname) "Darwin")))
+
+
 (class NSString
      ;; Change the extension at the end of a file name to a new specified value.
      (- (id) stringByReplacingPathExtensionWith:(id) newExtension is
