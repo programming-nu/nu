@@ -1821,9 +1821,10 @@ void *construct_block_handler(NuBlock *block, const char *signature);
 static id make_cblock (NuBlock *nuBlock, NSString *signature)
 {
 	void *funcptr = construct_block_handler(nuBlock, [signature UTF8String]);
-	
 
-	void(^cBlock)(void)=^(void){printf("dookie");};
+	int i = 0xFFFF;
+	void(^cBlock)(void)=[^(void){printf("%i",i);} copy];
+	
 	#ifdef __x86_64__
 	/*  this is what happens when a block is called on x86 64
 	 mov    %rax,-0x18(%rbp)		//the pointer to the block object is in rax
