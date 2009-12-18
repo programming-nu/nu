@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"> 
+<plist version="1.0"> 
+
+<!-- 
+ABOUT:
+	Nu language module
+	
+	This codeless language module supports the use of newlisp in BBEdit and TextWrangler
+	
+	Adapted by Jason Grossman 
+	from the newLISP module originally written by Seth Dillingham <seth.dillingham@gmail.com>
+	
+INSTALLATION:
+	1. Copy or move this file to the folder at
+	   
+	   ~/Library/Application Support/BBEdit/Language Modules/
+	   
+	   or, if you're a TextWrangler user:
+	   
+	   ~/Library/Application Support/TextWrangler/Language Modules/
+	   
+	2. You may need to restart BBEdit/TextWrangler for the changes to take effect.
+
+You can download BBEdit and/or TextWrangler from http://www.barebones.com
+-->
+
+<dict> 
+	<key>BBEditDocumentType</key> 
+	<string>CodelessLanguageModule</string> 
+	<key>BBLMColorsSyntax</key> 
+	<true/> 
+	<key>BBLMIsCaseSensitive</key> 
+	<true/> 
+	<key>BBLMKeywordList</key>
+	<array> 
+		<string>\(</string>
+		<string>\)</string>
+	</array> 
+	<key>BBLMLanguageCode</key> 
+	<string>nu</string> 
+	<key>BBLMLanguageDisplayName</key> 
+	<string>Nu</string> 
+	<key>BBLMScansFunctions</key> 
+	<true/> 
+	<key>BBLMSuffixMap</key> 
+	<array> 
+		<dict> 
+			<key>BBLMLanguageSuffix</key> 
+			<string>.nu</string> 
+		</dict> 
+	</array> 
+	<key>Language Features</key> 
+	<dict> 
+		<key>Comment Pattern</key>
+		<string><![CDATA[(?x:
+			(?>	[;\#]		.*			$		)
+		)]]></string>
+	  	  
+		<key>String Pattern</key>
+		<string><![CDATA[(?x:
+			(?>	"			(?s: \\. | [^"] )*?		(?: "			| $)	) |
+			
+			(?> \{			[^}]*?					(?> \}			| \z )  ) |
+			
+			(?> \[text\]	(?s: .*? )				(?> \[/text\]	| \z )  )
+		)]]></string>
+		
+		<key>Skip Pattern</key>
+		<string><![CDATA[(?x:
+			(?>
+				(?P>comment) | (?P>string)
+			)
+		)]]></string>
+		
+		<key>Identifier and Keyword Character Class</key>
+		<string><![CDATA[!$%&*+-./:<=>?@^~0-9A-Z_a-z]]></string>
+	</dict> 
+</dict> 
+</plist>
+
