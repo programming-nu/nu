@@ -1,0 +1,75 @@
+// Nu language specs
+
+// adapted from Apple's specs for Dylan, by Jason Grossman, 2009
+
+(
+
+/****************************************************************************/
+// MARK: Keywords
+/****************************************************************************/
+
+    {
+        Identifier = "xcode.lang.nu.keyword";
+        Syntax = {
+            StartChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$*@_";
+            Chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-+~?/>!&*<=|^$%@_";
+            Words = (
+                "set",
+                "class",
+            );
+            Type = "xcode.syntax.keyword";
+            AltType = "xcode.syntax.identifier";    // non-keywords are identifiers
+        };
+    },
+
+
+/****************************************************************************/
+// MARK: Simple Syntax Coloring
+/****************************************************************************/
+
+    {
+        Identifier = "xcode.lang.nu";
+        Description = "Nu Coloring";
+        BasedOn = "xcode.lang.simpleColoring";
+        IncludeInMenu = YES;
+        Name = "nu";
+        Syntax = {
+            IncludeRules = (        // processed in order
+                "xcode.lang.nu.comment.singleline",
+                "xcode.lang.string",
+                "xcode.lang.character",
+                "xcode.lang.number",
+                "xcode.lang.nu.keyword",
+                "xcode.lang.nu.sexp"
+            );
+            Type = "xcode.syntax.plain";
+        };
+    },
+    {
+        Identifier = "xcode.lang.nu.sexp";
+        Syntax = {
+            // Handle nested s-expressions, allowing for code folding
+            Start = "(";
+            End = ")";
+            Recursive = YES;
+			Foldable = YES;
+            IncludeRules = (        // processed in order
+                "xcode.lang.nu.comment.singleline",
+                "xcode.lang.string",
+                "xcode.lang.character",
+                "xcode.lang.number",
+                "xcode.lang.nu.keyword",
+                "xcode.lang.nu.sexp"
+            );
+        };
+    },
+    {
+		Identifier = "xcode.lang.nu.comment.singleline";
+		BasedOn = "xcode.lang.comment";
+		Syntax = {
+			Start = ";";
+			End = "\n";
+			Type = "xcode.syntax.comment";
+		};
+	},
+)

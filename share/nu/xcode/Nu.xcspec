@@ -1,0 +1,11 @@
+
+(
+	{
+		Type = FileType;
+		Identifier = sourcecode.nu;
+		BasedOn = sourcecode;
+		Name = "nu";
+		Extensions = ( nu );
+		Language = "xcode.lang.nu";
+	}
+)
