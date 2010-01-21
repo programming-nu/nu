@@ -4,6 +4,12 @@
 (set @nu_files 	  (filelist "^nu/.*nu$"))
 (set @frameworks  '("Cocoa" "Nu" "ScreenSaver"))
 
+(set @mflags "-fobjc-exceptions -fobjc-gc")
+
+(if (isSnowLeopard)
+	(then (set @arch '("x86_64"))) ;; Must be 64-bit in 10.6
+	(else (set @arch '("ppc" "i386"))))
+
 ;; bundle descriptors
 (set @bundle "NuScreenSaver")
 (set @bundle_identifier "nu.programming.screensaver")
