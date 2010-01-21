@@ -1395,7 +1395,7 @@ limitations under the License.
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuConsoleViewController *console = [[symbolTable symbolWithCString:"$$console"] value];
+    NuConsoleViewController *console = (NuConsoleViewController*)[[symbolTable symbolWithCString:"$$console"] value];
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
@@ -1439,7 +1439,7 @@ limitations under the License.
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuConsoleViewController *console = [[symbolTable symbolWithCString:"$$console"] value];
+    NuConsoleViewController *console = (NuConsoleViewController*)[[symbolTable symbolWithCString:"$$console"] value];
 
     NSString *string;
     id cursor = cdr;
@@ -1583,7 +1583,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
             }
         }
         if (fileName) {
-            NSString *string = [NSString stringWithContentsOfFile: fileName];
+            NSString *string = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:nil];
             id value = Nu__null;
             if (string) {
                 id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
@@ -1677,6 +1677,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     #if defined(__x86_64__) || defined(IPHONE)
     Class newClass = nil;
     #endif
+    
     NuClass *childClass;
     //NSLog(@"class name: %@", className);
     if ([cdr cdr]
@@ -1690,6 +1691,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
             [NSException raise:@"NuUndefinedSuperclass" format:@"undefined superclass %@", [parentName stringValue]];
 
         #if defined(__x86_64__) || defined(IPHONE)
+
         newClass = objc_allocateClassPair(parentClass, [[className stringValue] cStringUsingEncoding:NSUTF8StringEncoding], 0);
         childClass = [NuClass classWithClass:newClass];
         [childClass setRegistered:NO];
@@ -1698,6 +1700,23 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         if ([parentClass respondsToSelector:@selector(inheritedByClass:)]) {
             [parentClass inheritedByClass:childClass];
         }
+        
+        if (!childClass)
+        {
+            // This class may have already been defined previously
+            // (perhaps by loading the same .nu file twice).
+            // If so, the above call to objc_allocateClassPair() returns nil.
+            // So if childClass is nil, it may be that the class was 
+            // already defined, so we'll try to find it and use it.
+            Class existingClass = NSClassFromString([className stringValue]);
+            if (existingClass)
+            {
+                childClass = [NuClass classWithClass:existingClass];
+                //if (childClass)
+                //    NSLog(@"Warning: attempting to re-define existing class: %@.  Ignoring.", [className stringValue]);
+            }
+        }
+
         #else
         [parentClass createSubclassNamed:[className stringValue]];
         childClass = [NuClass classWithName:[className stringValue]];
@@ -1709,7 +1728,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         body = [cdr cdr];
     }
     if (!childClass)
-        [NSException raise:@"NuUndefinedClass" format:@"undefined class %@", [className stringValue]];
+        [NSException raise:@"NuUndefinedClass" format:@"undefined class %@", [className stringValue]];   
     id result = nil;
     if (body && (body != Nu__null)) {
         NuBlock *block = [[NuBlock alloc] initWithParameters:Nu__null body:body context:context];
