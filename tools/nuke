@@ -42,6 +42,11 @@
 (function isOpenSolaris () (eq (uname) "OpenSolaris"))
 (function isGNUstep () (not (eq (uname) "Darwin")))
 
+;; Special check for Snow Leopard
+;; Darwin kernel version for Snow Leopard is 10.x.x
+(function isSnowLeopard ()
+     (and (isDarwin)
+          (== "10" ((NSString stringWithShellCommand:"uname -r | cut -f1 -d.") chomp))))
 
 (class NSString
      ;; Change the extension at the end of a file name to a new specified value.
@@ -520,9 +525,9 @@
      (unless (and @arch (@arch length))
              (set @arch (list (NSString stringWithShellCommand:"arch"))))
      
-     (ifDarwin  
-         (then (set FRAMEWORK_ROOT "/Library/Frameworks"))
-         (else (set FRAMEWORK_ROOT "/usr/local/frameworks")))
+     (ifDarwin
+              (then (set FRAMEWORK_ROOT "/Library/Frameworks"))
+              (else (set FRAMEWORK_ROOT "/usr/local/frameworks")))
      
      ;; framework directory tasks
      (set @framework_dir                    "#{@framework}.framework")
@@ -884,9 +889,9 @@ END)
      ;; Load and evaluate code from a named file. This is typically used to read a Nukefile.
      (- (id) load: (id) filename is
         (ifGNUstep
-                (eval (parse (NSString stringWithContentsOfFile:filename)))
-                else
-                (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))
+                  (eval (parse (NSString stringWithContentsOfFile:filename)))
+                  else
+                  (eval (parse (NSString stringWithContentsOfFile:filename encoding:NSUTF8StringEncoding error:(set error (NuReference new))))))
         self))
 
 ;; Helper functions & extensions

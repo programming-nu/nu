@@ -10,6 +10,17 @@
 
 @interface NuScreenSaver : ScreenSaverView
 {
+    // These ivars are only used from Nu, but we
+    // need to declare them here since we're
+    // implementing the initialize method below.
+    // Otherwise, using (ivars) in Nu will fail 
+    // on the 64-bit objc runtime because you must
+    // declare all ivars before any methods are
+    // defined.
+    int color;
+    id colors;
+    int count;
+    id origin;
 }
 
 @end
