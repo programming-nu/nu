@@ -71,6 +71,7 @@ endif
 # OpenSolaris "uname" kernel is "SunOS"
 ifeq ($(SYSTEM), SunOS)
 	CFLAGS += -DOPENSOLARIS
+	LIBS += -lcurses
 endif
 
 LDFLAGS += $(FRAMEWORKS)
@@ -81,7 +82,9 @@ ifeq ($(SYSTEM), Darwin)
 else
 	LDFLAGS += $(shell gnustep-config --base-libs)
 	LDFLAGS += -lobjc 
+ifneq ($(SYSTEM), SunOS)
 	LDFLAGS += -Wl,--rpath -Wl,/usr/local/lib
+endif
 endif
 
 all: mininush

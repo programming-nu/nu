@@ -1,7 +1,12 @@
 
 #import <Cocoa/Cocoa.h>
 #import <Nu/Nu.h>
+
+#if defined(__x86_64__)
+#import <mach_inject_bundle/mach_inject_bundle.h>
+#else
 #import "mach_inject_bundle.h"
+#endif
 
 @implementation Nu (Inject)
 

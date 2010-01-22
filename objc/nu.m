@@ -26,7 +26,12 @@ limitations under the License.
 #import "class.h"
 #import "enumerable.h"
 #import <unistd.h>
+#ifdef OPENSOLARIS
+#import "pcre/pcre.h"
+#else
 #import "pcre.h"
+#endif
+
 #import "version.h"
 
 id Nu__null = 0;
@@ -174,8 +179,10 @@ int NuMain(int argc, const char *argv[], const char *envp[])
         }
         // if there's no file, run at the terminal
         else {
-            #if defined(DARWIN) || defined(FREEBSD)
+            #if defined(DARWIN) || defined(FREEBSD) 
             if (!isatty(stdin->_file))
+	    #elif defined(OPENSOLARIS)
+	    if (!isatty(fileno(stdin)))
             #else
                 if (!isatty(stdin->_fileno))
             #endif

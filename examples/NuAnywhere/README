@@ -5,7 +5,23 @@ of Nu into running Cocoa applications.
 It uses Jonathan Rentzsch's mach_star toolkit.
 	http://rentzsch.com/mach_star
 
+If you are developing on Leopard or older, you can use the
+mach_star files that are included with the NuAnywhere 
+distribution.
+
+If you are developing on Snow Leopard or newer, you first 
+need to download and compile the latest mach_star code
+from 
+	git://github.com/rentzsch/mach_star.git
+	
+After cloning this repository, go into the mach_inject_bundle
+directory of the mach_star distribution and build the 
+mach_inject_bundle framework using the included Xcode project.
+Then, copy the compiled framework to /Library/Frameworks.
+
 INSTALLATION AND USAGE
+
+IMPORTANT NOTE: If you are developing on Snow Leopard, skip step 0!
 
 0. cd libinject; nuke
 

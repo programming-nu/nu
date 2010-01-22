@@ -9,12 +9,16 @@
 (function random (n) (NuMath integerMod:(NuMath random) by:n))
 
 (class NuScreenSaver
-     (ivars)
-     
+
      (imethod initWithFrame:frame isPreview:isPreview is
           (super initWithFrame:frame isPreview:isPreview)
           (set @color 0)
-          (set @colors (NSMutableArray arrayWithList:(list (NSColor greenColor) (NSColor purpleColor))))
+          (set @colors (NSMutableArray arrayWithList:(list (NSColor greenColor)
+                                                           (NSColor redColor)
+                                                           (NSColor blueColor)
+                                                           (NSColor orangeColor)
+                                                           (NSColor yellowColor)
+                                                           (NSColor purpleColor))))
           (set @count 0)
           (self setOriginRandomly)
           self)
@@ -24,9 +28,9 @@
           (set @origin (list (+ (rect first) (random (rect third)))
                              (+ (rect second) (random (rect fourth))))))
      
-     (imethod animateOneFrame is 
-          (set @count (+ @count 1))   
-          (if (eq @count MAX) 
+     (imethod animateOneFrame is
+          (set @count (+ @count 1))
+          (if (eq @count MAX)
               (set @count 0)
               (set @color (+ 1 @color))
               (if (eq @color (@colors count)) (set @color 0))
@@ -35,11 +39,11 @@
      
      (imethod drawRect:rect is
           ((NSColor blackColor) set)
-          (NSRectFill rect)          
-          ((@colors @color) set)          
+          (NSRectFill rect)
+          ((@colors @color) set)
           (set turtle ((Turtle alloc) init))
           (turtle moveToPoint:@origin)
-          ((- MAX @count) times: 
+          ((- MAX @count) times:
            (do (i)
                (turtle lineForward:(* 5 i))
                (turtle turnLeft)))
@@ -69,5 +73,5 @@
                      (else '(0 1)))))
      
      (imethod lineForward:distance is
-          (@path relativeLineToPoint:(list (* distance (@direction first)) 
+          (@path relativeLineToPoint:(list (* distance (@direction first))
                                            (* distance (@direction second))))))

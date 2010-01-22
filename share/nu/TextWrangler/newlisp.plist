@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"> 
+<plist version="1.0"> 
+
+<!-- 
+ABOUT:
+	newlisp language module version 0.5b1
+	
+	This codeless language module supports the use of newlisp in BBEdit and TextWrangler
+	
+	Written by Seth Dillingham <seth.dillingham@gmail.com>
+	with help from Pete B. Anonymous :-)
+	
+INSTALLATION:
+	1. Copy or move this file to the folder at
+	   
+	   ~/Library/Application Support/BBEdit/Language Modules/
+	   
+	   or, if you're a TextWrangler user:
+	   
+	   ~/Library/Application Support/TextWrangler/Language Modules/
+	
+	2. Open the preferences window, and check the "Languages" panel for a "Suffix Mapping"
+	   for ".lsp"
+	   
+	   a. If you have a .lsp suffix mapping, select it then click 'Remove'
+	   
+	   b. Click the 'Add' button, type '.lsp' (no quotes) in the extension field, 
+	      and set the language to "newLISP", then click the 'Add' button.
+	   
+	3. You may need to restart BBEdit/TextWrangler for the changes to take effect.
+
+You can download BBEdit and/or TextWrangler from http://www.barebones.com
+-->
+
+<dict> 
+	<key>BBEditDocumentType</key> 
+	<string>CodelessLanguageModule</string> 
+	<key>BBLMColorsSyntax</key> 
+	<true/> 
+	<key>BBLMIsCaseSensitive</key> 
+	<true/> 
+	<key>BBLMKeywordList</key>
+	<array> 
+		<string>!</string>
+		<string>!=</string>
+		<string>$</string>
+		<string>$0</string>
+		<string>$1</string>
+		<string>$10</string>
+		<string>$11</string>
+		<string>$12</string>
+		<string>$13</string>
+		<string>$14</string>
+		<string>$15</string>
+		<string>$2</string>
+		<string>$3</string>
+		<string>$4</string>
+		<string>$5</string>
+		<string>$6</string>
+		<string>$7</string>
+		<string>$8</string>
+		<string>$9</string>
+		<string>$args</string>
+		<string>$command-event</string>
+		<string>$idx</string>
+		<string>$main-args</string>
+		<string>$prompt-event</string>
+		<string>%</string>
+		<string>&amp;</string>
+		<string>*</string>
+		<string>+</string>
+		<string>-</string>
+		<string>/</string>
+		<string>&lt;</string>
+		<string>&lt;&lt;</string>
+		<string>&lt;=</string>
+		<string>=</string>
+		<string>&gt;</string>
+		<string>&gt;=</string>
+		<string>&gt;&gt;</string>
+		<string>?</string>
+		<string>@</string>
+		<string>NaN?</string>
+		<string>^</string>
+		<string>abort</string>
+		<string>abs</string>
+		<string>acos</string>
+		<string>acosh</string>
+		<string>add</string>
+		<string>address</string>
+		<string>amb</string>
+		<string>and</string>
+		<string>append</string>
+		<string>append-file</string>
+		<string>apply</string>
+		<string>args</string>
+		<string>array</string>
+		<string>array-list</string>
+		<string>array?</string>
+		<string>asin</string>
+		<string>asinh</string>
+		<string>assoc</string>
+		<string>assoc-set</string>
+		<string>atan</string>
+		<string>atan2</string>
+		<string>atanh</string>
+		<string>atom?</string>
+		<string>base64-dec</string>
+		<string>base64-enc</string>
+		<string>bayes-query</string>
+		<string>bayes-train</string>
+		<string>begin</string>
+		<string>beta</string>
+		<string>betai</string>
+		<string>bind</string>
+		<string>binomial</string>
+		<string>callback</string>
+		<string>case</string>
+		<string>catch</string>
+		<string>ceil</string>
+		<string>change-dir</string>
+		<string>char</string>
+		<string>chop</string>
+		<string>clean</string>
+		<string>close</string>
+		<string>command-event</string>
+		<string>command-line</string>
+		<string>cond</string>
+		<string>cons</string>
+		<string>constant</string>
+		<string>context</string>
+		<string>context?</string>
+		<string>copy-file</string>
+		<string>cos</string>
+		<string>cosh</string>
+		<string>count</string>
+		<string>cpymem</string>
+		<string>crc32</string>
+		<string>crit-chi2</string>
+		<string>crit-z</string>
+		<string>current-line</string>
+		<string>curry</string>
+		<string>date</string>
+		<string>date-value</string>
+		<string>debug</string>
+		<string>dec</string>
+		<string>def-new</string>
+		<string>default</string>
+		<string>define</string>
+		<string>define-macro</string>
+		<string>delete</string>
+		<string>delete-file</string>
+		<string>delete-url</string>
+		<string>destroy</string>
+		<string>det</string>
+		<string>device</string>
+		<string>difference</string>
+		<string>directory</string>
+		<string>directory?</string>
+		<string>div</string>
+		<string>do-until</string>
+		<string>do-while</string>
+		<string>doargs</string>
+		<string>dolist</string>
+		<string>dostring</string>
+		<string>dotimes</string>
+		<string>dotree</string>
+		<string>dump</string>
+		<string>dup</string>
+		<string>empty?</string>
+		<string>encrypt</string>
+		<string>ends-with</string>
+		<string>env</string>
+		<string>erf</string>
+		<string>error-event</string>
+		<string>error-number</string>
+		<string>error-text</string>
+		<string>eval</string>
+		<string>eval-string</string>
+		<string>exec</string>
+		<string>exists</string>
+		<string>exit</string>
+		<string>exp</string>
+		<string>expand</string>
+		<string>explode</string>
+		<string>factor</string>
+		<string>fft</string>
+		<string>file-info</string>
+		<string>file?</string>
+		<string>filter</string>
+		<string>find</string>
+		<string>find-all</string>
+		<string>first</string>
+		<string>flat</string>
+		<string>float</string>
+		<string>float?</string>
+		<string>floor</string>
+		<string>flt</string>
+		<string>for</string>
+		<string>for-all</string>
+		<string>fork</string>
+		<string>format</string>
+		<string>fv</string>
+		<string>gammai</string>
+		<string>gammaln</string>
+		<string>gcd</string>
+		<string>get-char</string>
+		<string>get-float</string>
+		<string>get-int</string>
+		<string>get-long</string>
+		<string>get-string</string>
+		<string>get-url</string>
+		<string>global</string>
+		<string>global?</string>
+		<string>if</string>
+		<string>ifft</string>
+		<string>import</string>
+		<string>inc</string>
+		<string>index</string>
+		<string>int</string>
+		<string>integer</string>
+		<string>integer?</string>
+		<string>intersect</string>
+		<string>invert</string>
+		<string>irr</string>
+		<string>join</string>
+		<string>lambda?</string>
+		<string>last</string>
+		<string>legal?</string>
+		<string>length</string>
+		<string>let</string>
+		<string>letex</string>
+		<string>letn</string>
+		<string>list</string>
+		<string>list?</string>
+		<string>load</string>
+		<string>local</string>
+		<string>log</string>
+		<string>lookup</string>
+		<string>lower-case</string>
+		<string>macro?</string>
+		<string>main-args</string>
+		<string>make-dir</string>
+		<string>map</string>
+		<string>mat</string>
+		<string>match</string>
+		<string>max</string>
+		<string>member</string>
+		<string>min</string>
+		<string>mod</string>
+		<string>mul</string>
+		<string>multiply</string>
+		<string>name</string>
+		<string>net-accept</string>
+		<string>net-close</string>
+		<string>net-connect</string>
+		<string>net-error</string>
+		<string>net-eval</string>
+		<string>net-listen</string>
+		<string>net-local</string>
+		<string>net-lookup</string>
+		<string>net-peek</string>
+		<string>net-peer</string>
+		<string>net-ping</string>
+		<string>net-receive</string>
+		<string>net-receive-from</string>
+		<string>net-receive-udp</string>
+		<string>net-select</string>
+		<string>net-send</string>
+		<string>net-send-to</string>
+		<string>net-send-udp</string>
+		<string>net-service</string>
+		<string>net-sessions</string>
+		<string>new</string>
+		<string>nil</string>
+		<string>nil?</string>
+		<string>normal</string>
+		<string>not</string>
+		<string>now</string>
+		<string>nper</string>
+		<string>npv</string>
+		<string>nth</string>
+		<string>nth-set</string>
+		<string>null?</string>
+		<string>number?</string>
+		<string>open</string>
+		<string>or</string>
+		<string>ostype</string>
+		<string>pack</string>
+		<string>parse</string>
+		<string>parse-date</string>
+		<string>peek</string>
+		<string>pipe</string>
+		<string>pmt</string>
+		<string>pop</string>
+		<string>pop-assoc</string>
+		<string>post-url</string>
+		<string>pow</string>
+		<string>pretty-print</string>
+		<string>primitive?</string>
+		<string>print</string>
+		<string>println</string>
+		<string>prob-chi2</string>
+		<string>prob-z</string>
+		<string>process</string>
+		<string>prompt-event</string>
+		<string>protected?</string>
+		<string>push</string>
+		<string>put-url</string>
+		<string>pv</string>
+		<string>quote</string>
+		<string>quote?</string>
+		<string>rand</string>
+		<string>random</string>
+		<string>randomize</string>
+		<string>read-buffer</string>
+		<string>read-char</string>
+		<string>read-file</string>
+		<string>read-key</string>
+		<string>read-line</string>
+		<string>real-path</string>
+		<string>ref</string>
+		<string>ref-all</string>
+		<string>ref-set</string>
+		<string>regex</string>
+		<string>regex-comp</string>
+		<string>remove-dir</string>
+		<string>rename-file</string>
+		<string>replace</string>
+		<string>replace-assoc</string>
+		<string>reset</string>
+		<string>rest</string>
+		<string>reverse</string>
+		<string>rotate</string>
+		<string>round</string>
+		<string>save</string>
+		<string>search</string>
+		<string>seed</string>
+		<string>seek</string>
+		<string>select</string>
+		<string>semaphore</string>
+		<string>sequence</string>
+		<string>series</string>
+		<string>set</string>
+		<string>set-assoc</string>
+		<string>set-locale</string>
+		<string>set-nth</string>
+		<string>set-ref</string>
+		<string>set-ref-all</string>
+		<string>setq</string>
+		<string>sgn</string>
+		<string>share</string>
+		<string>signal</string>
+		<string>silent</string>
+		<string>sin</string>
+		<string>sinh</string>
+		<string>sleep</string>
+		<string>slice</string>
+		<string>sort</string>
+		<string>source</string>
+		<string>spawn</string>
+		<string>sqrt</string>
+		<string>starts-with</string>
+		<string>string</string>
+		<string>string?</string>
+		<string>sub</string>
+		<string>swap</string>
+		<string>sym</string>
+		<string>symbol?</string>
+		<string>symbols</string>
+		<string>sync</string>
+		<string>sys-error</string>
+		<string>sys-info</string>
+		<string>tan</string>
+		<string>tanh</string>
+		<string>throw</string>
+		<string>throw-error</string>
+		<string>time</string>
+		<string>time-of-day</string>
+		<string>timer</string>
+		<string>title-case</string>
+		<string>trace</string>
+		<string>trace-highlight</string>
+		<string>transpose</string>
+		<string>trim</string>
+		<string>true</string>
+		<string>true?</string>
+		<string>unicode</string>
+		<string>unify</string>
+		<string>unique</string>
+		<string>unless</string>
+		<string>unpack</string>
+		<string>until</string>
+		<string>upper-case</string>
+		<string>utf8</string>
+		<string>utf8len</string>
+		<string>uuid</string>
+		<string>wait-pid</string>
+		<string>when</string>
+		<string>while</string>
+		<string>write-buffer</string>
+		<string>write-char</string>
+		<string>write-file</string>
+		<string>write-line</string>
+		<string>xml-error</string>
+		<string>xml-parse</string>
+		<string>xml-type-tags</string>
+		<string>zero?</string>
+		<string>|</string>
+		<string>~</string>
+	</array> 
+	<key>BBLMLanguageCode</key> 
+	<string>lisp</string> 
+	<key>BBLMLanguageDisplayName</key> 
+	<string>newLISP</string> 
+	<key>BBLMScansFunctions</key> 
+	<true/> 
+	<key>BBLMSuffixMap</key> 
+	<array> 
+		<dict> 
+			<key>BBLMLanguageSuffix</key> 
+			<string>.lsp</string> 
+		</dict> 
+	</array> 
+	<key>Language Features</key> 
+	<dict> 
+		<key>Comment Pattern</key>
+		<string><![CDATA[(?x:
+			(?>	[;\#]		.*			$		)
+		)]]></string>
+	  
+		<key>Function Pattern</key>
+		<string><![CDATA[(?x:
+			^
+			[ \t]*
+			(?P<function>
+				\(
+					define
+					
+					[ ]+
+			
+					\(
+						(?P<function_name>
+						
+							(?P<identifier>
+								[!$%&*+\-./:<=>?@^~0-9A-Z_a-z]+
+							)
+						
+						)
+						
+						,?
+						
+						\s*
+						
+						(?>
+							(?P>identifier) |
+							
+							(?P>comment) |
+							
+							\s+
+						)*
+						
+						\s*
+					\)
+			
+					\s*
+					
+					(?>
+						(?P>comment) |
+						
+						\s*
+					)*
+					
+					(?P<function_body>
+						
+						(?>
+							(?P<plain_text>
+								(?> [^"{[;\#()]+ ) |
+								
+								(?> \[ (?!text\]) )
+							) |
+							
+							(?P>comment) |
+							
+							(?P>string) |
+							
+							(?P<parens>
+								\(
+									(?>
+										(?P>plain_text) |
+										
+										(?P>comment) |
+										
+										(?P>string) |
+										
+										(?P>parens)
+									)*
+									
+									\s*
+								\)
+							) |
+							
+							\s*
+						)*
+						
+					)
+					
+					\s*
+					
+				\)
+			)
+		)]]></string>
+	  
+		<key>String Pattern</key>
+		<string><![CDATA[(?x:
+			(?>	"			(?s: \\. | [^"] )*?		(?: "			| $)	) |
+			
+			(?> \{			[^}]*?					(?> \}			| \z )  ) |
+			
+			(?> \[text\]	(?s: .*? )				(?> \[/text\]	| \z )  )
+		)]]></string>
+		
+		<key>Skip Pattern</key>
+		<string><![CDATA[(?x:
+			(?>
+				(?P>comment) | (?P>string)
+			)
+		)]]></string>
+		
+		<key>Identifier and Keyword Character Class</key>
+		<string><![CDATA[!$%&*+-./:<=>?@^~0-9A-Z_a-z]]></string>
+	</dict> 
+</dict> 
+</plist>
+

@@ -49,6 +49,9 @@ END)
                ;; (@lib_dirs   addObject:"/usr/lib/GNUstep/System/Library/Libraries")
                ))
 
+(ifOpenSolaris
+	(then (@libs addObjectsFromList:(list "curses"))))
+
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@inc_dirs addObject:"#{@prefix}/include"))
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/lib") (@lib_dirs addObject:"#{@prefix}/lib"))
 
@@ -105,6 +108,8 @@ END)
          (then (set @arch '("ppc" "i386")))) ;; build a universal binary
 ;; or set this to just build for your chosen platform
 ;;(set @arch '("i386"))
+(if (isSnowLeopard)
+	(then (set @arch (append @arch '("x86_64")))))
 
 (set @includes
      ((@inc_dirs map: (do (inc) " -I#{inc}")) join))
@@ -121,8 +126,14 @@ END)
            (ifDarwin
                     (then ((@lib_dirs map:
                         (do (libdir) " -L#{libdir}")) join))
-                    (else ((@lib_dirs map:
-                        (do (libdir) " -L#{libdir} -Wl,--rpath #{libdir}")) join))))
+                    (else
+                        (if (isOpenSolaris)
+                          (then
+                            ((@lib_dirs map:
+                                 (do (libdir) " -L#{libdir} ")) join))
+                          (else 
+                            ((@lib_dirs map:
+                                 (do (libdir) " -L#{libdir} -Wl,--rpath #{libdir}")) join))))))
      join))
 
 (ifDarwin
