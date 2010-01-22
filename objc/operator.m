@@ -1583,7 +1583,11 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
             }
         }
         if (fileName) {
+#ifdef DARWIN
             NSString *string = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:nil];
+#else
+            NSString *string = [NSString stringWithContentsOfFile:fileName];
+#endif
             id value = Nu__null;
             if (string) {
                 id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
