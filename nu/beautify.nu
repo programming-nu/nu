@@ -124,4 +124,9 @@
                             ((- 0 indentation_change) times:
                              (do (i) (indentation_stack pop))))
                            (else nil))))
+          
+          ;; if we have open s-exprs, close them.
+          (if (set count (- (indentation_stack depth) 1))
+              (count times:(do (i) (result appendString:")"))))
+          
           result))
