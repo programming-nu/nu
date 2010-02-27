@@ -248,13 +248,13 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
         // is it a constant?
         id constantSignature = [[bridgeSupport valueForKey:@"constants"] valueForKey:[self stringValue]];
         if (constantSignature) {
-            value = [NuBridgedConstant constantWithName:[self stringValue] signature:constantSignature];
+            value = [[NuBridgedConstant constantWithName:[self stringValue] signature:constantSignature] retain];
             return value;
         }
         // is it a function?
         id functionSignature = [[bridgeSupport valueForKey:@"functions"] valueForKey:[self stringValue]];
         if (functionSignature) {
-            value = [NuBridgedFunction functionWithName:[self stringValue] signature:functionSignature];
+            value = [[NuBridgedFunction functionWithName:[self stringValue] signature:functionSignature] retain];
             return value;
         }
     }
