@@ -286,6 +286,43 @@ extern id Nu__null;
 #endif
 @end
 
+@interface NuStringEnumerator : NSEnumerator 
+{
+   NSString *string;
+   int index;
+}
+@end
+
+@implementation NuStringEnumerator
+
++ (NuStringEnumerator *) enumeratorWithString:(NSString *) string 
+{
+   return [[[self alloc] initWithString:string] autorelease];
+}
+
+- (id) initWithString:(NSString *) s
+{
+   self = [super init];
+   string = [s retain];
+   index = 0;
+   return self;
+}
+
+- (id) nextObject {
+   if (index < [string length]) {
+      return [NSNumber numberWithInteger:[string characterAtIndex:index++]];
+   } else {
+      return nil;
+   }
+}
+
+- (void) dealloc {
+   [string release];
+   [super dealloc];
+}
+
+@end
+
 @implementation NSString(Nu)
 - (id) stringValue
 {
@@ -452,27 +489,9 @@ extern id Nu__null;
     return s;
 }
 
-- (id) each:(NuBlock *) block
+- (id) objectEnumerator 
 {
-    int count = [self length];
-    NuCell *args = [[NuCell alloc] init];
-    for (int i = 0; i < count; i++) {
-        @try
-        {
-            [args setCar:[[[NSNumber alloc] initWithInt:[self characterAtIndex:i]] autorelease]];
-            [block evalWithArguments:args context:Nu__null];
-        }
-        @catch (NuBreakException *exception) {
-            break;
-        }
-        @catch (NuContinueException *exception) {
-            // do nothing, just continue with the next loop iteration
-        }
-        @catch (id exception) {
-            @throw(exception);
-        }
-    }
-    return self;
+   return [NuStringEnumerator enumeratorWithString:self];
 }
 
 #ifdef GNUSTEP

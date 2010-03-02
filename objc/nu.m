@@ -262,6 +262,7 @@ void NuInit()
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         [NSArray include: [NuClass classWithClass:[NuEnumerable class]]];
         [NSSet include: [NuClass classWithClass:[NuEnumerable class]]];
+        [NSString include: [NuClass classWithClass:[NuEnumerable class]]];
         [pool release];
 
         [NSObject exchangeInstanceMethod:@selector(dealloc) withMethod:@selector(nuDealloc)];
