@@ -310,7 +310,7 @@ extern id Nu__null;
 
 - (id) nextObject {
    if (index < [string length]) {
-      return [NSNumber numberWithInteger:[string characterAtIndex:index++]];
+      return [NSNumber numberWithInt:[string characterAtIndex:index++]];
    } else {
       return nil;
    }
