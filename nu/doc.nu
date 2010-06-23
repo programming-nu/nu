@@ -47,7 +47,7 @@
 
 (class NuRegexMatch
      ;; Compare matches by their location.  This allows arrays of matches to be sorted.
-     (imethod (int) compare: (id) other is
+     (imethod (NSComparisonResult) compare: (id) other is
           (set self-start  ((self  range) first))
           (set other-start ((other range) first))
           (self-start compare: other-start)))

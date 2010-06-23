@@ -1450,7 +1450,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 @end
 
 static NuSymbol *oneway_symbol, *in_symbol, *out_symbol, *inout_symbol, *bycopy_symbol, *byref_symbol, *const_symbol,
-*void_symbol, *star_symbol, *id_symbol, *voidstar_symbol, *idstar_symbol, *int_symbol, *long_symbol,
+*void_symbol, *star_symbol, *id_symbol, *voidstar_symbol, *idstar_symbol, *int_symbol, *long_symbol, *NSComparisonResult_symbol,
 *BOOL_symbol, *double_symbol, *float_symbol, *NSRect_symbol, *NSPoint_symbol, *NSSize_symbol, *NSRange_symbol,
 *SEL_symbol, *Class_symbol;
 
@@ -1469,7 +1469,8 @@ static void prepare_symbols(NuSymbolTable *symbolTable)
     voidstar_symbol = [symbolTable symbolWithCString:"void*"];
     idstar_symbol = [symbolTable symbolWithCString:"id*"];
     int_symbol = [symbolTable symbolWithCString:"int"];
-	long_symbol = [symbolTable symbolWithCString:"long"];
+    long_symbol = [symbolTable symbolWithCString:"long"];
+    NSComparisonResult_symbol = [symbolTable symbolWithCString:"NSComparisonResult"];
     BOOL_symbol = [symbolTable symbolWithCString:"BOOL"];
     double_symbol = [symbolTable symbolWithCString:"double"];
     float_symbol = [symbolTable symbolWithCString:"float"];
@@ -1567,6 +1568,13 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
         }
         else if ([cursor car] == long_symbol) {
             [signature appendString:@"l"];
+            finished = YES;
+        }
+        else if ([cursor car] == NSComparisonResult_symbol) {
+            if (sizeof(NSComparisonResult) == 4)
+                [signature appendString:@"i"];
+            else
+                [signature appendString:@"q"];
             finished = YES;
         }
         else if ([cursor car] == BOOL_symbol) {

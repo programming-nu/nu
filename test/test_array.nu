@@ -102,7 +102,11 @@
               ("q" (class NSObject (- (long) reverseCompare:(id) other is (* -1 (self compare:other))))))
         (set a (array 1 9 2 8 3 7 4 6 5))
         (set sorted (a sortedArrayUsingSelector:"reverseCompare:"))
-        (assert_equal (array 9 8 7 6 5 4 3 2 1) sorted))
+        (assert_equal (array 9 8 7 6 5 4 3 2 1) sorted)
+        ;; this is better. We directly support NSComparisonResult in declarations.
+        (class NSObject (- (NSComparisonResult) reverseCompare2:(id) other is (* -1 (self compare:other))))
+        (set sorted2 (a sortedArrayUsingSelector:"reverseCompare2:"))
+        (assert_equal (array 9 8 7 6 5 4 3 2 1) sorted2))
      
      (- testIndexing is
         (set a (array 1 2 3))
