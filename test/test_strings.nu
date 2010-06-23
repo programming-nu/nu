@@ -20,12 +20,12 @@
      (imethod (id) testInterpolation is
           (set x "")
           (assert_equal "" "#{x}")
-
+          
           (set x "blueberry")
           (assert_equal "blueberry pancakes" "#{x} pancakes")
-
+          
           (assert_equal "24" "#{(* 6 4)}"))
-
+     
      (imethod (id) testOctalEscapedStrings is
           (if (eq (uname) "Darwin") ;; requires UTF-8
               (assert_equal 0 ("\000" characterAtIndex:0)))
@@ -140,4 +140,14 @@ END)
           ;; each with continue
           (set finish "")
           (start each:(do (c) (if (eq c ',') (continue)) (finish appendCharacter:c)))
-          (assert_equal "hello world" finish)))
+          (assert_equal "hello world" finish))
+     
+     (imethod (id) testStringMap is
+          (set start "hello, world")
+          (set mapped
+               (start map:
+                      (do (c) (NSString stringWithCharacter:(if (and (>= c 'a') (<= c 'z'))
+                                                                (then (- c (- 'a' 'A')))
+                                                                (else c))))))
+          (set finish (mapped componentsJoinedByString:""))
+          (assert_equal "HELLO, WORLD" finish)))
