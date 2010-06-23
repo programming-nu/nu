@@ -1126,9 +1126,9 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     // unused: SEL sel = *((SEL*)args[1]);
 
     // in rare cases, we need an autorelease pool (specifically detachNewThreadSelector:toTarget:withObject:)
-    // previously we used a private api to verify that one existed before creating a new one. Now we just make one. 
+    // previously we used a private api to verify that one existed before creating a new one. Now we just make one.
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
+
     NuBlock *block = ((NuBlock **)userdata)[1];
     //NSLog(@"----------------------------------------");
     //NSLog(@"calling block %@", [block stringValue]);
@@ -1449,7 +1449,10 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 
 @end
 
-static NuSymbol *oneway_symbol, *in_symbol, *out_symbol, *inout_symbol, *bycopy_symbol, *byref_symbol, *const_symbol, *void_symbol, *star_symbol, *id_symbol, *voidstar_symbol, *idstar_symbol, *int_symbol, *BOOL_symbol, *double_symbol, *float_symbol, *NSRect_symbol, *NSPoint_symbol, *NSSize_symbol, *NSRange_symbol, *SEL_symbol, *Class_symbol;
+static NuSymbol *oneway_symbol, *in_symbol, *out_symbol, *inout_symbol, *bycopy_symbol, *byref_symbol, *const_symbol,
+*void_symbol, *star_symbol, *id_symbol, *voidstar_symbol, *idstar_symbol, *int_symbol, *long_symbol,
+*BOOL_symbol, *double_symbol, *float_symbol, *NSRect_symbol, *NSPoint_symbol, *NSSize_symbol, *NSRange_symbol,
+*SEL_symbol, *Class_symbol;
 
 static void prepare_symbols(NuSymbolTable *symbolTable)
 {
@@ -1466,6 +1469,7 @@ static void prepare_symbols(NuSymbolTable *symbolTable)
     voidstar_symbol = [symbolTable symbolWithCString:"void*"];
     idstar_symbol = [symbolTable symbolWithCString:"id*"];
     int_symbol = [symbolTable symbolWithCString:"int"];
+	long_symbol = [symbolTable symbolWithCString:"long"];
     BOOL_symbol = [symbolTable symbolWithCString:"BOOL"];
     double_symbol = [symbolTable symbolWithCString:"double"];
     float_symbol = [symbolTable symbolWithCString:"float"];
@@ -1559,6 +1563,10 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
         }
         else if ([cursor car] == int_symbol) {
             [signature appendString:@"i"];
+            finished = YES;
+        }
+        else if ([cursor car] == long_symbol) {
+            [signature appendString:@"l"];
             finished = YES;
         }
         else if ([cursor car] == BOOL_symbol) {

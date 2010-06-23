@@ -92,6 +92,18 @@
         (set sorted (array sortedArrayUsingBlock:(do (a b) ((a length) compare:(b length)))))
         (assert_equal '("ed" "tim" "mary" "brian" "jennifer" "christopher") (sorted list)))
      
+     (- testSortedArrayUsingSelector is
+        ;; I don't like this, but want to be sure we bridge the right
+        ;; return type for the comparison method. On Snow Leopard (at
+        ;; least), NSInteger is either int or long depending on the
+        ;; build architecture.
+        (case ((NSNumber instanceMethodWithName:"compare:") returnType)
+              ("i" (class NSObject (- (int) reverseCompare:(id) other is (* -1 (self compare:other)))))
+              ("q" (class NSObject (- (long) reverseCompare:(id) other is (* -1 (self compare:other))))))
+        (set a (array 1 9 2 8 3 7 4 6 5))
+        (set sorted (a sortedArrayUsingSelector:"reverseCompare:"))
+        (assert_equal (array 9 8 7 6 5 4 3 2 1) sorted))
+     
      (- testIndexing is
         (set a (array 1 2 3))
         (assert_equal 1 (a 0))
