@@ -82,3 +82,21 @@ id _nunumberd(double d);
 id _nucell(id car, id cdr);
 id _nuregex(const char *pattern, int options);
 id _nulist(id firstObject,...);
+
+@protocol NuCell <NSObject>
+- (void) setCar:(id) car;
+- (void) setCdr:(id) cdr;
+@end
+
+@protocol NuBlock <NSObject>
+- (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)calling_context;
+@end
+
+@protocol NuRegexMatch <NSObject>
+- (NSString *)groupAtIndex:(int)idx;
+@end
+
+@protocol NuRegex <NSObject>
++ (id<NuRegex>) regexWithPattern:(NSString *) pattern;
+- (id<NuRegexMatch>)findInString:(NSString *)str;
+@end
