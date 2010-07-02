@@ -33,7 +33,7 @@ ifeq ($(SYSTEM), Darwin)
 		INCLUDES += -I$(PREFIX)/include
 	endif
 	FRAMEWORKS = -framework Cocoa
-	LIBS = -lobjc -lpcre -lreadline
+	LIBS = -lobjc -lreadline
 	ifeq ($(shell test -d $(PREFIX)/lib && echo yes), yes)
 		LIBDIRS += -L$(PREFIX)/lib
 	endif
@@ -43,14 +43,17 @@ else
 	LIBDIRS =
 endif
 
-C_FILES = $(wildcard objc/*.c)
+C_FILES = $(wildcard objc/*.c) $(wildcard pcre/*.c)
 OBJC_FILES = $(wildcard objc/*.m) $(wildcard main/*.m)
 GCC_FILES = $(OBJC_FILES) $(C_FILES)
 GCC_OBJS = $(patsubst %.m, %.o, $(OBJC_FILES)) $(patsubst %.c, %.o, $(C_FILES))
 
 CC = gcc
-CFLAGS = -g -Wall -DMININUSH -std=gnu99
+CFLAGS = -g -Wall -DMININUSH -std=gnu99 
 MFLAGS = -fobjc-exceptions
+
+# required to compile bundled PCRE source
+CFLAGS += -DHAVE_CONFIG_H
 
 ifeq ($(SYSTEM), Darwin)
 	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS)
@@ -101,7 +104,7 @@ mininush: $(GCC_OBJS)
 
 .PHONY: clean
 clean:
-	rm -f objc/*.o main/*.o
+	rm -f objc/*.o main/*.o pcre/*.o
 
 .PHONY: clobber
 clobber: clean

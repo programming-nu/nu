@@ -27,6 +27,7 @@ END)
 
 ;; source files
 (set @c_files     (filelist "^objc/.*\.c$"))
+(@c_files unionSet:(filelist "^pcre/.*\.c$"))
 (set @m_files     (filelist "^objc/.*\.m$"))
 (@m_files unionSet:(filelist "^baked/.*\.m$"))
 (set @nu_files    (filelist "^nu/.*\.nu$"))
@@ -37,7 +38,7 @@ END)
 (set @frameworks (NSMutableArray array))
 (set @inc_dirs   (NSMutableArray arrayWithList:(list "/usr/include")))
 (set @lib_dirs (array)) ;;  (NSMutableArray arrayWithList:(list "/usr/lib")))
-(set @libs       (NSMutableArray arrayWithList:(list "objc" "ffi" "pcre")))
+(set @libs       (NSMutableArray arrayWithList:(list "objc" "ffi")))
 
 (@inc_dirs addObjectsFromList:(list "./include" "./include/Nu"))
 (ifDarwin
@@ -94,8 +95,10 @@ END)
             ("-isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
            (else "")))
 
+(set @cflags "-Wall -g -std=gnu99 -fPIC")
+
 (ifDarwin
-         (then (set @cflags "-Wall -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard} -std=gnu99")
+         (then (set @cflags (+ @cflags " -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard}"))
                (set @mflags "-fobjc-exceptions -fobjc-gc")) ;; To use garbage collection, add this flag: "-fobjc-gc"
          (else (set @cflags "-Wall -g -std=gnu99 -fPIC")
                (set @mflags ((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
@@ -104,10 +107,12 @@ END)
 (ifFreeBSD     (then (set @cflags (+ @cflags " -DFREEBSD"))))
 (ifOpenSolaris (then (set @cflags (+ @cflags " -DOPENSOLARIS"))))
 
+;; for our bundled PCRE
+(set @cflags (+ @cflags " -DHAVE_CONFIG_H"))
+
 (ifDarwin
-         (then (set @arch '("ppc" "i386")))) ;; build a universal binary
-;; or set this to just build for your chosen platform
-;;(set @arch '("i386"))
+         (then (set @arch '("i386")))) ;; optionally add "ppc" or "ppc64" to the list
+
 (if (isSnowLeopard)
 	(then (set @arch (append @arch '("x86_64")))))
 
@@ -115,12 +120,6 @@ END)
      ((@inc_dirs map: (do (inc) " -I#{inc}")) join))
 (set @ldflags
      ((list
-           (cond  ;; statically link in pcre since most people won't have it..
-(t nil)
-                  ((NSFileManager fileExistsNamed:"#{@pcre_prefix}/lib/libpcre.a") "#{@pcre_prefix}/lib/libpcre.a")
-                  ((NSFileManager fileExistsNamed:"/usr/lib/libpcre.a") "/usr/lib/libpcre.a")
-                  ((NSFileManager fileExistsNamed:"#{@prefix}/lib/libpcre.a") "#{@prefix}/lib/libpcre.a")
-                  (else (NSException raise:"NukeBuildError" format:"Can't find static pcre library (libpcre.a).")))
            ((@frameworks map: (do (framework) " -framework #{framework}")) join)
            ((@libs map: (do (lib) " -l#{lib}")) join)
            (ifDarwin

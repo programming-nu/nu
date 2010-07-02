@@ -52,7 +52,7 @@ extern id Nu__null;
     return [NSMutableArray array];
 }
 
-- (id) stringValue
+- (NSString *) stringValue
 {
     return @"()";
 }
@@ -324,7 +324,7 @@ extern id Nu__null;
 @end
 
 @implementation NSString(Nu)
-- (id) stringValue
+- (NSString *) stringValue
 {
     return self;
 }
@@ -391,7 +391,7 @@ extern id Nu__null;
                     body = [parser parse:expression];
                 }
                 value = [body evalWithContext:context];
-                id stringValue = [value stringValue];
+                NSString *stringValue = [value stringValue];
                 [result appendString:stringValue];
             }
             [result appendString:[parts objectAtIndex:1]];
