@@ -87,7 +87,9 @@ void nu_disableNSLog()
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
+#if !defined(SNOWLEOPARD)
         err = mach_override( "_NSLog", NULL, (void*)&NuLog, (void**)&g_originalNSLog);
+#endif
     }
     g_enableNSLog = false;
 }

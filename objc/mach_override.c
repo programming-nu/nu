@@ -4,8 +4,7 @@
 		Some rights reserved: <http://creativecommons.org/licenses/by/2.0/>
 
 	***************************************************************************/
-#ifdef DARWIN
-#ifndef IPHONE
+#if defined(DARWIN) && !defined(IPHONE) && !defined(SNOWLEOPARD)
 
 #include "mach_override.h"
 
@@ -602,6 +601,5 @@ asm(
 			"	ret"
 );
 
-#endif
 #endif
 #endif
