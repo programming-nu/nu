@@ -35,8 +35,11 @@ limitations under the License.
 #endif
 #import <Foundation/Foundation.h>
 #ifdef DARWIN
+#ifdef IPHONE
+#import "ffi.h"
+#else
 #import "ffi/ffi.h"
-
+#endif
 #else
 
 #import "ffi.h"

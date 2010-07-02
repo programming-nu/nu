@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #ifdef DARWIN
+#ifndef IPHONE
 
 #include "mach_override.h"
 #include "Foundation/Foundation.h"
@@ -95,5 +96,6 @@ void nu_enableNSLog()
 {
     g_enableNSLog = true;
 }
+#endif
 #endif
 #endif

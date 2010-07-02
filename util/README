@@ -1,0 +1,11 @@
+This directory contains code that creates a pool of predefined
+method handlers for use with Nu on iOS. Feel free to alter the
+mix of handlers as needed by your app.
+
+These handlers are required because restrictions enforced by
+mprotect() forbid us from generating executable method handlers
+at runtime.
+
+Anecdotally, this appears to not be necessary in some environments,
+so please be sure to test your apps both in and out of the debugger
+on all target device types (especially newer ones).

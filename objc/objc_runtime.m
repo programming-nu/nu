@@ -20,8 +20,10 @@ limitations under the License.
 
 // Undefine __OBJC2__ to get access to data structures in the ObjC runtime.
 // This triggers deprecation warnings on Leopard.
+#ifndef IPHONE
 #undef __OBJC2__
-//#define LEOPARD_OBJC2
+#endif
+#define LEOPARD_OBJC2
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -553,6 +555,7 @@ Ivar myclass_getInstanceVariable(Class c, const char *name)
 #endif
 
 #ifdef LEOPARD_OBJC2
+#ifndef IPHONE
 IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
 {
     if (class_addMethod(cls, name, imp, types)) {
@@ -562,6 +565,7 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
         return class_replaceMethod(cls, name, imp, types);
     }
 }
+#endif
 #endif
 
 void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature)
