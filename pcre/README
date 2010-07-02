@@ -1,0 +1,42 @@
+
+This directory contains PCRE source files generated from the official 
+PCRE distribution.
+
+These files are included to simplify building Nu on all platforms, 
+especially iOS, which currently has limited support for libraries.
+
+When compiling, please be sure to define the following macro:
+	-D HAVE_CONFIG_H
+
+See pcre.h for the version number of our PCRE snapshot.
+
+You can update these files from the latest PCRE distribution 
+by following these steps:
+
+1. Generate the appropriate config.h using this command (in 
+the PCRE directory):
+
+% ./configure --enable-utf8
+
+2. Copy all source files from your local PCRE source directory.
+
+% cd Nu/pcre
+% cp /usr/local/src/pcre-8.10/*.[ch] .
+
+3. Remove the sources for any PCRE test and demonstration programs.
+
+% grep "main(" *
+dftables.c:int main(int argc, char **argv)
+pcredemo.c:int main(int argc, char **argv)
+pcregrep.c:main(int argc, char **argv)
+pcretest.c:int main(int argc, char **argv)
+
+% rm dftables.c pcredemo.c pcregrep.c pcretest.c
+
+4. Verify that your sources include pcre_chartables.c. This
+file is generated automatically by the PCRE build, so if you don't
+have it, you can easily get it by running 'make' in your PCRE
+directory (after running the 'configure' step noted previously).
+
+% cp /usr/local/src/pcre-8.10/pcre_chartables.c .
+

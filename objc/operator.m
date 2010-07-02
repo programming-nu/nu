@@ -2088,7 +2088,7 @@ id evaluatedArguments(id cdr, NSMutableDictionary *context)
 
 @end
 
-#define install(name, class) [(NuSymbol *) [[symbolTable symbolWithCString:name] retain] setValue:[[class alloc] init]]
+#define install(name, class) [(NuSymbol *) [symbolTable symbolWithCString:name] setValue:[[[class alloc] init] autorelease]]
 
 void load_builtins(NuSymbolTable *symbolTable)
 {

@@ -21,6 +21,7 @@ limitations under the License.
 // Undefine __OBJC2__ to get access to data structures in the ObjC runtime.
 // This triggers deprecation warnings on Leopard.
 #undef __OBJC2__
+//#define LEOPARD_OBJC2
 
 #include <stdlib.h>
 #include <stdint.h>

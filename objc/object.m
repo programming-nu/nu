@@ -134,7 +134,7 @@ limitations under the License.
     return self;
 }
 
-- (id) stringValue
+- (NSString *) stringValue
 {
     #ifdef DARWIN
     return [NSString stringWithFormat:@"<%s:%x>", class_getName(object_getClass(self)), (long) self];
