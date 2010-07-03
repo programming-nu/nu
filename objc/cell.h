@@ -63,23 +63,23 @@ In Nu, nil is represented with the <code>[NSNull null]</code> object.
 /*! Get any comments that were associated with a NuCell in its Nu source file. */
 - (id) comments;
 /*! Iterate over each element of the list headed by a NuCell, calling the specified block with the element as an argument. */
-- (id) each:(NuBlock *) block;
+- (id) each:(id) block;
 /*! Iterate over each pair of elements of the list headed by a NuCell, calling the specified block with the two elements as arguments. */
-- (id) eachPair:(NuBlock *) block;
+- (id) eachPair:(id) block;
 /*! Iterate over each element of the list headed by a NuCell, calling the specified block with the element and its index as arguments. */
-- (id) eachWithIndex:(NuBlock *) block;
+- (id) eachWithIndex:(id) block;
 /*! Iterate over each element of the list headed by a NuCell, returning a list containing the elements for which the provided block evaluates non-nil. */
-- (id) select:(NuBlock *) block;
+- (id) select:(id) block;
 /*! Iterate over each element of the list headed by a NuCell, returning the first element for which the provided block evaluates non-nil. */
-- (id) find:(NuBlock *) block;
+- (id) find:(id) block;
 /*! Iterate over each element of the list headed by a NuCell, applying the provided block to each element, and returning a list of the results. */
-- (id) map:(NuBlock *) block;
+- (id) map:(id) block;
 /*! Iterate over each element of the list headed by a NuCell, using the provided block to combine elements into a single return value. */
-- (id) reduce:(NuBlock *) block from:(id) initial;
+- (id) reduce:(id) block from:(id) initial;
 /*! Get the length of a list beginning at a NuCell. */
-- (int) length;
+- (NSUInteger) length;
 /*! Get the number of elements in a list. Synonymous with length. */
-- (int) count;
+- (NSUInteger) count;
 /*! Get an array containing the elements of a list. */
 - (NSMutableArray *) array;
 

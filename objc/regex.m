@@ -419,7 +419,7 @@ static NuRegex *backrefPattern;
     return regex;
 }
 
-- (int)count
+- (NSUInteger)count
 {
     return count;
 }

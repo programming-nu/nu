@@ -1,6 +1,6 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(global VERSION '(0 4 0)) #(major minor tweak)
+(global VERSION '(0 9 0)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
@@ -136,7 +136,8 @@ END)
      join))
 
 (ifDarwin
-         (set @public_headers (filelist "^include/Nu/Nu.h")))
+         (set @public_headers (filelist "^include/Nu/Nu.h"))
+         (@public_headers unionSet:(filelist "^objc/.*\.h$")))
 
 ;; Setup the tasks for compilation and framework-building.
 ;; These are defined in the nuke application source file.

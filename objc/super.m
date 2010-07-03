@@ -72,7 +72,7 @@ limitations under the License.
     #endif
     if (!m) m = class_getClassMethod(c, sel);
 
-    id result = [NSNull null];
+    id result;
     if (m) {
         result = nu_calling_objc_method_handler(object, m, args);
     }

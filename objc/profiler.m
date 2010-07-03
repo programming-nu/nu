@@ -86,7 +86,7 @@ static NuProfiler *defaultProfiler = nil;
         #else
         float timeDelta = 1.0;
         #endif
-        NSNumber *delta = [NSNumber numberWithFloat:timeDelta];
+        //NSNumber *delta = [NSNumber numberWithFloat:timeDelta];
         NuProfileTimeSlice *entry = [sections objectForKey:stack->name];
         if (!entry) {
             entry = [[[NuProfileTimeSlice alloc] init] autorelease];

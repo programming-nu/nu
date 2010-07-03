@@ -64,7 +64,7 @@ extern const char *nu_parsedFilename(int i)
 - (NuCell *) root;
 - (NuStack *) opens;
 - (NSString *) stringValue;
-- (const char *) cStringUsingEncoding:(unsigned int) encoding;
+- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding;
 - (void) reset;
 - (id) init;
 - (void) openList;
@@ -229,7 +229,7 @@ id regexWithString(NSString *string)
     return [self description];
 }
 
-- (const char *) cStringUsingEncoding:(unsigned int) encoding
+- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
 {
     return [[self stringValue] cStringUsingEncoding:encoding];
 }

@@ -23,6 +23,10 @@ limitations under the License.
 #import "extensions.h"
 #import "enumerable.h"
 
+@protocol NuCanSetAction 
+- (void) setAction:(SEL) action;
+@end
+
 // use this to look up selectors with symbols
 @interface NuSelectorCache : NSObject
 {
@@ -716,7 +720,7 @@ limitations under the License.
             #else
             SEL selector = sel_register_name([value cStringUsingEncoding:NSUTF8StringEncoding]);
             #endif
-            [self setAction:selector];
+            [(id<NuCanSetAction>) self setAction:selector];
         }
         else {
             [self setValue:value forKey:label];

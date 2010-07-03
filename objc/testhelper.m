@@ -15,7 +15,7 @@ limitations under the License.
 #import "nutypes.h"
 
 #import <Foundation/Foundation.h>
-#import <Nu/Nu.h>
+#import "main.h"
 
 static BOOL verbose_helper = false;
 
