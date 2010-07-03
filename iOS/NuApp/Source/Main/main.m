@@ -5,6 +5,7 @@
 //  Created by Tim Burks on 7/2/10.
 //  Copyright Neon Design Technology, Inc. 2010. All rights reserved.
 //
+#import "main.h"
 
 int main(int argc, char *argv[]) {    
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
@@ -16,7 +17,7 @@ int main(int argc, char *argv[]) {
 	NSLog(@"%@", main_nu);
 	NSLog(@"%d", [main_nu length]);
 
-	id parser = [NSClassFromString(@"Nu") parser];
+	id parser = [Nu parser];
 	
 	NSLog(@"parsing %@", main_nu);
 	

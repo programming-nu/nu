@@ -40,6 +40,7 @@ char *alloca ();
 # include <string.h>
 #else
 # ifndef HAVE_MEMCPY
+void bcopy(const void *s1, void *s2, size_t n);
 #  define memcpy(d, s, n) bcopy ((s), (d), (n))
 # endif
 #endif

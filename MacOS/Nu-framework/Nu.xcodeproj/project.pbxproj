@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2213FC6A11DEB4910041388D /* main.h in Headers */ = {isa = PBXBuildFile; fileRef = 2213FC6911DEB4910041388D /* main.h */; };
 		224276A611DD73E500940005 /* block.h in Headers */ = {isa = PBXBuildFile; fileRef = 2242766B11DD73E500940005 /* block.h */; };
 		224276A711DD73E500940005 /* block.m in Sources */ = {isa = PBXBuildFile; fileRef = 2242766C11DD73E500940005 /* block.m */; };
 		224276A811DD73E500940005 /* bridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 2242766D11DD73E500940005 /* bridge.h */; };
@@ -135,6 +136,7 @@
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		2213FC6911DEB4910041388D /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		2242766B11DD73E500940005 /* block.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = block.h; sourceTree = "<group>"; };
 		2242766C11DD73E500940005 /* block.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = block.m; sourceTree = "<group>"; };
 		2242766D11DD73E500940005 /* bridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bridge.h; sourceTree = "<group>"; };
@@ -334,6 +336,7 @@
 		2242766A11DD73E500940005 /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				2213FC6911DEB4910041388D /* main.h */,
 				2242766B11DD73E500940005 /* block.h */,
 				2242766C11DD73E500940005 /* block.m */,
 				2242766D11DD73E500940005 /* bridge.h */,
@@ -532,6 +535,7 @@
 				22B78A3711DE98AF0022EE11 /* pcrecpparg.h in Headers */,
 				22B78A3911DE98AF0022EE11 /* pcreposix.h in Headers */,
 				22B78A3B11DE98AF0022EE11 /* ucp.h in Headers */,
+				2213FC6A11DEB4910041388D /* main.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

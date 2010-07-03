@@ -262,7 +262,7 @@ extern char *nu_parsedFilename(int i);
     return result;
 }
 
-- (id) each:(NuBlock *) block
+- (id) each:(id) block
 {
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
@@ -418,7 +418,7 @@ extern char *nu_parsedFilename(int i);
     return result;
 }
 
-- (int) length
+- (NSUInteger) length
 {
     int count = 0;
     id cursor = self;
@@ -440,7 +440,7 @@ extern char *nu_parsedFilename(int i);
    return a;
 }
 
-- (int) count
+- (NSUInteger) count
 {
     return [self length];
 }

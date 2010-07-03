@@ -37,12 +37,12 @@ extern id Nu__null;
     return true;
 }
 
-- (int) length
+- (NSUInteger) length
 {
     return 0;
 }
 
-- (int) count
+- (NSUInteger) count
 {
     return 0;
 }
@@ -513,6 +513,32 @@ extern id Nu__null;
 }
 
 #endif
+
+- (id) each:(id) block
+{
+    id args = [[NuCell alloc] init];
+    NSEnumerator *characterEnumerator = [self objectEnumerator];
+    id character;
+    while ((character = [characterEnumerator nextObject])) {
+        @try
+        {
+            [args setCar:character];
+            [block evalWithArguments:args context:Nu__null];
+        }
+        @catch (NuBreakException *exception) {
+            break;
+        }
+        @catch (NuContinueException *exception) {
+            // do nothing, just continue with the next loop iteration
+        }
+        @catch (id exception) {
+            @throw(exception);
+        }
+    }
+    [args release];
+    return self;
+}
+
 @end
 
 @implementation NSMutableString(Nu)
@@ -733,7 +759,11 @@ extern id Nu__null;
 + (id) _timestampForFileNamed:(NSString *) filename
 {
     if (filename == Nu__null) return nil;
-    NSDictionary *attributes = [[NSFileManager defaultManager] fileAttributesAtPath:[filename stringByExpandingTildeInPath] traverseLink:YES];
+	NSError *error;
+    NSDictionary *attributes = [[NSFileManager defaultManager] 
+								attributesOfItemAtPath:[filename stringByExpandingTildeInPath]
+								error:&error];
+								// was fileAttributesAtPath:[filename stringByExpandingTildeInPath] traverseLink:YES];
     return [attributes valueForKey:NSFileModificationDate];
 }
 
@@ -844,7 +874,7 @@ extern id Nu__null;
 {
     NSString *fileName = [self pathForResource:nuFileName ofType:@"nu"];
     if (fileName) {
-        NSString *string = [NSString stringWithContentsOfFile: fileName];
+        NSString *string = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:nil];
         id value = Nu__null;
         if (string) {
             NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];

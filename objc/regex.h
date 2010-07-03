@@ -63,7 +63,7 @@ The regular expression used to make this match. */
 /*!
 @method count
 The number of capturing subpatterns, including the pattern itself. */
-- (int)count;
+- (NSUInteger)count;
 
 /*!
 @method group

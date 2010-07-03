@@ -32,9 +32,9 @@ limitations under the License.
 /*! Returns false.  In Nu, nil is not an atom. */
 - (bool) atom;
 /*! The length of nil is zero. */
-- (int) length;
+- (NSUInteger) length;
 /*! count is a synonym for length. */
-- (int) count;
+- (NSUInteger) count;
 /*! nil converts to an empty array. */
 - (NSMutableArray *) array;
 @end
@@ -175,7 +175,7 @@ limitations under the License.
 - (NSString *) replaceString:(NSString *) target withString:(NSString *) replacement;
 
 /*! Iterate over each character in a string, evaluating the provided block for each character. */
-- (id) each:(NuBlock *) block;
+- (id) each:(id) block;
 
 #ifdef GNUSTEP
 + (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding;

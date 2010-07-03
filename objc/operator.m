@@ -30,7 +30,7 @@ limitations under the License.
 #import "parser.h"
 #import "regex.h"
 #import "version.h"
-#import "Nu/Nu.h"
+#import "main.h"
 #ifndef IPHONE
 #include <readline/readline.h>
 #endif

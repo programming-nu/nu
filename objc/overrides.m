@@ -15,8 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#ifdef DARWIN
-#ifndef IPHONE
+#if !defined(DARWIN) && !defined(IPHONE) && !defined(SNOWLEOPARD)
 
 #include "mach_override.h"
 #include "Foundation/Foundation.h"
@@ -87,9 +86,7 @@ void nu_disableNSLog()
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
-#if !defined(SNOWLEOPARD)
         err = mach_override( "_NSLog", NULL, (void*)&NuLog, (void**)&g_originalNSLog);
-#endif
     }
     g_enableNSLog = false;
 }
@@ -99,5 +96,14 @@ void nu_enableNSLog()
     g_enableNSLog = true;
 }
 #endif
-#endif
+#else
+
+void nu_disableNSLog()
+{
+}
+
+void nu_enableNSLog()
+{
+}
+
 #endif

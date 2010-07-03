@@ -186,9 +186,9 @@
 		228308AB11DE5F0100A5C690 /* symbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = symbol.m; sourceTree = "<group>"; };
 		228308AC11DE5F0100A5C690 /* testhelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = testhelper.m; sourceTree = "<group>"; };
 		228308AD11DE5F0100A5C690 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
-		228308E711DE5FD800A5C690 /* Nu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu.h; sourceTree = "<group>"; };
 		2283091911DE6B7800A5C690 /* main.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.nu; sourceTree = "<group>"; };
 		22A2932D11DE8450008B1084 /* handlers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = handlers.m; path = ../../util/handlers.m; sourceTree = "<group>"; };
+		22B4F2E311DEBD53009C693F /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
 		22E7304611AB5E210014052A /* ApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationDelegate.h; sourceTree = "<group>"; };
 		22E7304711AB5E210014052A /* ApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationDelegate.m; sourceTree = "<group>"; };
 		22E7304811AB5E210014052A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -280,6 +280,7 @@
 		2283087211DE5F0100A5C690 /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				22B4F2E311DEBD53009C693F /* main.h */,
 				2283087311DE5F0100A5C690 /* block.h */,
 				2283087411DE5F0100A5C690 /* block.m */,
 				2283087511DE5F0100A5C690 /* bridge.h */,
@@ -344,23 +345,6 @@
 			path = ../../objc;
 			sourceTree = SOURCE_ROOT;
 		};
-		228308E511DE5FD800A5C690 /* include */ = {
-			isa = PBXGroup;
-			children = (
-				228308E611DE5FD800A5C690 /* Nu */,
-			);
-			name = include;
-			path = ../../include;
-			sourceTree = SOURCE_ROOT;
-		};
-		228308E611DE5FD800A5C690 /* Nu */ = {
-			isa = PBXGroup;
-			children = (
-				228308E711DE5FD800A5C690 /* Nu.h */,
-			);
-			path = Nu;
-			sourceTree = "<group>";
-		};
 		22C003A211AB604B009E6408 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -392,7 +376,6 @@
 			isa = PBXGroup;
 			children = (
 				22A2932D11DE8450008B1084 /* handlers.m */,
-				228308E511DE5FD800A5C690 /* include */,
 				2283087211DE5F0100A5C690 /* objc */,
 				228307EF11DE5E9D00A5C690 /* pcre */,
 				228307CE11DE5E4F00A5C690 /* libffi */,

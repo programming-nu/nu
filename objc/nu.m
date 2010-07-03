@@ -17,7 +17,7 @@ limitations under the License.
 */
 #import "parser.h"
 #import "symbol.h"
-#import "Nu/Nu.h"
+#import "main.h"
 #import "extensions.h"
 #import "object.h"
 #import "objc_runtime.h"
@@ -113,7 +113,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
         // first we try to load main.nu from the application bundle.
         NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
         if (main_path) {
-            NSString *main_nu = [NSString stringWithContentsOfFile:main_path];
+            NSString *main_nu = [NSString stringWithContentsOfFile:main_path encoding:NSUTF8StringEncoding error:nil];
             if (main_nu) {
                 NuParser *parser = [[NuParser alloc] init];
                 id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
@@ -171,8 +171,10 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 }
                 i++;
             }
+#ifndef IPHONE
             if (!didSomething || goInteractive)
                 [parser interact];
+#endif
             [parser release];
             [pool release];
             return 0;
@@ -196,7 +198,9 @@ int NuMain(int argc, const char *argv[], const char *envp[])
             }
             else {
                 [pool release];
+#ifndef IPHONE
                 return [NuParser main];
+#endif
             }
         }
     }
@@ -385,7 +389,7 @@ id _nulist(id firstObject, ...)
     NSBundle *bundle = [NSBundle bundleWithIdentifier:bundleIdentifier];
     NSString *filePath = [bundle pathForResource:fileName ofType:@"nu"];
     if (filePath) {
-        NSString *fileNu = [NSString stringWithContentsOfFile:filePath];
+        NSString *fileNu = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
         if (fileNu) {
             id parser = [Nu parser];
             id script = [parser parse:fileNu asIfFromFilename:[filePath cStringUsingEncoding:NSUTF8StringEncoding]];
