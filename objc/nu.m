@@ -267,7 +267,7 @@ void NuInit()
         [NSArray include: [NuClass classWithClass:[NuEnumerable class]]];
         [NSSet include: [NuClass classWithClass:[NuEnumerable class]]];
         [NSString include: [NuClass classWithClass:[NuEnumerable class]]];
-        [pool release];
+        [pool drain];
 
         [NSObject exchangeInstanceMethod:@selector(dealloc) withMethod:@selector(nuDealloc)];
 

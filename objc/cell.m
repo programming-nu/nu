@@ -298,7 +298,7 @@ extern char *nu_parsedFilename(int i);
 {
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
-        [args setCdr:[[NuCell alloc] init]];
+        [args setCdr:[[[NuCell alloc] init] autorelease]];
         id cursor = self;
         int i = 0;
         while (cursor && (cursor != Nu__null)) {
@@ -315,7 +315,7 @@ extern char *nu_parsedFilename(int i);
 
 - (id) select:(id) block
 {
-    NuCell *parent = [[NuCell alloc] init];
+    NuCell *parent = [[[NuCell alloc] init] autorelease];
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
         id cursor = self;
@@ -334,7 +334,6 @@ extern char *nu_parsedFilename(int i);
     else
         return Nu__null;
     NuCell *selected = [parent cdr];
-    [parent release];
     return selected;
 }
 
@@ -359,7 +358,7 @@ extern char *nu_parsedFilename(int i);
 
 - (id) map:(id) block
 {
-    NuCell *parent = [[NuCell alloc] init];
+    NuCell *parent = [[[NuCell alloc] init] autorelease];
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
         id cursor = self;
@@ -376,7 +375,6 @@ extern char *nu_parsedFilename(int i);
     else
         return Nu__null;
     NuCell *result = [parent cdr];
-    [parent release];
     return result;
 }
 
@@ -404,7 +402,7 @@ extern char *nu_parsedFilename(int i);
     id result = initial;
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
-        [args setCdr:[[NuCell alloc] init]];
+        [args setCdr:[[[NuCell alloc] init] autorelease]];
         id cursor = self;
         while (cursor && (cursor != Nu__null)) {
             [args setCar:result];
@@ -412,7 +410,6 @@ extern char *nu_parsedFilename(int i);
             result = [block evalWithArguments:args context:Nu__null];
             cursor = [cursor cdr];
         }
-        [[args cdr] release];
         [args release];
     }
     return result;

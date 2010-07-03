@@ -182,7 +182,6 @@ extern id Nu__null;
     // set the arguments to the special variable "margs"
     [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
     // evaluate the body of the block in the calling context (implicit progn)
-    id value = Nu__null;
 
     // if the macro contains gensyms, give them a unique prefix
     int gensymCount = [[self gensyms] count];
@@ -198,7 +197,7 @@ extern id Nu__null;
     //bodyToEvaluate = body;
     //NSLog(@"evaluating %@", [bodyToEvaluate stringValue]);
 
-    value = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
+    id value = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
 
 	if (evalFlag)
 	{

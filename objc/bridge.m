@@ -1110,7 +1110,7 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
         }
     }
     [result retain];
-    [pool release];
+    [pool drain];
     [result autorelease];
     return result;
 }
@@ -1184,7 +1184,7 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     if (pool) {
         if (resultType[0] == '@')
             [*((id *)returnvalue) retain];
-        [pool release];
+        [pool drain];
         if (resultType[0] == '@')
             [*((id *)returnvalue) autorelease];
     }
@@ -1385,7 +1385,6 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     for (i = 0; i < argument_count; i++) {
         //    NSLog(@"argument %d type is %s", i, argument_type_identifiers[i]);
     }
-    id result = [NSNull null];
 
     ffi_cif *cif = (ffi_cif *)malloc(sizeof(ffi_cif));
 
@@ -1411,7 +1410,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
         arg_cursor = [arg_cursor cdr];
     }
     ffi_call(cif, FFI_FN(function), result_value, argument_values);
-    result = get_nu_value_from_objc_value(result_value, return_type_identifier);
+    id result = get_nu_value_from_objc_value(result_value, return_type_identifier);
 
     // free the value structures
     for (i = 0; i < argument_count; i++) {
@@ -1425,7 +1424,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     free(cif);
 
     [result retain];
-    [pool release];
+    [pool drain];
     [result autorelease];
     return result;
 }

@@ -70,7 +70,7 @@ static NSString *getTypeStringFromNode(id node)
     NSMutableDictionary *enums =     [BridgeSupport valueForKey:@"enums"];
     NSMutableDictionary *functions = [BridgeSupport valueForKey:@"functions"];
 
-    NSXMLDocument *xmlDocument = [[NSXMLDocument alloc] initWithContentsOfURL:[NSURL fileURLWithPath:xmlPath] options:0 error:nil];
+    NSXMLDocument *xmlDocument = [[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL fileURLWithPath:xmlPath] options:0 error:nil] autorelease];
     if (xmlDocument) {
         id node;
         NSEnumerator *childEnumerator = [[[xmlDocument rootElement] children] objectEnumerator];

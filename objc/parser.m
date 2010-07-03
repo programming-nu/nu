@@ -353,10 +353,9 @@ id regexWithString(NSString *string)
 {
 	ParserDebug(@"openList: depth = %d", depth);
 
-	int stackCount;
-
-	while ((stackCount = [readerMacroStack count]) > 0) {
+	while ([readerMacroStack count] > 0) {
 		ParserDebug(@"  openList: readerMacro");
+		
 		[self openListCell];
 		++readerMacroDepth[depth];
 		ParserDebug(@"  openList: ++RMD[%d] = %d", depth, readerMacroDepth[depth]);
@@ -375,9 +374,7 @@ id regexWithString(NSString *string)
 {
 	ParserDebug(@"addAtom: depth = %d  atom: %@", depth, [atom stringValue]);
 
-	int stackCount;
-
-	while ((stackCount = [readerMacroStack count]) > 0)	{
+	while ([readerMacroStack count] > 0)	{
 		ParserDebug(@"  addAtom: readerMacro");
 		[self openListCell];
 		++readerMacroDepth[depth];
@@ -970,7 +967,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     NuCell *expressions = [self parse:string];
     id result = [[expressions evalWithContext:context] stringValue];
     [result retain];
-    [pool release];
+    [pool drain];
     [result autorelease];
     return result;
 }
@@ -1075,7 +1072,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
     NuParser *parser = [[NuParser alloc] init];
     int result = [parser interact];
     [parser release];
-    [pool release];
+    [pool drain];
     return result;
 }
 

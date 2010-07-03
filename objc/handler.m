@@ -96,7 +96,7 @@ void nu_handler(void *return_value, struct handler_description *description, id 
         set_objc_value_from_nu_value(return_value, result, description->description[0]+1);
     }
     [arguments release];
-    [pool release];
+    [pool drain];
     if (description->description[0][1] == '@') {
         [result autorelease];
     }

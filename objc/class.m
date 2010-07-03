@@ -68,14 +68,14 @@ limitations under the License.
 
 + (NSArray *) all
 {
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+    NSMutableArray *array = [NSMutableArray array];
     int numClasses = objc_getClassList(NULL, 0);
     if(numClasses > 0) {
         Class *classes = (Class *) malloc( sizeof(Class) * numClasses );
         objc_getClassList(classes, numClasses);
         int i = 0;
         while (i < numClasses) {
-            NuClass *class = [[NuClass alloc] initWithClass:classes[i]];
+            NuClass *class = [[[NuClass alloc] initWithClass:classes[i]] autorelease];
             [array addObject:class];
             i++;
         }
@@ -106,7 +106,7 @@ limitations under the License.
 
 - (NSArray *) classMethods
 {
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+    NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
     #ifdef DARWIN
     Method *method_list = class_copyMethodList(object_getClass([self wrappedClass]), &method_count);
@@ -115,7 +115,7 @@ limitations under the License.
     #endif
     int i;
     for (i = 0; i < method_count; i++) {
-        [array addObject:[[NuMethod alloc] initWithMethod:method_list[i]]];
+        [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
     }
     free(method_list);
     [array sortUsingSelector:@selector(compare:)];
@@ -124,7 +124,7 @@ limitations under the License.
 
 - (NSArray *) instanceMethods
 {
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+    NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
     #ifdef DARWIN
     Method *method_list = class_copyMethodList([self wrappedClass], &method_count);
@@ -133,7 +133,7 @@ limitations under the License.
     #endif
     int i;
     for (i = 0; i < method_count; i++) {
-        [array addObject:[[NuMethod alloc] initWithMethod:method_list[i]]];
+        [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
     }
     free(method_list);
     [array sortUsingSelector:@selector(compare:)];
@@ -187,7 +187,7 @@ limitations under the License.
             #else
             if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
                 #endif
-                method = [[NuMethod alloc] initWithMethod:method_list[i]];
+                method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
             }
         }
         free(method_list);
@@ -211,7 +211,7 @@ limitations under the License.
                 #else
                 if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
                     #endif
-                    method = [[NuMethod alloc] initWithMethod:method_list[i]];
+                    method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
                 }
             }
             free(method_list);

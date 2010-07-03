@@ -384,13 +384,12 @@ extern id Nu__null;
             NSArray *parts = [[components objectAtIndex:i] componentsSeparatedByString:@"}"];
             NSString *expression = [parts objectAtIndex:0];
             // evaluate each expression
-            id value = Nu__null;
             if (expression) {
                 id body;
                 @synchronized(parser) {
                     body = [parser parse:expression];
                 }
-                value = [body evalWithContext:context];
+                id value = [body evalWithContext:context];
                 NSString *stringValue = [value stringValue];
                 [result appendString:stringValue];
             }
@@ -882,12 +881,11 @@ extern id Nu__null;
     NSString *fileName = [self pathForResource:nuFileName ofType:@"nu"];
     if (fileName) {
         NSString *string = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:nil];
-        id value = Nu__null;
         if (string) {
             NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
             id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
             id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
-            value = [body evalWithContext:context];
+            [body evalWithContext:context];
             return [symbolTable symbolWithCString:"t"];
         }
         return nil;

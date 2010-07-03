@@ -112,7 +112,7 @@ limitations under the License.
 {
     NuSelectorCache *child = [children objectForKey:childSymbol];
     if (!child) {
-        child = [[NuSelectorCache alloc] initWithSymbol:childSymbol parent:self];
+        child = [[[NuSelectorCache alloc] initWithSymbol:childSymbol parent:self] autorelease];
         NSString *selectorString = [child selectorName];
         #ifdef DARWIN
         [child setSelector:sel_registerName([selectorString cStringUsingEncoding:NSUTF8StringEncoding])];
@@ -254,9 +254,6 @@ limitations under the License.
             [argValues addObject:[[args objectAtIndex:i] evalWithContext:context]];
         }
         // Then call the method.
-        if (sel == @selector(animator)) {
-            imax = 0;                             // break here
-        }
         result = nu_calling_objc_method_handler(target, m, argValues);
         [argValues release];
     }
@@ -264,7 +261,7 @@ limitations under the License.
         // If the head of the list is a label, we treat the list as a property list.
         // We just evaluate the elements of the list and return the result.
         if (nu_objectIsKindOfClass(self, [NuSymbol class]) && [((NuSymbol *)self) isLabel]) {
-            NuCell *cell = [[NuCell alloc] init];
+            NuCell *cell = [[[NuCell alloc] init] autorelease];
             [cell setCar: self];
             id cursor = cdr;
             id result_cursor = cell;
@@ -290,7 +287,7 @@ limitations under the License.
 
     [args release];
     [result retain];
-    [pool release];
+    [pool drain];
     [result autorelease];
     return result;
 }
@@ -314,7 +311,7 @@ limitations under the License.
     // This seems like a bottleneck, and it also lacks flexibility.
     // Replacing explicit string building with the selector cache reduced runtimes by around 20%.
     // Methods with variadic arguments (NSArray arrayWithObjects:...) are not supported.
-    NSMutableArray *args = [[NSMutableArray alloc] init];
+    NSMutableArray *args = [NSMutableArray array];
     id cursor = cdr;
     SEL sel = 0;
     id nextSymbol = [cursor car];
@@ -461,7 +458,7 @@ limitations under the License.
 
 + (NSArray *) classMethods
 {
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+    NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
     #ifdef DARWIN
     Method *method_list = class_copyMethodList(object_getClass([self class]), &method_count);
@@ -470,7 +467,7 @@ limitations under the License.
     #endif
     int i;
     for (i = 0; i < method_count; i++) {
-        [array addObject:[[NuMethod alloc] initWithMethod:method_list[i]]];
+        [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
     }
     free(method_list);
     [array sortUsingSelector:@selector(compare:)];
@@ -479,7 +476,7 @@ limitations under the License.
 
 + (NSArray *) instanceMethods
 {
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+    NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
     #ifdef DARWIN
     Method *method_list = class_copyMethodList([self class], &method_count);
@@ -488,7 +485,7 @@ limitations under the License.
     #endif
     int i;
     for (i = 0; i < method_count; i++) {
-        [array addObject:[[NuMethod alloc] initWithMethod:method_list[i]]];
+        [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
     }
     free(method_list);
     [array sortUsingSelector:@selector(compare:)];
@@ -513,7 +510,7 @@ limitations under the License.
 
 + (NSArray *) instanceVariableNames
 {
-    NSMutableArray *array = [[NSMutableArray alloc] init];
+    NSMutableArray *array = [NSMutableArray array];
     unsigned int ivar_count;
     Ivar *ivar_list = class_copyIvarList([self class], &ivar_count);
     int i;
@@ -557,7 +554,7 @@ limitations under the License.
         s = objc_allocateClassPair(c, name, 0);
         objc_registerClassPair(s);
     }
-    NuClass *newClass = [[NuClass alloc] initWithClass:s];
+    NuClass *newClass = [[[NuClass alloc] initWithClass:s] autorelease];
 
     if ([self respondsToSelector:@selector(inheritedByClass:)]) {
         [self inheritedByClass:newClass];

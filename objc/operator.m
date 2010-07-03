@@ -691,7 +691,7 @@ limitations under the License.
     id cursor = cdr;
 
     while (cursor && (cursor != Nu__null)) {
-        id value = Nu__null;
+        id value;
         QuasiLog(@"quasiquote: [cursor car] == %@", [[cursor car] stringValue]);
 
         if ([[cursor car] atom]) {
@@ -720,10 +720,9 @@ limitations under the License.
             }
 
             id value_cursor = value;
-            id value_item = Nu__null;
 
             while (value_cursor && (value_cursor != Nu__null)) {
-                value_item = [value_cursor car];
+                id value_item = [value_cursor car];
 
                 if (result_cursor == Nu__null) {
                     result_cursor = [[[NuCell alloc] init] autorelease];
@@ -916,7 +915,7 @@ limitations under the License.
     id symbol = [cdr car];
     id args = [[cdr cdr] car];
     id body = [[cdr cdr] cdr];
-    NuBlock *block = [[NuBlock alloc] initWithParameters:args body:body context:context];
+    NuBlock *block = [[[NuBlock alloc] initWithParameters:args body:body context:context] autorelease];
     // this defines the function in the calling context, lexical closures make recursion possible
     [context setPossiblyNullObject:block forKey:symbol];
     #ifdef CLOSE_ON_VALUES
@@ -955,7 +954,7 @@ limitations under the License.
     id name = [cdr car];
     id body = [cdr cdr];
 
-    NuMacro_0 *macro = [[NuMacro_0 alloc] initWithName:name body:body];
+    NuMacro_0 *macro = [[[NuMacro_0 alloc] initWithName:name body:body] autorelease];
                                                   // this defines the function in the calling context
     [context setPossiblyNullObject:macro forKey:name];
     return macro;
@@ -973,7 +972,7 @@ limitations under the License.
     id args = [[cdr cdr] car];
     id body = [[cdr cdr] cdr];
 
-    NuMacro_1 *macro = [[NuMacro_1 alloc] initWithName:name parameters:args body:body];
+    NuMacro_1 *macro = [[[NuMacro_1 alloc] initWithName:name parameters:args body:body] autorelease];
                                                   // this defines the function in the calling context
     [context setPossiblyNullObject:macro forKey:name];
     return macro;
@@ -1588,10 +1587,9 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 #else
             NSString *string = [NSString stringWithContentsOfFile:fileName];
 #endif
-            id value = Nu__null;
             if (string) {
                 id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
-                value = [body evalWithContext:context];
+                [body evalWithContext:context];
                 return [symbolTable symbolWithCString:"t"];
             }
             else {
@@ -1662,7 +1660,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 
     [arg_names release];
     [arg_values release];
-    [pool release];
+    [pool drain];
     [result autorelease];
     return result;
 }
@@ -1677,7 +1675,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     id className = [cdr car];
-    id body = Nu__null;
+    id body;
     #if defined(__x86_64__) || defined(IPHONE)
     Class newClass = nil;
     #endif
@@ -2092,10 +2090,10 @@ id evaluatedArguments(id cdr, NSMutableDictionary *context)
 
 void load_builtins(NuSymbolTable *symbolTable)
 {
-    [(NuSymbol *) [[symbolTable symbolWithCString:"t"] retain] setValue:[symbolTable symbolWithCString:"t"]];
-    [(NuSymbol *) [[symbolTable symbolWithCString:"nil"] retain] setValue:Nu__null];
-    [(NuSymbol *) [[symbolTable symbolWithCString:"YES"] retain] setValue:[NSNumber numberWithInt:1]];
-    [(NuSymbol *) [[symbolTable symbolWithCString:"NO"] retain] setValue:[NSNumber numberWithInt:0]];
+    [(NuSymbol *) [symbolTable symbolWithCString:"t"] setValue:[symbolTable symbolWithCString:"t"]];
+    [(NuSymbol *) [symbolTable symbolWithCString:"nil"] setValue:Nu__null];
+    [(NuSymbol *) [symbolTable symbolWithCString:"YES"] setValue:[NSNumber numberWithInt:1]];
+    [(NuSymbol *) [symbolTable symbolWithCString:"NO"] setValue:[NSNumber numberWithInt:0]];
 
     install("car",      Nu_car_operator);
     install("cdr",      Nu_cdr_operator);

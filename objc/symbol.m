@@ -285,7 +285,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 {
     [super init];
     [self autorelease];
-    return [[NuSymbolTable sharedSymbolTable] symbolWithString:[coder decodeObject]];
+    return [[[NuSymbolTable sharedSymbolTable] symbolWithString:[coder decodeObject]] retain];
 }
 
 @end
