@@ -277,7 +277,7 @@ extern char *nu_parsedFilename(int i);
     return self;
 }
 
-- (id) eachPair:(NuBlock *) block
+- (id) eachPair:(id) block
 {
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
@@ -294,7 +294,7 @@ extern char *nu_parsedFilename(int i);
     return self;
 }
 
-- (id) eachWithIndex:(NuBlock *) block
+- (id) eachWithIndex:(id) block
 {
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
@@ -313,7 +313,7 @@ extern char *nu_parsedFilename(int i);
     return self;
 }
 
-- (id) select:(NuBlock *) block
+- (id) select:(id) block
 {
     NuCell *parent = [[NuCell alloc] init];
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
@@ -338,7 +338,7 @@ extern char *nu_parsedFilename(int i);
     return selected;
 }
 
-- (id) find:(NuBlock *) block
+- (id) find:(id) block
 {
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         id args = [[NuCell alloc] init];
@@ -357,7 +357,7 @@ extern char *nu_parsedFilename(int i);
     return Nu__null;
 }
 
-- (id) map:(NuBlock *) block
+- (id) map:(id) block
 {
     NuCell *parent = [[NuCell alloc] init];
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
@@ -399,7 +399,7 @@ extern char *nu_parsedFilename(int i);
     return result;
 }
 
-- (id) reduce:(NuBlock *) block from:(id) initial
+- (id) reduce:(id) block from:(id) initial
 {
     id result = initial;
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
