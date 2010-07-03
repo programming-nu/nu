@@ -23,7 +23,9 @@ limitations under the License.
 #ifndef IPHONE
 #undef __OBJC2__
 #endif
+#ifdef DARWIN
 #define LEOPARD_OBJC2
+#endif
 
 #include <stdlib.h>
 #include <stdint.h>

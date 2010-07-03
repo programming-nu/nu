@@ -512,6 +512,10 @@ extern id Nu__null;
     return [self stringByReplacingString:before withString:after];
 }
 
++ (NSString *) stringWithContentsOfFile:(NSString *) filePath encoding:(NSStringEncoding) encoding error:(NSError **) error
+{
+    return [NSString stringWithContentsOfFile:filePath];
+}
 #endif
 
 - (id) each:(id) block
@@ -760,10 +764,13 @@ extern id Nu__null;
 {
     if (filename == Nu__null) return nil;
 	NSError *error;
+#ifdef DARWIN
     NSDictionary *attributes = [[NSFileManager defaultManager] 
 								attributesOfItemAtPath:[filename stringByExpandingTildeInPath]
 								error:&error];
-								// was fileAttributesAtPath:[filename stringByExpandingTildeInPath] traverseLink:YES];
+#else
+    NSDictionary *attributes = [[NSFileManager defaultManager] fileAttributesAtPath:[filename stringByExpandingTildeInPath] traverseLink:YES];
+#endif
     return [attributes valueForKey:NSFileModificationDate];
 }
 
