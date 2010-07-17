@@ -43,7 +43,6 @@ limitations under the License.
 #import <Nu/profiler.h>
 #import <Nu/reference.h>
 #import <Nu/regex.h>
-#import <Nu/st.h>
 #import <Nu/stack.h>
 #import <Nu/super.h>
 #import <Nu/symbol.h>
