@@ -212,6 +212,7 @@ END)
           ;; copy the headers
           (SH "sudo rm -rf #{@installprefix}/include/Nu")
           (SH "sudo cp -rp include/Nu #{@installprefix}/include")
+          (SH "sudo cp -rp objc/*.h #{@installprefix}/include/Nu")
 	  (SH "sudo cp -rp nu/ #{@installprefix}/share/libNu"))
       (SH "sudo mkdir -p #{@installprefix}/share")
       (SH "sudo rm -rf #{@installprefix}/share/nu")
