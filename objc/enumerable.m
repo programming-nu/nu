@@ -142,6 +142,26 @@ limitations under the License.
     return results;
 }
 
+- (NSArray *) mapWithIndex:(id) callable
+{
+    NSMutableArray *results = [NSMutableArray array];
+    id args = [[NuCell alloc] init];
+    [args setCdr:[[[NuCell alloc] init] autorelease]];
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
+        NSEnumerator *enumerator = [self objectEnumerator];
+        id object;
+        int i = 0;
+        while ((object = [enumerator nextObject])) {
+            [args setCar:object];
+            [[args cdr] setCar:[NSNumber numberWithInt:i]];
+            [results addObject:[callable evalWithArguments:args context:nil]];
+            i++;
+        }
+    }
+    [args release];
+    return results;
+}
+
 - (NSArray *) mapSelector:(SEL) sel
 {
     NSMutableArray *results = [NSMutableArray array];

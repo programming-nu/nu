@@ -10,7 +10,7 @@
         ((array 100 200 300) each:
          (do (n) (set sum (+ sum n))))
         (assert_equal 600 sum)
-	(set sum "")
+        (set sum "")
         (function append-to-sum (x) (set sum (+ sum x)))
         ((array 100 200 300) each:append-to-sum)
         (assert_equal "100200300" sum))
@@ -53,6 +53,14 @@
         (set wanted (array /the girl/ /from ipanema/))
         (assert_equal wanted regexen))
      
+     (- testMapWithIndex is
+        (set result ((array 0 100 200 300) mapWithIndex:
+                     (do (n i) (+ n i))))
+        (assert_equal 0 (result 0))
+        (assert_equal 101 (result 1))
+        (assert_equal 202 (result 2))
+        (assert_equal 303 (result 3)))
+     
      (- testReduce is
         (set testArray (array 100 200 300))
         (set reduction
@@ -70,14 +78,14 @@
         (assert_equal r (testArray reduceLeft:- from:600)))
      
      (- testEachInReverse is
-         (set title "")
-         ((array "the" "girl" "from" "ipanema") eachInReverse:
-          (do (n) (set title (+ title n))))
-         (assert_equal title "ipanemafromgirlthe")
-	 (set sum "")
-         (function append-to-sum (x) (set sum (+ sum x)))
-         ((array 100 200 300) eachInReverse:append-to-sum)
-         (assert_equal "300200100" sum))
+        (set title "")
+        ((array "the" "girl" "from" "ipanema") eachInReverse:
+         (do (n) (set title (+ title n))))
+        (assert_equal title "ipanemafromgirlthe")
+        (set sum "")
+        (function append-to-sum (x) (set sum (+ sum x)))
+        ((array 100 200 300) eachInReverse:append-to-sum)
+        (assert_equal "300200100" sum))
      
      (- testMapSelector is
         (assert_equal 3 ((((array 100 200 300) mapSelector:"stringValue") 1) length))))
