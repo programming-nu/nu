@@ -95,7 +95,7 @@ extern id Nu__null;
             return [self objectAtIndex:mm];
         }
         else {
-            return nil;
+            return Nu__null;
         }
     }
     else {
@@ -222,14 +222,16 @@ extern id Nu__null;
     if (cursor && (cursor != Nu__null)) {
         // if the method is a label, use its value as the key.
         if ([[cursor car] isKindOfClass:[NuSymbol class]] && ([[cursor car] isLabel])) {
-            return [self objectForKey:[[cursor car] labelName]];
+            id result = [self objectForKey:[[cursor car] labelName]];
+			return result ? result : Nu__null;
         }
         else {
-            return [self objectForKey:[[cursor car] evalWithContext:context]];
+            id result = [self objectForKey:[[cursor car] evalWithContext:context]];
+			return result ? result : Nu__null;
         }
     }
     else {
-        return nil;
+        return Nu__null;
     }
 }
 
@@ -1036,7 +1038,7 @@ const char *stringValue(id object)
                 id variableName1 = [firstArgument substringWithRange:NSMakeRange(4, [firstArgument length] - 5)];
                 [self setValue:[[[message cdr] car] evalWithContext:context]
                     forIvar:[NSString stringWithFormat:@"%@%@", variableName0, variableName1]];
-                return nil;
+                return Nu__null;
             }
             @catch (id error) {
                 return [super handleUnknownMessage:message withContext:context];
@@ -1049,7 +1051,7 @@ const char *stringValue(id object)
     else {
         return [super handleUnknownMessage:message withContext:context];
     }
-    return nil;
+    return Nu__null;
 }
 
 @end
