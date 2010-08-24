@@ -88,6 +88,19 @@ limitations under the License.
     return self;
 }
 
+- (NSArray *) select
+{
+    NSMutableArray *selected = [NSMutableArray array];
+    NSEnumerator *enumerator = [self objectEnumerator];
+    id object;
+    while ((object = [enumerator nextObject])) {
+        if (nu_valueIsTrue(object)) {
+            [selected addObject:object];
+        }
+    }
+    return selected;
+}
+
 - (NSArray *) select:(NuBlock *) block
 {
     NSMutableArray *selected = [NSMutableArray array];

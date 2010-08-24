@@ -26,7 +26,10 @@
              ((array 100 200 300) select:(do (n) (> n 150))))
         (assert_equal 2 (selection count))
         (assert_equal 200 (selection objectAtIndex:0))
-        (assert_equal 300 (selection objectAtIndex:1)))
+        (assert_equal 300 (selection objectAtIndex:1))
+        (set a (array 1 2 3 nil 4 5 6 nil 7 8 nil))
+        (assert_equal 11 (a count))
+        (assert_equal 8 ((a select) count)))
      
      (- testSelectWithInteger is
         (set selection
