@@ -71,7 +71,6 @@
 		228308CC11DE5F0100A5C690 /* testhelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 228308AC11DE5F0100A5C690 /* testhelper.m */; };
 		22A292B411DE6E18008B1084 /* main.nu in Resources */ = {isa = PBXBuildFile; fileRef = 2283091911DE6B7800A5C690 /* main.nu */; };
 		22A2932E11DE8450008B1084 /* handlers.m in Sources */ = {isa = PBXBuildFile; fileRef = 22A2932D11DE8450008B1084 /* handlers.m */; };
-		22E7304911AB5E210014052A /* ApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E7304711AB5E210014052A /* ApplicationDelegate.m */; };
 		22E7304A11AB5E210014052A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E7304811AB5E210014052A /* main.m */; };
 /* End PBXBuildFile section */
 
@@ -189,8 +188,6 @@
 		2283091911DE6B7800A5C690 /* main.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.nu; sourceTree = "<group>"; };
 		22A2932D11DE8450008B1084 /* handlers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = handlers.m; path = ../../util/handlers.m; sourceTree = "<group>"; };
 		22B4F2E311DEBD53009C693F /* main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = main.h; sourceTree = "<group>"; };
-		22E7304611AB5E210014052A /* ApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationDelegate.h; sourceTree = "<group>"; };
-		22E7304711AB5E210014052A /* ApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationDelegate.m; sourceTree = "<group>"; };
 		22E7304811AB5E210014052A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -365,8 +362,6 @@
 		22E7304511AB5E210014052A /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				22E7304611AB5E210014052A /* ApplicationDelegate.h */,
-				22E7304711AB5E210014052A /* ApplicationDelegate.m */,
 				22E7304811AB5E210014052A /* main.m */,
 			);
 			path = Main;
@@ -451,7 +446,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22E7304911AB5E210014052A /* ApplicationDelegate.m in Sources */,
 				22E7304A11AB5E210014052A /* main.m in Sources */,
 				228307E011DE5E4F00A5C690 /* ffi-iphone.c in Sources */,
 				228307E111DE5E4F00A5C690 /* ffi-iphonesimulator.c in Sources */,
