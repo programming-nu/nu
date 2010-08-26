@@ -458,7 +458,7 @@
      (unless @creator_code (set @creator_code "????"))
      (set application_pkginfo "#{@application_contents_dir}/PkgInfo")
      (file application_pkginfo => @application_contents_dir is
-           (SH "echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
+           (SH "/bin/echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
      
      (task "application" => @application_executable_name "application_resources" application_infoplist application_pkginfo)
      
@@ -749,7 +749,7 @@ END)
      (unless @bundle_creator_code (set @bundle_creator_code "????"))
      (set bundle_pkginfo "#{@bundle_contents_dir}/PkgInfo")
      (file bundle_pkginfo => @bundle_contents_dir is
-           (SH "echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
+           (SH "/bin/echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
      
      (task "bundle" => @bundle_executable_name "bundle_resources" bundle_infoplist bundle_pkginfo)
      
