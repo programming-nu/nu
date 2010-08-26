@@ -28,6 +28,7 @@
 
 #include "ffi.h"
 #include "ffi_common.h"
+#include <alloca.h>
 
 #if !FFI_NO_RAW_API
 

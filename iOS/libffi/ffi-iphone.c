@@ -1,6 +1,9 @@
 #include "TargetConditionals.h"
 #if !TARGET_IPHONE_SIMULATOR
 
+#ifdef __arm__
+extern void __clear_cache (void *beg, void *end);
+#endif 
 
 /* -----------------------------------------------------------------------
    ffi.c - Copyright (c) 1998, 2008  Red Hat, Inc.
