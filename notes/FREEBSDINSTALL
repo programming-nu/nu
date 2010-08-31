@@ -9,9 +9,7 @@ pkg_add -r wget bash perl git libxml2 libxslt gnutls sudo gmake libxslt gnutls
 
 # In order to get the environment right, it's helpful to have bash as your shell.
 
-chsh
-
-# ... and edit the line that starts "Shell:" to read "Shell: /usr/local/bin/bash".
+chsh -s bash
 
 
 # Install libffi.
