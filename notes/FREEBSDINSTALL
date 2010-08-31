@@ -48,12 +48,13 @@ tar -xvf gnustep-base-1.19.2.tar
 cd gnustep-base-1.19.2
 
 
-# Fix up environment variables for GNUstep.
+# Fix up environment variables for GNUstep.  You will need to do this separately
+# for each user who will be using Nu.
 # These are the default GNUstep install paths. If you want, you can change 
 # them in the configure steps above.
-echo >> .bashrc "export GNUSTEP_MAKEFILES=/usr/GNUstep/System/Makefiles"
-echo >> .bashrc "export GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System"
-echo >> .bashrc ". $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh"
+echo >> ~/.bashrc "export GNUSTEP_MAKEFILES=/usr/GNUstep/System/Makefiles"
+echo >> ~/.bashrc "export GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System"
+echo >> ~/.bashrc ". $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh"
 
 # Start a new bash to make use of those environment variables.
 bash
