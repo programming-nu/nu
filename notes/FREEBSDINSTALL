@@ -111,5 +111,5 @@ nuke install
 cp libNu.so /usr/local/lib
 cp nush /usr/local/bin
 
-# Now (optionally) you can run 'nuke test' now to test your installation.
+# Now (optionally!) you can run 'nuke test' now to test your installation.
 nuke test
