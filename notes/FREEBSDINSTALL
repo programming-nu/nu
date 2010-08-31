@@ -47,13 +47,16 @@ gunzip gnustep-base-1.19.2.tar.gz
 tar -xvf gnustep-base-1.19.2.tar
 cd gnustep-base-1.19.2
 
-# these are the default GNUstep install paths. You can change them in 
-# the configure steps above.
-# You should run the following three commands AND add them to ~/.bashrc, 
-# so that the environment will be right on future logins.
-export GNUSTEP_MAKEFILES=/usr/GNUstep/System/Makefiles
-export GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System
-. $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh
+
+# Fix up environment variables for GNUstep.
+# These are the default GNUstep install paths. If you want, you can change 
+# them in the configure steps above.
+echo >> .bashrc "export GNUSTEP_MAKEFILES=/usr/GNUstep/System/Makefiles"
+echo >> .bashrc "export GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System"
+echo >> .bashrc ". $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh"
+
+# Start a new bash to make use of those environment variables.
+bash
 
 
 ./configure --enable-libffi --enable-fake-main
@@ -108,4 +111,5 @@ nuke install
 cp libNu.so /usr/local/lib
 cp nush /usr/local/bin
 
-# You can run 'nuke test' now to test your installation.
+# Now (optionally) you can run 'nuke test' now to test your installation.
+nuke test
