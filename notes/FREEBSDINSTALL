@@ -55,10 +55,26 @@ export GNUSTEP_MAKEFILES=/usr/GNUstep/System/Makefiles
 export GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System
 . $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh
 
+
 ./configure --enable-libffi --enable-fake-main
 gmake
 gmake install
 cd ..
+
+# 'gnustep-config --objc-flags' should look something like this on FreeBSD:
+#
+# -MMD -MP -DGNUSTEP -DGNUSTEP_BASE_LIBRARY=1 -DGNU_RUNTIME=1 -DGNUSTEP_BASE_LIBRARY=1 
+# -D_REENTRANT -pthread -fPIC -g -Wall -DDEBUG -fno-omit-frame-pointer -DGSWARN 
+# -DGSDIAGNOSE -Wno-import -g -fno-strict-aliasing -fexceptions -fobjc-exceptions 
+# -D_NATIVE_OBJC_EXCEPTIONS -fgnu-runtime -fconstant-string-class=NSConstantString 
+# -I. -I/usr/local/include -I/usr/GNUstep/Local/Library/Headers 
+# -I/usr/GNUstep/System/Library/Headers
+
+# 'gnustep-config --base-libs' should look something like this on FreeBSD:
+# -rdynamic -pthread -shared-libgcc -fexceptions -fgnu-runtime 
+# -L/usr/GNUstep/Local/Library/Libraries -L/usr/GNUstep/System/Library/Libraries 
+# -L/usr/local/lib -lgnustep-base -pthread -lobjc -lm
+
 
 # pcre
 wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.9.tar.gz
@@ -70,22 +86,6 @@ cd pcre-7.9
 make
 make install
 cd ..
-
-
-# 'gnustep-config --objc-flags' should look something like this on FreeBSD:
-#
-# -MMD -MP -DGNUSTEP -DGNUSTEP_BASE_LIBRARY=1 -DGNU_RUNTIME=1 -DGNUSTEP_BASE_LIBRARY=1 
-# -D_REENTRANT -pthread -fPIC -g -Wall -DDEBUG -fno-omit-frame-pointer -DGSWARN 
-# -DGSDIAGNOSE -Wno-import -g -fno-strict-aliasing -fexceptions -fobjc-exceptions 
-# -D_NATIVE_OBJC_EXCEPTIONS -fgnu-runtime -fconstant-string-class=NSConstantString 
-# -I. -I/usr/local/include -I/usr/GNUstep/Local/Library/Headers 
-# -I/usr/GNUstep/System/Library/Headers
-
-
-# 'gnustep-config --base-libs' should look something like this on FreeBSD:
-# -rdynamic -pthread -shared-libgcc -fexceptions -fgnu-runtime 
-# -L/usr/GNUstep/Local/Library/Libraries -L/usr/GNUstep/System/Library/Libraries 
-# -L/usr/local/lib -lgnustep-base -pthread -lobjc -lm
 
 
 # Now build Nu
