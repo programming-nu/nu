@@ -62,7 +62,7 @@ cd ..
 
 # pcre
 wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.9.tar.gz
-uncompress pcre-7.9.tar.gz
+gunzip pcre-7.9.tar.gz
 tar -xvf pcre-7.9.tar
 cd pcre-7.9
 
