@@ -198,6 +198,23 @@
         (NSPropertyListSerialization propertyListFromData:(NSData dataWithContentsOfFile:name)
              mutabilityOption:0 ;; NSPropertyListImmutable
              format:nil
+             errorDescription:nil))
+     
+     (- XMLPropertyListRepresentation is
+        (NSPropertyListSerialization dataFromPropertyList:self
+             format:100 ;; NSPropertyListXMLFormat_v1_0
+             errorDescription:(set error (NuReference new))))
+     
+     (- binaryPropertyListRepresentation is
+        (NSPropertyListSerialization dataFromPropertyList:self
+             format:200 ;; NSPropertyListBinaryFormat_v1_0
+             errorDescription:(set error (NuReference new)))))
+
+(class NSData
+     (- propertyListValue is
+        (NSPropertyListSerialization propertyListFromData:self
+             mutabilityOption:0 ;; NSPropertyListImmutable
+             format:nil
              errorDescription:nil)))
 
 (if (eq (uname) "Darwin")
