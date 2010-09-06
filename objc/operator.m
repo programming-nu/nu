@@ -2106,6 +2106,7 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("eq",       Nu_eq_operator);
     install("==",       Nu_eq_operator);
+    install("ne",       Nu_neq_operator);
     install("!=",       Nu_neq_operator);
 
     install("cons",     Nu_cons_operator);
