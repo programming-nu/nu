@@ -1,15 +1,20 @@
-# FreeBSD 7.1
+# Installing Nu on FreeBSD 8.
 
-# This assumes you already have a development environment installed
-#  (gcc, git, etc.)
-#
-# You can use portsnap and the distributions under /usr/ports
-# to install the various tools.
+# If you're installing in (in? on? into? onto?) a fresh copy of FreeBSD, 
+# there are a few packages you'll need first.
+# And even if your FreeBSD is not fresh, the following should do no harm.
 
-# You'll need to do most 'make install' steps with sudo if you don't
+pkg_add -r wget bash perl git libxml2 libxslt gnutls sudo gmake libxslt gnutls
+
+
+# In order to get the environment right, it's helpful to have bash as your shell.
+
+chsh -s bash
+
+
+# Install libffi.
+# You'll need to do this and other 'make install' steps with sudo if you don't
 # have permissions to write into the /usr/local tree.
-
-# install libffi
 wget ftp://sourceware.org:/pub/libffi/libffi-3.0.8.tar.gz
 gunzip libffi-3.0.8.tar.gz
 tar -xvf libffi-3.0.8.tar
@@ -42,29 +47,23 @@ gunzip gnustep-base-1.19.2.tar.gz
 tar -xvf gnustep-base-1.19.2.tar
 cd gnustep-base-1.19.2
 
-# these are the default GNUstep install paths. You can change them in 
-# the configure steps above.
-export GNUSTEP_MAKEFILES=/usr/GNUstep/System/Makefiles
-export GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System
 
-. $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh
+# Fix up environment variables for GNUstep.  You will need to do this separately
+# for each user who will be using Nu.
+# These are the default GNUstep install paths. If you want, you can change 
+# them in the configure steps above.
+echo >> ~/.bashrc "export GNUSTEP_MAKEFILES=/usr/GNUstep/System/Makefiles"
+echo >> ~/.bashrc "export GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System"
+echo >> ~/.bashrc ". $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh"
+
+# Start a new bash to make use of those environment variables.
+bash
+
 
 ./configure --enable-libffi --enable-fake-main
 gmake
 gmake install
 cd ..
-
-# pcre
-wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.9.tar.gz
-uncompress pcre-7.9.tar.gz
-tar -xvf pcre-7.9.tar
-cd pcre-7.9
-
-./configure --disable-dependency-tracking --enable-utf8
-make
-make install
-cd ..
-
 
 # 'gnustep-config --objc-flags' should look something like this on FreeBSD:
 #
@@ -75,11 +74,22 @@ cd ..
 # -I. -I/usr/local/include -I/usr/GNUstep/Local/Library/Headers 
 # -I/usr/GNUstep/System/Library/Headers
 
-
 # 'gnustep-config --base-libs' should look something like this on FreeBSD:
 # -rdynamic -pthread -shared-libgcc -fexceptions -fgnu-runtime 
 # -L/usr/GNUstep/Local/Library/Libraries -L/usr/GNUstep/System/Library/Libraries 
 # -L/usr/local/lib -lgnustep-base -pthread -lobjc -lm
+
+
+# pcre
+wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.9.tar.gz
+gunzip pcre-7.9.tar.gz
+tar -xvf pcre-7.9.tar
+cd pcre-7.9
+
+./configure --disable-dependency-tracking --enable-utf8
+make
+make install
+cd ..
 
 
 # Now build Nu
@@ -102,6 +112,5 @@ nuke install
 cp libNu.so /usr/local/lib
 cp nush /usr/local/bin
 
-# You can run 'nuke test' now to test your installation.
-
-
+# Now (optionally!) you can run 'nuke test' now to test your installation.
+nuke test

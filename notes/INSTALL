@@ -1,8 +1,11 @@
 INSTALLING NU
 =============
 
-First of all, if you're installed Nu previously using a package manager (e.g. Fink, MacPorts), 
-use the package manager to uninstall the old version.
+These are the instructions for installing Nu on a Macintosh.  See the other files
+in this directory for other operating systems.
+
+If you're installed Nu previously using a package manager (e.g. Fink, MacPorts), 
+start by using the package manager to uninstall the old version.
 
 BUILD THE PREREQUISITES
 -----------------------
