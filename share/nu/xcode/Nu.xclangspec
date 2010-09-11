@@ -37,7 +37,6 @@
             IncludeRules = (        // processed in order
                 "xcode.lang.nu.comment.singleline",
                 "xcode.lang.string",
-                "xcode.lang.character",
                 "xcode.lang.number",
                 "xcode.lang.nu.keyword",
                 "xcode.lang.nu.sexp"
@@ -56,7 +55,6 @@
             IncludeRules = (        // processed in order
                 "xcode.lang.nu.comment.singleline",
                 "xcode.lang.string",
-                "xcode.lang.character",
                 "xcode.lang.number",
                 "xcode.lang.nu.keyword",
                 "xcode.lang.nu.sexp"
