@@ -23,6 +23,7 @@ limitations under the License.
 #import "dtrace.h"
 #import "object.h"
 #import "objc_runtime.h"
+#import "exception.h"
 
 @implementation NuCell
 
@@ -233,9 +234,29 @@ limitations under the License.
 
 extern char *nu_parsedFilename(int i);
 
+
+- (void) addToException:(NuException*)e value:(id)value
+{
+	char* parsedFilename = nu_parsedFilename(self->file);
+
+	if (parsedFilename) 
+    {
+		NSString* filename = [NSString stringWithCString:parsedFilename encoding:NSUTF8StringEncoding];
+		[e addFunction:value lineNumber:[self line] filename:filename];
+	}
+	else 
+    {
+		[e addFunction:value lineNumber:[self line]];
+	}
+}
+
 - (id) evalWithContext:(NSMutableDictionary *)context
 {
-    id value = [car evalWithContext:context];
+    id value = nil;
+    id result = nil;
+
+    @try {
+        value = [car evalWithContext:context];
 
     #ifdef DARWIN
     if (NU_LIST_EVAL_BEGIN_ENABLED()) {
@@ -247,7 +268,7 @@ extern char *nu_parsedFilename(int i);
         }
     }
     #endif
-    id result = [value evalWithArguments:cdr context:context];
+    result = [value evalWithArguments:cdr context:context];
 
     #ifdef DARWIN
     if (NU_LIST_EVAL_END_ENABLED()) {
@@ -259,6 +280,28 @@ extern char *nu_parsedFilename(int i);
         }
     }
     #endif
+    }
+    @catch (NuException* nuException) {
+        [self addToException:nuException value:[car stringValue]];
+        @throw nuException;
+    } 
+    @catch (NSException* e) {
+        if (   nu_objectIsKindOfClass(e, [NuBreakException class])
+            || nu_objectIsKindOfClass(e, [NuContinueException class])
+            || nu_objectIsKindOfClass(e, [NuReturnException class]))
+        {
+            @throw e;
+        }
+        else
+        {
+            NuException* nuException = [[NuException alloc] initWithName:[e name]
+                                                                  reason:[e reason]
+                                                                userInfo:[e userInfo]];
+            [self addToException:nuException value:[car stringValue]];
+            @throw nuException;
+        }
+    }
+
     return result;
 }
 

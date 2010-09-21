@@ -24,6 +24,7 @@ limitations under the License.
 #import "symbol.h"
 #import "extensions.h"
 #import "regex.h"
+#import "exception.h"
 
 #define PARSE_NORMAL     0
 #define PARSE_COMMENT    1
@@ -1014,6 +1015,11 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
             {
                 progn = [[self parse:[NSString stringWithCString:line encoding:NSUTF8StringEncoding]] retain];
             }
+			@catch (NuException* nuException)
+            {
+                printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
+                [self reset];
+            }
             @catch (id exception)
             {
                 printf("%s: %s\n",
@@ -1042,6 +1048,10 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                                 }
                                 printf("%s\n", [stringToDisplay cStringUsingEncoding:NSUTF8StringEncoding]);
                             }
+                        }
+                        @catch (NuException* nuException)
+                        {
+                            printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
                         }
                         @catch (id exception)
                         {

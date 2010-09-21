@@ -44,3 +44,4 @@ limitations under the License.
 #import <Nu/super.h>
 #import <Nu/symbol.h>
 #import <Nu/version.h>
+#import <Nu/exception.h>

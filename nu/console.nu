@@ -351,10 +351,14 @@
                                       (self write:"\n"))
                               (catch (exception)
                                      ;; don't use string interpolation here, it calls the parser again
-                                     (self write:(exception name))
-                                     (self write:": ")
-                                     (self write:(exception reason))
-                                     (self write:("\n"))
+                                     (if (exception isKindOfClass:(NuException class))
+                                        (then (set result (exception dumpExcludingTopLevelCount:4))) ; leave off the console stack
+                                        (else (set result (exception dump))))
+                                     (self write:result)
+                                     ;(self write:(exception name))
+                                     ;(self write:": ")
+                                     ;(self write:(exception reason))
+                                     ;(self write:("\n"))
                                      (@parser reset)
                                      (set @insertionPoint @startOfInput))))
                      (else
