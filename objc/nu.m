@@ -195,7 +195,11 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 [parser interact];
 #endif
             [parser release];
+
+#ifndef FREEBSD
+            // FreeBSD infinite loop on emptyPool/dealloc
             [pool release];
+#endif
             return 0;
         }
         // if there's no file, run at the terminal
@@ -231,10 +235,6 @@ int NuMain(int argc, const char *argv[], const char *envp[])
     {
         NSLog(@"Terminating due to uncaught exception (below):");
         NSLog(@"%@: %@", [exception name], [exception reason]);
-    }
-    @catch (...)
-    {
-        printf("Warning: Caught an unexpected object in NuMain\n");
     }
 
     #ifdef GNUSTEP
