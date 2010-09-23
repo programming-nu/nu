@@ -66,7 +66,6 @@ extern const char *nu_parsedFilename(int i)
 - (NuStack *) opens;
 - (NSString *) stringValue;
 - (const char *) cStringUsingEncoding:(NSStringEncoding) encoding;
-- (void) reset;
 - (id) init;
 - (void) openList;
 - (void) closeList;

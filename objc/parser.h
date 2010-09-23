@@ -81,6 +81,9 @@ limitations under the License.
     invocation of the parse: method.
 */
 - (BOOL) incomplete;
+/*! Reset the parse set after an error */
+- (void) reset;
+
 #ifndef IPHONE
 /*! Run a parser interactively at the console (Terminal.app). */
 - (int) interact;
