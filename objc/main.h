@@ -20,7 +20,7 @@ limitations under the License.
 */
 #import <Foundation/Foundation.h>
 
-@protocol NuParsing
+@protocol NuParsing <NSObject>
 /*! Parse a string into a list of objects that can be evaluated. */
 - (id) parse:(NSString *)string;
 /*! Evaluate a parsed code structure in the parser's context. */
