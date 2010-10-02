@@ -23,10 +23,17 @@
 ;; main program
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(set $willThrow nil)
 (set argv ((NuApplication sharedApplication) arguments))
 
 (if (> (argv count) 0)
     (then
+        (if (argv containsObject:"-t")
+          (then
+            (set $willThrow t)
+            (argv removeObjectAtIndex:(argv indexOfObject:"-t"))
+          )
+        )
          (if (eq (argv 0) "-v")
              (then
                   (system "nush -v"))
@@ -38,3 +45,5 @@
                   (NuTestCase runAllTests))))
     (else
          (puts "usage: nutest <sourcefile>")))
+         
+(if (and (eq $willThrow t) (or (!= $failures 0) (!= $errors 0))) (then (throw 1)))
