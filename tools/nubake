@@ -20,13 +20,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-(class NSString
-     ;; Output a string as an array of ints. This way we don't have to worry about escaping special characters.
-     ;; Beware -- this does not correctly handle UTF-8. You will get compilation warnings for characters that are out-of-range.
-     (- characterArray is
-        (set result "(const char[]){")
+(class NSData
+     (- byteArray is
+        (set result "(const unsigned char[]){")
         ((self length) times:
-         (do (i) (result appendString:"#{(self characterAtIndex:i)},")))
+         (do (i) (result appendString:(+ "" (self byteAtIndex:i) ","))))
         (result appendString:"0}")
         result))
 
@@ -42,21 +40,28 @@
         (cond ((eq node nil)
                (result appendString:"_nunull()"))
               ((node isKindOfClass:NuCell)
-               (result appendString:(+ "_nucell(" (self expandNuExpression:(node car)) ",\n" (self expandNuExpression:(node cdr)) ")")))
+               (result appendString:(+ "_nucell("
+                                       (self expandNuExpression:(node car)) ",\n"
+                                       (self expandNuExpression:(node cdr)) ")")))
               ((node isKindOfClass:NuSymbol)
-               (result appendString:"_nusymbol(#{((node stringValue) characterArray)})"))
+               (set data ((node stringValue) dataUsingEncoding:NSUTF8StringEncoding))
+               (result appendString:"_nusymbol_with_length(#{(data byteArray)}, #{(data length)})"))
               ((node isKindOfClass:NSString)
-               (result appendString:"_nustring(#{(node characterArray)})"))
+               (set data (node dataUsingEncoding:NSUTF8StringEncoding))
+               (result appendString:"_nustring_with_length(#{(data byteArray)}, #{(data length)})"))
               ((node isKindOfClass:NSNumber)
                (result appendString:"_nunumberd(#{node})"))
               ((node isKindOfClass:NuRegex)
-               (result appendString:"_nuregex(#{((node pattern) characterArray)}, #{(node options)})"))
+               (set data ((node pattern) dataUsingEncoding:NSUTF8StringEncoding))
+               (result appendString:"_nuregex_with_length(#{(data byteArray)}, #{(data length)}, #{(node options)})"))
               (else (result appendString:"[ERROR]")))
         result)
      
      ;; Generate an Objective-C source file from parsed Nu source code.
-     ;; The file will a function named 'functionName' that when called, will construct a code tree that is identical to the specified program.
-     ;; If 'standalone' is true, a 'main()' function will be included to allow the file to be compiled, linked, and run standalone.
+     ;; The file will a function named 'functionName' that when called,
+     ;; will construct a code tree that is identical to the specified program.
+     ;; If 'standalone' is true, a 'main()' function will be included to allow
+     ;; the file to be compiled, linked, and run standalone.
      (+ (id) bakeNuCode:(id)program intoFunction:(id)functionName standalone:(int)standalone is
         (set result <<-END
 #import <Foundation/Foundation.h>
@@ -118,7 +123,8 @@ END))
          (unless outputFileName
                  (set outputFileName (+ (sourceFileName stringByDeletingPathExtension) ".m")))
          (try
-             ((NuBake bakeNuCode:(parse (NSString stringWithContentsOfFile:sourceFileName))
+             ((NuBake bakeNuCode:(parse (NSString stringWithContentsOfFile:sourceFileName
+                                             encoding:NSUTF8StringEncoding error:nil))
                       intoFunction:functionName
                       standalone:standalone)
               writeToFile:outputFileName atomically:NO)

@@ -55,7 +55,7 @@
           (set indentation_stack ((NuStack alloc) init))
           (indentation_stack push:0)
           
-          (set pattern /\(def|\(macro|\(function|\(class|\(imethod|\(cmethod/)
+          (set pattern /\(def|\(macro|\(function|\(class|\(imethod|\(cmethod|\(&/)
           
           (set nube-parser ((NuParser alloc) init))
           (set @olddepth 0)

@@ -326,9 +326,25 @@ id _nustring(const char *string)
     return [NSString stringWithCString:string encoding:NSUTF8StringEncoding];
 }
 
+id _nustring_with_length(const char *string, int length)
+{
+	NSData *data = [NSData dataWithBytes:string length:length];
+	return [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+}
+
+id _nudata(const void *bytes, int length)
+{
+	return [NSData dataWithBytes:bytes length:length];
+}
+
 id _nusymbol(const char *string)
 {
     return [[NuSymbolTable sharedSymbolTable] symbolWithCString:string];
+}
+
+id _nusymbol_with_length(const char *string, int length)
+{
+	return [[NuSymbolTable sharedSymbolTable] symbolWithString:_nustring_with_length(string, length)];
 }
 
 id _nunumberd(double d)
@@ -344,6 +360,11 @@ id _nucell(id car, id cdr)
 id _nuregex(const char *pattern, int options)
 {
     return [NuRegex regexWithPattern:_nustring(pattern) options:options];
+}
+
+id _nuregex_with_length(const char *pattern, int length, int options)
+{
+    return [NuRegex regexWithPattern:_nustring_with_length(pattern, length) options:options];
 }
 
 id _nulist(id firstObject, ...)

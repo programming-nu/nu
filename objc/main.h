@@ -77,10 +77,13 @@ Used by bundle (aka framework) initializers.
 // Experimental. They may change or disappear in future releases.
 id _nunull();
 id _nustring(const char *string);
+id _nustring_with_length(const char *string, int length);
 id _nusymbol(const char *string);
+id _nusymbol_with_length(const char *string, int length);
 id _nunumberd(double d);
 id _nucell(id car, id cdr);
 id _nuregex(const char *pattern, int options);
+id _nuregex_with_length(const char *pattern, int length, int options);
 id _nulist(id firstObject,...);
 
 @protocol NuCell <NSObject>

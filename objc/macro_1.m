@@ -189,7 +189,7 @@ extern id Nu__null;
 	if (   ((pattern == nil) || (pattern == Nu__null)) 
 	    && (sequence != Nu__null)) {
         [NSException raise:@"NuDestructureException"
-            format:@"Attempt to match empty pattern to non-empty object"];
+            format:[NSString stringWithFormat:@"Attempt to match empty pattern to non-empty object %@", [self stringValue]]];
 	}
 	// ((not pat) nil)
 	else if ((pattern == nil) || (pattern == Nu__null)) {

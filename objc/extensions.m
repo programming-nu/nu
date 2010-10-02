@@ -556,6 +556,13 @@ extern id Nu__null;
 
 @implementation NSData(Nu)
 
+- (const unsigned char) byteAtIndex:(int) i 
+{
+	const unsigned char buffer[2];
+	[self getBytes:&buffer range:NSMakeRange(i,1)];
+	return buffer[0];
+}
+
 #ifndef IPHONE
 // Read the output of a shell command into an NSData object and return the object.
 + (NSData *) dataWithShellCommand:(NSString *) command
