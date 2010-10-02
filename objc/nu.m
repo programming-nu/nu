@@ -32,6 +32,8 @@ limitations under the License.
 #import "pcre.h"
 #endif
 
+#import "exception.h"
+
 #import "version.h"
 
 id Nu__null = 0;
@@ -88,6 +90,13 @@ void write_arguments(int argc, char *argv[])
     }
 }
 
+void NuMain_exceptionHandler(NSException* e)
+{
+    printf("%s\n", [[e dump] cStringUsingEncoding:NSUTF8StringEncoding]);
+    exit(1);
+}
+
+
 #ifdef DARWIN
 int NuMain(int argc, const char *argv[])
 #else
@@ -105,6 +114,16 @@ int NuMain(int argc, const char *argv[], const char *envp[])
 
     void NuInit();
     NuInit();
+
+#if 0
+    NSSetUncaughtExceptionHandler(&NuMain_exceptionHandler);
+    [[NSExceptionHandler defaultExceptionHandler] 
+        setExceptionHandlingMask:(    NSHandleUncaughtExceptionMask 
+                                    | NSHandleUncaughtSystemExceptionMask 
+                                    | NSHandleUncaughtRuntimeErrorMask 
+                                    | NSHandleTopLevelExceptionMask 
+                                    | NSHandleOtherExceptionMask)];
+#endif
 
     @try
     {
@@ -176,7 +195,11 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 [parser interact];
 #endif
             [parser release];
+
+#ifndef FREEBSD
+            // FreeBSD infinite loop on emptyPool/dealloc
             [pool release];
+#endif
             return 0;
         }
         // if there's no file, run at the terminal
@@ -204,6 +227,10 @@ int NuMain(int argc, const char *argv[], const char *envp[])
             }
         }
     }
+	@catch (NuException* nuException)
+    {
+        printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
+	}
     @catch (id exception)
     {
         NSLog(@"Terminating due to uncaught exception (below):");
