@@ -237,7 +237,7 @@ id regexWithString(NSString *string)
 - (void) reset
 {
     state = PARSE_NORMAL;
-    partial = [NSMutableString string];
+    [partial setString:@""];
     depth = 0;
     parens = 0;
 
@@ -277,6 +277,7 @@ id regexWithString(NSString *string)
     [context setPossiblyNullObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
     [context setPossiblyNullObject:symbolTable forKey:SYMBOLS_KEY];
 
+    partial = [[NSMutableString alloc] initWithString:@""];
 
     [self reset];
     return self;
@@ -298,6 +299,7 @@ id regexWithString(NSString *string)
     [comments release];
     [readerMacroStack release];
     [pattern release];
+    [partial release];
     [super dealloc];
 }
 
@@ -560,7 +562,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
 
     column = 0;
     if (state != PARSE_REGEX)
-        partial = [NSMutableString string];
+        [partial setString:@""];
     else
         [partial autorelease];
 
@@ -587,7 +589,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         if (parens < 0) parens = 0;
                         if ([partial length] > 0) {
                             [self addAtom:atomWithString(partial, symbolTable)];
-                            partial = [NSMutableString string];
+                            [partial setString:@""];
                         }
                         if (depth > 0) {
                             [self closeList];
@@ -600,7 +602,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     {
                         state = PARSE_STRING;
                         parseEscapes = YES;
-                        partial = [NSMutableString string];
+                        [partial setString:@""];
                         break;
                     }
                     case '-':
@@ -609,7 +611,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         if ((i+1 < imax) && ([string characterAtIndex:i+1] == '"')) {
                             state = PARSE_STRING;
                             parseEscapes = (stri == '+');
-                            partial = [NSMutableString string];
+                            [partial setString:@""];
                             i++;
                         }
                         else {
@@ -626,7 +628,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                             }
                             else {
                                 state = PARSE_REGEX;
-                                partial = [NSMutableString string];
+                                [partial setString:@""];
                                 [partial appendCharacter:'/'];
                             }
                         }
@@ -638,7 +640,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     case ':':
                         [partial appendCharacter:':'];
                         [self addAtom:atomWithString(partial, symbolTable)];
-                        partial = [NSMutableString string];
+                        [partial setString:@""];
                         break;
                     case '\'':
                     {
@@ -674,7 +676,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                                 if ([partial length] > 0) {
                                     isACharacterLiteral = true;
                                     characterLiteralValue = [partial characterAtIndex:0];
-                                    partial = [NSMutableString string];
+                                    [partial setString:@""];
                                     i = newi;
                                     // make sure that we have a closing single-quote
                                     if ((i + 1 < imax) && ([string characterAtIndex:i+1] == '\'')) {
@@ -718,7 +720,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                     case 0:                       // end of string
                         if ([partial length] > 0) {
                             [self addAtom:atomWithString(partial, symbolTable)];
-                            partial = [NSMutableString string];
+                            [partial setString:@""];
                         }
                         break;
                     case ';':
@@ -726,7 +728,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         if ([partial length] > 0) {
                             NuSymbol *symbol = [symbolTable symbolWithString:partial];
                             [self addAtom:symbol];
-                            partial = [NSMutableString string];
+                            [partial setString:@""];
                         }
                         state = PARSE_COMMENT;
                         break;
@@ -744,7 +746,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                             [pattern release];
                             pattern = [[string substringWithRange:NSMakeRange(i+3, j-(i+3))] retain];
                             //NSLog(@"herestring pattern: %@", pattern);
-                            partial = [NSMutableString string];
+                            [partial setString:@""];
                             // skip the newline
                             i = j;
                             //NSLog(@"parsing herestring that ends with %@ from %@", pattern, [string substringFromIndex:i]);
@@ -764,7 +766,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                 ([pattern isEqual:[string substringWithRange:NSMakeRange(i, [pattern length])]])) {
                     // everything up to here is the string
                     NSString *string = [[[NSString alloc] initWithString:partial] autorelease];
-                    partial = [NSMutableString string];
+                    [partial setString:@""];
                     if (!hereString)
                         hereString = [[[NSMutableString alloc] init] autorelease];
                     else
@@ -799,7 +801,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         NSString *string = [NSString stringWithString:partial];
                         //NSLog(@"parsed string:%@:", string);
                         [self addAtom:string];
-                        partial = [NSMutableString string];
+                        [partial setString:@""];
                         break;
                     }
                     case '\n':
@@ -808,7 +810,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         linenum++;
                         NSString *string = [[NSString alloc] initWithString:partial];
                         [NSException raise:@"NuParseError" format:@"partial string (terminated by newline): %@", string];
-                        partial = [NSMutableString string];
+                        [partial setString:@""];
                         break;
                     }
                     case '\\':
@@ -846,7 +848,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                             }
                         }
                         [self addAtom:regexWithString(partial)];
-                        partial = [NSMutableString string];
+                        [partial setString:@""];
                         state = PARSE_NORMAL;
                         break;
                     }
@@ -870,7 +872,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         if (!comments) comments = [[NSMutableString alloc] init];
                         else [comments appendString:@"\n"];
                         [comments appendString:[[[NSString alloc] initWithString:partial] autorelease]];
-                        partial = [NSMutableString string];
+                        [partial setString:@""];
                         column = 0;
                         linenum++;
                         state = PARSE_NORMAL;
@@ -888,12 +890,12 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
         if ([partial length] > 0) {
             [self addAtom:atomWithString(partial, symbolTable)];
         }
-        partial = [NSMutableString string];
+        [partial setString:@""];
     }
     else if (state == PARSE_COMMENT) {
         if (!comments) comments = [[NSMutableString alloc] init];
         [comments appendString:[[[NSString alloc] initWithString:partial] autorelease]];
-        partial = [NSMutableString string];
+        [partial setString:@""];
         column = 0;
         linenum++;
         state = PARSE_NORMAL;
@@ -913,7 +915,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                 hereString = [[NSMutableString alloc] init];
             }
             [hereString appendString:partial];
-            partial = [NSMutableString string];
+            [partial setString:@""];
         }
     }
     else if (state == PARSE_REGEX) {
