@@ -117,6 +117,8 @@
 		22B78A3811DE98AF0022EE11 /* pcreposix.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1711DE98AF0022EE11 /* pcreposix.c */; };
 		22B78A3911DE98AF0022EE11 /* pcreposix.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A1811DE98AF0022EE11 /* pcreposix.h */; };
 		22B78A3B11DE98AF0022EE11 /* ucp.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A1A11DE98AF0022EE11 /* ucp.h */; };
+		22F69A601260D9CE0007DA45 /* exception.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F69A5E1260D9CE0007DA45 /* exception.h */; };
+		22F69A611260D9CE0007DA45 /* exception.m in Sources */ = {isa = PBXBuildFile; fileRef = 22F69A5F1260D9CE0007DA45 /* exception.m */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -246,6 +248,8 @@
 		22B78A1711DE98AF0022EE11 /* pcreposix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcreposix.c; sourceTree = "<group>"; };
 		22B78A1811DE98AF0022EE11 /* pcreposix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcreposix.h; sourceTree = "<group>"; };
 		22B78A1A11DE98AF0022EE11 /* ucp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ucp.h; sourceTree = "<group>"; };
+		22F69A5E1260D9CE0007DA45 /* exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exception.h; sourceTree = "<group>"; };
+		22F69A5F1260D9CE0007DA45 /* exception.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exception.m; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* Nu_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu_Prefix.pch; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* Nu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Nu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -351,6 +355,8 @@
 				2242767611DD73E500940005 /* dtrace.h */,
 				2242767711DD73E500940005 /* enumerable.h */,
 				2242767811DD73E500940005 /* enumerable.m */,
+				22F69A5E1260D9CE0007DA45 /* exception.h */,
+				22F69A5F1260D9CE0007DA45 /* exception.m */,
 				2242767911DD73E500940005 /* extensions.h */,
 				2242767A11DD73E500940005 /* extensions.m */,
 				2242767B11DD73E500940005 /* handler.h */,
@@ -536,6 +542,7 @@
 				22B78A3911DE98AF0022EE11 /* pcreposix.h in Headers */,
 				22B78A3B11DE98AF0022EE11 /* ucp.h in Headers */,
 				2213FC6A11DEB4910041388D /* main.h in Headers */,
+				22F69A601260D9CE0007DA45 /* exception.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -585,7 +592,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Nu" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* Nu */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
@@ -689,6 +703,7 @@
 				22B78A3311DE98AF0022EE11 /* pcre_version.c in Sources */,
 				22B78A3411DE98AF0022EE11 /* pcre_xclass.c in Sources */,
 				22B78A3811DE98AF0022EE11 /* pcreposix.c in Sources */,
+				22F69A611260D9CE0007DA45 /* exception.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
