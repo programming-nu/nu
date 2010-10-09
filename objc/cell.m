@@ -153,20 +153,20 @@ limitations under the License.
 - (id) handleUnknownMessage:(NuCell *) method withContext:(NSMutableDictionary *) context
 {
     if ([[method car] isKindOfClass:[NuSymbol class]]) {
-       NSString *methodName = [[method car] stringValue];
-       int length = [methodName length];
-       if (([methodName characterAtIndex:0] == 'c') && ([methodName characterAtIndex:(length - 1)] == 'r')) {
-          id cursor = self;
-          BOOL valid = YES;
-          for (int i = 1; valid && (i < length - 1); i++) {
-             switch ([methodName characterAtIndex:i]) {
-                case 'd': cursor = [cursor cdr]; break;
-                case 'a': cursor = [cursor car]; break;
-                default:  valid = NO;
-             }
-          }
-          if (valid) return cursor;
-       }
+        NSString *methodName = [[method car] stringValue];
+        int length = [methodName length];
+        if (([methodName characterAtIndex:0] == 'c') && ([methodName characterAtIndex:(length - 1)] == 'r')) {
+            id cursor = self;
+            BOOL valid = YES;
+            for (int i = 1; valid && (i < length - 1); i++) {
+                switch ([methodName characterAtIndex:i]) {
+                    case 'd': cursor = [cursor cdr]; break;
+                    case 'a': cursor = [cursor car]; break;
+                    default:  valid = NO;
+                }
+            }
+            if (valid) return cursor;
+        }
     }
     id m = [[method car] evalWithContext:context];
     if ([m isKindOfClass:[NSNumber class]]) {
@@ -232,22 +232,17 @@ limitations under the License.
     return result;
 }
 
-extern char *nu_parsedFilename(int i);
-
-
 - (void) addToException:(NuException*)e value:(id)value
 {
-	char* parsedFilename = nu_parsedFilename(self->file);
+    const char *parsedFilename = nu_parsedFilename(self->file);
 
-	if (parsedFilename) 
-    {
-		NSString* filename = [NSString stringWithCString:parsedFilename encoding:NSUTF8StringEncoding];
-		[e addFunction:value lineNumber:[self line] filename:filename];
-	}
-	else 
-    {
-		[e addFunction:value lineNumber:[self line]];
-	}
+    if (parsedFilename) {
+        NSString* filename = [NSString stringWithCString:parsedFilename encoding:NSUTF8StringEncoding];
+        [e addFunction:value lineNumber:[self line] filename:filename];
+    }
+    else {
+        [e addFunction:value lineNumber:[self line]];
+    }
 }
 
 - (id) evalWithContext:(NSMutableDictionary *)context
@@ -255,48 +250,50 @@ extern char *nu_parsedFilename(int i);
     id value = nil;
     id result = nil;
 
-    @try {
+    @try
+    {
         value = [car evalWithContext:context];
 
-    #ifdef DARWIN
-    if (NU_LIST_EVAL_BEGIN_ENABLED()) {
-        if ((self->line != -1) && (self->file != -1)) {
-            NU_LIST_EVAL_BEGIN(nu_parsedFilename(self->file), self->line);
+        #ifdef DARWIN
+        if (NU_LIST_EVAL_BEGIN_ENABLED()) {
+            if ((self->line != -1) && (self->file != -1)) {
+                NU_LIST_EVAL_BEGIN(nu_parsedFilename(self->file), self->line);
+            }
+            else {
+                NU_LIST_EVAL_BEGIN("", 0);
+            }
         }
-        else {
-            NU_LIST_EVAL_BEGIN("", 0);
-        }
-    }
-    #endif
-    result = [value evalWithArguments:cdr context:context];
+        #endif
+        // to improve error reporting,
+        // add the currently-evaluating expression to the context
+        [context setObject:self forKey:[[NuSymbolTable sharedSymbolTable] symbolWithString:@"_expression"]];
+        result = [value evalWithArguments:cdr context:context];
 
-    #ifdef DARWIN
-    if (NU_LIST_EVAL_END_ENABLED()) {
-        if ((self->line != -1) && (self->file != -1)) {
-            NU_LIST_EVAL_END(nu_parsedFilename(self->file), self->line);
+        #ifdef DARWIN
+        if (NU_LIST_EVAL_END_ENABLED()) {
+            if ((self->line != -1) && (self->file != -1)) {
+                NU_LIST_EVAL_END(nu_parsedFilename(self->file), self->line);
+            }
+            else {
+                NU_LIST_EVAL_END("", 0);
+            }
         }
-        else {
-            NU_LIST_EVAL_END("", 0);
-        }
-    }
-    #endif
+        #endif
     }
     @catch (NuException* nuException) {
         [self addToException:nuException value:[car stringValue]];
         @throw nuException;
-    } 
+    }
     @catch (NSException* e) {
         if (   nu_objectIsKindOfClass(e, [NuBreakException class])
             || nu_objectIsKindOfClass(e, [NuContinueException class])
-            || nu_objectIsKindOfClass(e, [NuReturnException class]))
-        {
+        || nu_objectIsKindOfClass(e, [NuReturnException class])) {
             @throw e;
         }
-        else
-        {
+        else {
             NuException* nuException = [[NuException alloc] initWithName:[e name]
-                                                                  reason:[e reason]
-                                                                userInfo:[e userInfo]];
+                reason:[e reason]
+                userInfo:[e userInfo]];
             [self addToException:nuException value:[car stringValue]];
             @throw nuException;
         }
@@ -471,13 +468,13 @@ extern char *nu_parsedFilename(int i);
 
 - (NSMutableArray *) array
 {
-   NSMutableArray *a = [NSMutableArray array];
-   id cursor = self;
-   while (cursor && cursor != Nu__null) {
-      [a addObject:[cursor car]];
-      cursor = [cursor cdr];
-   }
-   return a;
+    NSMutableArray *a = [NSMutableArray array];
+    id cursor = self;
+    while (cursor && cursor != Nu__null) {
+        [a addObject:[cursor car]];
+        cursor = [cursor cdr];
+    }
+    return a;
 }
 
 - (NSUInteger) count
@@ -513,9 +510,10 @@ extern char *nu_parsedFilename(int i);
 
 @implementation NuCellWithComments
 
-- (void) dealloc {
-  [comments release];
-  [super dealloc];
+- (void) dealloc
+{
+    [comments release];
+    [super dealloc];
 }
 
 - (id) comments {return comments;}

@@ -49,9 +49,11 @@ limitations under the License.
     @class NuReturnException
     @abstract Internal class used to implement the Nu return operator.
  */
-@interface NuReturnException : NSException {
+@interface NuReturnException : NSException
+{
     id value;
 }
+
 - (id) value;
 @end
 
@@ -63,3 +65,6 @@ void nu_registerIvarForRelease(Class c, NSString *name);
 
 // use this to get the instance variables that should be released.
 NSArray *nu_ivarsToRelease(Class c);
+
+// use this to get the filename for a NuCell created by the parser
+const char *nu_parsedFilename(int i);
