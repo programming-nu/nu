@@ -1582,11 +1582,11 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
             }
         }
         if (fileName) {
-#ifdef DARWIN
+            #ifdef DARWIN
             NSString *string = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:nil];
-#else
+            #else
             NSString *string = [NSString stringWithContentsOfFile:fileName];
-#endif
+            #endif
             if (string) {
                 id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
                 [body evalWithContext:context];
@@ -1679,7 +1679,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     #if defined(__x86_64__) || defined(IPHONE)
     Class newClass = nil;
     #endif
-    
+
     NuClass *childClass;
     //NSLog(@"class name: %@", className);
     if ([cdr cdr]
@@ -1702,17 +1702,15 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         if ([parentClass respondsToSelector:@selector(inheritedByClass:)]) {
             [parentClass inheritedByClass:childClass];
         }
-        
-        if (!childClass)
-        {
+
+        if (!childClass) {
             // This class may have already been defined previously
             // (perhaps by loading the same .nu file twice).
             // If so, the above call to objc_allocateClassPair() returns nil.
-            // So if childClass is nil, it may be that the class was 
+            // So if childClass is nil, it may be that the class was
             // already defined, so we'll try to find it and use it.
             Class existingClass = NSClassFromString([className stringValue]);
-            if (existingClass)
-            {
+            if (existingClass) {
                 childClass = [NuClass classWithClass:existingClass];
                 //if (childClass)
                 //    NSLog(@"Warning: attempting to re-define existing class: %@.  Ignoring.", [className stringValue]);
@@ -1730,7 +1728,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         body = [cdr cdr];
     }
     if (!childClass)
-        [NSException raise:@"NuUndefinedClass" format:@"undefined class %@", [className stringValue]];   
+        [NSException raise:@"NuUndefinedClass" format:@"undefined class %@", [className stringValue]];
     id result = nil;
     if (body && (body != Nu__null)) {
         NuBlock *block = [[NuBlock alloc] initWithParameters:Nu__null body:body context:context];
@@ -1887,6 +1885,43 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     id command = [[cdr car] evalWithContext:context];
     const char *commandString = [[command stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
     int result = system(commandString) >> 8;      // this needs an explanation
+    return [NSNumber numberWithInt:result];
+}
+
+@end
+
+@interface Nu_exit_operator : NuOperator {}
+@end
+
+@implementation Nu_exit_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    if (cdr && (cdr != Nu__null)) {
+        int status = [[[cdr car] evalWithContext:context] intValue];
+        exit(status);
+    }
+    else {
+        exit (0);
+    }
+    return Nu__null;                              // we'll never get here.
+}
+
+@end
+
+@interface Nu_sleep_operator : NuOperator {}
+@end
+
+@implementation Nu_sleep_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+	int result = -1;
+    if (cdr && (cdr != Nu__null)) {
+        int seconds = [[[cdr car] evalWithContext:context] intValue];
+        result = sleep(seconds);
+    }
+    else {
+        [NSException raise: @"NuArityError" format:@"sleep expects 1 argument, got 0"];
+    }
     return [NSNumber numberWithInt:result];
 }
 
@@ -2193,6 +2228,8 @@ void load_builtins(NuSymbolTable *symbolTable)
 
     install("uname",    Nu_uname_operator);
     install("system",   Nu_system_operator);
+    install("exit",     Nu_exit_operator);
+    install("sleep",    Nu_sleep_operator);
 
     install("class",    Nu_class_operator);
     install("imethod",  Nu_imethod_operator);
