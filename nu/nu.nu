@@ -69,6 +69,10 @@
         (do (x)
             (eq (x class) NuSymbol)))
 
+(global zero?
+        (do (x)
+            (eq x 0)))
+
 ;; Reverses a list.
 (global reverse
         (do (my-list)
