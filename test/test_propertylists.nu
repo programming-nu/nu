@@ -4,7 +4,7 @@
 ;;  Copyright (c) 2008 Tim Burks, Neon Design Technology, Inc.
 
 (class TestPropertyLists is NuTestCase
-       
+     
      (- (id) testSerialization is
         (set PLISTFILE "/tmp/TEMPORARY.plist")
         (set object (array 1 2 3.3 (dict now:(NSDate date)) "five" (array 1 2 3 4 5)))

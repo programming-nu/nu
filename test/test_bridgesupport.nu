@@ -8,12 +8,12 @@
     
     (class TestBridgeSupport is NuTestCase
          
-         (imethod (id) testConstants is
-              (assert_equal "NSFileBusy" NSFileBusy))
+         (- (id) testConstants is
+            (assert_equal "NSFileBusy" NSFileBusy))
          
-         (imethod (id) testEnums is
-              (assert_equal 4 NSGreaterThanComparison))
+         (- (id) testEnums is
+            (assert_equal 4 NSGreaterThanComparison))
          
          (unless ((NSGarbageCollector defaultCollector) isEnabled)
-                 (imethod (id) testFunctions is
-                      (assert_equal 2 (NSMinY '(1 2 3 4)))))))
+                 (- (id) testFunctions is
+                    (assert_equal 2 (NSMinY '(1 2 3 4)))))))

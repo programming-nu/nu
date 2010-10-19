@@ -263,8 +263,8 @@ class TestNu < Test::Unit::TestCase
     @patterns = <<-END  
     (class Test is NSObject
         (ivar (int) x)
-        (imethod (void) setX:(int) x is (set @x x))
-        (imethod (int) x is @x))
+        (- (void) setX:(int) x is (set @x x))
+        (- (int) x is @x))
     (set y ((Test alloc) init))
     (y setX:33)               
     (y x)                                                    === 33
@@ -275,7 +275,7 @@ class TestNu < Test::Unit::TestCase
     @patterns = <<-END    
     (class Foo is NSObject
         (ivars)
-        (imethod (id) incr is
+        (- (id) incr is
             (cond (@y (set @y (+ @y 1)))
                   (else (set @y 1)))))
     (set f ((Foo alloc) init))
@@ -305,12 +305,12 @@ class TestNu < Test::Unit::TestCase
     @patterns = <<-END
     (class Counter is NSObject
   	  (ivar (id) c)
-  	  (imethod (id) init is
+  	  (- (id) init is
   		  (super init)
   		  (set @c 0)
   		  self)
-  	  (imethod (id) count is (@c))
-  	  (imethod (void) step is (set @c (+ @c 1))))
+  	  (- (id) count is (@c))
+  	  (- (void) step is (set @c (+ @c 1))))
     (set counter ((Counter alloc) init))
     (counter count)                         === 0
     (10 times: (do () (counter step)))
@@ -321,7 +321,7 @@ class TestNu < Test::Unit::TestCase
   def test_another_factorial
     @patterns = <<-END
     (class NSNumber
-       (imethod (id) "!" is 
+       (- (id) "!" is 
          (set n (self intValue))
          (cond ((eq n 0) 1)
                (else     (* n ((- n 1)!))))))
@@ -341,27 +341,27 @@ class TestNu < Test::Unit::TestCase
 	@patterns = <<-END
   	(NSArray include: NuEnumerable)
 	  (class NSMutableDictionary
-    	 (cmethod (id) dictionaryWithList: (id) list is
+    	 (+ (id) dictionaryWithList: (id) list is
         	(let (d (self dictionary))
              	(list eachPair:
                    	(do (key value)
                        	(d setValue:value forKey:key)))
              			d)))
 	  (class NSDictionary
-    	 (imethod (id) list is
+    	 (- (id) list is
         	((self allKeys) reduce:
          		(do (result key)
              		(cons key (cons (self objectForKey: key) result)))
          			from: nil)))
 	  (class NSMutableArray
-    	 (cmethod (id) arrayWithList: (id) list is
+    	 (+ (id) arrayWithList: (id) list is
         	(let (a (self array))
              (list each: (do (item) (a addObject: item)))
              a)))
 	  (class NSArray
-    	 (imethod (id) list is
+    	 (- (id) list is
         	(self reduceLeft:(do (result item) (cons item result)) from: nil))
-		   (imethod (id) sum is
+		   (- (id) sum is
 			    (self reduce:(do (result item) (+ item result)) from: 0)))
 	  (set d (NSMutableDictionary dictionaryWithList: '("a" 1 "b" 2 "c" 3)))
 	  (d count) 				        === 3
@@ -383,13 +383,13 @@ class TestNu < Test::Unit::TestCase
   def test_super
     @patterns = <<-END
     (class Level1 is NSObject
-        (imethod (int) depth is (1)))
+        (- (int) depth is (1)))
     (class Level2 is Level1
-        (imethod (int) depth is (+ 1 (super depth))))
+        (- (int) depth is (+ 1 (super depth))))
     (class Level3 is Level2
-        (imethod (int) depth is (+ 1 (super depth))))
+        (- (int) depth is (+ 1 (super depth))))
     (class Level4 is Level3
-        (imethod (int) depth is (+ 1 (super depth))))
+        (- (int) depth is (+ 1 (super depth))))
     (((Level1 alloc) init) depth) === 1
     (((Level2 alloc) init) depth) === 2
     (((Level3 alloc) init) depth) === 3
@@ -399,13 +399,13 @@ class TestNu < Test::Unit::TestCase
   
   def test_method_replacement
     @patterns = <<-END
-    (class NSObject (imethod (int) one is 1))
+    (class NSObject (- (int) one is 1))
     (((NSObject alloc) init) one) === 1
-    (class NSObject (imethod (int) one is 2))
+    (class NSObject (- (int) one is 2))
     (((NSObject alloc) init) one) === 2
     END
     # this doesn't work, though:
-    #(class NSObject (imethod (double) one is (1.1)))
+    #(class NSObject (- (double) one is (1.1)))
     #(((NSObject alloc) init) one) === 1.1
     # it seems that we can't change the return type of a method
   end
@@ -432,17 +432,17 @@ class TestNu < Test::Unit::TestCase
         (cond ((eq n nil) nil)
               (else (append (reverse (cdr n)) (list (car n))))))
     (class Structs is NSObject
-      (cmethod (NSPoint) makePointX:(double)x y:(double)y is (list x y))
-      (cmethod (NSSize) makeSizeW:(double)w h:(double)h is (list w h))
-      (cmethod (NSRect) makeRectX:(double)x y:(double)y w:(double)w h:(double)h is (list x y w h))
-      (cmethod (id) unpackPoint:(NSPoint) point is point)
-      (cmethod (id) unpackSize:(NSSize) size is size)
-      (cmethod (id) unpackRect:(NSRect) rect is rect)
-      (cmethod (NSPoint) passPoint:(NSPoint) point is point)
-      (cmethod (NSSize) passSize:(NSSize) size is size)
-      (cmethod (NSRange) passRange:(NSRange) range is range)
-      (cmethod (NSRect) passRect:(NSRect) rect is rect)
-      (cmethod (NSRect) flipRect:(NSRect) rect is (reverse rect)))
+      (+ (NSPoint) makePointX:(double)x y:(double)y is (list x y))
+      (+ (NSSize) makeSizeW:(double)w h:(double)h is (list w h))
+      (+ (NSRect) makeRectX:(double)x y:(double)y w:(double)w h:(double)h is (list x y w h))
+      (+ (id) unpackPoint:(NSPoint) point is point)
+      (+ (id) unpackSize:(NSSize) size is size)
+      (+ (id) unpackRect:(NSRect) rect is rect)
+      (+ (NSPoint) passPoint:(NSPoint) point is point)
+      (+ (NSSize) passSize:(NSSize) size is size)
+      (+ (NSRange) passRange:(NSRange) range is range)
+      (+ (NSRect) passRect:(NSRect) rect is rect)
+      (+ (NSRect) flipRect:(NSRect) rect is (reverse rect)))
     (Structs makePointX:3 y:5)              === (3 5)
     (Structs makeSizeW:9.9 h:110)           === (9.9 110)
     (Structs makeRectX:1 y:2.2 w:3.3 h:4.4) === (1 2.2 3.3 4.4)

@@ -110,11 +110,11 @@
                     (+ x y))))
      
      (- (id) testNumericIf is
-		(macro-1 numeric-if (expr pos zero neg)
-			`(let ((__expr ,expr))
-				(cond
-					((> __expr 0) ,pos)
-					((eq __expr 0) ,zero)
-					(t ,neg))))
-		(assert_equal '(p z n)
-			('(1 0 -1) map: (do (n) (numeric-if n 'p 'z 'n))))))
+        (macro-1 numeric-if (expr pos zero neg)
+             `(let ((__expr ,expr))
+                   (cond
+                        ((> __expr 0) ,pos)
+                        ((eq __expr 0) ,zero)
+                        (t ,neg))))
+        (assert_equal '(p z n)
+             ('(1 0 -1) map: (do (n) (numeric-if n 'p 'z 'n))))))

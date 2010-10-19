@@ -10,4 +10,4 @@
         (assert_equal t (defined 123))
         (set madeUpName 123)
         (assert_equal t (defined madeUpName))))
-     
+
