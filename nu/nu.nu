@@ -276,3 +276,8 @@
                      (set __result (progn ,@*body))
                      ((NuProfiler defaultProfiler) stop)
                      __result)))
+
+;; import some useful C functions
+(global random  (NuBridgedFunction functionWithName:"random" signature:"l"))
+(global srandom (NuBridgedFunction functionWithName:"srandom" signature:"vI"))
+
