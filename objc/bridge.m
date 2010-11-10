@@ -901,6 +901,12 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
                 [reference setPointer:*((id**)objc_value)];
                 return reference;
             }
+            // Certain pointer types are essentially just ids.
+            // CGImageRef is one. As we find others, we can add them here.
+            else if (!strcmp(typeString, "^{CGImage=}")) {
+                id result = *((id *)objc_value);
+                return result ? result : (id)[NSNull null];
+            }
             else {
                 if (*((unsigned long *)objc_value) == 0)
                     return [NSNull null];
