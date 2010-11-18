@@ -150,4 +150,7 @@ END)
                                                               (then (- c (- 'a' 'A')))
                                                               (else c))))))
         (set finish (mapped componentsJoinedByString:""))
-        (assert_equal "HELLO, WORLD" finish)))
+        (assert_equal "HELLO, WORLD" finish))
+     
+     (- (id) testAddingNilToStrings is
+        (assert_equal "hello world" (+ "hello" nil " " nil "world"))))

@@ -1060,7 +1060,10 @@ limitations under the License.
         NSMutableString *result = [NSMutableString stringWithString:[firstArgument stringValue]];
         id cursor = [cdr cdr];
         while (cursor && (cursor != Nu__null)) {
-            [result appendString:[[[cursor car] evalWithContext:context] stringValue]];
+            id carValue = [[cursor car] evalWithContext:context];
+            if (carValue && (carValue != Nu__null)) {
+                [result appendString:[carValue stringValue]];
+            }
             cursor = [cursor cdr];
         }
         return result;
@@ -1914,7 +1917,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 @implementation Nu_sleep_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-	int result = -1;
+    int result = -1;
     if (cdr && (cdr != Nu__null)) {
         int seconds = [[[cdr car] evalWithContext:context] intValue];
         result = sleep(seconds);
