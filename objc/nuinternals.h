@@ -52,9 +52,11 @@ limitations under the License.
 @interface NuReturnException : NSException
 {
     id value;
+	id blockForReturn;
 }
 
 - (id) value;
+- (id) blockForReturn;
 @end
 
 // use this to test a value for "truth"

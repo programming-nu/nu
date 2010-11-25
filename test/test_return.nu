@@ -50,4 +50,12 @@
         (assert_equal "positive" (rtc sign:1))
         (assert_equal "-" (ReturnTestClass sign:-1))
         (assert_equal "0" (ReturnTestClass sign:0))
-        (assert_equal "+" (ReturnTestClass sign:1))))
+        (assert_equal "+" (ReturnTestClass sign:1)))
+     
+     (- testReturnFromOperator is
+        (set outer (do ()
+                       (10 times:
+                           (do (i) (10 times:
+                                       (do (j) (if (and (eq i 3) (eq j 4))
+                                                   (return-from outer (+ i j)))))))))
+        (assert_equal 7 (outer))))

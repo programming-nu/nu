@@ -53,11 +53,20 @@ limitations under the License.
 @end
 
 @implementation NuReturnException
-- (id) initWithValue:(id) v;
+- (id) initWithValue:(id) v
 {
     [super initWithName:@"NuReturnException" reason:@"A return operator was evaluated" userInfo:nil];
     value = [v retain];
-    return self; ;
+    blockForReturn = nil;
+    return self;
+}
+
+- (id) initWithValue:(id) v blockForReturn:(id) b
+{
+    [super initWithName:@"NuReturnException" reason:@"A return operator was evaluated" userInfo:nil];
+    value = [v retain];
+    blockForReturn = b;                           // weak reference
+    return self;
 }
 
 - (void) dealloc
@@ -69,6 +78,11 @@ limitations under the License.
 - (id) value
 {
     return value;
+}
+
+- (id) blockForReturn
+{
+    return blockForReturn;
 }
 
 @end
@@ -2007,6 +2021,29 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 
 @end
 
+@interface Nu_return_from_operator : NuOperator {}
+@end
+
+@implementation Nu_return_from_operator
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    id block = nil;
+    id value = nil;
+    id cursor = cdr;
+    if (cursor && cursor != Nu__null) {
+        block = [[cursor car] evalWithContext:context];
+        cursor = [cursor cdr];
+    }
+    if (cursor && cursor != Nu__null) {
+        value = [[cursor car] evalWithContext:context];
+    }
+    @throw [[[NuReturnException alloc] initWithValue:value blockForReturn:block] autorelease];
+    return nil;                                   // unreached
+}
+
+@end
+
 @interface Nu_version_operator : NuOperator {}
 @end
 
@@ -2160,6 +2197,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("break",    Nu_break_operator);
     install("continue", Nu_continue_operator);
     install("return",   Nu_return_operator);
+    install("return-from",   Nu_return_from_operator);
 
     install("try",      Nu_try_operator);
 

@@ -158,6 +158,9 @@ extern id Nu__null;
     }
     @catch (NuReturnException *exception) {
         value = [exception value];
+		if ([exception blockForReturn] && ([exception blockForReturn] != self)) {
+			@throw(exception);
+		}
     }
     @catch (id exception) {
         @throw(exception);
@@ -230,6 +233,9 @@ id getObjectFromContext(id context, id symbol)
     }
     @catch (NuReturnException *exception) {
         value = [exception value];
+		if ([exception blockForReturn] && ([exception blockForReturn] != self)) {
+			@throw(exception);
+		}
     }
     @catch (id exception) {
         @throw(exception);
