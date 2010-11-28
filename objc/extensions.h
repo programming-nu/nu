@@ -77,6 +77,8 @@ limitations under the License.
 @interface NSSet(Nu)
 /*! Creates a set that contains the contents of a specified list. */
 + (NSSet *) setWithList:(id) list;
+/*! Convert a set into a list. */
+- (NuCell *) list;
 @end
 
 /*!

@@ -164,6 +164,27 @@ extern id Nu__null;
     return s;
 }
 
+// Convert a set into a list.
+- (NuCell *) list
+{
+    NSEnumerator *setEnumerator = [self objectEnumerator];
+    NSObject *anObject = [setEnumerator nextObject];
+
+    if(!anObject)
+        return nil;
+
+    NuCell *result = [[[NuCell alloc] init] autorelease];
+    NuCell *cursor = result;
+    [cursor setCar:anObject];
+
+    while ((anObject = [setEnumerator nextObject])) {
+        [cursor setCdr:[[[NuCell alloc] init] autorelease]];
+        cursor = [cursor cdr];
+        [cursor setCar:anObject];
+    }
+    return result;
+}
+
 @end
 
 @implementation NSMutableSet(Nu)
