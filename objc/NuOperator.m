@@ -176,20 +176,18 @@ limitations under the License.
 @implementation Nu_eq_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    id cadr = [cdr car];
-    id caddr = [[cdr cdr] car];
-    id value1 = [cadr evalWithContext:context];
-    id value2 = [caddr evalWithContext:context];
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    if ((value1 == nil) && (value2 == nil)) {
-        return [symbolTable symbolWithCString:"t"];
+    id cursor = cdr;
+    id current = [[cursor car] evalWithContext:context];
+    cursor = [cursor cdr];
+    while (cursor && (cursor != Nu__null)) {
+        id next = [[cursor car] evalWithContext: context];
+        if (![current isEqual:next])
+            return Nu__null;
+        current = next;
+        cursor = [cursor cdr];
     }
-    else if ([value1 isEqual:value2]) {
-        return [symbolTable symbolWithCString:"t"];
-    }
-    else {
-        return Nu__null;
-    }
+    return [symbolTable symbolWithCString:"t"];
 }
 
 @end
