@@ -1,7 +1,7 @@
 /*
 @file objc_runtime.m
-@description Nu extensions to the Objective-C runtime.  
-Includes replacements for Objective-C 2.0 enhancements that are 
+@description Nu extensions to the Objective-C runtime.
+Includes replacements for Objective-C 2.0 enhancements that are
 only available in Apple's OS X 10.5 (Leopard).
 @copyright Copyright (c) 2007 Neon Design Technology, Inc.
 
@@ -193,7 +193,7 @@ SEL sel_getUid(const char *str)
 #ifdef IPHONE
 #import "objc/runtime.h"
 IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types) {
-	return class_replaceMethod(cls, name, imp, types);	
+	return class_replaceMethod(cls, name, imp, types);
 }
 #endif
 

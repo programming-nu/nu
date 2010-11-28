@@ -17,9 +17,9 @@
 #include <CoreServices/CoreServices.h>
 
 /**************************
-*	
+*
 *	Constants
-*	
+*
 **************************/
 #pragma mark	-
 #pragma mark	(Constants)
@@ -46,9 +46,9 @@ long kIslandTemplate[] = {
 #define kOriginalInstructionsSize 16
 
 char kIslandTemplate[] = {
-	// kOriginalInstructionsSize nop instructions so that we 
-	// should have enough space to host original instructions 
-	0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 
+	// kOriginalInstructionsSize nop instructions so that we
+	// should have enough space to host original instructions
+	0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
 	0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90,
 	// Now the real jump instruction
 	0xE9, 0xEF, 0xBE, 0xAD, 0xDE
@@ -63,9 +63,9 @@ char kIslandTemplate[] = {
 #define	kAllocateNormal		0
 
 /**************************
-*	
+*
 *	Data Types
-*	
+*
 **************************/
 #pragma mark	-
 #pragma mark	(Data Types)
@@ -76,9 +76,9 @@ typedef	struct	{
 }	BranchIsland;
 
 /**************************
-*	
+*
 *	Funky Protos
-*	
+*
 **************************/
 #pragma mark	-
 #pragma mark	(Funky Protos)
@@ -98,7 +98,7 @@ setBranchIslandTarget(
 		BranchIsland	*island,
 		const void		*branchTo,
 		long			instruction );
-#endif 
+#endif
 
 #if defined(__i386__)
 mach_error_t
@@ -106,23 +106,23 @@ setBranchIslandTarget_i386(
 						   BranchIsland	*island,
 						   const void		*branchTo,
 						   char*			instructions );
-void 
+void
 atomic_mov64(
 		uint64_t *targetAddress,
 		uint64_t value );
 
-	static Boolean 
-eatKnownInstructions( 
-	unsigned char	*code, 
+	static Boolean
+eatKnownInstructions(
+	unsigned char	*code,
 	uint64_t		*newInstruction,
-	int				*howManyEaten, 
+	int				*howManyEaten,
 	char			*originalInstructions );
 #endif
 
 /*******************************************************************************
-*	
+*
 *	Interface
-*	
+*
 *******************************************************************************/
 #pragma mark	-
 #pragma mark	(Interface)
@@ -137,7 +137,7 @@ mach_override(
 	assert( originalFunctionSymbolName );
 	assert( strlen( originalFunctionSymbolName ) );
 	assert( overrideFunctionAddress );
-	
+
 	//	Lookup the original function's code pointer.
 	long	*originalFunctionPtr;
 	if( originalFunctionLibraryNameHint )
@@ -151,7 +151,7 @@ mach_override(
 			originalFunctionSymbolName,
 			(void*) &originalFunctionPtr,
 			NULL );
-	
+
 	return mach_override_ptr( originalFunctionPtr, overrideFunctionAddress,
 		originalFunctionReentryIsland );
 }
@@ -164,15 +164,15 @@ mach_override_ptr(
 {
 	assert( originalFunctionAddress );
 	assert( overrideFunctionAddress );
-	
+
 	long	*originalFunctionPtr = (long*) originalFunctionAddress;
 	mach_error_t	err = err_none;
-	
+
 #if defined(__ppc__) || defined(__POWERPC__)
 	//	Ensure first instruction isn't 'mfctr'.
 	#define	kMFCTRMask			0xfc1fffff
 	#define	kMFCTRInstruction	0x7c0903a6
-	
+
 	long	originalInstruction = *originalFunctionPtr;
 	if( !err && ((originalInstruction & kMFCTRMask) == kMFCTRInstruction) )
 		err = err_cannot_override;
@@ -181,7 +181,7 @@ mach_override_ptr(
 	char originalInstructions[kOriginalInstructionsSize];
 	uint64_t jumpRelativeInstruction = 0; // JMP
 
-	Boolean overridePossible = eatKnownInstructions ((unsigned char *)originalFunctionPtr, 
+	Boolean overridePossible = eatKnownInstructions ((unsigned char *)originalFunctionPtr,
 										&jumpRelativeInstruction, &eatenCount, originalInstructions);
 	if (eatenCount > kOriginalInstructionsSize) {
 		//printf ("Too many instructions eaten\n");
@@ -189,7 +189,7 @@ mach_override_ptr(
 	}
 	if (!overridePossible) err = err_cannot_override;
 #endif
-	
+
 	//	Make the original function implementation writable.
 	if( !err ) {
 		err = vm_protect( mach_task_self(),
@@ -200,12 +200,12 @@ mach_override_ptr(
 					(vm_address_t) originalFunctionPtr, sizeof(long), false,
 					(VM_PROT_DEFAULT | VM_PROT_COPY) );
 	}
-	
+
 	//	Allocate and target the escape island to the overriding function.
 	BranchIsland	*escapeIsland = NULL;
-	if( !err )	
+	if( !err )
 		err = allocateBranchIsland( &escapeIsland, kAllocateHigh );
-	
+
 #if defined(__ppc__) || defined(__POWERPC__)
 	if( !err )
 		err = setBranchIslandTarget( escapeIsland, overrideFunctionAddress, 0 );
@@ -219,18 +219,18 @@ mach_override_ptr(
 #elif defined (__i386__)
 	if( !err )
 		err = setBranchIslandTarget_i386( escapeIsland, overrideFunctionAddress, 0 );
- 
+
 	// Build the jump relative instruction to the escape island
 	if (!err) {
 		int32_t addressOffset = ((int32_t)escapeIsland - (int32_t)originalFunctionPtr - 5);
 		addressOffset = OSSwapInt32(addressOffset);
-		
-		jumpRelativeInstruction |= 0xE900000000000000LL; 
+
+		jumpRelativeInstruction |= 0xE900000000000000LL;
 		jumpRelativeInstruction |= ((uint64_t)addressOffset & 0xffffffff) << 24;
-		jumpRelativeInstruction = OSSwapInt64(jumpRelativeInstruction);		
+		jumpRelativeInstruction = OSSwapInt64(jumpRelativeInstruction);
 	}
 #endif
-	
+
 	//	Optionally allocate & return the reentry island.
 	BranchIsland	*reentryIsland = NULL;
 	if( !err && originalFunctionReentryIsland ) {
@@ -238,8 +238,8 @@ mach_override_ptr(
 		if( !err )
 			*originalFunctionReentryIsland = reentryIsland;
 	}
-	
-#if defined(__ppc__) || defined(__POWERPC__)	
+
+#if defined(__ppc__) || defined(__POWERPC__)
 	//	Atomically:
 	//	o If the reentry island was allocated:
 	//		o Insert the original instruction into the reentry island.
@@ -271,7 +271,7 @@ mach_override_ptr(
 	// Atomically:
 	//	o If the reentry island was allocated:
 	//		o Insert the original instructions into the reentry island.
-	//		o Target the reentry island at the first non-replaced 
+	//		o Target the reentry island at the first non-replaced
 	//        instruction of the original function.
 	//	o Replace the original first instructions with the jump relative.
 	//
@@ -284,7 +284,7 @@ mach_override_ptr(
 			atomic_mov64((uint64_t *)originalFunctionPtr, jumpRelativeInstruction);
 	}
 #endif
-	
+
 	//	Clean up on error.
 	if( err ) {
 		if( reentryIsland )
@@ -292,21 +292,21 @@ mach_override_ptr(
 		if( escapeIsland )
 			freeBranchIsland( escapeIsland );
 	}
-	
+
 	return err;
 }
 
 /*******************************************************************************
-*	
+*
 *	Implementation
-*	
+*
 *******************************************************************************/
 #pragma mark	-
 #pragma mark	(Implementation)
 
 /***************************************************************************//**
 	Implementation: Allocates memory for a branch island.
-	
+
 	@param	island			<-	The allocated island.
 	@param	allocateHigh	->	Whether to allocate the island at the end of the
 								address space (for use with the branch absolute
@@ -321,9 +321,9 @@ allocateBranchIsland(
 		int				allocateHigh )
 {
 	assert( island );
-	
+
 	mach_error_t	err = err_none;
-	
+
 	if( allocateHigh ) {
 		vm_size_t pageSize;
 		err = host_page_size( mach_host_self(), &pageSize );
@@ -334,7 +334,7 @@ allocateBranchIsland(
 			vm_address_t page = first;
 			int allocated = 0;
 			vm_map_t task_self = mach_task_self();
-			
+
 			while( !err && !allocated && page != last ) {
 				err = vm_allocate( task_self, &page, pageSize, 0 );
 				if( err == err_none )
@@ -358,13 +358,13 @@ allocateBranchIsland(
 	}
 	if( !err )
 		(**island).allocatedHigh = allocateHigh;
-	
+
 	return err;
 }
 
 /***************************************************************************//**
 	Implementation: Deallocates memory for a branch island.
-	
+
 	@param	island	->	The island to deallocate.
 	@result			<-	mach_error_t
 
@@ -377,9 +377,9 @@ freeBranchIsland(
 	assert( island );
 	assert( (*(long*)&island->instructions[0]) == kIslandTemplate[0] );
 	assert( island->allocatedHigh );
-	
+
 	mach_error_t	err = err_none;
-	
+
 	if( island->allocatedHigh ) {
 		vm_size_t pageSize;
 		err = host_page_size( mach_host_self(), &pageSize );
@@ -392,14 +392,14 @@ freeBranchIsland(
 	} else {
 		free( island );
 	}
-	
+
 	return err;
 }
 
 /***************************************************************************//**
 	Implementation: Sets the branch island's target, with an optional
 	instruction.
-	
+
 	@param	island		->	The branch island to insert target into.
 	@param	branchTo	->	The address of the target.
 	@param	instruction	->	Optional instruction to execute prior to branch. Set
@@ -416,12 +416,12 @@ setBranchIslandTarget(
 {
 	//	Copy over the template code.
     bcopy( kIslandTemplate, island->instructions, sizeof( kIslandTemplate ) );
-    
+
     //	Fill in the address.
     ((short*)island->instructions)[kAddressLo] = ((long) branchTo) & 0x0000FFFF;
     ((short*)island->instructions)[kAddressHi]
     	= (((long) branchTo) >> 16) & 0x0000FFFF;
-    
+
     //	Fill in the (optional) instuction.
     if( instruction != 0 ) {
         ((short*)island->instructions)[kInstructionLo]
@@ -429,13 +429,13 @@ setBranchIslandTarget(
         ((short*)island->instructions)[kInstructionHi]
         	= (instruction >> 16) & 0x0000FFFF;
     }
-    
+
     //MakeDataExecutable( island->instructions, sizeof( kIslandTemplate ) );
 	msync( island->instructions, sizeof( kIslandTemplate ), MS_INVALIDATE );
-    
+
     return err_none;
 }
-#endif 
+#endif
 
 #if defined(__i386__)
 	mach_error_t
@@ -447,16 +447,16 @@ setBranchIslandTarget_i386(
 
 	//	Copy over the template code.
     bcopy( kIslandTemplate, island->instructions, sizeof( kIslandTemplate ) );
-    
+
 	// copy original instructions
 	if (instructions) {
 		bcopy (instructions, island->instructions + kInstructions, kOriginalInstructionsSize);
 	}
-	
+
     //	Fill in the address.
 	int32_t addressOffset = (char *)branchTo - (island->instructions + kJumpAddress + 4);
-	*((int32_t *)(island->instructions + kJumpAddress)) = addressOffset; 
-	
+	*((int32_t *)(island->instructions + kJumpAddress)) = addressOffset;
+
     //MakeDataExecutable( island->instructions, sizeof( kIslandTemplate ) );
 	msync( island->instructions, sizeof( kIslandTemplate ), MS_INVALIDATE );
 
@@ -484,10 +484,10 @@ static AsmInstructionMatch possibleInstructions[] = {
 	{ 0x0 }
 };
 
-static Boolean codeMatchesInstruction(unsigned char *code, AsmInstructionMatch* instruction) 
+static Boolean codeMatchesInstruction(unsigned char *code, AsmInstructionMatch* instruction)
 {
 	Boolean match = true;
-	
+
 	int i;
 	for (i=0; i<instruction->length; i++) {
 		unsigned char mask = instruction->mask[i];
@@ -496,39 +496,39 @@ static Boolean codeMatchesInstruction(unsigned char *code, AsmInstructionMatch* 
 		match = ((codeValue & mask) == constraint);
 		if (!match) break;
 	}
-	
+
 	return match;
 }
 
-	static Boolean 
-eatKnownInstructions( 
-	unsigned char *code, 
+	static Boolean
+eatKnownInstructions(
+	unsigned char *code,
 	uint64_t* newInstruction,
-	int* howManyEaten, 
+	int* howManyEaten,
 	char* originalInstructions )
 {
 	Boolean allInstructionsKnown = true;
 	int totalEaten = 0;
 	unsigned char* ptr = code;
 	int remainsToEat = 5; // a JMP instruction takes 5 bytes
-	
+
 	if (howManyEaten) *howManyEaten = 0;
 	while (remainsToEat > 0) {
 		Boolean curInstructionKnown = false;
-		
+
 		// See if instruction matches one  we know
 		AsmInstructionMatch* curInstr = possibleInstructions;
 		do {
 			if ((curInstructionKnown = codeMatchesInstruction(ptr, curInstr))) break;
 			curInstr++;
 		} while (curInstr->length > 0);
-		
+
 		// if all instruction matches failed, we don't know current instruction then, stop here
-		if (!curInstructionKnown) { 
+		if (!curInstructionKnown) {
 			allInstructionsKnown = false;
 			break;
 		}
-		
+
 		// At this point, we've matched curInstr
 		int eaten = curInstr->length;
 		ptr += eaten;
@@ -541,7 +541,7 @@ eatKnownInstructions(
 
 	if (originalInstructions) {
 		Boolean enoughSpaceForOriginalInstructions = (totalEaten < kOriginalInstructionsSize);
-		
+
 		if (enoughSpaceForOriginalInstructions) {
 			memset(originalInstructions, 0x90 /* NOP */, kOriginalInstructionsSize); // fill instructions with NOP
 			bcopy(code, originalInstructions, totalEaten);
@@ -550,13 +550,13 @@ eatKnownInstructions(
 			return false;
 		}
 	}
-	
+
 	if (allInstructionsKnown) {
 		// save last 3 bytes of first 64bits of codre we'll replace
 		uint64_t currentFirst64BitsOfCode = *((uint64_t *)code);
 		currentFirst64BitsOfCode = OSSwapInt64(currentFirst64BitsOfCode); // back to memory representation
-		currentFirst64BitsOfCode &= 0x0000000000FFFFFFLL; 
-		
+		currentFirst64BitsOfCode &= 0x0000000000FFFFFFLL;
+
 		// keep only last 3 instructions bytes, first 5 will be replaced by JMP instr
 		*newInstruction &= 0xFFFFFFFFFF000000LL; // clear last 3 bytes
 		*newInstruction |= (currentFirst64BitsOfCode & 0x0000000000FFFFFFLL); // set last 3 bytes
@@ -565,7 +565,7 @@ eatKnownInstructions(
 	return allInstructionsKnown;
 }
 
-asm(		
+asm(
 			".text;"
 			".align 2, 0x90;"
 			".globl _atomic_mov64;"
@@ -577,11 +577,11 @@ asm(
 			"	pushl %ecx;"
 			"	pushl %eax;"
 			"	pushl %edx;"
-	
+
 			// atomic push of value to an address
-			// we use cmpxchg8b, which compares content of an address with 
-			// edx:eax. If they are equal, it atomically puts 64bit value 
-			// ecx:ebx in address. 
+			// we use cmpxchg8b, which compares content of an address with
+			// edx:eax. If they are equal, it atomically puts 64bit value
+			// ecx:ebx in address.
 			// We thus put contents of address in edx:eax to force ecx:ebx
 			// in address
 			"	mov		8(%ebp), %esi;"  // esi contains target address
@@ -590,7 +590,7 @@ asm(
 			"	mov		(%esi), %eax;"
 			"	mov		4(%esi), %edx;"  // edx:eax now contains value currently contained in target address
 			"	lock; cmpxchg8b	(%esi);" // atomic move.
-			
+
 			// restore registers
 			"	popl %edx;"
 			"	popl %eax;"

@@ -34,15 +34,15 @@ limitations under the License.
 	must destructure manually.
 
 	<b>macro</b> does not implicitly "quote" the body of the macro.
-	Instead the <b>backquote</b> (abbreviated as '`') 
+	Instead the <b>backquote</b> (abbreviated as '`')
 	and <b>bq-comma</b> (abbreviated as ',') operators can be
-	used to write a macro body that more closely resembles the 
+	used to write a macro body that more closely resembles the
 	generated code.
 
 	For example, the following two macros are equivalent:
-	
+
 	(macro-0 inc! (set (unquote (car margs)) (+ (unquote (car margs)) 1)))
-	
+
 	(macro inc! (n) `(set ,n (+ ,n 1)))
  */
 @interface NuMacro_1 : NuMacro_0

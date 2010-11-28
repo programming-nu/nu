@@ -23,7 +23,7 @@ limitations under the License.
 #import "extensions.h"
 #import "enumerable.h"
 
-@protocol NuCanSetAction 
+@protocol NuCanSetAction
 - (void) setAction:(SEL) action;
 @end
 
@@ -165,7 +165,7 @@ limitations under the License.
 
 
 - (id) sendMessage:(id)cdr withContext:(NSMutableDictionary *)context
-{   
+{
     // By themselves, Objective-C objects evaluate to themselves.
     if (!cdr || (cdr == Nu__null))
         return self;

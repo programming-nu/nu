@@ -32,7 +32,7 @@ void nu_registerIvarForRelease(Class c, NSString *name)
         ivarsToRelease = NSCreateMapTable(NSIntegerMapKeyCallBacks, NSObjectMapValueCallBacks, 0);
         #else
         ivarsToRelease = NSCreateMapTable(NSIntMapKeyCallBacks, NSObjectMapValueCallBacks, 0);
-        #endif	
+        #endif
     }
     NSMutableArray *ivars = NSMapGet(ivarsToRelease, c);
     if (!ivars) {

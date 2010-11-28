@@ -52,20 +52,20 @@ extern id Nu__null;
 
 	// Check for the presence of "*args" in parameter list
 	id plist = parameters;
-	
+
 	if (!(   ([parameters length] == 1)
 		  && ([[[parameters car] stringValue] isEqualToString:@"*args"])))
 	{
-		while (plist && (plist != Nu__null)) 
+		while (plist && (plist != Nu__null))
 		{
 			id parameter = [plist car];
-		
+
 			if ([[parameter stringValue] isEqualToString:@"*args"])
 			{
 				printf("Warning: Overriding implicit variable '*args'.\n");
 				return self;
 			}
-			
+
 			plist = [plist cdr];
 		}
 	}

@@ -17,26 +17,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #import <Foundation/Foundation.h>
-extern id Nu__null; 
+extern id Nu__null;
 /*!
 	@class NuOperator
-    @abstract An abstract class for Nu operators. 
-	@discussion Like everything else in Nu, operators are represented with objects. 
+    @abstract An abstract class for Nu operators.
+	@discussion Like everything else in Nu, operators are represented with objects.
     Nu operators that are written in Objective-C are implemented with subclasses of this class.
     Each operator is intended to have a singleton instance that is bound to a symbol
-    in a Nu symbol table.  An operator is evaluated with a call to 
+    in a Nu symbol table.  An operator is evaluated with a call to
     its evalWithArguments:context: method.
-    When they implement functions, operators evaluate their arguments, 
-    but many special forms exist that evaluate their arguments zero or multiple times.  
+    When they implement functions, operators evaluate their arguments,
+    but many special forms exist that evaluate their arguments zero or multiple times.
  */
 @interface NuOperator : NSObject
 {
 }
-/*! Evaluate an operator with a list of arguments and an execution context. 
+/*! Evaluate an operator with a list of arguments and an execution context.
     This method calls callWithArguments:context: and should not be overridden.
 */
 - (id) evalWithArguments:(id) cdr context:(NSMutableDictionary *) context;
-/*! Call an operator with a list of arguments and an execution context. 
+/*! Call an operator with a list of arguments and an execution context.
 	This method should be overridden by implementations of new operators.
 */
 - (id) callWithArguments:(id) cdr context:(NSMutableDictionary *) context;

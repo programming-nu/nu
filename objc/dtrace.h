@@ -20,7 +20,7 @@ extern "C" {
 	__asm__ volatile(".reference " NU_TYPEDEFS); \
 	__dtrace_probe$nu$list_eval_begin$v1$63686172202a$696e74((char *)arg0, arg1); \
 	__asm__ volatile(".reference " NU_STABILITY); \
-} 
+}
 #define	NU_LIST_EVAL_BEGIN_ENABLED() \
 	__dtrace_isenabled$nu$list_eval_begin$v1()
 #define	NU_LIST_EVAL_END(arg0, arg1) \
@@ -28,7 +28,7 @@ extern "C" {
 	__asm__ volatile(".reference " NU_TYPEDEFS); \
 	__dtrace_probe$nu$list_eval_end$v1$63686172202a$696e74((char *)arg0, arg1); \
 	__asm__ volatile(".reference " NU_STABILITY); \
-} 
+}
 #define	NU_LIST_EVAL_END_ENABLED() \
 	__dtrace_isenabled$nu$list_eval_end$v1()
 

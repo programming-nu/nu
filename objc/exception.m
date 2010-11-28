@@ -16,7 +16,7 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License. 
+limitations under the License.
 */
 
 //#define IMPORT_EXCEPTION_HANDLING_FRAMEWORK
@@ -71,11 +71,11 @@ static BOOL NuException_verboseExceptionReporting = NO;
     NSSetUncaughtExceptionHandler(*Nu_defaultExceptionHandler);
 
 #ifdef IMPORT_EXCEPTION_HANDLING_FRAMEWORK
-    [[NSExceptionHandler defaultExceptionHandler] 
-        setExceptionHandlingMask:(NSHandleUncaughtExceptionMask 
-                                    | NSHandleUncaughtSystemExceptionMask 
-                                    | NSHandleUncaughtRuntimeErrorMask 
-                                    | NSHandleTopLevelExceptionMask 
+    [[NSExceptionHandler defaultExceptionHandler]
+        setExceptionHandlingMask:(NSHandleUncaughtExceptionMask
+                                    | NSHandleUncaughtSystemExceptionMask
+                                    | NSHandleUncaughtRuntimeErrorMask
+                                    | NSHandleTopLevelExceptionMask
                                     | NSHandleOtherExceptionMask)];
 #endif
 }
@@ -115,8 +115,8 @@ static BOOL NuException_verboseExceptionReporting = NO;
 
 - (NuException *)addFunction:(NSString *)function lineNumber:(int)line filename:(NSString *)filename
 {
-    NuTraceInfo* traceInfo = [[NuTraceInfo alloc] initWithFunction:function 
-                                                        lineNumber:line 
+    NuTraceInfo* traceInfo = [[NuTraceInfo alloc] initWithFunction:function
+                                                        lineNumber:line
                                                           filename:filename];
     [stackTrace addObject:traceInfo];
 
@@ -132,7 +132,7 @@ static BOOL NuException_verboseExceptionReporting = NO;
 - (NSString*)dumpExcludingTopLevelCount:(int)topLevelCount
 {
     NSMutableString* dump = [NSMutableString stringWithString:@"Nu uncaught exception: "];
-    
+
     [dump appendString:[NSString stringWithFormat:@"%@: %@\n", [self name], [self reason]]];
 
     int count = [stackTrace count] - topLevelCount;
@@ -169,7 +169,7 @@ static BOOL NuException_verboseExceptionReporting = NO;
 - (id)initWithFunction:(NSString *)aFunction lineNumber:(int)aLine filename:(NSString *)aFilename
 {
     self = [super init];
-    
+
     if (self)
     {
         filename = [aFilename retain];

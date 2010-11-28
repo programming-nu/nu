@@ -117,11 +117,11 @@ int NuMain(int argc, const char *argv[], const char *envp[])
 
 #if 0
     NSSetUncaughtExceptionHandler(&NuMain_exceptionHandler);
-    [[NSExceptionHandler defaultExceptionHandler] 
-        setExceptionHandlingMask:(    NSHandleUncaughtExceptionMask 
-                                    | NSHandleUncaughtSystemExceptionMask 
-                                    | NSHandleUncaughtRuntimeErrorMask 
-                                    | NSHandleTopLevelExceptionMask 
+    [[NSExceptionHandler defaultExceptionHandler]
+        setExceptionHandlingMask:(    NSHandleUncaughtExceptionMask
+                                    | NSHandleUncaughtSystemExceptionMask
+                                    | NSHandleUncaughtRuntimeErrorMask
+                                    | NSHandleTopLevelExceptionMask
                                     | NSHandleOtherExceptionMask)];
 #endif
 
@@ -204,7 +204,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
         }
         // if there's no file, run at the terminal
         else {
-            #if defined(DARWIN) || defined(FREEBSD) 
+            #if defined(DARWIN) || defined(FREEBSD)
             if (!isatty(stdin->_file))
 	    #elif defined(OPENSOLARIS)
 	    if (!isatty(fileno(stdin)))

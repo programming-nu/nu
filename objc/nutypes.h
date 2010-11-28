@@ -1,5 +1,4 @@
 
-
 #ifdef GNUSTEP
 
 #define bool char
@@ -8,4 +7,3 @@
 #define false 0
 
 #endif
-

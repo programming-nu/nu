@@ -8,14 +8,14 @@
 /***************************************************************************//**
 	@mainpage	mach_override
 	@author		Jonathan 'Wolf' Rentzsch: <http://rentzsch.com>
-	
+
 	This package, coded in C to the Mach API, allows you to override ("patch")
 	program- and system-supplied functions at runtime. You can fully replace
 	functions with your implementations, or merely head- or tail-patch the
 	original implementations.
-	
+
 	Use it by #include'ing mach_override.h from your .c, .m or .mm file(s).
-	
+
 	@todo	Discontinue use of Carbon's MakeDataExecutable() and
 			CompareAndSwap() calls and start using the Mach equivalents, if they
 			exist. If they don't, write them and roll them in. That way, this
@@ -62,7 +62,7 @@
 	originalFunctionSymbolName with the implentation pointed to by
 	overrideFunctionAddress. Optionally returns a pointer to a "reentry island"
 	which, if jumped to, will resume the original implementation.
-	
+
 	@param	originalFunctionSymbolName		->	Required symbol name of the
 												function to override (with
 												overrideFunctionAddress).
@@ -85,7 +85,7 @@
 												'mfctr' instruction.
 
 	***************************************************************************/
-	 
+
     mach_error_t
 mach_override(
     char *originalFunctionSymbolName,
@@ -98,7 +98,7 @@ mach_override(
 	originalFunctionAddress with the implentation pointed to by overrideFunctionAddress.
 	Optionally returns a pointer to a "reentry island" which, if jumped to, will resume
 	the original implementation.
-	
+
 	@param	originalFunctionAddress			->	Required address of the function to
 												override (with overrideFunctionAddress).
 	@param	overrideFunctionAddress			->	Required address to the overriding
@@ -116,7 +116,7 @@ mach_override_ptr(
 	void *originalFunctionAddress,
     const void *overrideFunctionAddress,
     void **originalFunctionReentryIsland );
- 
+
 #ifdef	__cplusplus
 	}
 #endif

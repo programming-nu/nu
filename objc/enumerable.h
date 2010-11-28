@@ -26,7 +26,7 @@ limitations under the License.
     @discussion This class implements methods that act on enumerated collections of objects.
     It is designed to be mixed into a class using the include method that Nu adds to NSObject.
     The receiving class must have an objectEnumerator method that returns an NSEnumerator.
-    Some methods in this class take a callable object as an argument; callable objects are those 
+    Some methods in this class take a callable object as an argument; callable objects are those
     that have evalWithArguments:context: defined.
  */
 @interface NuEnumerable : NSObject

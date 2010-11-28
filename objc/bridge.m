@@ -38,7 +38,7 @@ limitations under the License.
 #import "handler.h"
 #import <sys/mman.h>
 
-/* 
+/*
  * types:
  * c char
  * i int

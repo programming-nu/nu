@@ -309,7 +309,7 @@ extern id Nu__null;
 #endif
 @end
 
-@interface NuStringEnumerator : NSEnumerator 
+@interface NuStringEnumerator : NSEnumerator
 {
    NSString *string;
    int index;
@@ -318,7 +318,7 @@ extern id Nu__null;
 
 @implementation NuStringEnumerator
 
-+ (NuStringEnumerator *) enumeratorWithString:(NSString *) string 
++ (NuStringEnumerator *) enumeratorWithString:(NSString *) string
 {
    return [[[self alloc] initWithString:string] autorelease];
 }
@@ -511,7 +511,7 @@ extern id Nu__null;
     return s;
 }
 
-- (id) objectEnumerator 
+- (id) objectEnumerator
 {
    return [NuStringEnumerator enumeratorWithString:self];
 }
@@ -529,7 +529,7 @@ extern id Nu__null;
 }
 */
 
-- (NSString *) stringByReplacingOccurrencesOfString:(NSString *) before withString:(NSString *) after 
+- (NSString *) stringByReplacingOccurrencesOfString:(NSString *) before withString:(NSString *) after
 {
     return [self stringByReplacingString:before withString:after];
 }
@@ -577,7 +577,7 @@ extern id Nu__null;
 
 @implementation NSData(Nu)
 
-- (const unsigned char) byteAtIndex:(int) i 
+- (const unsigned char) byteAtIndex:(int) i
 {
 	const unsigned char buffer[2];
 	[self getBytes:&buffer range:NSMakeRange(i,1)];
@@ -794,7 +794,7 @@ extern id Nu__null;
     if (filename == Nu__null) return nil;
 	NSError *error;
 #ifdef DARWIN
-    NSDictionary *attributes = [[NSFileManager defaultManager] 
+    NSDictionary *attributes = [[NSFileManager defaultManager]
 								attributesOfItemAtPath:[filename stringByExpandingTildeInPath]
 								error:&error];
 #else

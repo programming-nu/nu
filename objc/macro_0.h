@@ -29,20 +29,20 @@ limitations under the License.
 
     Macros are like functions, but with two important differences:
 
-    First, macro arguments are not evaluated before the macro is called. 
-    It is up to the macro implementation to decide whether and how 
+    First, macro arguments are not evaluated before the macro is called.
+    It is up to the macro implementation to decide whether and how
     many times to evaluate each argument. When a Nu macro is evaluated,
     the <b>margs</b> name is defined and is bound to a list of
     the arguments of the macro.
 
-	Second, macro evaluation occurs in the context of the caller. 
+	Second, macro evaluation occurs in the context of the caller.
 	This means that a macro has access to all names defined in the
 	code that calls it, and that any name assignments made in a macro will
 	affect the names in the calling code. To avoid unintentional
 	name conflicts, any names in a macro body that begin with a double
 	underscore ("__") are replaced with automatically-generated symbols
 	that are guaranteed to be unique. In Lisp terminology, these generated
-	symbols are called "gensyms".   
+	symbols are called "gensyms".
  */
 @interface NuMacro_0 : NSObject
 {
