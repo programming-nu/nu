@@ -2183,6 +2183,14 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("==",       Nu_eq_operator);
     install("ne",       Nu_neq_operator);
     install("!=",       Nu_neq_operator);
+    install("gt",       Nu_greaterthan_operator);
+    install(">",        Nu_greaterthan_operator);
+    install("lt",       Nu_lessthan_operator);
+    install("<",        Nu_lessthan_operator);
+    install("ge",       Nu_gte_operator);
+    install(">=",       Nu_gte_operator);
+    install("le",       Nu_lte_operator);
+    install("<=",       Nu_lte_operator);
 
     install("cons",     Nu_cons_operator);
     install("append",   Nu_append_operator);
@@ -2234,20 +2242,12 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("/",        Nu_divide_operator);
     install("**",       Nu_exponentiation_operator);
     install("%",        Nu_modulus_operator);
+
     install("&",        Nu_bitwiseand_operator);
     install("|",        Nu_bitwiseor_operator);
-
-    install("gt",       Nu_greaterthan_operator);
-    install(">",        Nu_greaterthan_operator);
-    install("lt",       Nu_lessthan_operator);
-    install("<",        Nu_lessthan_operator);
-    install("ge",       Nu_gte_operator);
-    install(">=",       Nu_gte_operator);
-    install("le",       Nu_lte_operator);
-    install("<=",       Nu_lte_operator);
-
     install("<<",       Nu_leftshift_operator);
     install(">>",       Nu_rightshift_operator);
+
     install("and",      Nu_and_operator);
     install("or",       Nu_or_operator);
     install("not",      Nu_not_operator);
