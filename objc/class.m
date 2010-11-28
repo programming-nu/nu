@@ -184,100 +184,104 @@ limitations under the License.
     for (i = 0; i < method_count; i++) {
         #ifdef DARWIN
         if (!strcmp(methodNameString, sel_getName(method_getName(method_list[i])))) {
-            #else
-            if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
-                #endif
-                method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
-            }
+            method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
         }
-        free(method_list);
-        return method;
-    }
-
-    - (NuMethod *) instanceMethodWithName:(NSString *) methodName
-    {
-        const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
-        NuMethod *method = Nu__null;
-        unsigned int method_count;
-        #ifdef DARWIN
-        Method *method_list = class_copyMethodList([self wrappedClass], &method_count);
         #else
-        Method_t *method_list = class_copyMethodList([self wrappedClass], &method_count);
+        if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
+            method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
+        }
         #endif
-        int i;
-        for (i = 0; i < method_count; i++) {
-            #ifdef DARWIN
-            if (!strcmp(methodNameString, sel_getName(method_getName(method_list[i])))) {
-                #else
-                if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
-                    #endif
-                    method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
-                }
-            }
-            free(method_list);
-            return method;
-        }
+    }
+    free(method_list);
+    return method;
+}
 
-        - (id) addInstanceMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
-        {
-            //NSLog(@"adding instance method %@", methodName);
-            return add_method_to_class(c, methodName, signature, block);
+- (NuMethod *) instanceMethodWithName:(NSString *) methodName
+{
+    const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
+    NuMethod *method = Nu__null;
+    unsigned int method_count;
+    #ifdef DARWIN
+    Method *method_list = class_copyMethodList([self wrappedClass], &method_count);
+    #else
+    Method_t *method_list = class_copyMethodList([self wrappedClass], &method_count);
+    #endif
+    int i;
+    for (i = 0; i < method_count; i++) {
+        #ifdef DARWIN
+        if (!strcmp(methodNameString, sel_getName(method_getName(method_list[i])))) {
+            method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
         }
-
-        - (id) addClassMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
-        {
-            //NSLog(@"adding class method %@", methodName);
-            #ifdef DARWIN
-            return add_method_to_class(c->isa, methodName, signature, block);
-            #else
-            return add_method_to_class(c->class_pointer, methodName, signature, block);
-            #endif
+        #else
+        if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
+            method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
         }
+        #endif
+    }
+    free(method_list);
+    return method;
+}
 
-        - (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
-        {
-            //NSLog(@"adding instance variable %@", variableName);
-            class_addInstanceVariable_withSignature(c, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
-            return Nu__null;
-        }
+- (id) addInstanceMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
+{
+    //NSLog(@"adding instance method %@", methodName);
+    return add_method_to_class(c, methodName, signature, block);
+}
 
-        - (BOOL) isEqual:(NuClass *) anotherClass
-        {
-            return c == anotherClass->c;
-        }
+- (id) addClassMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
+{
+    //NSLog(@"adding class method %@", methodName);
+    #ifdef DARWIN
+    return add_method_to_class(c->isa, methodName, signature, block);
+    #else
+    return add_method_to_class(c->class_pointer, methodName, signature, block);
+    #endif
+}
 
-        - (void) setSuperclass:(NuClass *) newSuperclass
-        {
-            struct nu_objc_class
-            {
-                Class isa;
-                Class super_class;
-                // other stuff...
-            };
-            ((struct nu_objc_class *) self->c)->super_class = newSuperclass->c;
-        }
+- (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
+{
+    //NSLog(@"adding instance variable %@", variableName);
+    class_addInstanceVariable_withSignature(c, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+    return Nu__null;
+}
 
-        - (BOOL) isRegistered
-        {
-            return isRegistered;
-        }
+- (BOOL) isEqual:(NuClass *) anotherClass
+{
+    return c == anotherClass->c;
+}
 
-        - (void) setRegistered:(BOOL) value
-        {
-            isRegistered = value;
-        }
+- (void) setSuperclass:(NuClass *) newSuperclass
+{
+    struct nu_objc_class
+    {
+        Class isa;
+        Class super_class;
+        // other stuff...
+    };
+    ((struct nu_objc_class *) self->c)->super_class = newSuperclass->c;
+}
 
-        - (void) registerClass
-        {
-            if (isRegistered == NO) {
-                objc_registerClassPair(c);
-                isRegistered = YES;
-            }
-        }
+- (BOOL) isRegistered
+{
+    return isRegistered;
+}
 
-        - (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
-        {
-            return [[self wrappedClass] handleUnknownMessage:cdr withContext:context];
-        }
+- (void) setRegistered:(BOOL) value
+{
+    isRegistered = value;
+}
 
-        @end
+- (void) registerClass
+{
+    if (isRegistered == NO) {
+        objc_registerClassPair(c);
+        isRegistered = YES;
+    }
+}
+
+- (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
+{
+    return [[self wrappedClass] handleUnknownMessage:cdr withContext:context];
+}
+
+@end
