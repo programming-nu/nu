@@ -2236,10 +2236,16 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("%",        Nu_modulus_operator);
     install("&",        Nu_bitwiseand_operator);
     install("|",        Nu_bitwiseor_operator);
+
+    install("gt",       Nu_greaterthan_operator);
     install(">",        Nu_greaterthan_operator);
+    install("lt",       Nu_lessthan_operator);
     install("<",        Nu_lessthan_operator);
+    install("ge",       Nu_gte_operator);
     install(">=",       Nu_gte_operator);
+    install("le",       Nu_lte_operator);
     install("<=",       Nu_lte_operator);
+
     install("<<",       Nu_leftshift_operator);
     install(">>",       Nu_rightshift_operator);
     install("and",      Nu_and_operator);
