@@ -1,5 +1,5 @@
 ;; @file       nibtools.nu
-;; @discussion Nu helpers for manipulating Cocoa objects.  
+;; @discussion Nu helpers for manipulating Cocoa objects.
 ;; These are especially useful for working with objects loaded from nib files.
 ;;
 ;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
@@ -75,6 +75,6 @@
 (class NSMenuItem
      ;; The children of a menu item are its submenus.
      (imethod (id) children is
-          (if (self submenu) 
+          (if (self submenu)
               (then (append (super children) (list (self submenu))))
               (else (super children)))))

@@ -16,15 +16,15 @@
 ;;   limitations under the License.
 
 (if nil ;; This is just here for fun.  It shows some alternate ways of building macros.
-    (function subst (new old tree) 
+    (function subst (new old tree)
          (cond ((eq tree old) new)
                ((not tree) tree)
                ((atom tree) tree)
-               (else (cons (subst new old (car tree)) 
+               (else (cons (subst new old (car tree))
                            (subst new old (cdr tree))))))
     
     (function meval (pairs code)
-         (if pairs 
+         (if pairs
              (then (meval ((pairs cdr) cdr) (subst (pairs second) (pairs first) code)))
              (else (eval code))))
     

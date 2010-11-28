@@ -176,12 +176,12 @@
 ;; It controls a Cocoa text view containing an interactive Nu console.
 (class NuConsoleViewController is NSObject
      (ivar (id) textview (id) startOfInput (id) insertionPoint (id) parser (id) history (id) index (id) count (id) chunk)
-
+     
      (imethod (id) loadFile:(id)file is
-         ((_parser parse: (NSString stringWithContentsOfFile:
-										(file stringByResolvingSymlinksInPath)))
-             evalWithContext: (_parser context)))
-
+          ((_parser parse: (NSString stringWithContentsOfFile:
+                                (file stringByResolvingSymlinksInPath)))
+           evalWithContext: (_parser context)))
+     
      ;; Initialize a controller with a specified frame.
      (imethod (id) initWithFrame:(NSRect) frame is
           (super init)
@@ -352,8 +352,8 @@
                               (catch (exception)
                                      ;; don't use string interpolation here, it calls the parser again
                                      (if (exception isKindOfClass:(NuException class))
-                                        (then (set result (exception dumpExcludingTopLevelCount:4))) ; leave off the console stack
-                                        (else (set result (exception dump))))
+                                         (then (set result (exception dumpExcludingTopLevelCount:4))) ; leave off the console stack
+                                         (else (set result (exception dump))))
                                      (self write:result)
                                      ;(self write:(exception name))
                                      ;(self write:": ")

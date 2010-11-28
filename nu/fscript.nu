@@ -18,9 +18,9 @@
 (load "FScript")
 
 (function fs-browse (object)
-     (set browser (BigBrowser 
-                       bigBrowserWithRootObject:object
-                       interpreter:(FSInterpreter interpreter)))
+     (set browser (BigBrowser
+                             bigBrowserWithRootObject:object
+                             interpreter:(FSInterpreter interpreter)))
      (browser makeKeyAndOrderFront:0)
      (unless $fs-browsers (set $fs-browsers (array)))
      ($fs-browsers << browser)

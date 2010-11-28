@@ -17,7 +17,7 @@
 ;;   See the License for the specific language governing permissions and
 ;;   limitations under the License.
 
-(macro-0 bridge 
+(macro-0 bridge
      (set __kind (margs first))
      (set __name (margs second))
      (set __signature (margs third))

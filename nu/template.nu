@@ -51,8 +51,8 @@
                (set parser ((NuParser alloc) init))
                (set code (parser parse:script))
                (if (parser incomplete) (NSException raise:"NuTemplateError" format:@"incomplete expression in template"))
-;; temporary fix for retain cycle in parser. Parser owns context, context references parser.
-((parser context) removeObjectForKey:'_parser)
+               ;; temporary fix for retain cycle in parser. Parser owns context, context references parser.
+               ((parser context) removeObjectForKey:'_parser)
                code))
      
      ;; Take a string corresponding to a template and generate a string that can be parsed and evaluated
