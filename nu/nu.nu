@@ -187,6 +187,15 @@
      ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
      (- (void) << (id) object is (self addObject:object)))
 
+(class NSMutableString
+     
+     ;; Concisely append to a string using this method, which is equivalent to a call to appendString:.
+     (- (void) << (id) object is
+         (if (not (string? object))
+            (throw* "NSInvalidArgumentExpection"
+                    "Attempt to append a non-string to a string"))
+            (else (self appendString:object))))
+
 (class NSObject
      
      ;; Write objects as XML property lists (only for NSData, NSString, NSNumber, NSDate, NSArray, and NSDictionary objects)
