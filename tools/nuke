@@ -426,7 +426,7 @@
      (@xib_files each:
          (do (xib)
              (set baseName ((xib componentsSeparatedByString:"/") lastObject))
-             (set targetFile (/xib$/ replaceWithString:"nib" inString:baseName))
+             (set targetFile (baseName stringByReplacingPathExtensionWith:"nib"))
              (set nib "#{@application_resource_localized_dir}/#{targetFile}")
              (file nib => xib @application_resource_localized_dir is
                    (SH "ibtool --errors --warnings --notices --output-format human-readable-text --compile #{nib} #{xib}"))
@@ -612,7 +612,7 @@
      (@xib_files each:
           (do (xib)
               (set baseName ((xib componentsSeparatedByString:"/") lastObject))
-              (set targetFile (/xib$/ replaceWithString:"nib" inString:baseName))
+              (set targetFile (baseName stringByReplacingPathExtensionWith:"nib"))
               (set nib "#{@framework_resource_localized_dir}/#{targetFile}")
               (file nib => xib @framework_resource_localized_dir is
                     (SH "ibtool --errors --warnings --notices --output-format human-readable-text --compile #{nib} #{xib}"))
