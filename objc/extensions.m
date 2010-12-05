@@ -456,7 +456,7 @@ extern id Nu__null;
 // Read the contents of standard input into a string.
 + (NSString *) stringWithStandardInput
 {
-    return [[[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding] autorelease];
+    return [[[NSString alloc] initWithData:[NSData dataWithStandardInput] encoding:NSUTF8StringEncoding] autorelease];
 }
 
 // If the last character is a newline, delete it.
@@ -633,6 +633,13 @@ extern id Nu__null;
     return returnValue;
 }
 #endif
+
+// Read the contents of standard input into a string.
++ (NSData *) dataWithStandardInput
+{
+    return [[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile];
+}
+
 @end
 
 @implementation NSNumber(Nu)

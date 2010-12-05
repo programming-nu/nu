@@ -134,6 +134,9 @@ limitations under the License.
 /*! Run a shell command with the specified data or string as standard input and return the results as data. */
 + (NSData *) dataWithShellCommand:(NSString *) command standardInput:(id) input;
 #endif
+
+/*! Return data read from standard input. */
++ (NSData *) dataWithStandardInput;
 @end
 
 /*!
@@ -157,6 +160,9 @@ limitations under the License.
 /*! Run a shell command with the specified data or string as standard input and return the results in a string. */
 + (NSString *) stringWithShellCommand:(NSString *) command standardInput:(id) input;
 #endif
+
+/*! Return a string read from standard input. */
++ (NSString *) stringWithStandardInput;
 
 /*! If the last character is a newline, return a new string without it. */
 - (NSString *) chomp;
