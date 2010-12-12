@@ -35,6 +35,7 @@ limitations under the License.
 #include <readline/readline.h>
 #endif
 #include <stdlib.h>
+#include <unistd.h>
 
 @implementation NuBreakException
 - (id) init

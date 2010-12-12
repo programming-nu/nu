@@ -10,6 +10,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		222BF10B11DE8BCD00E20A3F /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 222BF10A11DE8BCD00E20A3F /* Icon.png */; };
+		226BB85F12B49BB7006A562F /* exception.m in Sources */ = {isa = PBXBuildFile; fileRef = 226BB85E12B49BB7006A562F /* exception.m */; };
 		228307E011DE5E4F00A5C690 /* ffi-iphone.c in Sources */ = {isa = PBXBuildFile; fileRef = 228307CF11DE5E4F00A5C690 /* ffi-iphone.c */; };
 		228307E111DE5E4F00A5C690 /* ffi-iphonesimulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 228307D111DE5E4F00A5C690 /* ffi-iphonesimulator.c */; };
 		228307E211DE5E4F00A5C690 /* iphone-sysv.S in Sources */ = {isa = PBXBuildFile; fileRef = 228307D911DE5E4F00A5C690 /* iphone-sysv.S */; };
@@ -79,6 +80,8 @@
 		1D6058910D05DD3D006BFB54 /* NuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		222BF10A11DE8BCD00E20A3F /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = ../Icon.png; sourceTree = "<group>"; };
+		226BB85D12B49BB7006A562F /* exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = exception.h; sourceTree = "<group>"; };
+		226BB85E12B49BB7006A562F /* exception.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = exception.m; sourceTree = "<group>"; };
 		228307CF11DE5E4F00A5C690 /* ffi-iphone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "ffi-iphone.c"; sourceTree = "<group>"; };
 		228307D011DE5E4F00A5C690 /* ffi-iphone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ffi-iphone.h"; sourceTree = "<group>"; };
 		228307D111DE5E4F00A5C690 /* ffi-iphonesimulator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "ffi-iphonesimulator.c"; sourceTree = "<group>"; };
@@ -277,6 +280,8 @@
 		2283087211DE5F0100A5C690 /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				226BB85D12B49BB7006A562F /* exception.h */,
+				226BB85E12B49BB7006A562F /* exception.m */,
 				22B4F2E311DEBD53009C693F /* main.h */,
 				2283087311DE5F0100A5C690 /* block.h */,
 				2283087411DE5F0100A5C690 /* block.m */,
@@ -419,7 +424,14 @@
 			isa = PBXProject;
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "NuApp" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -507,6 +519,7 @@
 				228308CB11DE5F0100A5C690 /* symbol.m in Sources */,
 				228308CC11DE5F0100A5C690 /* testhelper.m in Sources */,
 				22A2932E11DE8450008B1084 /* handlers.m in Sources */,
+				226BB85F12B49BB7006A562F /* exception.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,7 +570,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				SDKROOT = iphoneos3.2;
+				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
