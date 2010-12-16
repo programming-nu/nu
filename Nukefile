@@ -14,7 +14,7 @@
 #define NU_RELEASE_MONTH #{(now monthOfYear)}
 #define NU_RELEASE_DAY   #{(now dayOfMonth)}
 END)
-      (version writeToFile:"objc/version.h" atomically:NO encoding:NSUTF8StringEncoding error:(set error (NuReference new))))
+      (version writeToFile:"objc/NuVersion.h" atomically:NO encoding:NSUTF8StringEncoding error:(set error (NuReference new))))
 
 ;; read environment for prefix and destroot
 (let ((env ((NSProcessInfo processInfo) environment)))
