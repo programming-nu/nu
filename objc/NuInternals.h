@@ -22,7 +22,7 @@ limitations under the License.
 
 // Use this key to get the symbol table from an execution context.
 
-#import "nutypes.h"
+#import "NuTypes.h"
 
 #define SYMBOLS_KEY @"symbols"
 

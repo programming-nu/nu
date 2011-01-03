@@ -20,7 +20,7 @@ limitations under the License.
 @class NuCell;
 @class NuBlock;
 
-#import "nutypes.h"
+#import "NuTypes.h"
 
 
 /*!
