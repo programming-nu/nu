@@ -387,7 +387,7 @@ static NuRegex *backrefPattern;
 
 - (BOOL)isEqual:(NuRegex *)other
 {
-    return (([pattern isEqual: [other pattern]]) && (options == [other options]));
+    return ([other isKindOfClass:[NuRegex class]] && [pattern isEqual:[other pattern]] && (options == [other options]));
 }
 
 @end

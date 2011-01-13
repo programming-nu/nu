@@ -51,7 +51,9 @@
         (assert_equal /extended/x /extended/x)
         (assert_equal /a(.*)z/ /a(.*)z/)
         (assert_not_equal /hello/ /goodbye/)
-        (assert_not_equal /extended/x /extended/)))
+        (assert_not_equal /extended/x /extended/)
+        (assert_not_equal /foo/ nil)
+        (assert_not_equal /foo/ "foo")))
 
 
 
