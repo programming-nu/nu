@@ -422,6 +422,16 @@
                        0)
                  (task "application_resources" => "#{@application_resource_localized_dir}/#{g}")))))
      
+     ; compile xib files into the application
+     (@xib_files each:
+         (do (xib)
+             (set baseName ((xib componentsSeparatedByString:"/") lastObject))
+             (set targetFile (baseName stringByReplacingPathExtensionWith:"nib"))
+             (set nib "#{@application_resource_localized_dir}/#{targetFile}")
+             (file nib => xib @application_resource_localized_dir is
+                   (SH "ibtool --errors --warnings --notices --output-format human-readable-text --compile #{nib} #{xib}"))
+                   (task "application_resources" => nib)))
+     
      ;; copy datamodels into the application
      (@datamodels each:
           (do (model)
@@ -445,7 +455,7 @@
                                 "CFBundleVersion" "1.0"
                                 "NSHumanReadableCopyright" ""
                                 "NSPrincipalClass" "NSApplication")))
-           (if @nib_files
+           (if (or @nib_files @xib_files)
                (info set:(NSMainNibFile:"MainMenu")))
            (if @application_help_folder
                (info setObject:@application_help_folder forKey:"CFBundleHelpBookFolder")
@@ -599,6 +609,14 @@
                     (SH "cp -R '#{f}' '#{((target name) dirName)}'")
                     0)
               (task "framework_resources" => "#{@framework_resource_localized_dir}/#{g}")))
+     (@xib_files each:
+          (do (xib)
+              (set baseName ((xib componentsSeparatedByString:"/") lastObject))
+              (set targetFile (baseName stringByReplacingPathExtensionWith:"nib"))
+              (set nib "#{@framework_resource_localized_dir}/#{targetFile}")
+              (file nib => xib @framework_resource_localized_dir is
+                    (SH "ibtool --errors --warnings --notices --output-format human-readable-text --compile #{nib} #{xib}"))
+                    (task "framework_resources" => nib)))
      
      ;; copy filelist defined in @public_headers into the framework
      (task "copy_framework_headers" => @framework_headers_dir)
