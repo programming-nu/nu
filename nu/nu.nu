@@ -34,13 +34,37 @@
             (let ((r (NuMath random)))
                  (* maximum (- (/ r maximum) ((/ r maximum) intValue))))))
 
+(global atom?
+        (do (x)
+            (x atom)))
+
 (global char?
         (do (x)
             (eq (x class) ('a' class))))
 
-(global atom?
-        (do (x)
-            (x atom)))
+(global eq?
+        (do (x y)
+            (eq x y)))
+
+(global ge?
+        (do (x y)
+            (ge x y)))
+
+(global gt?
+        (do (x y)
+            (gt x y)))
+
+(global le?
+        (do (x y)
+            (le x y)))
+
+(global lt?
+        (do (x y)
+            (lt x y)))
+
+(global ne?
+        (do (x y)
+            (ne x y)))
 
 (global number?
         (do (x)
