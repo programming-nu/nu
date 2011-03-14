@@ -28,7 +28,7 @@
 ;;
 ;; <div style="margin-left:2em"><code>
 ;; (class MyTestClass is NuTestCase<br/>
-;; &nbsp;&nbsp;(imethod (id) testPlus is<br/>
+;; &nbsp;&nbsp;(- (id) testPlus is<br/>
 ;; &nbsp;&nbsp;&nbsp;&nbsp;(assert_equal 4 (+ 2 2))))
 ;; </code></div>
 ;;
@@ -42,20 +42,20 @@
      (ivar (id) failures (id) assertions (id) errors)
      
      ;; By overriding this method, we detect each time a class is defined in Nu that inherits from this class.
-     (cmethod (id) inheritedByClass:(id) testClass is
+     (+ (id) inheritedByClass:(id) testClass is
           (unless $testClasses (set $testClasses (NSMutableSet set)))
           ($testClasses addObject:testClass))
      
      ;; The setup method is called before each test case is executed.
      ;; The default implementation does nothing.
-     (imethod (id) setup is nil)
+     (- (id) setup is nil)
      
      ;; The teardown method is called after each test case is executed.
      ;; The default implementation does nothing.
-     (imethod (id) teardown is nil)
+     (- (id) teardown is nil)
      
      ;; Loop over all subclasses of NuTestCase and run all test cases defined in each class.
-     (cmethod (id) runAllTests is
+     (+ (id) runAllTests is
           ;; class variables would be nice here
           (set $errors 0)
           (set $assertions 0)
@@ -75,7 +75,7 @@
           (+ $failures $errors))
      
      ;; Run all the test cases for a particular instance of NuTestCase.
-     (imethod (id) run is
+     (- (id) run is
           (set @failures 0)
           (set @errors 0)
           (set @assertions 0)

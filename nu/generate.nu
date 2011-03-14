@@ -20,14 +20,14 @@
 
 (class NSString
      ;; Get the last character of a string.
-     (imethod (int) lastCharacter is
+     (- (int) lastCharacter is
           (self characterAtIndex:(- (self length) 1)))
      ;; Capitalize the first character of a string.
-     (imethod (id) capitalizeFirstCharacter is
+     (- (id) capitalizeFirstCharacter is
           (self stringByReplacingCharactersInRange:'(0 1)
                 withString:((self substringWithRange:'(0 1)) capitalizedString)))
      ;; Remove the parentheses surrounding a string.
-     (imethod (id) stripParens is
+     (- (id) stripParens is
           (self substringWithRange:(list 1 (- (self length) 2)))))
 
 ;; @abstract A code generator for Objective-C classes.
@@ -43,13 +43,13 @@
      (ivars)
      
      ;; Initialize a generator with a list that describes a set of classes to be generated.
-     (imethod (id) initWithDescription:(id) description is
+     (- (id) initWithDescription:(id) description is
           (super init)
           (set @description description)
           self)
      
      ;; Generate typedefs for enumerated types
-     (imethod (id) generateEnumTypedefs is
+     (- (id) generateEnumTypedefs is
           (set result ((NSMutableString alloc) init))
           (@description each:
                (do (declaration)
@@ -72,7 +72,7 @@ END)
           result)
      
      ;; Generate class forward declarations; usually these are placed in header files.
-     (imethod (id) generateDeclarations is
+     (- (id) generateDeclarations is
           (set result ((NSMutableString alloc) init))
           
           (@description each:
@@ -85,7 +85,7 @@ END))))
           result)
      
      ;; Generate class interface descriptions; usually these are placed in header files.
-     (imethod (id) generateInterfaces is
+     (- (id) generateInterfaces is
           (set result ((NSMutableString alloc) init))
           
           (@description each:
@@ -133,7 +133,7 @@ END)
           result)
      
      ;; Generate class implementations; usually these are placed in source (.m) files.
-     (imethod (id) generateImplementations is
+     (- (id) generateImplementations is
           (set result ((NSMutableString alloc) init))
           
           (@description each:
@@ -215,7 +215,7 @@ END))))
           result)
      
      ;; Generate code to encode instance variables during archiving.
-     (cmethod (id) encodeVariable:(id) name withType:(id) type is
+     (+ (id) encodeVariable:(id) name withType:(id) type is
           (set typeName ((type stringValue) stripParens))
           (cond ((eq typeName "int")
                  "    [coder encodeValueOfObjCType:@encode(int) at:&#{name}];")
@@ -229,7 +229,7 @@ END))))
                   "    [coder encodeValueOfObjCType:@encode(int) at:&#{name}];")))
      
      ;; Generate code to decode instance variables during unarchiving.
-     (cmethod (id) decodeVariable:(id) name withType:(id) type is
+     (+ (id) decodeVariable:(id) name withType:(id) type is
           (set typeName ((type stringValue) stripParens))
           (cond ((eq typeName "int")
                  "    [coder decodeValueOfObjCType:@encode(int) at:&#{name}];")

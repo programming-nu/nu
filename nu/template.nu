@@ -17,7 +17,7 @@
 
 (class NSString
      ;; Get the last character of a string.
-     (imethod (id) lastCharacter is
+     (- (id) lastCharacter is
           (self substringFromIndex:(- (self length) 1))))
 
 ;; @class NuTemplate
@@ -31,19 +31,19 @@
 (class NuTemplate is NSObject
      
      ;; Read a template from a file and return a string to be parsed and evaluated to generate the desired text.
-     (cmethod (id) scriptForFileNamed:(id) fileName is
+     (+ (id) scriptForFileNamed:(id) fileName is
           (set template (NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:nil))
           (self scriptForString:template))
      
      ;; Read a template from a file and return a code object to be evaluated to generate the desired text.
-     (cmethod (id) codeForFileNamed:(id) fileName is
+     (+ (id) codeForFileNamed:(id) fileName is
           (set template (NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:nil))
           (self codeForString:template))
      
      ;; Take a string corresponding to a template and generate code (parsed s-expressions) that can be evaluated
      ;; to generate the desired text.  The returned code should be evaluated in a context that defines all symbols
      ;; referenced in the template.
-     (cmethod (id) codeForString: (id) template is
+     (+ (id) codeForString: (id) template is
           ;; Parse the script into an internal s-expression representation.
           ;; The calling code should evaluate it with (eval code).
           (synchronized NuTemplate
@@ -58,7 +58,7 @@
      ;; Take a string corresponding to a template and generate a string that can be parsed and evaluated
      ;; to generate the desired text.  The returned string should be evaluated in a context that defines all symbols
      ;; referenced in the template.
-     (cmethod (id) scriptForString: (id) template is
+     (+ (id) scriptForString: (id) template is
           (unless template
                   (NSLog "Warning: Nu template string is null, treating it as an empty string.")
                   (set template ""))

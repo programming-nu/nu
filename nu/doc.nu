@@ -22,7 +22,7 @@
 
 (class NSString
      ;; Create a copy of a string with leading whitespace removed.
-     (imethod (id) strip is
+     (- (id) strip is
           (set i 0)
           (while (and (< i (self length))
                       (or (eq (self characterAtIndex:i) SPACE)
@@ -30,11 +30,11 @@
                  (set i (+ i 1)))
           (self substringFromIndex:i))
      ;; Test to see whether a string begins with a specified substring.
-     (imethod (id) beginsWithString:(id) string is
+     (- (id) beginsWithString:(id) string is
           (set range (self rangeOfString:string))
           (and range (eq (range first) 0)))
      ;; Shorthand method to write files using UTF8 encodings.
-     (imethod (id) writeToFile:(id) fileName is
+     (- (id) writeToFile:(id) fileName is
           (puts "writing #{fileName}")
           (self writeToFile:fileName atomically:NO encoding:NSUTF8StringEncoding error:(set perror ((NuReference alloc) init)))))
 
@@ -42,12 +42,12 @@
      ;; Generate a string representation of the same form as this one:
      ;;
      ;; "Thursday, 30 Aug 2007"
-     (imethod (id) descriptionForDocumentation is
+     (- (id) descriptionForDocumentation is
           (self descriptionWithCalendarFormat:"%A, %d %b %Y" timeZone:nil locale:nil)))
 
 (class NuRegexMatch
      ;; Compare matches by their location.  This allows arrays of matches to be sorted.
-     (imethod (NSComparisonResult) compare: (id) other is
+     (- (NSComparisonResult) compare: (id) other is
           (set self-start  ((self  range) first))
           (set other-start ((other range) first))
           (self-start compare: other-start)))
@@ -94,14 +94,14 @@
      (ivar-accessors)
      
      ;; Get the file description for a named file.
-     (cmethod (id) infoForFileNamed:(id)name is
+     (+ (id) infoForFileNamed:(id)name is
           (unless (set fileInfo ($files objectForKey:name))
                   (set fileInfo ((NuDocFileInfo alloc) initWithName:name))
                   ($files setObject:fileInfo forKey:name))
           fileInfo)
      
      ;; Initialize a description for a named file.
-     (imethod (id) initWithName:(id) name is
+     (- (id) initWithName:(id) name is
           (super init)
           (set @name name)
           (set @niceName (NSMutableString stringWithString:name))
@@ -113,18 +113,18 @@
           self)
      
      ;; Generate a link to the html description of the file.
-     (imethod (id) linkWithPrefix:(id) prefix is
+     (- (id) linkWithPrefix:(id) prefix is
           (set link <<-END
 <a href="#{prefix}#{(self niceName)}.html">#{@name}</a>END)
           link)
      
      ;; Set the raw comments associated with a file.
-     (imethod (void) setComments:(id) comments is
+     (- (void) setComments:(id) comments is
           (set @comments comments)
           (self parseFileComments))
      
      ;; Extract information from one line of file comments.
-     (imethod (void) parseFileCommentLine:(id) line is
+     (- (void) parseFileCommentLine:(id) line is
           (cond ((or (line beginsWithString:"@class")
                      (line beginsWithString:"@category")
                      (line beginsWithString:"@method")
@@ -151,7 +151,7 @@
                 (else nil)))
      
      ;; Extract documentation from file comments.
-     (imethod (void) parseFileComments is
+     (- (void) parseFileComments is
           (set @discussion (NSMutableString string))
           (if @comments
               (if (set match (objc-comment-pattern findInString:@comments))
@@ -172,10 +172,10 @@
                                            (self parseFileCommentLine:line)))))))))
      
      ;; Add a method description to a file's array of methods.
-     (imethod (void) addMethod: (id) method is (@methods addObject:method))
+     (- (void) addMethod: (id) method is (@methods addObject:method))
      
      ;; Add a class description to a file's array of classes.
-     (imethod (void) addClass: (id) class is (@classes addObject:class)))
+     (- (void) addClass: (id) class is (@classes addObject:class)))
 
 ;; Extract information from one line of class and method comments.
 (macro-0 parseClassAndMethodCommentLine
@@ -226,7 +226,7 @@
      (ivar-accessors)
      
      ;; Initialize a description for a named class.
-     (imethod (id) initWithName:(id) name is
+     (- (id) initWithName:(id) name is
           (super init)
           (set @name name)
           (set @methods (NSMutableArray array))
@@ -234,38 +234,38 @@
           self)
      
      ;; Generate a link to the html description of the class.
-     (imethod (id) linkWithPrefix:(id) prefix is
+     (- (id) linkWithPrefix:(id) prefix is
           (set link <<-END
 <a href="#{prefix}#{(self name)}.html">#{@name}</a>END)
           link)
      
      ;; Generate a link to the html description of the class' superclass.
-     (imethod (id) linkToSuperClassWithPrefix:(id) prefix is
+     (- (id) linkToSuperClassWithPrefix:(id) prefix is
           (if (set superClassInfo ($classes objectForKey:@superClassName))
               (then (superClassInfo linkWithPrefix:prefix))
               (else @superClassName)))
      
      ;; Get an array of descriptions of a class' class methods.
-     (imethod (id) classMethods is
+     (- (id) classMethods is
           (@methods select:(do (method) (eq (method methodType) "+"))))
      
      ;; Get an array of descriptions of a class' instance methods.
-     (imethod (id) instanceMethods is
+     (- (id) instanceMethods is
           (@methods select:(do (method) (eq (method methodType) "-"))))
      
      ;; Set the raw comments associated with a class.
-     (imethod (void) setComments:(id) comments is
+     (- (void) setComments:(id) comments is
           (set @comments comments)
           (parseClassAndMethodComments))
      
      ;; A sorted list of the names of files containing declarations of a class and its methods.
-     (imethod (id) fileNames is ((@files allKeys) sort))
+     (- (id) fileNames is ((@files allKeys) sort))
      
      ;; A list of the descriptions of files containing declarations of a class and its methods.
-     (imethod (id) files is (@files allValues))
+     (- (id) files is (@files allValues))
      
      ;; Add a file description to the class' list.
-     (imethod (void) addFile:(id) file is
+     (- (void) addFile:(id) file is
           (@files setObject:file forKey:(file name))))
 
 (set method-table-template (NuTemplate codeForString: <<-END
@@ -298,7 +298,7 @@ END))
      (ivar-accessors)
      
      ;; Initialize a method description from a Nu declaration.
-     (imethod (id) initWithDeclaration:(id) declaration file:(id) file class:(id) classInfo is
+     (- (id) initWithDeclaration:(id) declaration file:(id) file class:(id) classInfo is
           (super init)
           (set @file file)
           (set @classInfo classInfo)
@@ -333,7 +333,7 @@ END))
           self)
      
      ;; Initialize a method description from an Objective-C declaration.
-     (imethod (id) initWithName:(id) name file:(id) file class:(id) classInfo is
+     (- (id) initWithName:(id) name file:(id) file class:(id) classInfo is
           (super init)
           (set @file file)
           (set @classInfo classInfo)
@@ -362,21 +362,21 @@ END))
           self)
      
      ;; Generate a link to the html description of the method.
-     (imethod (id) linkWithPrefix:(id) prefix is
+     (- (id) linkWithPrefix:(id) prefix is
           (set link <<-END
 <a href="#{prefix}#{((self classInfo) name)}.html##{(self shortMethodName)}">#{@methodType} #{@shortMethodName}</a>END)
           link)
      
      ;; Compare methods by name, allowing method descriptions to be sorted.
-     (imethod (int) compare:(id) other is
+     (- (int) compare:(id) other is
           (@shortMethodName compare:(other shortMethodName)))
      
      ;; Generate an html table that prettily-prints the method selector.
-     (imethod (id) tableDescription is
+     (- (id) tableDescription is
           (eval method-table-template))
      
      ;; Set the raw comments associatied with a method.
-     (imethod (void) setComments:(id) comments is
+     (- (void) setComments:(id) comments is
           (set @comments comments)
           (parseClassAndMethodComments)))
 

@@ -32,25 +32,25 @@
          (meval (list 'className (margs first)
                       'helpText (margs second))
                 '(class className
-                      (imethod (id) help is helpText))))
+                      (- (id) help is helpText))))
     
     (macro-0 class-help-1
          (eval (list 'class (margs first)
-                     (list 'imethod '(id) 'help 'is (margs second)))))
+                     (list '- '(id) 'help 'is (margs second)))))
     
     (macro-0 class-help-2
          (class (unquote (margs first))
-              (imethod (id) help is (unquote (margs second)))))
+              (- (id) help is (unquote (margs second)))))
     
     ; we might prefer this when the parser can handle commas.
     ;(macro-0 class-help-3
     ;     (class ,(margs first))
-    ;          (imethod (id) help is ,(margs second)))
+    ;          (- (id) help is ,(margs second)))
     )
 
 (macro-0 class-help
      (class (unquote (margs first))
-          (imethod (id) help is (unquote (margs second)))))
+          (- (id) help is (unquote (margs second)))))
 
 ;; help text
 

@@ -29,7 +29,7 @@
 (class NSTextStorage
      
      ;; Search back from a closing paren to find its match.
-     (imethod (int) findOpeningParenForParenAt:(int) position backTo:(int) startOfInput is
+     (- (int) findOpeningParenForParenAt:(int) position backTo:(int) startOfInput is
           (let ((count 0)
                 (index position)
                 (found NO)
@@ -46,7 +46,7 @@
                (if found (then index) (else -1))))
      
      ;; Search forward from an opening paren to find its match.
-     (imethod (int) findClosingParenForParenAt:(int) position is
+     (- (int) findClosingParenForParenAt:(int) position is
           (let ((count 0)
                 (index position)
                 (maxindex (self length))
@@ -69,13 +69,13 @@
 (class NuConsoleShowHideTransformer is NSValueTransformer
      
      ;; Get the class of the transformed value (NSString).
-     (cmethod (Class) transformedValueClass is NSString)
+     (+ (Class) transformedValueClass is NSString)
      
      ;; Return NO because this transformer does not allow reverse transformation.
-     (cmethod (BOOL) allowsReverseTransformation is NO)
+     (+ (BOOL) allowsReverseTransformation is NO)
      
      ;; Convert a boolean value into an appropriate string for the menu item.
-     (imethod (id) transformedValue:(id) v is (if v (then "Hide Nu Console") (else "Show Nu Console"))))
+     (- (id) transformedValue:(id) v is (if v (then "Hide Nu Console") (else "Show Nu Console"))))
 
 (NSValueTransformer setValueTransformer: ((NuConsoleShowHideTransformer alloc) init)
      forName:"NuConsoleShowHideTransformer")
@@ -87,16 +87,16 @@
      (ivar (id) parser (id) showConsole (id) alert (id) console (int) exitWhenClosed)
      
      ;; Setter to use to control the display of the console with bindings.
-     (imethod (void) setMyShowConsole:(id) showConsole is (self setValue:showConsole forKey:"showConsole"))
+     (- (void) setMyShowConsole:(id) showConsole is (self setValue:showConsole forKey:"showConsole"))
      
      ;; Toggle the console display.
-     (imethod (void) toggleConsole:(id) sender is
+     (- (void) toggleConsole:(id) sender is
           (if @showConsole
               (then (self setMyShowConsole:NO)  ((self window) close))
               (else (self setMyShowConsole:YES) ((self window) makeKeyAndOrderFront:self))))
      
      ;; Add a menu item to toggle the console's display.
-     (imethod (void) addMenuItem is
+     (- (void) addMenuItem is
           (let (m ((NSMenuItem alloc) initWithTitle:"Toggle Nu Console" action:"toggleConsole:" keyEquivalent:"l"))
                (m setTarget: self)
                (m bind:"title" toObject:self withKeyPath:"showConsole"
@@ -105,7 +105,7 @@
                     (if windowMenu (windowMenu insertItem:m atIndex:0)))))
      
      ;; Initialize a console.
-     (imethod (id) init is
+     (- (id) init is
           (self initWithWindow:((NSPanel alloc) initWithContentRect:'(0 0 600 200)
                                 styleMask:(+ NSTitledWindowMask NSClosableWindowMask NSMiniaturizableWindowMask NSResizableWindowMask NSUtilityWindowMask)
                                 backing:NSBackingStoreBuffered
@@ -129,16 +129,16 @@
           self)
      
      ;; When a window resizes, move the cursor to the end of the input.
-     (imethod (void) windowDidResize: (id) notification is
+     (- (void) windowDidResize: (id) notification is
           (@console moveToEndOfInput))
      
      ;; On window close, optionally terminate the application.
-     (imethod (void) windowWillClose: (id) notification is
+     (- (void) windowWillClose: (id) notification is
           (if (eq @exitWhenClosed YES) ((NSApplication sharedApplication) terminate:self))
           (self setMyShowConsole:NO))
      
      ;; When a window is to be closed, optionally threaten to terminate the application.
-     (imethod (BOOL) windowShouldClose: (id) sender is
+     (- (BOOL) windowShouldClose: (id) sender is
           (case @exitWhenClosed
                 (NO  YES)
                 (YES (set @alert ((NSAlert alloc) init))
@@ -154,7 +154,7 @@
                      NO)))
      
      ;; Helper for window close alert.
-     (imethod (void) alertDidEnd:(id) alert returnCode:(int) code contextInfo:(void *) contextInfo is
+     (- (void) alertDidEnd:(id) alert returnCode:(int) code contextInfo:(void *) contextInfo is
           (if (eq code 1000)
               ((self window) close))))
 
@@ -164,7 +164,7 @@
 (class NuConsoleView is NSTextView
      
      ;; Intercept key presses to capture control key sequences that enhance command line editing.
-     (imethod (void) keyDown: (id) event is
+     (- (void) keyDown: (id) event is
           (cond ((eq 0  (& (event modifierFlags) NSControlKeyMask)) nil)       ;; do nothing if control key is not pressed
                 ((eq 0  (event keyCode)) ((self delegate) moveToStartOfInput)) ;; ctrl-a
                 ((eq 14 (event keyCode)) ((self delegate) moveToEndOfInput))   ;; ctrl-e
@@ -177,13 +177,13 @@
 (class NuConsoleViewController is NSObject
      (ivar (id) textview (id) startOfInput (id) insertionPoint (id) parser (id) history (id) index (id) count (id) chunk)
      
-     (imethod (id) loadFile:(id)file is
+     (- (id) loadFile:(id)file is
           ((_parser parse: (NSString stringWithContentsOfFile:
                                 (file stringByResolvingSymlinksInPath)))
            evalWithContext: (_parser context)))
      
      ;; Initialize a controller with a specified frame.
-     (imethod (id) initWithFrame:(NSRect) frame is
+     (- (id) initWithFrame:(NSRect) frame is
           (super init)
           (set @textview ((NuConsoleView alloc) initWithFrame: frame))
           (@textview setAutoresizingMask: (+ NSViewHeightSizable NSViewWidthSizable))
@@ -204,18 +204,18 @@
           self)
      
      ;; Get the number of lines to output between handling application events.
-     (imethod (id) chunk is @chunk)
+     (- (id) chunk is @chunk)
      
      ;; Set the number of lines to output between handling application events.
      ;; Setting this higher causes output to display faster, but more erratically.
-     (imethod (void) setChunk:(id) chunk is (set @chunk chunk))
+     (- (void) setChunk:(id) chunk is (set @chunk chunk))
      
      ;; Set the console font
-     (imethod (void) setFonts is
+     (- (void) setFonts is
           (@textview setFont: (NSFont fontWithName:"Monaco" size: 14)))
      
      ;; Get the console prompt.
-     (imethod (void) prompt is
+     (- (void) prompt is
           ;; In general, writes move both the insertionPoint and the startOfInput forward,
           ;; but we don't want to do this when we write the prompt.
           (let ((savedInsertionPoint @insertionPoint))
@@ -226,7 +226,7 @@
                (set @insertionPoint savedInsertionPoint)))
      
      ;; Write text to the console.
-     (imethod (void) write: (id) string is
+     (- (void) write: (id) string is
           ((@textview textStorage) replaceCharactersInRange:(list @insertionPoint 0) withString:string)
           (set @insertionPoint (+ @insertionPoint (string length)))
           (set @startOfInput (+ @startOfInput (string length)))
@@ -237,29 +237,29 @@
           (self moveToEndOfInput))
      
      ;; Move the console display to a specified point.
-     (imethod (void) moveAndScrollToIndex: (id) index is
+     (- (void) moveAndScrollToIndex: (id) index is
           (@textview scrollRangeToVisible:(list index 0))
           (@textview setSelectedRange:(list index 0)))
      
      ;; Move the console display and cursor to the beginning of the input area.
-     (imethod (void) moveToStartOfInput is
+     (- (void) moveToStartOfInput is
           (self moveAndScrollToIndex:@startOfInput))
      
      ;; Move the console display and cursor to the end of the input area.
-     (imethod (void) moveToEndOfInput is
+     (- (void) moveToEndOfInput is
           (self moveAndScrollToIndex:(self lengthOfTextView)))
      
      ;; Get the length of the text view containing the console.
-     (imethod (id) lengthOfTextView is
+     (- (id) lengthOfTextView is
           (((@textview textStorage) mutableString) length))
      
      ;; Get the current line of input to the console.
-     (imethod (id) currentLine is
+     (- (id) currentLine is
           (let (text ((@textview textStorage) mutableString))
                (text substringWithRange:(list @startOfInput (- (text length) @startOfInput)))))
      
      ;; Replace the current line of input with a line from the input history.
-     (imethod (void) replaceLineWithPrevious is
+     (- (void) replaceLineWithPrevious is
           (cond ((eq @index 0) nil)
                 ((eq @index -1) nil)
                 (else
@@ -270,7 +270,7 @@
                      (@textview scrollRangeToVisible:(list (self lengthOfTextView) 0)))))
      
      ;; Replace the current line of input with a line from the input history.
-     (imethod (void) replaceLineWithNext is
+     (- (void) replaceLineWithNext is
           (cond ((eq @index (- (@history count) 0)) nil)
                 ((eq @index (- (@history count) 1))
                  (set @index (+ @index 1))
@@ -286,7 +286,7 @@
                      (@textview scrollRangeToVisible:(list (self lengthOfTextView) 0)))))
      
      ;; Delegate methods to handle text changes.
-     (imethod (BOOL) textView:(id) textview shouldChangeTextInRange:(NSRange) range replacementString:(id) replacement is
+     (- (BOOL) textView:(id) textview shouldChangeTextInRange:(NSRange) range replacementString:(id) replacement is
           ((@textview layoutManager) removeTemporaryAttribute:"NSColor" forCharacterRange:(list 0 (self lengthOfTextView)))
           ((@textview layoutManager) removeTemporaryAttribute:"NSBackgroundColor" forCharacterRange:(list 0 (self lengthOfTextView)))
           ((@textview layoutManager) removeTemporaryAttribute:"NSFont" forCharacterRange:(list 0 (self lengthOfTextView)))
@@ -368,7 +368,7 @@
                 (else YES)))  ;; in the general case, the caller should insert replacement text
      
      ;; Delegate method to approve text changes.
-     (imethod (NSRange) textView:(id) textview is
+     (- (NSRange) textView:(id) textview is
           willChangeSelectionFromCharacterRange:(NSRange) oldRange
           toCharacterRange:(NSRange) newRange is
           (if (and (eq (second newRange) 0)
@@ -377,7 +377,7 @@
               (else newRange)))
      
      ;; Delegate method to perform actions.
-     (imethod (int) textView:(id) textview doCommandBySelector:(SEL) selector is
+     (- (int) textView:(id) textview doCommandBySelector:(SEL) selector is
           (case selector
                 ("moveUp:"    (self replaceLineWithPrevious))
                 ("moveDown:"  (self replaceLineWithNext))
