@@ -1033,6 +1033,15 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
 #if USE_SIG
 	NSMethodSignature *sig = [target methodSignatureForSelector:s];
 	int argument_count = [sig numberOfArguments];
+    BOOL zeroArguments = NO;
+	if (argument_count == 0)
+	{
+        // - [NSMethodSignature numberOfArguments] returns 0 if there are no arguments, but we expect 2 (cmd and self).
+        // If we get zero, we use method_getNumberOfArguments() here, and method_getArgumentType() below.
+        // This works around Apple's bug in the method_*** functions, but allows 'nuke test' to pass
+        argument_count =  method_getNumberOfArguments(m);
+        zeroArguments = YES;
+	}
 #else
     int argument_count = method_getNumberOfArguments(m);
 #endif
@@ -1053,7 +1062,11 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
         int i;
         for (i = 0; i < argument_count; i++) {
 			#if USE_SIG
-			strncpy(&arg_type_buffer[0], [sig getArgumentTypeAtIndex:i], BUFSIZE);
+			if (zeroArguments) {
+			    method_getArgumentType(m, i, &arg_type_buffer[0], BUFSIZE);
+			} else {
+			    strncpy(&arg_type_buffer[0], [sig getArgumentTypeAtIndex:i], BUFSIZE);
+		    }
 			#else
             method_getArgumentType(m, i, &arg_type_buffer[0], BUFSIZE);
             #endif
