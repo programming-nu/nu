@@ -5,7 +5,7 @@
 //  Created by Tim Burks on 7/2/10.
 //  Copyright Neon Design Technology, Inc. 2010. All rights reserved.
 //
-#import "main.h"
+#import "NuMain.h"
 
 int main(int argc, char *argv[]) {    
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
