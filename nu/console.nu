@@ -368,7 +368,7 @@
                 (else YES)))  ;; in the general case, the caller should insert replacement text
      
      ;; Delegate method to approve text changes.
-     (- (NSRange) textView:(id) textview is
+     (- (NSRange) textView:(id) textview
           willChangeSelectionFromCharacterRange:(NSRange) oldRange
           toCharacterRange:(NSRange) newRange is
           (if (and (eq (second newRange) 0)
