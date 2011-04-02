@@ -984,6 +984,12 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
             valid_history_file = 1;
         }
     }
+    
+    const char *unbufferedIO = getenv("NSUnbufferedIO");
+    if (unbufferedIO && !strcmp(unbufferedIO, "YES")) {
+        system("stty -echo"); // Turn off echoing to avoid duplicated input. Surely there's a better way to do this.
+        puts("It looks like you are running in the Xcode debugger console. Beware: command history is broken.");
+    }
 
     do {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
