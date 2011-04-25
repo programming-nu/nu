@@ -232,6 +232,11 @@ limitations under the License.
     return result;
 }
 
+- (NSString *) description 
+{
+    return [self stringValue];
+}
+
 - (void) addToException:(NuException*)e value:(id)value
 {
     const char *parsedFilename = nu_parsedFilename(self->file);
