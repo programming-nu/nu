@@ -1,5 +1,9 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
+(set DEVROOT 
+     (ifDarwin (then (NSString stringWithShellCommand:"xcode-select -print-path"))
+               (else nil)))
+ 
 (global VERSION '(0 9 1)) #(major minor tweak)
 
 (task "version" is
@@ -84,19 +88,21 @@ END)
 
 ;; build configuration
 (set @cc "gcc")
+(set @cc "#{DEVROOT}/usr/bin/llvm-gcc-4.2")
+
 (set @leopard "")
 (set @sdk
-     (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.7.sdk")
+     (cond ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.7.sdk")
             (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__ -DSNOWLEOPARD -DLION")
-            ("-isysroot /Developer/SDKs/MacOSX10.6.sdk")) ;; stay on the 10.6 SDK for now
-           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.6.sdk")
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.6.sdk")) ;; stay on the 10.6 SDK for now
+           ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.6.sdk")
             (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__ -DSNOWLEOPARD")
-            ("-isysroot /Developer/SDKs/MacOSX10.6.sdk"))
-           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk")
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.6.sdk"))
+           ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.5.sdk")
             (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__")
-            ("-isysroot /Developer/SDKs/MacOSX10.5.sdk"))
-           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk")
-            ("-isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.5.sdk"))
+           ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.4u.sdk")
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.4u.sdk"))
            (else "")))
 
 (set @cflags "-Wall -g -std=gnu99 -fPIC")
@@ -186,7 +192,7 @@ END)
       (SH "ruby -rtest/unit -e0 -- -v --pattern '/test_.*\.rb^/'"))
 
 (task "test" => "framework" "nush" is
-      (SH "./nush tools/nutest test/test_*.nu"))
+      (SH "./nush tools/nutest tests.nu"))
 
 (task "doc" is
       (SH "nudoc"))
@@ -232,9 +238,9 @@ END)
       (SH "hdiutil create -srcdir dmg '#{@framework}.dmg' -volname '#{@framework}'")
       (SH "rm -rf dmg"))
 
-(if (NSFileManager fileExistsNamed:"/Developer/usr/bin/packagemaker")
-    (then (set PACKAGEMAKER "/Developer/usr/bin/packagemaker"))
-    (else (set PACKAGEMAKER "/Developer/Tools/packagemaker")))
+(if (NSFileManager fileExistsNamed:"#{DEVROOT}/usr/bin/packagemaker")
+    (then (set PACKAGEMAKER "#{DEVROOT}/usr/bin/packagemaker"))
+    (else (set PACKAGEMAKER "#{DEVROOT}/Tools/packagemaker")))
 
 ;; Build an installer and wrap it in a disk image.
 (task "installer" => "framework" "nush" is

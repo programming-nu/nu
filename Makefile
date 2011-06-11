@@ -9,21 +9,26 @@ SYSTEM = $(shell uname)
 PREFIX ?= /usr/local
 
 ifeq ($(SYSTEM), Darwin)
+
+        DEVROOT = $(shell xcode-select -print-path)
+
 	ifeq ($(shell test -e /usr/lib/libffi.dylib && echo yes), yes)
 		# Use the libffi that ships with OS X.
 		FFI_LIB = -L/usr/lib -lffi
 		FFI_INCLUDE = -I/usr/include/ffi
+		# assume that our system is at least on Leopard 
 		LEOPARD_CFLAGS = -DLEOPARD_OBJC2 
 	else
 		# Use the libffi that is distributed with Nu.
 		FFI_LIB = -L./libffi -lffi
 		FFI_INCLUDE = -I./libffi/include
+		# assume that our system is pre-Leopard 
 		LEOPARD_CFLAGS =
 	endif
 
-	ifeq ($(shell test -e /Developer/SDKs/MacOSX10.7.sdk && echo yes), yes)
+	ifeq ($(shell test -e $(DEVROOT)/SDKs/MacOSX10.7.sdk && echo yes), yes)
 		# not a typo, we deliberatly stay back on the 10.6 SDK for now.
-                LION_CFLAGS = -DLION -isysroot /Developer/SDKs/MacOSX10.6.sdk
+                LION_CFLAGS = -DLION -isysroot $(DEVROOT)/SDKs/MacOSX10.6.sdk
         else
                 LION_CFLAGS =
         endif
@@ -63,7 +68,7 @@ MFLAGS = -fobjc-exceptions
 CFLAGS += -DHAVE_CONFIG_H
 
 ifeq ($(SYSTEM), Darwin)
-	#CC = /Developer/usr/bin/llvm-gcc-4.2 
+	CC = $(DEVROOT)/usr/bin/llvm-gcc-4.2 
 	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS) $(LION_CFLAGS) -Ipcre 
 else
 #	CFLAGS += -DLINUX
