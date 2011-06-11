@@ -308,16 +308,20 @@ void NuInit()
         void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();
 
+	#ifndef LION
         // Stop NSView from complaining when we retain alloc-ed views.
         Class NSView = NSClassFromString(@"NSView");
         [NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
+	#endif
 
-        // Enable support for protocols in Nu.  Apple doesn't have an API for this, so we use our own.
 	#ifndef __DARWIN_10_6_AND_LATER
+	#ifndef LION
+        // Enable support for protocols in Nu.  Apple doesn't have an API for this, so we use our own.
         extern void nu_initProtocols();
         nu_initProtocols();
         // if you don't like making Protocol a subclass of NSObject (see nu_initProtocols), you can do this instead.
         // transplant_nu_methods([Protocol class], [NSObject class]);
+	#endif
 	#endif
 
         #ifndef MININUSH

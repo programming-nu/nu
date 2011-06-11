@@ -13,13 +13,20 @@ ifeq ($(SYSTEM), Darwin)
 		# Use the libffi that ships with OS X.
 		FFI_LIB = -L/usr/lib -lffi
 		FFI_INCLUDE = -I/usr/include/ffi
-		LEOPARD_CFLAGS = -DLEOPARD_OBJC2
+		LEOPARD_CFLAGS = -DLEOPARD_OBJC2 
 	else
 		# Use the libffi that is distributed with Nu.
 		FFI_LIB = -L./libffi -lffi
 		FFI_INCLUDE = -I./libffi/include
 		LEOPARD_CFLAGS =
 	endif
+
+	ifeq ($(shell test -e /Developer/SDKs/MacOSX10.7.sdk && echo yes), yes)
+		# not a typo, we deliberatly stay back on the 10.6 SDK for now.
+                LION_CFLAGS = -DLION -isysroot /Developer/SDKs/MacOSX10.6.sdk
+        else
+                LION_CFLAGS =
+        endif
 
 else # GNUstep
 	FFI_LIB=-lffi
@@ -56,7 +63,8 @@ MFLAGS = -fobjc-exceptions
 CFLAGS += -DHAVE_CONFIG_H
 
 ifeq ($(SYSTEM), Darwin)
-	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS)
+	#CC = /Developer/usr/bin/llvm-gcc-4.2 
+	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS) $(LION_CFLAGS) -Ipcre 
 else
 #	CFLAGS += -DLINUX
 #	MFLAGS += -fconstant-string-class=NSConstantString
@@ -100,7 +108,7 @@ all: mininush
 
 .PHONY: mininush
 mininush: $(GCC_OBJS)
-	$(CC) $(GCC_OBJS) -g -O2 -o mininush $(LDFLAGS)
+	$(CC) $(GCC_OBJS) $(CFLAGS) -o mininush $(LDFLAGS)
 
 .PHONY: clean
 clean:
@@ -109,3 +117,4 @@ clean:
 .PHONY: clobber
 clobber: clean
 	rm -f mininush
+

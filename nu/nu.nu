@@ -226,7 +226,7 @@
      (- writeToPropertyList:name is
         (set xmlData (NSPropertyListSerialization dataFromPropertyList:self
                           format:100 ;; NSPropertyListXMLFormat_v1_0
-                          errorDescription:(set error (NuReference new))))
+                          errorDescription:nil))
         (if xmlData (xmlData writeToFile:name atomically:YES)
             (else (puts ((error value) description)))))
      
@@ -240,12 +240,12 @@
      (- XMLPropertyListRepresentation is
         (NSPropertyListSerialization dataFromPropertyList:self
              format:100 ;; NSPropertyListXMLFormat_v1_0
-             errorDescription:(set error (NuReference new))))
+             errorDescription:nil))
      
      (- binaryPropertyListRepresentation is
         (NSPropertyListSerialization dataFromPropertyList:self
              format:200 ;; NSPropertyListBinaryFormat_v1_0
-             errorDescription:(set error (NuReference new)))))
+             errorDescription:nil)))
 
 (class NSData
      (- propertyListValue is

@@ -43,6 +43,7 @@ END)
 (@inc_dirs addObjectsFromList:(list "./include" "./include/Nu"))
 (ifDarwin
          (then (@frameworks addObject:"Cocoa")
+               (@inc_dirs   addObject:"./pcre")
                (@libs       addObject:"edit"))
          (else (@libs       addObjectsFromList:(list "readline" "m" ))
                ;;(@inc_dirs   addObject:"/usr/include/GNUstep/Headers")
@@ -85,8 +86,11 @@ END)
 (set @cc "gcc")
 (set @leopard "")
 (set @sdk
-     (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.6.sdk")
-            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__")
+     (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.7.sdk")
+            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__ -DSNOWLEOPARD -DLION")
+            ("-isysroot /Developer/SDKs/MacOSX10.6.sdk")) ;; stay on the 10.6 SDK for now
+           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.6.sdk")
+            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__ -DSNOWLEOPARD")
             ("-isysroot /Developer/SDKs/MacOSX10.6.sdk"))
            ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk")
             (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__")
@@ -206,7 +210,7 @@ END)
       (ifDarwin
                ;; install the framework
                (SH "sudo rm -rf #{@destdir}/Library/Frameworks/#{@framework}.framework")
-               (SH "ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
+               (SH "sudo ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
       (ifGNUstep
           ;; install the dynamic library
           (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib")

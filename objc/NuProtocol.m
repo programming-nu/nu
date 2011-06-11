@@ -43,6 +43,7 @@ struct objc_method_description_list
 #ifndef IPHONE
 #ifndef __DARWIN_10_6_AND_LATER
 #ifndef __x86_64__
+#ifndef SNOWLEOPARD
 
 @interface Protocol : NSObject
 {
@@ -293,6 +294,7 @@ Protocol **nu_objc_copyProtocolList(unsigned int *outCount)
 void nu_initProtocols()
 {
     #ifndef __x86_64__
+    #ifndef SNOWLEOPARD
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
@@ -309,6 +311,7 @@ void nu_initProtocols()
         mach_override("_objc_copyProtocolList", NULL, (void*)&nu_objc_copyProtocolList, (void**)&original_objc_copyProtocolList);
         #endif
     }
+    #endif
     #endif
 }
 #ifdef DARWIN
@@ -344,6 +347,7 @@ void nu_initProtocols()
 }
 
 @end
+#endif
 #endif
 #endif
 #endif
