@@ -1,5 +1,5 @@
 ;; Use this script to generate precompiled configurable method handlers.
-;; Copyright 2008, Tim Burks, Neon Design Technology, Inc.
+;; Copyright 2008, Tim Burks, Radtastical Inc.
 ;; Released under the Apache License, 2.0.
 
 (load "template")

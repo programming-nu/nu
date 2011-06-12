@@ -1,7 +1,7 @@
 ;; test_templates.nu
 ;;  tests for Nu code templates.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (load "template")
 

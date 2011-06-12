@@ -1,7 +1,7 @@
 ;; test_errors.nu
 ;;  tests for Nu errors that throw exceptions.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 ;; use these functions to call class construction operators outside of any class scope.
 (function misplaced-instance-method () (imethod foo is nil))

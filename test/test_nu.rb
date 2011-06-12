@@ -1,7 +1,7 @@
 # test_nu.rb
 #  Nu sanity tests.  Requires Ruby, RubyObjC, and Test::Unit.
 #
-#  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+#  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 #  For more information about this file, visit http://programming.nu.
 
 require 'test/unit'

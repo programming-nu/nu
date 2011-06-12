@@ -1,7 +1,7 @@
 ;; test_system.nu
 ;;  tests for Nu system-level operators.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestSystem is NuTestCase
      

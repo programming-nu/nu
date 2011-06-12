@@ -1,7 +1,7 @@
 ;; test_types.nu
 ;;  tests for Nu type handling.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestTypes is NuTestCase
      

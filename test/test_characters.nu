@@ -1,7 +1,7 @@
 ;; test_characters.nu
 ;;  tests for Nu character literals.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestCharacters is NuTestCase
      

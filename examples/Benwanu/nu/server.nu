@@ -1,7 +1,7 @@
 ;; @file server.nu
 ;; @discussion An embedded web server for benwanu.
 ;;
-;; @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 ;; Load this file into a running app to add a web server.
 ;; It requires NuHTTP. Specifically /Library/Frameworks/NuHTTP.framework.

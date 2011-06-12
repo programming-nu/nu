@@ -1,7 +1,7 @@
 ;; test_profiler.nu
 ;;  tests for Nu profiling helpers.
 ;;
-;;  Copyright (c) 2009 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2009 Tim Burks, Radtastical Inc.
 
 
 (function dosomething ()

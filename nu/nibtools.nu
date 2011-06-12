@@ -2,7 +2,7 @@
 ;; @discussion Nu helpers for manipulating Cocoa objects.
 ;; These are especially useful for working with objects loaded from nib files.
 ;;
-;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
 ;;   Licensed under the Apache License, Version 2.0 (the "License");
 ;;   you may not use this file except in compliance with the License.

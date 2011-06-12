@@ -1,7 +1,7 @@
 ;; test_comparison.nu
 ;;  tests for Nu comparison operators.
 ;;
-;;  Copyright (c) 2008 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2008 Tim Burks, Radtastical Inc.
 
 (class TestComparison is NuTestCase
      

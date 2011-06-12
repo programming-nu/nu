@@ -1,7 +1,7 @@
 ;; @file       doc.nu
 ;; @discussion Documentation extraction utility for Nu.
 ;;
-;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
 ;;   Licensed under the Apache License, Version 2.0 (the "License");
 ;;   you may not use this file except in compliance with the License.
@@ -494,7 +494,7 @@ END))
 <div style="float:left; margin-left:10px">Documentation by NuDoc</div>
 <div style="float:right; margin-right:10px">Updated <%= ((NSDate date) descriptionForDocumentation) %></div>
 <% (if (eq $sitename "programming.nu") %>
-<a href="http://blog.neontology.com">&copy; 2007-2008, Neon Design Technology, Inc.</a>
+<a href="http://radtastical.com">&copy; 2007-2008, Radtastical Inc.</a>
 <% ) %>
 </font>
 </center>

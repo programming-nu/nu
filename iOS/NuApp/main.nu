@@ -2,7 +2,7 @@
 ;; HelloWorldClassic in Nu
 ;;  a sample iPhone application ported to Nu
 ;;
-;; Copyright 2008, Tim Burks http://blog.neontology.com
+;; Copyright 2008, Tim Burks http://radtastical.com
 ;; Released under the Creative Commons Attribution-Share Alike 3.0 license
 ;; http://creativecommons.org/license/results-one?license_code=by-sa
 

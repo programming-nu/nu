@@ -1,7 +1,7 @@
 ;; @file       bridgesupport.nu
 ;; @discussion Optionally read constants, enums, and functions from Apple's BridgeSupport files.
 ;;
-;; @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
 ;;   Licensed under the Apache License, Version 2.0 (the "License");
 ;;   you may not use this file except in compliance with the License.

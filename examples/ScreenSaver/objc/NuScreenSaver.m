@@ -2,7 +2,7 @@
  * NuScreenSaver.m
  *  initialization code for the NuScreenSaver plugin.
  *
- * Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+ * Copyright (c) 2007 Tim Burks, Radtastical Inc.
  */
 #import <Cocoa/Cocoa.h>
 #import <ScreenSaver/ScreenSaverView.h>

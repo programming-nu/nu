@@ -1,7 +1,7 @@
 ;; test_exceptions.nu
 ;;  tests for Nu exception handling.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestExceptions is NuTestCase
      

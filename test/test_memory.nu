@@ -1,7 +1,7 @@
 ;; test_memory.nu
 ;;  tests for Nu memory management.
 ;;
-;;  Copyright (c) 2008 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2008 Tim Burks, Radtastical Inc.
 
 (class TestMemory is NuTestCase
      

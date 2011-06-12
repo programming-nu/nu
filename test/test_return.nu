@@ -1,7 +1,7 @@
 ;; test_return.nu
 ;;  tests for the Nu return operator.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestReturn is NuTestCase
      

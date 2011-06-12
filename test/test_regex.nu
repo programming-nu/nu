@@ -1,7 +1,7 @@
 ;; test_regex.nu
 ;;  tests for Nu regular expression support.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestRegex is NuTestCase
      

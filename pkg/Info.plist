@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleGetInfoString</key>
-	<string>1.0, neontology</string>
+	<string>1.0, radtastical</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.neontology.nu.package</string>
+	<string>com.radtastical.nu.package</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>IFMajorVersion</key>

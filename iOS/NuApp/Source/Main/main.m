@@ -3,7 +3,7 @@
 //  NuApp
 //
 //  Created by Tim Burks on 7/2/10.
-//  Copyright Neon Design Technology, Inc. 2010. All rights reserved.
+//  Copyright Radtastical Inc. 2010. All rights reserved.
 //
 #import "NuMain.h"
 

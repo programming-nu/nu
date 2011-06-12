@@ -2,7 +2,7 @@
 ;;  Aaron Hillegass' RandomApp example, the nib way. 
 ;;  a how-to for cooking with Nu and Cocoa.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (load "Nu:nu")		;; basics
 (load "Nu:cocoa")	;; cocoa definitions

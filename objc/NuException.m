@@ -1,7 +1,7 @@
 /*!
 @file exception.m
 @discussion  NuException
-@copyright Copyright (c) 2007 Neon Design Technology, Inc.
+@copyright Copyright (c) 2007 Radtastical Inc.
 
 Added by Peter Quade <pq@pqua.de>
 System stack trace support and other enhancements by Jeff Buck.

@@ -1,7 +1,7 @@
 ;; test_list_enumerable.nu
 ;;  tests for Nu methods for enumerating lists.
 ;;
-;;  Copyright (c) 2008 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2008 Tim Burks, Radtastical Inc.
 
 (class TestListEnumerable is NuTestCase
      

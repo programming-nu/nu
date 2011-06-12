@@ -1,7 +1,7 @@
 ;; test_structs.nu
 ;;  tests for Nu handling of common Cocoa structures.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (if (eq (uname) "Darwin")
     

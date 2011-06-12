@@ -34,7 +34,7 @@ FRAMEWORK_EXECUTABLE_NAME="${FRAMEWORK_NAME}"
 FRAMEWORK_IDENTIFIER="nu.programming.framework"
 FRAMEWORK_ICON="nu.icns"
 FRAMEWORK_CREATOR_CODE="????"
-FRAMEWORK_COPYRIGHT_STRING="Nu. Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc."
+FRAMEWORK_COPYRIGHT_STRING="Nu. Copyright (c) 2007 Tim Burks, Radtastical Inc."
 
 FRAMEWORK_REVISION_LETTER="A"
 

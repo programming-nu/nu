@@ -1,7 +1,7 @@
 ;; test_list.nu
 ;;  tests for basic Nu list operations.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestList is NuTestCase
      (- testPair? is

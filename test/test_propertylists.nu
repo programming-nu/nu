@@ -1,7 +1,7 @@
 ;; test_propertylists.nu
 ;;  tests for Nu property list support.
 ;;
-;;  Copyright (c) 2008 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2008 Tim Burks, Radtastical Inc.
 
 (class TestPropertyLists is NuTestCase
      

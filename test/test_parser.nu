@@ -1,7 +1,7 @@
 ;; test_parser.nu
 ;;  tests for the Nu parser.  Mainly used to test incremental parsing.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestParser is NuTestCase
      

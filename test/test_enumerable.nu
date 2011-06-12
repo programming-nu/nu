@@ -1,7 +1,7 @@
 ;; test_enumerable.nu
 ;;  tests for Nu enumerable extensions.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestEnumerable is NuTestCase
      

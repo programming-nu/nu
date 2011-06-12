@@ -1,7 +1,7 @@
 ;; rocks.nu
 ;;  Nu Rocks.  A Nu take on asteroids.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (load "nu")
 

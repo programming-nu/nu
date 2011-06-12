@@ -2,7 +2,7 @@
 @header super.h
 @discussion Declarations for NuSuper, a Nu proxy for object superclasses.
 NuSuper allows Nu method implementations to send messages to their superclass implementations.
-@copyright Copyright (c) 2007 Neon Design Technology, Inc.
+@copyright Copyright (c) 2007 Radtastical Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

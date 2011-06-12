@@ -1,7 +1,7 @@
 ;; growl.nu
 ;;  Use Growl from Nu.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 ;; This example requires Growl and the Growl SDK.
 ;; Install and start Growl, then get Growl.framework

@@ -1,7 +1,7 @@
 ;; test_control.nu
 ;;  tests for Nu control structures.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestControl is NuTestCase
      

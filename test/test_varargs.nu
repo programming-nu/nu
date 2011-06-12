@@ -1,7 +1,7 @@
 ;; test_varargs.nu
 ;;  tests for Nu support for blocks with variable numbers of arguments.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestVarArgs is NuTestCase
      

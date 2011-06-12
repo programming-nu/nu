@@ -1,7 +1,7 @@
 ;; test_bridgesupport.nu
 ;;  tests for the Nu reader for Apple's BridgeSupport files.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (if (eq (uname) "Darwin")
     (import Foundation)

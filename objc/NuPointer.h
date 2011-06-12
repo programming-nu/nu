@@ -2,7 +2,7 @@
 @header pointer.h
 @discussion Declarations for the NuPointer class,
 which wrap pointers to arbitrary locations in memory.
-@copyright Copyright (c) 2007 Neon Design Technology, Inc.
+@copyright Copyright (c) 2007 Radtastical Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

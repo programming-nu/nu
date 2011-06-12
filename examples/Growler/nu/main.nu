@@ -1,7 +1,7 @@
 ;; main.nu
 ;;  Entry point for a Nu program.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (load "nu")      	;; essentials
 (load "cocoa")		;; wrapped frameworks

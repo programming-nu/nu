@@ -1,7 +1,7 @@
 ;; test_bridge.nu
 ;;  tests for the Nu bridge to Objective-C.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestBridge is NuTestCase
      (if (eq (uname) "Darwin")
