@@ -48,6 +48,12 @@
      (and (isDarwin)
           (== "10" ((NSString stringWithShellCommand:"uname -r | cut -f1 -d.") chomp))))
 
+;; Special check for Lion
+;; Darwin kernel version for Lion is 11.x.x
+(function isLion ()
+     (and (isDarwin)
+          (== "11" ((NSString stringWithShellCommand:"uname -r | cut -f1 -d.") chomp))))
+
 (class NSString
      ;; Change the extension at the end of a file name to a new specified value.
      (- (id) stringByReplacingPathExtensionWith:(id) newExtension is

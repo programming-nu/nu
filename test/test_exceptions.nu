@@ -2,7 +2,7 @@
 ;;  tests for Nu exception handling.
 ;;
 ;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
-
+(if (eq (uname) "Darwin")
 (class TestExceptions is NuTestCase
      
      (- (id) testRangeException is
@@ -75,4 +75,4 @@
 
 
 
-
+)

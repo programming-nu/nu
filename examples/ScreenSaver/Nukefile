@@ -6,7 +6,7 @@
 
 (set @mflags "-fobjc-exceptions -fobjc-gc")
 
-(if (isSnowLeopard)
+(if (or isSnowLeopard isLion)
 	(then (set @arch '("x86_64"))) ;; Must be 64-bit in 10.6
 	(else (set @arch '("ppc" "i386"))))
 

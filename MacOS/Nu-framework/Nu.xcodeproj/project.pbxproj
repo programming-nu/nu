@@ -7,6 +7,67 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		223061C013A50DEA00B67882 /* beautify.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F411DDBBD100A5C690 /* beautify.nu */; };
+		223061C113A50DEA00B67882 /* bridgesupport.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F511DDBBD100A5C690 /* bridgesupport.nu */; };
+		223061C213A50DEA00B67882 /* cocoa.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F611DDBBD100A5C690 /* cocoa.nu */; };
+		223061C313A50DEA00B67882 /* console.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F711DDBBD100A5C690 /* console.nu */; };
+		223061C413A50DEA00B67882 /* coredata.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F811DDBBD100A5C690 /* coredata.nu */; };
+		223061C513A50DEA00B67882 /* doc.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F911DDBBD100A5C690 /* doc.nu */; };
+		223061C613A50DEA00B67882 /* fscript.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306FA11DDBBD100A5C690 /* fscript.nu */; };
+		223061C713A50DEA00B67882 /* generate.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306FB11DDBBD100A5C690 /* generate.nu */; };
+		223061C813A50DEA00B67882 /* help.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306FC11DDBBD100A5C690 /* help.nu */; };
+		223061C913A50DEA00B67882 /* match.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306FD11DDBBD100A5C690 /* match.nu */; };
+		223061CA13A50DEA00B67882 /* math.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306FE11DDBBD100A5C690 /* math.nu */; };
+		223061CB13A50DEA00B67882 /* menu.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306FF11DDBBD100A5C690 /* menu.nu */; };
+		223061CC13A50DEA00B67882 /* nibtools.nu in Resources */ = {isa = PBXBuildFile; fileRef = 2283070011DDBBD100A5C690 /* nibtools.nu */; };
+		223061CD13A50DEA00B67882 /* nu.nu in Resources */ = {isa = PBXBuildFile; fileRef = 2283070111DDBBD100A5C690 /* nu.nu */; };
+		223061CE13A50DEA00B67882 /* template.nu in Resources */ = {isa = PBXBuildFile; fileRef = 2283070211DDBBD100A5C690 /* template.nu */; };
+		223061CF13A50DEA00B67882 /* test.nu in Resources */ = {isa = PBXBuildFile; fileRef = 2283070311DDBBD100A5C690 /* test.nu */; };
+		223061FF13A54EDC00B67882 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 223061D113A54EDC00B67882 /* test.html */; };
+		2230620013A54EDC00B67882 /* test_array.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061D213A54EDC00B67882 /* test_array.nu */; };
+		2230620113A54EDC00B67882 /* test_blockargs.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061D313A54EDC00B67882 /* test_blockargs.nu */; };
+		2230620213A54EDC00B67882 /* test_bridge.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061D413A54EDC00B67882 /* test_bridge.nu */; };
+		2230620313A54EDC00B67882 /* test_bridgesupport.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061D513A54EDC00B67882 /* test_bridgesupport.nu */; };
+		2230620413A54EDC00B67882 /* test_characters.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061D613A54EDC00B67882 /* test_characters.nu */; };
+		2230620513A54EDC00B67882 /* test_classes.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061D713A54EDC00B67882 /* test_classes.nu */; };
+		2230620613A54EDC00B67882 /* test_closures.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061D813A54EDC00B67882 /* test_closures.nu */; };
+		2230620713A54EDC00B67882 /* test_comparison.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061D913A54EDC00B67882 /* test_comparison.nu */; };
+		2230620813A54EDC00B67882 /* test_control.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061DA13A54EDC00B67882 /* test_control.nu */; };
+		2230620913A54EDC00B67882 /* test_dictionary.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061DB13A54EDC00B67882 /* test_dictionary.nu */; };
+		2230620A13A54EDC00B67882 /* test_enumerable.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061DC13A54EDC00B67882 /* test_enumerable.nu */; };
+		2230620B13A54EDC00B67882 /* test_errors.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061DD13A54EDC00B67882 /* test_errors.nu */; };
+		2230620C13A54EDC00B67882 /* test_exceptions.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061DE13A54EDC00B67882 /* test_exceptions.nu */; };
+		2230620D13A54EDC00B67882 /* test_interface.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061DF13A54EDC00B67882 /* test_interface.nu */; };
+		2230620E13A54EDC00B67882 /* test_list.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061E013A54EDC00B67882 /* test_list.nu */; };
+		2230620F13A54EDC00B67882 /* test_list_enumerable.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061E113A54EDC00B67882 /* test_list_enumerable.nu */; };
+		2230621013A54EDC00B67882 /* test_macros.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061E213A54EDC00B67882 /* test_macros.nu */; };
+		2230621113A54EDC00B67882 /* test_macrox.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061E313A54EDC00B67882 /* test_macrox.nu */; };
+		2230621213A54EDC00B67882 /* test_match.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061E413A54EDC00B67882 /* test_match.nu */; };
+		2230621313A54EDC00B67882 /* test_math.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061E513A54EDC00B67882 /* test_math.nu */; };
+		2230621413A54EDC00B67882 /* test_memory.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061E613A54EDC00B67882 /* test_memory.nu */; };
+		2230621513A54EDC00B67882 /* test_nu.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061E713A54EDC00B67882 /* test_nu.nu */; };
+		2230621713A54EDC00B67882 /* test_numbers.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061E913A54EDC00B67882 /* test_numbers.nu */; };
+		2230621813A54EDC00B67882 /* test_onlisp.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061EA13A54EDC00B67882 /* test_onlisp.nu */; };
+		2230621913A54EDC00B67882 /* test_operators.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061EB13A54EDC00B67882 /* test_operators.nu */; };
+		2230621A13A54EDC00B67882 /* test_parser.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061EC13A54EDC00B67882 /* test_parser.nu */; };
+		2230621B13A54EDC00B67882 /* test_profiler.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061ED13A54EDC00B67882 /* test_profiler.nu */; };
+		2230621C13A54EDC00B67882 /* test_propertylists.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061EE13A54EDC00B67882 /* test_propertylists.nu */; };
+		2230621D13A54EDC00B67882 /* test_protocols.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061EF13A54EDC00B67882 /* test_protocols.nu */; };
+		2230621E13A54EDC00B67882 /* test_quasiquote.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F013A54EDC00B67882 /* test_quasiquote.nu */; };
+		2230621F13A54EDC00B67882 /* test_references.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F113A54EDC00B67882 /* test_references.nu */; };
+		2230622013A54EDC00B67882 /* test_regex.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F213A54EDC00B67882 /* test_regex.nu */; };
+		2230622113A54EDC00B67882 /* test_return.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F313A54EDC00B67882 /* test_return.nu */; };
+		2230622213A54EDC00B67882 /* test_set.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F413A54EDC00B67882 /* test_set.nu */; };
+		2230622313A54EDC00B67882 /* test_strings.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F513A54EDC00B67882 /* test_strings.nu */; };
+		2230622413A54EDC00B67882 /* test_structs.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F613A54EDC00B67882 /* test_structs.nu */; };
+		2230622513A54EDC00B67882 /* test_swizzling.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F713A54EDC00B67882 /* test_swizzling.nu */; };
+		2230622613A54EDC00B67882 /* test_symbols.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F813A54EDC00B67882 /* test_symbols.nu */; };
+		2230622713A54EDC00B67882 /* test_system.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061F913A54EDC00B67882 /* test_system.nu */; };
+		2230622813A54EDC00B67882 /* test_templates.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061FA13A54EDC00B67882 /* test_templates.nu */; };
+		2230622913A54EDC00B67882 /* test_truth.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061FB13A54EDC00B67882 /* test_truth.nu */; };
+		2230622A13A54EDC00B67882 /* test_types.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061FC13A54EDC00B67882 /* test_types.nu */; };
+		2230622B13A54EDC00B67882 /* test_undo.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061FD13A54EDC00B67882 /* test_undo.nu */; };
+		2230622C13A54EDC00B67882 /* test_varargs.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061FE13A54EDC00B67882 /* test_varargs.nu */; };
 		224276FF11DD748600940005 /* Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 224276FE11DD748600940005 /* Nu.h */; };
 		2283070411DDBBD100A5C690 /* beautify.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F411DDBBD100A5C690 /* beautify.nu */; };
 		2283070511DDBBD100A5C690 /* bridgesupport.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F511DDBBD100A5C690 /* bridgesupport.nu */; };
@@ -118,6 +179,72 @@
 		22B78A3811DE98AF0022EE11 /* pcreposix.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1711DE98AF0022EE11 /* pcreposix.c */; };
 		22B78A3911DE98AF0022EE11 /* pcreposix.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A1811DE98AF0022EE11 /* pcreposix.h */; };
 		22B78A3B11DE98AF0022EE11 /* ucp.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A1A11DE98AF0022EE11 /* ucp.h */; };
+		22EE2BF813A4731600895861 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22EE2BF713A4731600895861 /* UIKit.framework */; };
+		22EE2BFA13A4731600895861 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22EE2BF913A4731600895861 /* Foundation.framework */; };
+		22EE2BFC13A4731600895861 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22EE2BFB13A4731600895861 /* CoreGraphics.framework */; };
+		22EE2BFE13A4731600895861 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22EE2BFD13A4731600895861 /* CoreData.framework */; };
+		22EE2C0413A4731600895861 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 22EE2C0213A4731600895861 /* InfoPlist.strings */; };
+		22EE2C0613A4731600895861 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0513A4731600895861 /* main.m */; };
+		22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0913A4731600895861 /* NuAppDelegate.m */; };
+		22EE2C1813A4750300895861 /* mach_override.c in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7012B9E29B00B42E63 /* mach_override.c */; };
+		22EE2C1A13A4750300895861 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7212B9E29B00B42E63 /* Nu.m */; };
+		22EE2C1C13A4750300895861 /* NuBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7412B9E29B00B42E63 /* NuBlock.m */; };
+		22EE2C1E13A4750300895861 /* NuBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7612B9E29B00B42E63 /* NuBridge.m */; };
+		22EE2C2013A4750300895861 /* NuBridgeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7812B9E29B00B42E63 /* NuBridgeSupport.m */; };
+		22EE2C2213A4750300895861 /* NuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7A12B9E29B00B42E63 /* NuCell.m */; };
+		22EE2C2413A4750300895861 /* NuClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7C12B9E29B00B42E63 /* NuClass.m */; };
+		22EE2C2713A4750300895861 /* NuEnumerable.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8012B9E29B00B42E63 /* NuEnumerable.m */; };
+		22EE2C2913A4750300895861 /* NuException.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8212B9E29B00B42E63 /* NuException.m */; };
+		22EE2C2B13A4750300895861 /* NuExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8412B9E29B00B42E63 /* NuExtensions.m */; };
+		22EE2C2D13A4750300895861 /* NuHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8612B9E29B00B42E63 /* NuHandler.m */; };
+		22EE2C2F13A4750300895861 /* NuIvars.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8812B9E29B00B42E63 /* NuIvars.m */; };
+		22EE2C3113A4750300895861 /* NuMacro_0.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8A12B9E29B00B42E63 /* NuMacro_0.m */; };
+		22EE2C3313A4750300895861 /* NuMacro_1.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8C12B9E29B00B42E63 /* NuMacro_1.m */; };
+		22EE2C3613A4750300895861 /* NuMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8F12B9E29B00B42E63 /* NuMethod.m */; };
+		22EE2C3813A4750300895861 /* NuObjCRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9112B9E29B00B42E63 /* NuObjCRuntime.m */; };
+		22EE2C3A13A4750300895861 /* NuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9312B9E29B00B42E63 /* NuObject.m */; };
+		22EE2C3C13A4750300895861 /* NuOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9512B9E29B00B42E63 /* NuOperator.m */; };
+		22EE2C3D13A4750300895861 /* NuOverrides.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9612B9E29B00B42E63 /* NuOverrides.m */; };
+		22EE2C3F13A4750300895861 /* NuParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9812B9E29B00B42E63 /* NuParser.m */; };
+		22EE2C4113A4750300895861 /* NuPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9A12B9E29B00B42E63 /* NuPointer.m */; };
+		22EE2C4313A4750300895861 /* NuProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9C12B9E29B00B42E63 /* NuProfiler.m */; };
+		22EE2C4413A4750300895861 /* NuProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9D12B9E29B00B42E63 /* NuProtocol.m */; };
+		22EE2C4613A4750300895861 /* NuReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9F12B9E29B00B42E63 /* NuReference.m */; };
+		22EE2C4813A4750300895861 /* NuRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA112B9E29B00B42E63 /* NuRegex.m */; };
+		22EE2C4A13A4750300895861 /* NuStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA312B9E29B00B42E63 /* NuStack.m */; };
+		22EE2C4C13A4750300895861 /* NuSuper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA512B9E29B00B42E63 /* NuSuper.m */; };
+		22EE2C4D13A4750300895861 /* NuSwizzles.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA612B9E29B00B42E63 /* NuSwizzles.m */; };
+		22EE2C4F13A4750300895861 /* NuSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA812B9E29B00B42E63 /* NuSymbol.m */; };
+		22EE2C5013A4750300895861 /* NuTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA912B9E29B00B42E63 /* NuTestHelper.m */; };
+		22EE2C5313A4750300895861 /* st.c in Sources */ = {isa = PBXBuildFile; fileRef = 22956DAC12B9E29B00B42E63 /* st.c */; };
+		22EE2C6713A4757B00895861 /* ffi-iphone.c in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C5613A4757B00895861 /* ffi-iphone.c */; };
+		22EE2C6813A4757B00895861 /* ffi-iphonesimulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C5813A4757B00895861 /* ffi-iphonesimulator.c */; };
+		22EE2C6913A4757B00895861 /* iphone-sysv.S in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C6013A4757B00895861 /* iphone-sysv.S */; };
+		22EE2C6A13A4757B00895861 /* iphonesimulator-darwin.S in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C6113A4757B00895861 /* iphonesimulator-darwin.S */; };
+		22EE2C6C13A4757B00895861 /* prep_cif.c in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C6313A4757B00895861 /* prep_cif.c */; };
+		22EE2C6D13A4757B00895861 /* raw_api.c in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C6413A4757B00895861 /* raw_api.c */; };
+		22EE2C6F13A4757B00895861 /* types.c in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C6613A4757B00895861 /* types.c */; };
+		22EE2C7B13A47D9F00895861 /* pcre_chartables.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B789FD11DE98AF0022EE11 /* pcre_chartables.c */; };
+		22EE2C7C13A47D9F00895861 /* pcre_compile.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B789FE11DE98AF0022EE11 /* pcre_compile.c */; };
+		22EE2C7D13A47D9F00895861 /* pcre_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B789FF11DE98AF0022EE11 /* pcre_config.c */; };
+		22EE2C7E13A47D9F00895861 /* pcre_dfa_exec.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0011DE98AF0022EE11 /* pcre_dfa_exec.c */; };
+		22EE2C7F13A47D9F00895861 /* pcre_exec.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0111DE98AF0022EE11 /* pcre_exec.c */; };
+		22EE2C8013A47D9F00895861 /* pcre_fullinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0211DE98AF0022EE11 /* pcre_fullinfo.c */; };
+		22EE2C8113A47D9F00895861 /* pcre_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0311DE98AF0022EE11 /* pcre_get.c */; };
+		22EE2C8213A47D9F00895861 /* pcre_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0411DE98AF0022EE11 /* pcre_globals.c */; };
+		22EE2C8313A47D9F00895861 /* pcre_info.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0511DE98AF0022EE11 /* pcre_info.c */; };
+		22EE2C8513A47D9F00895861 /* pcre_maketables.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0711DE98AF0022EE11 /* pcre_maketables.c */; };
+		22EE2C8613A47D9F00895861 /* pcre_newline.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0811DE98AF0022EE11 /* pcre_newline.c */; };
+		22EE2C8713A47D9F00895861 /* pcre_ord2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0911DE98AF0022EE11 /* pcre_ord2utf8.c */; };
+		22EE2C8813A47D9F00895861 /* pcre_refcount.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0A11DE98AF0022EE11 /* pcre_refcount.c */; };
+		22EE2C8B13A47D9F00895861 /* pcre_study.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0D11DE98AF0022EE11 /* pcre_study.c */; };
+		22EE2C8C13A47D9F00895861 /* pcre_tables.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0E11DE98AF0022EE11 /* pcre_tables.c */; };
+		22EE2C8D13A47D9F00895861 /* pcre_try_flipped.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0F11DE98AF0022EE11 /* pcre_try_flipped.c */; };
+		22EE2C8E13A47D9F00895861 /* pcre_ucd.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1011DE98AF0022EE11 /* pcre_ucd.c */; };
+		22EE2C8F13A47D9F00895861 /* pcre_valid_utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1111DE98AF0022EE11 /* pcre_valid_utf8.c */; };
+		22EE2C9013A47D9F00895861 /* pcre_version.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1211DE98AF0022EE11 /* pcre_version.c */; };
+		22EE2C9113A47D9F00895861 /* pcre_xclass.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1311DE98AF0022EE11 /* pcre_xclass.c */; };
+		22EE2C9513A47D9F00895861 /* pcreposix.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1711DE98AF0022EE11 /* pcreposix.c */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -137,6 +264,52 @@
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		223061D113A54EDC00B67882 /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
+		223061D213A54EDC00B67882 /* test_array.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_array.nu; sourceTree = "<group>"; };
+		223061D313A54EDC00B67882 /* test_blockargs.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_blockargs.nu; sourceTree = "<group>"; };
+		223061D413A54EDC00B67882 /* test_bridge.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_bridge.nu; sourceTree = "<group>"; };
+		223061D513A54EDC00B67882 /* test_bridgesupport.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_bridgesupport.nu; sourceTree = "<group>"; };
+		223061D613A54EDC00B67882 /* test_characters.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_characters.nu; sourceTree = "<group>"; };
+		223061D713A54EDC00B67882 /* test_classes.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_classes.nu; sourceTree = "<group>"; };
+		223061D813A54EDC00B67882 /* test_closures.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_closures.nu; sourceTree = "<group>"; };
+		223061D913A54EDC00B67882 /* test_comparison.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_comparison.nu; sourceTree = "<group>"; };
+		223061DA13A54EDC00B67882 /* test_control.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_control.nu; sourceTree = "<group>"; };
+		223061DB13A54EDC00B67882 /* test_dictionary.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_dictionary.nu; sourceTree = "<group>"; };
+		223061DC13A54EDC00B67882 /* test_enumerable.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_enumerable.nu; sourceTree = "<group>"; };
+		223061DD13A54EDC00B67882 /* test_errors.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_errors.nu; sourceTree = "<group>"; };
+		223061DE13A54EDC00B67882 /* test_exceptions.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_exceptions.nu; sourceTree = "<group>"; };
+		223061DF13A54EDC00B67882 /* test_interface.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_interface.nu; sourceTree = "<group>"; };
+		223061E013A54EDC00B67882 /* test_list.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_list.nu; sourceTree = "<group>"; };
+		223061E113A54EDC00B67882 /* test_list_enumerable.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_list_enumerable.nu; sourceTree = "<group>"; };
+		223061E213A54EDC00B67882 /* test_macros.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_macros.nu; sourceTree = "<group>"; };
+		223061E313A54EDC00B67882 /* test_macrox.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_macrox.nu; sourceTree = "<group>"; };
+		223061E413A54EDC00B67882 /* test_match.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_match.nu; sourceTree = "<group>"; };
+		223061E513A54EDC00B67882 /* test_math.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_math.nu; sourceTree = "<group>"; };
+		223061E613A54EDC00B67882 /* test_memory.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_memory.nu; sourceTree = "<group>"; };
+		223061E713A54EDC00B67882 /* test_nu.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_nu.nu; sourceTree = "<group>"; };
+		223061E813A54EDC00B67882 /* test_nu.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = test_nu.rb; sourceTree = "<group>"; };
+		223061E913A54EDC00B67882 /* test_numbers.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_numbers.nu; sourceTree = "<group>"; };
+		223061EA13A54EDC00B67882 /* test_onlisp.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_onlisp.nu; sourceTree = "<group>"; };
+		223061EB13A54EDC00B67882 /* test_operators.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_operators.nu; sourceTree = "<group>"; };
+		223061EC13A54EDC00B67882 /* test_parser.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_parser.nu; sourceTree = "<group>"; };
+		223061ED13A54EDC00B67882 /* test_profiler.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_profiler.nu; sourceTree = "<group>"; };
+		223061EE13A54EDC00B67882 /* test_propertylists.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_propertylists.nu; sourceTree = "<group>"; };
+		223061EF13A54EDC00B67882 /* test_protocols.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_protocols.nu; sourceTree = "<group>"; };
+		223061F013A54EDC00B67882 /* test_quasiquote.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_quasiquote.nu; sourceTree = "<group>"; };
+		223061F113A54EDC00B67882 /* test_references.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_references.nu; sourceTree = "<group>"; };
+		223061F213A54EDC00B67882 /* test_regex.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_regex.nu; sourceTree = "<group>"; };
+		223061F313A54EDC00B67882 /* test_return.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_return.nu; sourceTree = "<group>"; };
+		223061F413A54EDC00B67882 /* test_set.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_set.nu; sourceTree = "<group>"; };
+		223061F513A54EDC00B67882 /* test_strings.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_strings.nu; sourceTree = "<group>"; };
+		223061F613A54EDC00B67882 /* test_structs.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_structs.nu; sourceTree = "<group>"; };
+		223061F713A54EDC00B67882 /* test_swizzling.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_swizzling.nu; sourceTree = "<group>"; };
+		223061F813A54EDC00B67882 /* test_symbols.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_symbols.nu; sourceTree = "<group>"; };
+		223061F913A54EDC00B67882 /* test_system.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_system.nu; sourceTree = "<group>"; };
+		223061FA13A54EDC00B67882 /* test_templates.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_templates.nu; sourceTree = "<group>"; };
+		223061FB13A54EDC00B67882 /* test_truth.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_truth.nu; sourceTree = "<group>"; };
+		223061FC13A54EDC00B67882 /* test_types.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_types.nu; sourceTree = "<group>"; };
+		223061FD13A54EDC00B67882 /* test_undo.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_undo.nu; sourceTree = "<group>"; };
+		223061FE13A54EDC00B67882 /* test_varargs.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_varargs.nu; sourceTree = "<group>"; };
 		224276FE11DD748600940005 /* Nu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu.h; sourceTree = "<group>"; };
 		228306F411DDBBD100A5C690 /* beautify.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = beautify.nu; sourceTree = "<group>"; };
 		228306F511DDBBD100A5C690 /* bridgesupport.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bridgesupport.nu; sourceTree = "<group>"; };
@@ -248,6 +421,32 @@
 		22B78A1711DE98AF0022EE11 /* pcreposix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcreposix.c; sourceTree = "<group>"; };
 		22B78A1811DE98AF0022EE11 /* pcreposix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcreposix.h; sourceTree = "<group>"; };
 		22B78A1A11DE98AF0022EE11 /* ucp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ucp.h; sourceTree = "<group>"; };
+		22EE2BF413A4731600895861 /* NuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		22EE2BF713A4731600895861 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		22EE2BF913A4731600895861 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		22EE2BFB13A4731600895861 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		22EE2BFD13A4731600895861 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
+		22EE2C0113A4731600895861 /* NuApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NuApp-Info.plist"; sourceTree = "<group>"; };
+		22EE2C0313A4731600895861 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		22EE2C0513A4731600895861 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		22EE2C0713A4731600895861 /* NuApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NuApp-Prefix.pch"; sourceTree = "<group>"; };
+		22EE2C0813A4731600895861 /* NuAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NuAppDelegate.h; sourceTree = "<group>"; };
+		22EE2C0913A4731600895861 /* NuAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NuAppDelegate.m; sourceTree = "<group>"; };
+		22EE2C5613A4757B00895861 /* ffi-iphone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "ffi-iphone.c"; sourceTree = "<group>"; };
+		22EE2C5713A4757B00895861 /* ffi-iphone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ffi-iphone.h"; sourceTree = "<group>"; };
+		22EE2C5813A4757B00895861 /* ffi-iphonesimulator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "ffi-iphonesimulator.c"; sourceTree = "<group>"; };
+		22EE2C5913A4757B00895861 /* ffi-iphonesimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ffi-iphonesimulator.h"; sourceTree = "<group>"; };
+		22EE2C5A13A4757B00895861 /* ffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
+		22EE2C5B13A4757B00895861 /* ffi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_common.h; sourceTree = "<group>"; };
+		22EE2C5C13A4757B00895861 /* fficonfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fficonfig.h; sourceTree = "<group>"; };
+		22EE2C5D13A4757B00895861 /* ffitarget-iphone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ffitarget-iphone.h"; sourceTree = "<group>"; };
+		22EE2C5E13A4757B00895861 /* ffitarget-iphonesimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ffitarget-iphonesimulator.h"; sourceTree = "<group>"; };
+		22EE2C5F13A4757B00895861 /* ffitarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget.h; sourceTree = "<group>"; };
+		22EE2C6013A4757B00895861 /* iphone-sysv.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "iphone-sysv.S"; sourceTree = "<group>"; };
+		22EE2C6113A4757B00895861 /* iphonesimulator-darwin.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "iphonesimulator-darwin.S"; sourceTree = "<group>"; };
+		22EE2C6313A4757B00895861 /* prep_cif.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = prep_cif.c; sourceTree = "<group>"; };
+		22EE2C6413A4757B00895861 /* raw_api.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = raw_api.c; sourceTree = "<group>"; };
+		22EE2C6613A4757B00895861 /* types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = types.c; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* Nu_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu_Prefix.pch; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* Nu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Nu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -260,6 +459,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				2283074411DDBEA700A5C690 /* Nu.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22EE2BF113A4731600895861 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22EE2BF813A4731600895861 /* UIKit.framework in Frameworks */,
+				22EE2BFA13A4731600895861 /* Foundation.framework in Frameworks */,
+				22EE2BFC13A4731600895861 /* CoreGraphics.framework in Frameworks */,
+				22EE2BFE13A4731600895861 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,6 +489,7 @@
 			children = (
 				8DC2EF5B0486A6940098B216 /* Nu.framework */,
 				2283073111DDBE3100A5C690 /* nush */,
+				22EE2BF413A4731600895861 /* NuApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -286,6 +497,8 @@
 		0867D691FE84028FC02AAC07 /* Nu */ = {
 			isa = PBXGroup;
 			children = (
+				223061D013A54EDC00B67882 /* test */,
+				22EE2C5513A4757B00895861 /* libffi */,
 				22B789F911DE98AF0022EE11 /* pcre */,
 				2283073C11DDBE7300A5C690 /* main.m */,
 				228306F311DDBBD100A5C690 /* nu */,
@@ -294,6 +507,8 @@
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				22EE2BFF13A4731600895861 /* NuApp */,
+				22EE2BF613A4731600895861 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = Nu;
@@ -333,6 +548,60 @@
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		223061D013A54EDC00B67882 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				223061D113A54EDC00B67882 /* test.html */,
+				223061D213A54EDC00B67882 /* test_array.nu */,
+				223061D313A54EDC00B67882 /* test_blockargs.nu */,
+				223061D413A54EDC00B67882 /* test_bridge.nu */,
+				223061D513A54EDC00B67882 /* test_bridgesupport.nu */,
+				223061D613A54EDC00B67882 /* test_characters.nu */,
+				223061D713A54EDC00B67882 /* test_classes.nu */,
+				223061D813A54EDC00B67882 /* test_closures.nu */,
+				223061D913A54EDC00B67882 /* test_comparison.nu */,
+				223061DA13A54EDC00B67882 /* test_control.nu */,
+				223061DB13A54EDC00B67882 /* test_dictionary.nu */,
+				223061DC13A54EDC00B67882 /* test_enumerable.nu */,
+				223061DD13A54EDC00B67882 /* test_errors.nu */,
+				223061DE13A54EDC00B67882 /* test_exceptions.nu */,
+				223061DF13A54EDC00B67882 /* test_interface.nu */,
+				223061E013A54EDC00B67882 /* test_list.nu */,
+				223061E113A54EDC00B67882 /* test_list_enumerable.nu */,
+				223061E213A54EDC00B67882 /* test_macros.nu */,
+				223061E313A54EDC00B67882 /* test_macrox.nu */,
+				223061E413A54EDC00B67882 /* test_match.nu */,
+				223061E513A54EDC00B67882 /* test_math.nu */,
+				223061E613A54EDC00B67882 /* test_memory.nu */,
+				223061E713A54EDC00B67882 /* test_nu.nu */,
+				223061E813A54EDC00B67882 /* test_nu.rb */,
+				223061E913A54EDC00B67882 /* test_numbers.nu */,
+				223061EA13A54EDC00B67882 /* test_onlisp.nu */,
+				223061EB13A54EDC00B67882 /* test_operators.nu */,
+				223061EC13A54EDC00B67882 /* test_parser.nu */,
+				223061ED13A54EDC00B67882 /* test_profiler.nu */,
+				223061EE13A54EDC00B67882 /* test_propertylists.nu */,
+				223061EF13A54EDC00B67882 /* test_protocols.nu */,
+				223061F013A54EDC00B67882 /* test_quasiquote.nu */,
+				223061F113A54EDC00B67882 /* test_references.nu */,
+				223061F213A54EDC00B67882 /* test_regex.nu */,
+				223061F313A54EDC00B67882 /* test_return.nu */,
+				223061F413A54EDC00B67882 /* test_set.nu */,
+				223061F513A54EDC00B67882 /* test_strings.nu */,
+				223061F613A54EDC00B67882 /* test_structs.nu */,
+				223061F713A54EDC00B67882 /* test_swizzling.nu */,
+				223061F813A54EDC00B67882 /* test_symbols.nu */,
+				223061F913A54EDC00B67882 /* test_system.nu */,
+				223061FA13A54EDC00B67882 /* test_templates.nu */,
+				223061FB13A54EDC00B67882 /* test_truth.nu */,
+				223061FC13A54EDC00B67882 /* test_types.nu */,
+				223061FD13A54EDC00B67882 /* test_undo.nu */,
+				223061FE13A54EDC00B67882 /* test_varargs.nu */,
+			);
+			name = test;
+			path = ../../test;
 			sourceTree = "<group>";
 		};
 		2242766A11DD73E500940005 /* objc */ = {
@@ -484,6 +753,61 @@
 			path = ../../pcre;
 			sourceTree = SOURCE_ROOT;
 		};
+		22EE2BF613A4731600895861 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				22EE2BF713A4731600895861 /* UIKit.framework */,
+				22EE2BF913A4731600895861 /* Foundation.framework */,
+				22EE2BFB13A4731600895861 /* CoreGraphics.framework */,
+				22EE2BFD13A4731600895861 /* CoreData.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		22EE2BFF13A4731600895861 /* NuApp */ = {
+			isa = PBXGroup;
+			children = (
+				22EE2C0813A4731600895861 /* NuAppDelegate.h */,
+				22EE2C0913A4731600895861 /* NuAppDelegate.m */,
+				22EE2C0013A4731600895861 /* Supporting Files */,
+			);
+			path = NuApp;
+			sourceTree = "<group>";
+		};
+		22EE2C0013A4731600895861 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				22EE2C0113A4731600895861 /* NuApp-Info.plist */,
+				22EE2C0213A4731600895861 /* InfoPlist.strings */,
+				22EE2C0513A4731600895861 /* main.m */,
+				22EE2C0713A4731600895861 /* NuApp-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		22EE2C5513A4757B00895861 /* libffi */ = {
+			isa = PBXGroup;
+			children = (
+				22EE2C5613A4757B00895861 /* ffi-iphone.c */,
+				22EE2C5713A4757B00895861 /* ffi-iphone.h */,
+				22EE2C5813A4757B00895861 /* ffi-iphonesimulator.c */,
+				22EE2C5913A4757B00895861 /* ffi-iphonesimulator.h */,
+				22EE2C5A13A4757B00895861 /* ffi.h */,
+				22EE2C5B13A4757B00895861 /* ffi_common.h */,
+				22EE2C5C13A4757B00895861 /* fficonfig.h */,
+				22EE2C5D13A4757B00895861 /* ffitarget-iphone.h */,
+				22EE2C5E13A4757B00895861 /* ffitarget-iphonesimulator.h */,
+				22EE2C5F13A4757B00895861 /* ffitarget.h */,
+				22EE2C6013A4757B00895861 /* iphone-sysv.S */,
+				22EE2C6113A4757B00895861 /* iphonesimulator-darwin.S */,
+				22EE2C6313A4757B00895861 /* prep_cif.c */,
+				22EE2C6413A4757B00895861 /* raw_api.c */,
+				22EE2C6613A4757B00895861 /* types.c */,
+			);
+			name = libffi;
+			path = ../../iOS/libffi;
+			sourceTree = "<group>";
+		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -563,6 +887,23 @@
 			productReference = 2283073111DDBE3100A5C690 /* nush */;
 			productType = "com.apple.product-type.tool";
 		};
+		22EE2BF313A4731600895861 /* NuApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22EE2C1013A4731600895861 /* Build configuration list for PBXNativeTarget "NuApp" */;
+			buildPhases = (
+				22EE2BF013A4731600895861 /* Sources */,
+				22EE2BF113A4731600895861 /* Frameworks */,
+				22EE2BF213A4731600895861 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NuApp;
+			productName = NuApp;
+			productReference = 22EE2BF413A4731600895861 /* NuApp.app */;
+			productType = "com.apple.product-type.application";
+		};
 		8DC2EF4F0486A6940098B216 /* Nu */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Nu" */;
@@ -599,6 +940,7 @@
 				Japanese,
 				French,
 				German,
+				en,
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* Nu */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -607,11 +949,81 @@
 			targets = (
 				8DC2EF4F0486A6940098B216 /* Nu */,
 				2283073011DDBE3100A5C690 /* nush */,
+				22EE2BF313A4731600895861 /* NuApp */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		22EE2BF213A4731600895861 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				223061C013A50DEA00B67882 /* beautify.nu in Resources */,
+				223061C113A50DEA00B67882 /* bridgesupport.nu in Resources */,
+				223061C213A50DEA00B67882 /* cocoa.nu in Resources */,
+				223061C313A50DEA00B67882 /* console.nu in Resources */,
+				223061C413A50DEA00B67882 /* coredata.nu in Resources */,
+				223061C513A50DEA00B67882 /* doc.nu in Resources */,
+				223061C613A50DEA00B67882 /* fscript.nu in Resources */,
+				223061C713A50DEA00B67882 /* generate.nu in Resources */,
+				223061C813A50DEA00B67882 /* help.nu in Resources */,
+				223061C913A50DEA00B67882 /* match.nu in Resources */,
+				223061CA13A50DEA00B67882 /* math.nu in Resources */,
+				223061CB13A50DEA00B67882 /* menu.nu in Resources */,
+				223061CC13A50DEA00B67882 /* nibtools.nu in Resources */,
+				223061CD13A50DEA00B67882 /* nu.nu in Resources */,
+				223061CE13A50DEA00B67882 /* template.nu in Resources */,
+				223061CF13A50DEA00B67882 /* test.nu in Resources */,
+				22EE2C0413A4731600895861 /* InfoPlist.strings in Resources */,
+				223061FF13A54EDC00B67882 /* test.html in Resources */,
+				2230620013A54EDC00B67882 /* test_array.nu in Resources */,
+				2230620113A54EDC00B67882 /* test_blockargs.nu in Resources */,
+				2230620213A54EDC00B67882 /* test_bridge.nu in Resources */,
+				2230620313A54EDC00B67882 /* test_bridgesupport.nu in Resources */,
+				2230620413A54EDC00B67882 /* test_characters.nu in Resources */,
+				2230620513A54EDC00B67882 /* test_classes.nu in Resources */,
+				2230620613A54EDC00B67882 /* test_closures.nu in Resources */,
+				2230620713A54EDC00B67882 /* test_comparison.nu in Resources */,
+				2230620813A54EDC00B67882 /* test_control.nu in Resources */,
+				2230620913A54EDC00B67882 /* test_dictionary.nu in Resources */,
+				2230620A13A54EDC00B67882 /* test_enumerable.nu in Resources */,
+				2230620B13A54EDC00B67882 /* test_errors.nu in Resources */,
+				2230620C13A54EDC00B67882 /* test_exceptions.nu in Resources */,
+				2230620D13A54EDC00B67882 /* test_interface.nu in Resources */,
+				2230620E13A54EDC00B67882 /* test_list.nu in Resources */,
+				2230620F13A54EDC00B67882 /* test_list_enumerable.nu in Resources */,
+				2230621013A54EDC00B67882 /* test_macros.nu in Resources */,
+				2230621113A54EDC00B67882 /* test_macrox.nu in Resources */,
+				2230621213A54EDC00B67882 /* test_match.nu in Resources */,
+				2230621313A54EDC00B67882 /* test_math.nu in Resources */,
+				2230621413A54EDC00B67882 /* test_memory.nu in Resources */,
+				2230621513A54EDC00B67882 /* test_nu.nu in Resources */,
+				2230621713A54EDC00B67882 /* test_numbers.nu in Resources */,
+				2230621813A54EDC00B67882 /* test_onlisp.nu in Resources */,
+				2230621913A54EDC00B67882 /* test_operators.nu in Resources */,
+				2230621A13A54EDC00B67882 /* test_parser.nu in Resources */,
+				2230621B13A54EDC00B67882 /* test_profiler.nu in Resources */,
+				2230621C13A54EDC00B67882 /* test_propertylists.nu in Resources */,
+				2230621D13A54EDC00B67882 /* test_protocols.nu in Resources */,
+				2230621E13A54EDC00B67882 /* test_quasiquote.nu in Resources */,
+				2230621F13A54EDC00B67882 /* test_references.nu in Resources */,
+				2230622013A54EDC00B67882 /* test_regex.nu in Resources */,
+				2230622113A54EDC00B67882 /* test_return.nu in Resources */,
+				2230622213A54EDC00B67882 /* test_set.nu in Resources */,
+				2230622313A54EDC00B67882 /* test_strings.nu in Resources */,
+				2230622413A54EDC00B67882 /* test_structs.nu in Resources */,
+				2230622513A54EDC00B67882 /* test_swizzling.nu in Resources */,
+				2230622613A54EDC00B67882 /* test_symbols.nu in Resources */,
+				2230622713A54EDC00B67882 /* test_system.nu in Resources */,
+				2230622813A54EDC00B67882 /* test_templates.nu in Resources */,
+				2230622913A54EDC00B67882 /* test_truth.nu in Resources */,
+				2230622A13A54EDC00B67882 /* test_types.nu in Resources */,
+				2230622B13A54EDC00B67882 /* test_undo.nu in Resources */,
+				2230622C13A54EDC00B67882 /* test_varargs.nu in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF520486A6940098B216 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -644,6 +1056,74 @@
 			buildActionMask = 2147483647;
 			files = (
 				2283073D11DDBE7300A5C690 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22EE2BF013A4731600895861 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22EE2C7B13A47D9F00895861 /* pcre_chartables.c in Sources */,
+				22EE2C7C13A47D9F00895861 /* pcre_compile.c in Sources */,
+				22EE2C7D13A47D9F00895861 /* pcre_config.c in Sources */,
+				22EE2C7E13A47D9F00895861 /* pcre_dfa_exec.c in Sources */,
+				22EE2C7F13A47D9F00895861 /* pcre_exec.c in Sources */,
+				22EE2C8013A47D9F00895861 /* pcre_fullinfo.c in Sources */,
+				22EE2C8113A47D9F00895861 /* pcre_get.c in Sources */,
+				22EE2C8213A47D9F00895861 /* pcre_globals.c in Sources */,
+				22EE2C8313A47D9F00895861 /* pcre_info.c in Sources */,
+				22EE2C8513A47D9F00895861 /* pcre_maketables.c in Sources */,
+				22EE2C8613A47D9F00895861 /* pcre_newline.c in Sources */,
+				22EE2C8713A47D9F00895861 /* pcre_ord2utf8.c in Sources */,
+				22EE2C8813A47D9F00895861 /* pcre_refcount.c in Sources */,
+				22EE2C8B13A47D9F00895861 /* pcre_study.c in Sources */,
+				22EE2C8C13A47D9F00895861 /* pcre_tables.c in Sources */,
+				22EE2C8D13A47D9F00895861 /* pcre_try_flipped.c in Sources */,
+				22EE2C8E13A47D9F00895861 /* pcre_ucd.c in Sources */,
+				22EE2C8F13A47D9F00895861 /* pcre_valid_utf8.c in Sources */,
+				22EE2C9013A47D9F00895861 /* pcre_version.c in Sources */,
+				22EE2C9113A47D9F00895861 /* pcre_xclass.c in Sources */,
+				22EE2C9513A47D9F00895861 /* pcreposix.c in Sources */,
+				22EE2C1813A4750300895861 /* mach_override.c in Sources */,
+				22EE2C1A13A4750300895861 /* Nu.m in Sources */,
+				22EE2C1C13A4750300895861 /* NuBlock.m in Sources */,
+				22EE2C1E13A4750300895861 /* NuBridge.m in Sources */,
+				22EE2C2013A4750300895861 /* NuBridgeSupport.m in Sources */,
+				22EE2C2213A4750300895861 /* NuCell.m in Sources */,
+				22EE2C2413A4750300895861 /* NuClass.m in Sources */,
+				22EE2C2713A4750300895861 /* NuEnumerable.m in Sources */,
+				22EE2C2913A4750300895861 /* NuException.m in Sources */,
+				22EE2C2B13A4750300895861 /* NuExtensions.m in Sources */,
+				22EE2C2D13A4750300895861 /* NuHandler.m in Sources */,
+				22EE2C2F13A4750300895861 /* NuIvars.m in Sources */,
+				22EE2C3113A4750300895861 /* NuMacro_0.m in Sources */,
+				22EE2C3313A4750300895861 /* NuMacro_1.m in Sources */,
+				22EE2C3613A4750300895861 /* NuMethod.m in Sources */,
+				22EE2C3813A4750300895861 /* NuObjCRuntime.m in Sources */,
+				22EE2C3A13A4750300895861 /* NuObject.m in Sources */,
+				22EE2C3C13A4750300895861 /* NuOperator.m in Sources */,
+				22EE2C3D13A4750300895861 /* NuOverrides.m in Sources */,
+				22EE2C3F13A4750300895861 /* NuParser.m in Sources */,
+				22EE2C4113A4750300895861 /* NuPointer.m in Sources */,
+				22EE2C4313A4750300895861 /* NuProfiler.m in Sources */,
+				22EE2C4413A4750300895861 /* NuProtocol.m in Sources */,
+				22EE2C4613A4750300895861 /* NuReference.m in Sources */,
+				22EE2C4813A4750300895861 /* NuRegex.m in Sources */,
+				22EE2C4A13A4750300895861 /* NuStack.m in Sources */,
+				22EE2C4C13A4750300895861 /* NuSuper.m in Sources */,
+				22EE2C4D13A4750300895861 /* NuSwizzles.m in Sources */,
+				22EE2C4F13A4750300895861 /* NuSymbol.m in Sources */,
+				22EE2C5013A4750300895861 /* NuTestHelper.m in Sources */,
+				22EE2C5313A4750300895861 /* st.c in Sources */,
+				22EE2C0613A4731600895861 /* main.m in Sources */,
+				22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */,
+				22EE2C6713A4757B00895861 /* ffi-iphone.c in Sources */,
+				22EE2C6813A4757B00895861 /* ffi-iphonesimulator.c in Sources */,
+				22EE2C6913A4757B00895861 /* iphone-sysv.S in Sources */,
+				22EE2C6A13A4757B00895861 /* iphonesimulator-darwin.S in Sources */,
+				22EE2C6C13A4757B00895861 /* prep_cif.c in Sources */,
+				22EE2C6D13A4757B00895861 /* raw_api.c in Sources */,
+				22EE2C6F13A4757B00895861 /* types.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,6 +1205,14 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
+		22EE2C0213A4731600895861 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				22EE2C0313A4731600895861 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -775,6 +1263,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SNOWLEOPARD,
 					HAVE_CONFIG_H,
@@ -799,6 +1288,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SNOWLEOPARD,
 					HAVE_CONFIG_H,
@@ -860,6 +1350,73 @@
 			};
 			name = Release;
 		};
+		22EE2C0E13A4731600895861 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NuApp/NuApp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					IPHONE,
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		22EE2C0F13A4731600895861 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NuApp/NuApp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SNOWLEOPARD,
+					HAVE_CONFIG_H,
+					DARWIN,
+					IPHONE,
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -886,6 +1443,15 @@
 			buildConfigurations = (
 				2283073311DDBE3200A5C690 /* Debug */,
 				2283073411DDBE3200A5C690 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22EE2C1013A4731600895861 /* Build configuration list for PBXNativeTarget "NuApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22EE2C0E13A4731600895861 /* Debug */,
+				22EE2C0F13A4731600895861 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

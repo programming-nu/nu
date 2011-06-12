@@ -97,7 +97,7 @@
         
         (assert_equal 6 (our-apply + '(1 2 3))))
      
-     (- (id) testOurLet is
+     (- (id) fixme_testOurLet is
         (macro-1 mylet (bindings *body)
              `((do ,(bindings map:
                          (do (x) (car x)))

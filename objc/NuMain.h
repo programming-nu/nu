@@ -20,6 +20,8 @@ limitations under the License.
 */
 #import <Foundation/Foundation.h>
 
+void NuInit();
+
 @protocol NuParsing <NSObject>
 /*! Parse a string into a list of objects that can be evaluated. */
 - (id) parse:(NSString *)string;
@@ -66,6 +68,7 @@ Get a Nu parser. The parser will implement the NuParsing protocol, shown below.
 </div>
 */
 + (id<NuParsing>) parser;
++ (id<NuParsing>) sharedParser;
 /*!
 Load a Nu source file from a bundle with the specified identifier.
 Used by bundle (aka framework) initializers.

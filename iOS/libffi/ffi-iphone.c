@@ -5,6 +5,10 @@
 extern void __clear_cache (void *beg, void *end);
 #endif 
 
+//extern void __clear_cache (void *start, void *end) {
+//    sys_icache_invalidate(start, end-start);
+//}
+
 /* -----------------------------------------------------------------------
    ffi.c - Copyright (c) 1998, 2008  Red Hat, Inc.
    
@@ -280,6 +284,23 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
 
 /* How to make a trampoline.  */
 
+#ifdef __arm__
+
+// __clear_cache seems to be missing on iOS5, so we omit it. Danger, Will Robinson.
+
+#define FFI_INIT_TRAMPOLINE(TRAMP,FUN,CTX)				\
+({ unsigned char *__tramp = (unsigned char*)(TRAMP);			\
+   unsigned int  __fun = (unsigned int)(FUN);				\
+   unsigned int  __ctx = (unsigned int)(CTX);				\
+   *(unsigned int*) &__tramp[0] = 0xe92d000f; /* stmfd sp!, {r0-r3} */	\
+   *(unsigned int*) &__tramp[4] = 0xe59f0000; /* ldr r0, [pc] */	\
+   *(unsigned int*) &__tramp[8] = 0xe59ff000; /* ldr pc, [pc] */	\
+   *(unsigned int*) &__tramp[12] = __ctx;				\
+   *(unsigned int*) &__tramp[16] = __fun;				\
+ })
+
+#else
+
 #define FFI_INIT_TRAMPOLINE(TRAMP,FUN,CTX)				\
 ({ unsigned char *__tramp = (unsigned char*)(TRAMP);			\
    unsigned int  __fun = (unsigned int)(FUN);				\
@@ -290,7 +311,9 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
    *(unsigned int*) &__tramp[12] = __ctx;				\
    *(unsigned int*) &__tramp[16] = __fun;				\
    __clear_cache((&__tramp[0]), (&__tramp[19]));			\
- })
+})
+
+#endif
 
 
 /* the cif must already be prep'ed */

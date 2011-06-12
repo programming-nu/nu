@@ -3,6 +3,7 @@
 ;;
 ;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
+(unless (defined IPHONE)
 (if (eq (uname) "Darwin")
     (import Foundation)
     
@@ -16,4 +17,4 @@
          
          (unless ((NSGarbageCollector defaultCollector) isEnabled)
                  (- (id) testFunctions is
-                    (assert_equal 2 (NSMinY '(1 2 3 4)))))))
+                    (assert_equal 2 (NSMinY '(1 2 3 4))))))))

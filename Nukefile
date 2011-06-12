@@ -124,7 +124,7 @@ END)
 (ifDarwin
          (then (set @arch '("i386")))) ;; optionally add "ppc" or "ppc64" to the list
 
-(if (isSnowLeopard)
+(if (or isSnowLeopard isLion)
 	(then (set @arch (append @arch '("x86_64")))))
 
 (set @includes

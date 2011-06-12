@@ -3,10 +3,10 @@
 ;;
 ;;  Copyright (c) 2008 Issac Trotts
 
-(load "match")
-
 (if (eq (uname) "Darwin") ;; pattern matching is broken on Linux because it relies on throw, which is not working with the GNU runtime.
     
+    (load "match")
+
     (class TestDestructuring is NuTestCase
          
          (- (id) testFindFirstMatch is

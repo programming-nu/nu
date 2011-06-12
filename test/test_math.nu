@@ -2,7 +2,7 @@
 ;;  tests for Nu math functions.
 ;;
 ;;  Copyright (c) 2007 Michael Burks/Tim Burks, Radtastical Inc.
-
+(if (eq (uname) "Darwin")
 (load "math")
 (set PI 3.14159)
 (set E 2.71828)
@@ -163,3 +163,4 @@
         (assert_equal nil (not t))
         (assert_equal t   (not 0))
         (assert_equal t   (not nil))))
+)

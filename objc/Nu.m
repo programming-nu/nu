@@ -431,6 +431,15 @@ id _nulist(id firstObject, ...)
     return [[[NuParser alloc] init] autorelease];
 }
 
++ (id<NuParsing>) sharedParser
+{
+    static NuParser *sharedParser = nil;
+    if (!sharedParser) {
+        sharedParser = [[NuParser alloc] init];
+    }
+    return (id<NuParsing>) sharedParser;
+}
+
 + (int) sizeOfPointer
 {
     return sizeof(void *);
