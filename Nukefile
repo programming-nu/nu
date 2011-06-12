@@ -93,8 +93,8 @@ END)
 (set @leopard "")
 (set @sdk
      (cond ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.7.sdk")
-            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__ -DSNOWLEOPARD -DLION")
-            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.6.sdk")) ;; stay on the 10.6 SDK for now
+            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__ -DSNOWLEOPARD")
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.7.sdk"))
            ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.6.sdk")
             (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__ -DSNOWLEOPARD")
             ("-isysroot #{DEVROOT}/SDKs/MacOSX10.6.sdk"))

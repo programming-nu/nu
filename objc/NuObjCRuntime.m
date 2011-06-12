@@ -642,16 +642,21 @@ BOOL nu_objectIsKindOfClass(id object, Class class)
 {
     if (object == NULL)
         return NO;
-#ifdef DARWIN
-    Class classCursor = object->isa;
+#ifdef DARWIN    
+    Class classCursor = object_getClass(object);
+    while (classCursor) {
+        if (classCursor == class) return YES;
+        classCursor = class_getSuperclass(classCursor);
+    }
+    return NO;    
 #else
     Class classCursor = object->class_pointer;
-#endif
     while (classCursor) {
         if (classCursor == class) return YES;
         classCursor = class_getSuperclass(classCursor);
     }
     return NO;
+#endif
 }
 
 // This function attempts to recognize the return type from a method signature.

@@ -1,20 +1,20 @@
 /*!
-@file block.m
-@description Nu blocks.
-@copyright Copyright (c) 2007 Neon Design Technology, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file block.m
+ @description Nu blocks.
+ @copyright Copyright (c) 2007 Neon Design Technology, Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import "NuInternals.h"
 #import "NuBlock.h"
 #import "NuCell.h"
@@ -39,37 +39,37 @@ extern id Nu__null;
 
 - (id) initWithParameters:(NuCell *)p body:(NuCell *)b context:(NSMutableDictionary *)c
 {
-    [super init];
-    parameters = [p retain];
-    body = [b retain];
-    #ifdef CLOSE_ON_VALUES
-    context = [c mutableCopy];
-    #else
-    context = [[NSMutableDictionary alloc] init];
-    [context setPossiblyNullObject:c forKey:PARENT_KEY];
-    [context setPossiblyNullObject:[c objectForKey:SYMBOLS_KEY] forKey:SYMBOLS_KEY];
-    #endif
-
-	// Check for the presence of "*args" in parameter list
-	id plist = parameters;
-
-	if (!(   ([parameters length] == 1)
-		  && ([[[parameters car] stringValue] isEqualToString:@"*args"])))
-	{
-		while (plist && (plist != Nu__null))
-		{
-			id parameter = [plist car];
-
-			if ([[parameter stringValue] isEqualToString:@"*args"])
-			{
-				printf("Warning: Overriding implicit variable '*args'.\n");
-				return self;
-			}
-
-			plist = [plist cdr];
-		}
-	}
-
+    if ((self = [super init])) {
+        parameters = [p retain];
+        body = [b retain];
+#ifdef CLOSE_ON_VALUES
+        context = [c mutableCopy];
+#else
+        context = [[NSMutableDictionary alloc] init];
+        [context setPossiblyNullObject:c forKey:PARENT_KEY];
+        [context setPossiblyNullObject:[c objectForKey:SYMBOLS_KEY] forKey:SYMBOLS_KEY];
+#endif
+        
+        // Check for the presence of "*args" in parameter list
+        id plist = parameters;
+        
+        if (!(   ([parameters length] == 1)
+              && ([[[parameters car] stringValue] isEqualToString:@"*args"])))
+        {
+            while (plist && (plist != Nu__null))
+            {
+                id parameter = [plist car];
+                
+                if ([[parameter stringValue] isEqualToString:@"*args"])
+                {
+                    printf("Warning: Overriding implicit variable '*args'.\n");
+                    return self;
+                }
+                
+                plist = [plist cdr];
+            }
+        }
+    }
     return self;
 }
 
@@ -82,25 +82,25 @@ extern id Nu__null;
 {
     int numberOfArguments = [cdr length];
     int numberOfParameters = [parameters length];
-
+    
     if (numberOfArguments != numberOfParameters) {
         // is the last parameter a variable argument? if so, it's ok, and we allow it to have zero elements.
         id lastParameter = [parameters lastObject];
         if (lastParameter && ([[lastParameter stringValue] characterAtIndex:0] == '*')) {
             if (numberOfArguments < (numberOfParameters - 1)) {
                 [NSException raise:@"NuIncorrectNumberOfArguments"
-                    format:@"Incorrect number of arguments to block. Received %d but expected %d or more: %@",
-                    numberOfArguments,
-                    numberOfParameters - 1,
-                    [parameters stringValue]];
+                            format:@"Incorrect number of arguments to block. Received %d but expected %d or more: %@",
+                 numberOfArguments,
+                 numberOfParameters - 1,
+                 [parameters stringValue]];
             }
         }
         else {
             [NSException raise:@"NuIncorrectNumberOfArguments"
-                format:@"Incorrect number of arguments to block. Received %d but expected %d: %@",
-                numberOfArguments,
-                numberOfParameters,
-                [parameters stringValue]];
+                        format:@"Incorrect number of arguments to block. Received %d but expected %d: %@",
+             numberOfArguments,
+             numberOfParameters,
+             [parameters stringValue]];
         }
     }
     //NSLog(@"block eval %@", [cdr stringValue]);
@@ -108,11 +108,11 @@ extern id Nu__null;
     id plist = parameters;
     id vlist = cdr;
     id evaluation_context = [context mutableCopy];
-
+    
 	// Insert the implicit variable "*args".  It contains the entire parameter list.
 	NuSymbolTable *symbolTable = [evaluation_context objectForKey:SYMBOLS_KEY];
 	[evaluation_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
-
+    
     while (plist && (plist != Nu__null)) {
         id parameter = [plist car];
         if ([[parameter stringValue] characterAtIndex:0] == '*') {
@@ -132,8 +132,8 @@ extern id Nu__null;
             // this must be the last element in the parameter list
             if (plist != Nu__null) {
                 [NSException raise:@"NuBadParameterList"
-                    format:@"Variable argument list must be the last parameter in the parameter list: %@",
-                    [parameters stringValue]];
+                            format:@"Variable argument list must be the last parameter in the parameter list: %@",
+                 [parameters stringValue]];
             }
         }
         else {
@@ -193,10 +193,10 @@ id getObjectFromContext(id context, id symbol)
     int numberOfParameters = [parameters length];
     if (numberOfArguments != numberOfParameters) {
         [NSException raise:@"NuIncorrectNumberOfArguments"
-            format:@"Incorrect number of arguments to method. Received %d but expected %d, %@",
-            numberOfArguments,
-            numberOfParameters,
-            [parameters stringValue]];
+                    format:@"Incorrect number of arguments to method. Received %d but expected %d, %@",
+         numberOfArguments,
+         numberOfParameters,
+         [parameters stringValue]];
     }
     //    NSLog(@"block eval %@", [cdr stringValue]);
     // loop over the arguments, looking up their values in the calling_context and copying them into the evaluation_context

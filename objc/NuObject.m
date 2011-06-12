@@ -216,7 +216,7 @@ limitations under the License.
     if (sel) {
         #endif
                                                   // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
-        BOOL isAClass = (self->isa == [NuClass class]) ? YES : NO;
+        BOOL isAClass = (object_getClass(self) == [NuClass class]);
         if (isAClass) {
             // Class wrappers (objects of type NuClass) get special treatment. Instance methods are sent directly to the class wrapper object.
             // But when a class method is sent to a class wrapper, the method is instead sent as a class method to the wrapped class.

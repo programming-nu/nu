@@ -27,8 +27,7 @@ ifeq ($(SYSTEM), Darwin)
 	endif
 
 	ifeq ($(shell test -e $(DEVROOT)/SDKs/MacOSX10.7.sdk && echo yes), yes)
-		# not a typo, we deliberatly stay back on the 10.6 SDK for now.
-                LION_CFLAGS = -DLION -isysroot $(DEVROOT)/SDKs/MacOSX10.6.sdk
+                LION_CFLAGS = -isysroot $(DEVROOT)/SDKs/MacOSX10.7.sdk
         else
                 LION_CFLAGS =
         endif

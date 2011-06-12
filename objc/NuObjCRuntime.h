@@ -19,17 +19,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
 #import <objc/objc.h>
 
 #ifdef DARWIN
-#ifndef IPHONE
-#import <objc/objc-runtime.h>
-#import <objc/objc-class.h>
-#import <objc/Protocol.h>
-#else
 #import <objc/runtime.h>
-#endif
 #else
 #import <objc/objc-api.h>
 #endif
