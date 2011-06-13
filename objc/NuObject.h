@@ -85,4 +85,19 @@ This method should be overridden by subclasses to be more helpful. */
 /*! Concisely set key-value pairs from a property list. */
 - (id) set:(NuCell *) propertyList;
 
+/*! Set a retained associated object. */
+- (void) setRetainedAssociatedObject:(id) object forKey:(id) key;
+
+/*! Set an assigned associated object. */
+- (void) setAssignedAssociatedObject:(id) object forKey:(id) key;
+
+/*! Set a copied associated object. */
+- (void) setCopiedAssociatedObject:(id) object forKey:(id) key;
+
+/*! Get the value of an associated object. */
+- (id) associatedObjectForKey:(id) key;
+
+/*! Remove all associated objects. */
+- (void) removeAssociatedObjects;
+
 @end

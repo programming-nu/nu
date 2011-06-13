@@ -1,20 +1,20 @@
 /*!
-@file class.m
-@description The Nu class abstraction.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file class.m
+ @description The Nu class abstraction.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import "NuObjCRuntime.h"
 #import "NuClass.h"
 #import "NuMethod.h"
@@ -23,6 +23,7 @@ limitations under the License.
 #import "NuObject.h"
 #import "NuExtensions.h"
 #import "NuEnumerable.h"
+#import "NuProperty.h"
 
 // getting a specific method...
 // (set x (((Convert classMethods) select: (do (m) (eq (m name) "passRect:"))) objectAtIndex:0))
@@ -87,11 +88,11 @@ limitations under the License.
 - (NSString *) name
 {
     //	NSLog(@"calling NuClass name for object %@", self);
-    #ifdef DARWIN
+#ifdef DARWIN
     return [NSString stringWithCString:class_getName(c) encoding:NSUTF8StringEncoding];
-    #else
+#else
     return [NSString stringWithCString:class_get_class_name(c) encoding:NSUTF8StringEncoding];
-    #endif
+#endif
 }
 
 - (NSString *) stringValue
@@ -108,11 +109,11 @@ limitations under the License.
 {
     NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
-    #ifdef DARWIN
+#ifdef DARWIN
     Method *method_list = class_copyMethodList(object_getClass([self wrappedClass]), &method_count);
-    #else
+#else
     Method_t *method_list = class_copyMethodList(object_get_class([self wrappedClass]), &method_count);
-    #endif
+#endif
     int i;
     for (i = 0; i < method_count; i++) {
         [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
@@ -126,11 +127,11 @@ limitations under the License.
 {
     NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
-    #ifdef DARWIN
+#ifdef DARWIN
     Method *method_list = class_copyMethodList([self wrappedClass], &method_count);
-    #else
+#else
     Method_t *method_list = class_copyMethodList([self wrappedClass], &method_count);
-    #endif
+#endif
     int i;
     for (i = 0; i < method_count; i++) {
         [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
@@ -175,22 +176,22 @@ limitations under the License.
     const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     NuMethod *method = Nu__null;
     unsigned int method_count;
-    #ifdef DARWIN
+#ifdef DARWIN
     Method *method_list = class_copyMethodList(object_getClass([self wrappedClass]), &method_count);
-    #else
+#else
     Method_t *method_list = class_copyMethodList(object_get_class([self wrappedClass]), &method_count);
-    #endif
+#endif
     int i;
     for (i = 0; i < method_count; i++) {
-        #ifdef DARWIN
+#ifdef DARWIN
         if (!strcmp(methodNameString, sel_getName(method_getName(method_list[i])))) {
             method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
         }
-        #else
+#else
         if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
             method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
         }
-        #endif
+#endif
     }
     free(method_list);
     return method;
@@ -201,22 +202,22 @@ limitations under the License.
     const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     NuMethod *method = Nu__null;
     unsigned int method_count;
-    #ifdef DARWIN
+#ifdef DARWIN
     Method *method_list = class_copyMethodList([self wrappedClass], &method_count);
-    #else
+#else
     Method_t *method_list = class_copyMethodList([self wrappedClass], &method_count);
-    #endif
+#endif
     int i;
     for (i = 0; i < method_count; i++) {
-        #ifdef DARWIN
+#ifdef DARWIN
         if (!strcmp(methodNameString, sel_getName(method_getName(method_list[i])))) {
             method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
         }
-        #else
+#else
         if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
             method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
         }
-        #endif
+#endif
     }
     free(method_list);
     return method;
@@ -230,12 +231,12 @@ limitations under the License.
 
 - (id) addClassMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
 {
-    //NSLog(@"adding class method %@", methodName);
-    #ifdef DARWIN
-    return add_method_to_class(c->isa, methodName, signature, block);
-    #else
+    NSLog(@"adding class method %@", methodName);
+#ifdef DARWIN
+    return add_method_to_class(object_getClass(c), /* c->isa, */ methodName, signature, block);
+#else
     return add_method_to_class(c->class_pointer, methodName, signature, block);
-    #endif
+#endif
 }
 
 - (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
@@ -283,5 +284,47 @@ limitations under the License.
 {
     return [[self wrappedClass] handleUnknownMessage:cdr withContext:context];
 }
+
+@end
+
+@implementation NuClass (Experiments)
+
+- (NSArray *) instanceVariableNames {
+    NSMutableArray *names = [NSMutableArray array];
+    
+    int ivarCount;
+    Ivar *ivarList = class_copyIvarList(c, &ivarCount);
+    
+    NSLog(@"%d ivars", ivarCount);
+    return names;
+}
+
+- (BOOL) addPropertyWithName:(NSString *) name {
+    const objc_property_t attributes[10];
+    unsigned int attributeCount = 0;
+    return class_addProperty(c, [name cStringUsingEncoding:NSUTF8StringEncoding],
+                             &attributes, attributeCount);    
+}
+
+- (NuProperty *) propertyWithName:(NSString *) name {
+    objc_property_t property = class_getProperty(c, [name cStringUsingEncoding:NSUTF8StringEncoding]);
+
+    return [NuProperty propertyWithProperty:(objc_property_t) property];
+}
+
+- (NSArray *) properties {
+    unsigned int property_count;
+    objc_property_t *property_list = class_copyPropertyList(c, &property_count);
+  
+    NSMutableArray *properties = [NSMutableArray array];
+    for (int i = 0; i < property_count; i++) {
+        [properties addObject:[NuProperty propertyWithProperty:property_list[i]]];
+    }    
+    free(property_list);
+    return properties;
+}
+
+//OBJC_EXPORT objc_property_t class_getProperty(Class cls, const char *name)
+
 
 @end

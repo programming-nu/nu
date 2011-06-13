@@ -1017,11 +1017,12 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
         return (!strcmp(return_type_buffer, "v")) ? (id)[NSNull null] : result;
     }
 
+    id result; 
     // if we get here, we're going through the ObjC runtime to make the call.
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     SEL s = method_getName(m);
-    id result = [NSNull null];
+    result = [NSNull null];
 
     // dynamically construct the method call
 
@@ -1798,7 +1799,7 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
             forKey:[symbolTable symbolWithCString:"_method"]];
         #ifdef DARWIN
         return add_method_to_class(
-            addClassMethod ? classToExtend->isa : classToExtend,
+            addClassMethod ? object_getClass(classToExtend) : classToExtend,
             methodName, signature, block);
         #else
         return add_method_to_class(

@@ -1,20 +1,20 @@
 /*!
-@file object.m
-@description Nu extensions to NSObject.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file object.m
+ @description Nu extensions to NSObject.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import "NuObject.h"
 #import "NuClass.h"
 #import "NuMethod.h"
@@ -85,7 +85,7 @@ limitations under the License.
 - (NSString *) selectorName
 {
     NSMutableArray *selectorStrings = [NSMutableArray array];
-    #ifdef DARWIN
+#ifdef DARWIN
     [selectorStrings addObject:[[self symbol] stringValue]];
     id p = parent;
     while ([p symbol]) {
@@ -97,14 +97,14 @@ limitations under the License.
     for (i = 0; i < max/2; i++) {
         [selectorStrings exchangeObjectAtIndex:i withObjectAtIndex:(max - i - 1)];
     }
-    #else
+#else
     [selectorStrings insertObject:[[self symbol] stringValue] atIndex:0];
     id p = parent;
     while ([p symbol]) {
         [selectorStrings insertObject:[[p symbol] stringValue] atIndex:0];
         p = [p parent];
     }
-    #endif
+#endif
     return [selectorStrings componentsJoinedByString:@""];
 }
 
@@ -114,11 +114,11 @@ limitations under the License.
     if (!child) {
         child = [[[NuSelectorCache alloc] initWithSymbol:childSymbol parent:self] autorelease];
         NSString *selectorString = [child selectorName];
-        #ifdef DARWIN
+#ifdef DARWIN
         [child setSelector:sel_registerName([selectorString cStringUsingEncoding:NSUTF8StringEncoding])];
-        #else
+#else
         [child setSelector:sel_register_name([selectorString cStringUsingEncoding:NSUTF8StringEncoding])];
-        #endif
+#endif
         [children setValue:child forKey:(id)childSymbol];
     }
     return child;
@@ -140,26 +140,26 @@ limitations under the License.
 
 - (NSString *) stringValue
 {
-    #ifdef DARWIN
+#ifdef DARWIN
     return [NSString stringWithFormat:@"<%s:%x>", class_getName(object_getClass(self)), (long) self];
-    #else
+#else
     return [NSString stringWithFormat:@"<%s:%x>", class_get_class_name(object_get_class(self)), (long) self];
-    #endif
+#endif
 }
 
 - (id) car
 {
     [NSException raise:@"NuCarCalledOnAtom"
-        format:@"car called on atom for object %@",
-        self];
+                format:@"car called on atom for object %@",
+     self];
     return Nu__null;
 }
 
 - (id) cdr
 {
     [NSException raise:@"NuCdrCalledOnAtom"
-        format:@"cdr called on atom for object %@",
-        self];
+                format:@"cdr called on atom for object %@",
+     self];
     return Nu__null;
 }
 
@@ -169,10 +169,10 @@ limitations under the License.
     // By themselves, Objective-C objects evaluate to themselves.
     if (!cdr || (cdr == Nu__null))
         return self;
-
+    
     // But when they're at the head of a list, that list is converted into a message that is sent to the object.
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
+    
     // Collect the method selector and arguments.
     // This seems like a bottleneck, and it also lacks flexibility.
     // Replacing explicit string building with the selector cache reduced runtimes by around 20%.
@@ -203,19 +203,19 @@ limitations under the License.
         // sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
         sel = [selectorCache selector];
     }
-
+    
     id target = self;
-
+    
     // Look up the appropriate method to call for the specified selector.
-    #ifdef DARWIN
+#ifdef DARWIN
     Method m;
-    #else
+#else
     Method_t m = 0;
-    #endif
-    #ifdef GNUSTEP
+#endif
+#ifdef GNUSTEP
     if (sel) {
-        #endif
-                                                  // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
+#endif
+        // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
         BOOL isAClass = (object_getClass(self) == [NuClass class]);
         if (isAClass) {
             // Class wrappers (objects of type NuClass) get special treatment. Instance methods are sent directly to the class wrapper object.
@@ -226,23 +226,23 @@ limitations under the License.
             if (m)
                 target = wrappedClass;
             else
-            #ifdef DARWIN
+#ifdef DARWIN
                 m = class_getInstanceMethod(object_getClass(self), sel);
-            #else
+#else
             m = class_get_instance_method(object_getClass(self), sel);
-            #endif
+#endif
         }
         else {
-            #ifdef DARWIN
+#ifdef DARWIN
             m = class_getInstanceMethod(object_getClass(self), sel);
-            #else
+#else
             m = class_get_instance_method(object_getClass(self), sel);
-            #endif
+#endif
             if (!m) m = class_getClassMethod(object_getClass(self), sel);
         }
-        #ifdef GNUSTEP
+#ifdef GNUSTEP
     }
-    #endif
+#endif
     id result = Nu__null;
     if (m) {
         // We have a method that matches the selector.
@@ -284,7 +284,7 @@ limitations under the License.
             //NSLog(@"result is %@", result);
         }
     }
-
+    
     [args release];
     [result retain];
     [pool drain];
@@ -300,8 +300,8 @@ limitations under the License.
 + (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
 {
     [NSException raise:@"NuUnknownMessage"
-        format:@"unable to find message handler for %@",
-        [cdr stringValue]];
+                format:@"unable to find message handler for %@",
+     [cdr stringValue]];
     return Nu__null;
 }
 
@@ -337,7 +337,7 @@ limitations under the License.
         // sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
         sel = [selectorCache selector];
     }
-
+    
     // If the object responds to methodSignatureForSelector:, we should create and forward an invocation to it.
     NSMethodSignature *methodSignature = sel ? [self methodSignatureForSelector:sel] : 0;
     if (methodSignature) {
@@ -368,13 +368,13 @@ limitations under the License.
         }
         return result;
     }
-
+    
     NuCell *cell = [[[NuCell alloc] init] autorelease];
     [cell setCar: self];
     [cell setCdr: cdr];
     [NSException raise:@"NuUnknownMessage"
-        format:@"unable to find message handler for %@",
-        [cell stringValue]];
+                format:@"unable to find message handler for %@",
+     [cell stringValue]];
     return Nu__null;
 }
 
@@ -383,18 +383,14 @@ limitations under the License.
     Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
     if (!v) {
         // look for sparse ivar storage
-        Ivar __ivars = class_getInstanceVariable([self class], "__nuivars");
-        if (__ivars) {
-            NSMutableDictionary *sparseIvars = [self valueForIvar:@"__nuivars"];
-            if (sparseIvars && (sparseIvars != Nu__null)) {
-                id result = [sparseIvars objectForKey:name];
-                return result;
-            }
+        NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
+        if (sparseIvars) {
+            return [sparseIvars objectForKey:name];
         }
         [NSException raise:@"NuNoInstanceVariable"
-            format:@"Unable to get ivar named %@ for object %@",
-            name, self];
-
+                    format:@"Unable to get ivar named %@ for object %@",
+         name, self];
+        
         return Nu__null;
     }
     void *location = (void *)&(((char *)self)[ivar_getOffset(v)]);
@@ -406,25 +402,14 @@ limitations under the License.
 {
     Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
     if (!v) {
-        // look for sparse ivar storage
-        Ivar __ivars = class_getInstanceVariable([self class], "__nuivars");
-        if (__ivars) {
-            NSMutableDictionary *sparseIvars = [self valueForIvar:@"__nuivars"];
-            //NSLog(@"get sparse ivars dictionary: %@", sparseIvars);
-            if (!sparseIvars || (sparseIvars == Nu__null)) {
-                //NSLog(@"creating new sparse ivars dictionary");
-                sparseIvars = [[[NSMutableDictionary alloc] init] autorelease];
-                //NSLog(@"setting sparse ivars dictionary: %@", sparseIvars);
-                [self setValue:sparseIvars forIvar:@"__nuivars"];
-            }
-            [self willChangeValueForKey:name];
-            [sparseIvars setPossiblyNullObject:value forKey:name];
-            [self didChangeValueForKey:name];
-            return;
+        NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
+        if (!sparseIvars) {
+            sparseIvars = [[[NSMutableDictionary alloc] init] autorelease];
+            [self setRetainedAssociatedObject:sparseIvars forKey:@"__nuivars"];
         }
-        [NSException raise:@"NuNoInstanceVariable"
-            format:@"Unable to set ivar named %@ for object %@",
-            name, self];
+        [self willChangeValueForKey:name];
+        [sparseIvars setPossiblyNullObject:value forKey:name];
+        [self didChangeValueForKey:name];
         return;
     }
     [self willChangeValueForKey:name];
@@ -438,33 +423,15 @@ limitations under the License.
     [self didChangeValueForKey:name];
 }
 
-- (void) nuDealloc
-{
-    NSArray *ivarsToRelease = nu_ivarsToRelease([self class]);
-    if (ivarsToRelease) {
-        int count = [ivarsToRelease count];
-        for (int i = 0; i < count; i++) {
-            NSString *ivarName = [ivarsToRelease objectAtIndex:i];
-            Ivar ivar = class_getInstanceVariable([self class], [ivarName cStringUsingEncoding:NSUTF8StringEncoding]);
-            if (ivar) {
-                // NSLog(@"releasing ivar %@", ivarName);
-                void *location = (void *)&(((char *)self)[ivar_getOffset(ivar)]);
-                [*((id *)location) release];
-            }
-        }
-    }
-    [self nuDealloc];
-}
-
 + (NSArray *) classMethods
 {
     NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
-    #ifdef DARWIN
+#ifdef DARWIN
     Method *method_list = class_copyMethodList(object_getClass([self class]), &method_count);
-    #else
+#else
     Method_t *method_list = class_copyMethodList(object_getClass([self class]), &method_count);
-    #endif
+#endif
     int i;
     for (i = 0; i < method_count; i++) {
         [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
@@ -478,11 +445,11 @@ limitations under the License.
 {
     NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
-    #ifdef DARWIN
+#ifdef DARWIN
     Method *method_list = class_copyMethodList([self class], &method_count);
-    #else
+#else
     Method_t *method_list = class_copyMethodList([self class], &method_count);
-    #endif
+#endif
     int i;
     for (i = 0; i < method_count; i++) {
         [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
@@ -497,7 +464,7 @@ limitations under the License.
     Class c = [self class];
     id methods = [c classMethods];
     return [methods mapSelector:@selector(name)];
-//    return [[c classMethods] mapSelector:@selector(name)];
+    //    return [[c classMethods] mapSelector:@selector(name)];
 }
 
 + (NSArray *) instanceMethodNames
@@ -505,7 +472,7 @@ limitations under the License.
     Class c = [self class];
     id methods = [c instanceMethods];
     return [methods mapSelector:@selector(name)];
-//    return [[c instanceMethods] mapSelector:@selector(name)];
+    //    return [[c instanceMethods] mapSelector:@selector(name)];
 }
 
 + (NSArray *) instanceVariableNames
@@ -537,17 +504,17 @@ limitations under the License.
 {
     Class c = [self class];
     const char *name = [subclassName cStringUsingEncoding:NSUTF8StringEncoding];
-
+    
     // does the class already exist?
     Class s = objc_getClass(name);
     if (s) {
         // the subclass's superclass must be the current class!
         if (c != [s superclass]) {
-            #ifdef DARWIN
+#ifdef DARWIN
             NSLog(@"Warning: Class %s already exists and is not a subclass of %s", name, class_getName(c));
-            #else
+#else
             NSLog(@"Warning: Class %s already exists and is not a subclass of %s", name, class_get_class_name(c));
-            #endif
+#endif
         }
     }
     else {
@@ -555,37 +522,37 @@ limitations under the License.
         objc_registerClassPair(s);
     }
     NuClass *newClass = [[[NuClass alloc] initWithClass:s] autorelease];
-
+    
     if ([self respondsToSelector:@selector(inheritedByClass:)]) {
         [self inheritedByClass:newClass];
     }
-
+    
     return newClass;
 }
 
 /*
-+ (id) addInstanceMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
-{
-    Class c = [self class];
-    return add_method_to_class(c, methodName, signature, block);
-}
-
-+ (id) addClassMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
-{
-    Class c = [self class]->isa;
-    return add_method_to_class(c, methodName, signature, block);
-}
-*/
+ + (id) addInstanceMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
+ {
+ Class c = [self class];
+ return add_method_to_class(c, methodName, signature, block);
+ }
+ 
+ + (id) addClassMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
+ {
+ Class c = [self class]->isa;
+ return add_method_to_class(c, methodName, signature, block);
+ }
+ */
 + (BOOL) copyInstanceMethod:(NSString *) methodName fromClass:(NuClass *)prototypeClass
 {
     Class thisClass = [self class];
     Class otherClass = [prototypeClass wrappedClass];
     const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
-    #ifdef DARWIN
+#ifdef DARWIN
     SEL selector = sel_registerName(method_name_str);
-    #else
+#else
     SEL selector = sel_register_name(method_name_str);
-    #endif
+#endif
     BOOL result = nu_copyInstanceMethod(thisClass, otherClass, selector);
     return result;
 }
@@ -603,33 +570,33 @@ limitations under the License.
 }
 
 /*
-+ (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
-{
-    Class thisClass = [self class];
-    size_t size_of_objc_type(const char *typeString);
-
-    class_addInstanceVariable_withSignature(thisClass, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
-
-    return Nu__null;
-}
-*/
+ + (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
+ {
+ Class thisClass = [self class];
+ size_t size_of_objc_type(const char *typeString);
+ 
+ class_addInstanceVariable_withSignature(thisClass, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+ 
+ return Nu__null;
+ }
+ */
 
 + (NSString *) help
 {
-    #ifdef DARWIN
+#ifdef DARWIN
     return [NSString stringWithFormat:@"This is a class named %s.", class_getName([self class])];
-    #else
+#else
     return [NSString stringWithFormat:@"This is a class named %s.", class_get_class_name([self class])];
-    #endif
+#endif
 }
 
 - (NSString *) help
 {
-    #ifdef DARWIN
+#ifdef DARWIN
     return [NSString stringWithFormat:@"This is an instance of %s.", class_getName([self class])];
-    #else
+#else
     return [NSString stringWithFormat:@"This is an instance of %s.", class_get_class_name([self class])];
-    #endif
+#endif
 }
 
 // adapted from the CocoaDev MethodSwizzling page
@@ -637,68 +604,68 @@ limitations under the License.
 + (BOOL) exchangeInstanceMethod:(SEL)sel1 withMethod:(SEL)sel2
 {
     Class myClass = [self class];
-    #ifdef DARWIN
+#ifdef DARWIN
     Method method1 = NULL, method2 = NULL;
-    #else
+#else
     Method_t method1 = NULL, method2 = NULL;
-    #endif
-
+#endif
+    
     // First, look for the methods
-    #ifdef DARWIN
+#ifdef DARWIN
     method1 = class_getInstanceMethod(myClass, sel1);
     method2 = class_getInstanceMethod(myClass, sel2);
-    #else
+#else
     method1 = class_get_instance_method(myClass, sel1);
     method2 = class_get_instance_method(myClass, sel2);
-    #endif
+#endif
     // If both are found, swizzle them
     if ((method1 != NULL) && (method2 != NULL)) {
         method_exchangeImplementations(method1, method2);
         return true;
     }
     else {
-        #ifdef DARWIN
+#ifdef DARWIN
         if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel1));
         if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel2));
-        #else
+#else
         if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel1));
         if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel2));
-        #endif
+#endif
         return false;
     }
-
+    
     return YES;
 }
 
 + (BOOL) exchangeClassMethod:(SEL)sel1 withMethod:(SEL)sel2
 {
     Class myClass = [self class];
-    #ifdef DARWIN
+#ifdef DARWIN
     Method method1 = NULL, method2 = NULL;
-    #else
+#else
     Method_t method1 = NULL, method2 = NULL;
-    #endif
-
+#endif
+    
     // First, look for the methods
     method1 = class_getClassMethod(myClass, sel1);
     method2 = class_getClassMethod(myClass, sel2);
-
+    
     // If both are found, swizzle them
     if ((method1 != NULL) && (method2 != NULL)) {
         method_exchangeImplementations(method1, method2);
         return true;
     }
     else {
-        #ifdef DARWIN
+#ifdef DARWIN
         if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel1));
         if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel2));
-        #else
+#else
         if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel1));
         if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel2));
-        #endif
+#endif
         return false;
     }
-
+    
     return YES;
 }
 
@@ -712,11 +679,11 @@ limitations under the License.
         id value = [[cursor cdr] car];
         id label = ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) ? [key labelName] : key;
         if ([label isEqualToString:@"action"] && [self respondsToSelector:@selector(setAction:)]) {
-            #ifdef DARWIN
+#ifdef DARWIN
             SEL selector = sel_registerName([value cStringUsingEncoding:NSUTF8StringEncoding]);
-            #else
+#else
             SEL selector = sel_register_name([value cStringUsingEncoding:NSUTF8StringEncoding]);
-            #endif
+#endif
             [(id<NuCanSetAction>) self setAction:selector];
         }
         else {
@@ -725,6 +692,34 @@ limitations under the License.
         cursor = [[cursor cdr] cdr];
     }
     return self;
+}
+
+- (void) setRetainedAssociatedObject:(id) object forKey:(id) key {
+    if ([key isKindOfClass:[NSString class]]) 
+        key = [[NuSymbolTable sharedSymbolTable] symbolWithString:key];
+    objc_setAssociatedObject(self, key, object, OBJC_ASSOCIATION_RETAIN);
+}
+
+- (void) setAssignedAssociatedObject:(id) object forKey:(id) key {
+    if ([key isKindOfClass:[NSString class]]) 
+        key = [[NuSymbolTable sharedSymbolTable] symbolWithString:key];
+    objc_setAssociatedObject(self, key, object, OBJC_ASSOCIATION_ASSIGN);
+}
+
+- (void) setCopiedAssociatedObject:(id) object forKey:(id) key {
+    if ([key isKindOfClass:[NSString class]]) 
+        key = [[NuSymbolTable sharedSymbolTable] symbolWithString:key];
+    objc_setAssociatedObject(self, key, object, OBJC_ASSOCIATION_COPY);
+}
+
+- (id) associatedObjectForKey:(id) key {
+    if ([key isKindOfClass:[NSString class]]) 
+        key = [[NuSymbolTable sharedSymbolTable] symbolWithString:key];
+    return objc_getAssociatedObject(self, key);
+}
+
+- (void) removeAssociatedObjects {
+    objc_removeAssociatedObjects(self);
 }
 
 @end

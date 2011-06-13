@@ -129,7 +129,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
 
     @try
     {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        @autoreleasepool {
 
         // first we try to load main.nu from the application bundle.
         NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
@@ -140,7 +140,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
                 [parser eval:script];
                 [parser release];
-                [pool release];
+                //[pool release];
                 return 0;
             }
         }
@@ -200,7 +200,6 @@ int NuMain(int argc, const char *argv[], const char *envp[])
 
 #ifndef FREEBSD
             // FreeBSD infinite loop on emptyPool/dealloc
-            [pool release];
 #endif
             return 0;
         }
@@ -219,15 +218,16 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 id script = [parser parse:string asIfFromFilename:"stdin"];
                 [parser eval:script];
                 [parser release];
-                [pool release];
+                //[pool release];
             }
             else {
-                [pool release];
+               // [pool release];
 #ifndef IPHONE
                 return [NuParser main];
 #endif
             }
         }
+    }
     }
 	@catch (NuException* nuException)
     {
@@ -297,9 +297,6 @@ void NuInit()
         [NSSet include: [NuClass classWithClass:[NuEnumerable class]]];
         [NSString include: [NuClass classWithClass:[NuEnumerable class]]];
         [pool drain];
-
-        [NSObject exchangeInstanceMethod:@selector(dealloc) withMethod:@selector(nuDealloc)];
-
 
         #ifdef DARWIN
         #ifndef IPHONE

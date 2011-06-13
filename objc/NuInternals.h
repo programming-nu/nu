@@ -62,11 +62,5 @@ limitations under the License.
 // use this to test a value for "truth"
 bool nu_valueIsTrue(id value);
 
-// use this to remember that instance variables created by Nu must be released when their owner is deallocated.
-void nu_registerIvarForRelease(Class c, NSString *name);
-
-// use this to get the instance variables that should be released.
-NSArray *nu_ivarsToRelease(Class c);
-
 // use this to get the filename for a NuCell created by the parser
 const char *nu_parsedFilename(int i);

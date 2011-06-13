@@ -1825,9 +1825,6 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         class_addInstanceVariable_withSignature(classToExtend,
             [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
             [signature cStringUsingEncoding:NSUTF8StringEncoding]);
-        if ([signature isEqual:@"@"]) {
-            //nu_registerIvarForRelease(classToExtend, [variableName stringValue]);
-        }
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
     return Nu__null;
@@ -1841,20 +1838,6 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 @implementation Nu_ivars_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-
-    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
-    #if defined(__x86_64__) || defined(IPHONE)
-    // this will only work if the class is unregistered...
-    if ([classWrapper isRegistered]) {
-        [NSException raise:@"NuIvarAddedTooLate" format:@"instance variables must be added when a class is created and before any method declarations"];
-    }
-    #endif
-    Class classToExtend = [classWrapper wrappedClass];
-    if (!classToExtend)
-        [NSException raise:@"NuMisplacedDeclaration" format:@"dynamic instance variables declaration with no enclosing class declaration"];
-    class_addInstanceVariable_withSignature(classToExtend, "__nuivars", "@");
-    nu_registerIvarForRelease(classToExtend, @"__nuivars");
     return Nu__null;
 }
 

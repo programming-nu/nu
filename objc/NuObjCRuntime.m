@@ -433,7 +433,7 @@ static struct objc_method_list** method_list_alloc(int cnt)
 // this function was taken from RubyCocoa
 #ifdef DARWIN
 Class objc_allocateClassPair(Class super_class, const char *name, size_t extraBytes)
-{
+{thisnevergetscompiled
     Class c = alloc_from_default_zone(sizeof(struct objc_class));
     Class isa = alloc_from_default_zone(sizeof(struct objc_class));
     struct objc_method_list **mlp0, **mlp1;

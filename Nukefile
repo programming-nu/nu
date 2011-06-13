@@ -88,7 +88,7 @@ END)
 
 ;; build configuration
 (set @cc "gcc")
-(set @cc "#{DEVROOT}/usr/bin/llvm-gcc-4.2")
+(set @cc "#{DEVROOT}/usr/bin/clang")
 
 (set @leopard "")
 (set @sdk

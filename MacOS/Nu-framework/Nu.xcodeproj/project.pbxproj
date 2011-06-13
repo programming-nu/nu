@@ -69,6 +69,9 @@
 		2230622B13A54EDC00B67882 /* test_undo.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061FD13A54EDC00B67882 /* test_undo.nu */; };
 		2230622C13A54EDC00B67882 /* test_varargs.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061FE13A54EDC00B67882 /* test_varargs.nu */; };
 		224276FF11DD748600940005 /* Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 224276FE11DD748600940005 /* Nu.h */; };
+		2276E5E013A5E4AB006A166B /* NuProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 2276E5DE13A5E4AB006A166B /* NuProperty.h */; };
+		2276E5E113A5E4AB006A166B /* NuProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 2276E5DF13A5E4AB006A166B /* NuProperty.m */; };
+		2276E5E213A5E4AB006A166B /* NuProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 2276E5DF13A5E4AB006A166B /* NuProperty.m */; };
 		2283070411DDBBD100A5C690 /* beautify.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F411DDBBD100A5C690 /* beautify.nu */; };
 		2283070511DDBBD100A5C690 /* bridgesupport.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F511DDBBD100A5C690 /* bridgesupport.nu */; };
 		2283070611DDBBD100A5C690 /* cocoa.nu in Resources */ = {isa = PBXBuildFile; fileRef = 228306F611DDBBD100A5C690 /* cocoa.nu */; };
@@ -311,6 +314,8 @@
 		223061FD13A54EDC00B67882 /* test_undo.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_undo.nu; sourceTree = "<group>"; };
 		223061FE13A54EDC00B67882 /* test_varargs.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_varargs.nu; sourceTree = "<group>"; };
 		224276FE11DD748600940005 /* Nu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu.h; sourceTree = "<group>"; };
+		2276E5DE13A5E4AB006A166B /* NuProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuProperty.h; sourceTree = "<group>"; };
+		2276E5DF13A5E4AB006A166B /* NuProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuProperty.m; sourceTree = "<group>"; };
 		228306F411DDBBD100A5C690 /* beautify.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = beautify.nu; sourceTree = "<group>"; };
 		228306F511DDBBD100A5C690 /* bridgesupport.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bridgesupport.nu; sourceTree = "<group>"; };
 		228306F611DDBBD100A5C690 /* cocoa.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cocoa.nu; sourceTree = "<group>"; };
@@ -668,6 +673,8 @@
 				22956DAB12B9E29B00B42E63 /* NuVersion.h */,
 				22956DAC12B9E29B00B42E63 /* st.c */,
 				22956DAD12B9E29B00B42E63 /* st.h */,
+				2276E5DE13A5E4AB006A166B /* NuProperty.h */,
+				2276E5DF13A5E4AB006A166B /* NuProperty.m */,
 			);
 			name = objc;
 			path = ../../objc;
@@ -864,6 +871,7 @@
 				22956DE812B9E29B00B42E63 /* NuTypes.h in Headers */,
 				22956DE912B9E29B00B42E63 /* NuVersion.h in Headers */,
 				22956DEB12B9E29B00B42E63 /* st.h in Headers */,
+				2276E5E013A5E4AB006A166B /* NuProperty.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1124,6 +1132,7 @@
 				22EE2C6C13A4757B00895861 /* prep_cif.c in Sources */,
 				22EE2C6D13A4757B00895861 /* raw_api.c in Sources */,
 				22EE2C6F13A4757B00895861 /* types.c in Sources */,
+				2276E5E213A5E4AB006A166B /* NuProperty.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1183,6 +1192,7 @@
 				22956DE612B9E29B00B42E63 /* NuSymbol.m in Sources */,
 				22956DE712B9E29B00B42E63 /* NuTestHelper.m in Sources */,
 				22956DEA12B9E29B00B42E63 /* st.c in Sources */,
+				2276E5E113A5E4AB006A166B /* NuProperty.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -67,7 +67,7 @@ MFLAGS = -fobjc-exceptions
 CFLAGS += -DHAVE_CONFIG_H
 
 ifeq ($(SYSTEM), Darwin)
-	CC = $(DEVROOT)/usr/bin/llvm-gcc-4.2 
+	CC = $(DEVROOT)/usr/bin/clang
 	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS) $(LION_CFLAGS) -Ipcre 
 else
 #	CFLAGS += -DLINUX
