@@ -29,12 +29,6 @@
             (catch (exception) (set myException exception)))
         (assert_equal "NuMisplacedDeclaration" (myException name)))
      
-     (- (id) testMisplacedIvars is
-        (try
-            (misplaced-ivars)
-            (catch (exception) (set myException exception)))
-        (assert_equal "NuMisplacedDeclaration" (myException name)))
-     
      (- (id) testUndefinedClass is
         (try
             (class Undefined)
