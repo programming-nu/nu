@@ -18,8 +18,6 @@ limitations under the License.
 */
 #import <Foundation/Foundation.h>
 
-#import "NuTypes.h"
-
 /*!
    @class NuReference
    @abstract The Nu object wrapper.

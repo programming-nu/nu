@@ -22,8 +22,6 @@ limitations under the License.
 
 // Use this key to get the symbol table from an execution context.
 
-#import "NuTypes.h"
-
 #define SYMBOLS_KEY @"symbols"
 
 // Use this key to get the parent context of an execution context.

@@ -20,9 +20,6 @@ limitations under the License.
 @class NuCell;
 @class NuBlock;
 
-#import "NuTypes.h"
-
-
 /*!
     @category NSNull(Nu)
     @abstract NSNull extensions for Nu programming.

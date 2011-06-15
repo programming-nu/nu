@@ -90,8 +90,6 @@
 		2283071311DDBBD100A5C690 /* test.nu in Resources */ = {isa = PBXBuildFile; fileRef = 2283070311DDBBD100A5C690 /* test.nu */; };
 		2283073D11DDBE7300A5C690 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2283073C11DDBE7300A5C690 /* main.m */; };
 		2283074411DDBEA700A5C690 /* Nu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* Nu.framework */; };
-		22956DAE12B9E29B00B42E63 /* mach_override.c in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7012B9E29B00B42E63 /* mach_override.c */; };
-		22956DAF12B9E29B00B42E63 /* mach_override.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D7112B9E29B00B42E63 /* mach_override.h */; };
 		22956DB012B9E29B00B42E63 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7212B9E29B00B42E63 /* Nu.m */; };
 		22956DB112B9E29B00B42E63 /* NuBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D7312B9E29B00B42E63 /* NuBlock.h */; };
 		22956DB212B9E29B00B42E63 /* NuBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7412B9E29B00B42E63 /* NuBlock.m */; };
@@ -113,7 +111,6 @@
 		22956DC312B9E29B00B42E63 /* NuHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D8512B9E29B00B42E63 /* NuHandler.h */; };
 		22956DC412B9E29B00B42E63 /* NuHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8612B9E29B00B42E63 /* NuHandler.m */; };
 		22956DC512B9E29B00B42E63 /* NuInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D8712B9E29B00B42E63 /* NuInternals.h */; };
-		22956DC612B9E29B00B42E63 /* NuIvars.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8812B9E29B00B42E63 /* NuIvars.m */; };
 		22956DC712B9E29B00B42E63 /* NuMacro_0.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D8912B9E29B00B42E63 /* NuMacro_0.h */; };
 		22956DC812B9E29B00B42E63 /* NuMacro_0.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8A12B9E29B00B42E63 /* NuMacro_0.m */; };
 		22956DC912B9E29B00B42E63 /* NuMacro_1.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D8B12B9E29B00B42E63 /* NuMacro_1.h */; };
@@ -127,14 +124,12 @@
 		22956DD112B9E29B00B42E63 /* NuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9312B9E29B00B42E63 /* NuObject.m */; };
 		22956DD212B9E29B00B42E63 /* NuOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D9412B9E29B00B42E63 /* NuOperator.h */; };
 		22956DD312B9E29B00B42E63 /* NuOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9512B9E29B00B42E63 /* NuOperator.m */; };
-		22956DD412B9E29B00B42E63 /* NuOverrides.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9612B9E29B00B42E63 /* NuOverrides.m */; };
 		22956DD512B9E29B00B42E63 /* NuParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D9712B9E29B00B42E63 /* NuParser.h */; };
 		22956DD612B9E29B00B42E63 /* NuParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9812B9E29B00B42E63 /* NuParser.m */; };
 		22956DD712B9E29B00B42E63 /* NuPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D9912B9E29B00B42E63 /* NuPointer.h */; };
 		22956DD812B9E29B00B42E63 /* NuPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9A12B9E29B00B42E63 /* NuPointer.m */; };
 		22956DD912B9E29B00B42E63 /* NuProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D9B12B9E29B00B42E63 /* NuProfiler.h */; };
 		22956DDA12B9E29B00B42E63 /* NuProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9C12B9E29B00B42E63 /* NuProfiler.m */; };
-		22956DDB12B9E29B00B42E63 /* NuProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9D12B9E29B00B42E63 /* NuProtocol.m */; };
 		22956DDC12B9E29B00B42E63 /* NuReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956D9E12B9E29B00B42E63 /* NuReference.h */; };
 		22956DDD12B9E29B00B42E63 /* NuReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9F12B9E29B00B42E63 /* NuReference.m */; };
 		22956DDE12B9E29B00B42E63 /* NuRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956DA012B9E29B00B42E63 /* NuRegex.h */; };
@@ -147,7 +142,6 @@
 		22956DE512B9E29B00B42E63 /* NuSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956DA712B9E29B00B42E63 /* NuSymbol.h */; };
 		22956DE612B9E29B00B42E63 /* NuSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA812B9E29B00B42E63 /* NuSymbol.m */; };
 		22956DE712B9E29B00B42E63 /* NuTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA912B9E29B00B42E63 /* NuTestHelper.m */; };
-		22956DE812B9E29B00B42E63 /* NuTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956DAA12B9E29B00B42E63 /* NuTypes.h */; };
 		22956DE912B9E29B00B42E63 /* NuVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956DAB12B9E29B00B42E63 /* NuVersion.h */; };
 		22956DEA12B9E29B00B42E63 /* st.c in Sources */ = {isa = PBXBuildFile; fileRef = 22956DAC12B9E29B00B42E63 /* st.c */; };
 		22956DEB12B9E29B00B42E63 /* st.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956DAD12B9E29B00B42E63 /* st.h */; };
@@ -189,7 +183,6 @@
 		22EE2C0413A4731600895861 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 22EE2C0213A4731600895861 /* InfoPlist.strings */; };
 		22EE2C0613A4731600895861 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0513A4731600895861 /* main.m */; };
 		22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0913A4731600895861 /* NuAppDelegate.m */; };
-		22EE2C1813A4750300895861 /* mach_override.c in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7012B9E29B00B42E63 /* mach_override.c */; };
 		22EE2C1A13A4750300895861 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7212B9E29B00B42E63 /* Nu.m */; };
 		22EE2C1C13A4750300895861 /* NuBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7412B9E29B00B42E63 /* NuBlock.m */; };
 		22EE2C1E13A4750300895861 /* NuBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D7612B9E29B00B42E63 /* NuBridge.m */; };
@@ -200,18 +193,15 @@
 		22EE2C2913A4750300895861 /* NuException.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8212B9E29B00B42E63 /* NuException.m */; };
 		22EE2C2B13A4750300895861 /* NuExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8412B9E29B00B42E63 /* NuExtensions.m */; };
 		22EE2C2D13A4750300895861 /* NuHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8612B9E29B00B42E63 /* NuHandler.m */; };
-		22EE2C2F13A4750300895861 /* NuIvars.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8812B9E29B00B42E63 /* NuIvars.m */; };
 		22EE2C3113A4750300895861 /* NuMacro_0.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8A12B9E29B00B42E63 /* NuMacro_0.m */; };
 		22EE2C3313A4750300895861 /* NuMacro_1.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8C12B9E29B00B42E63 /* NuMacro_1.m */; };
 		22EE2C3613A4750300895861 /* NuMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D8F12B9E29B00B42E63 /* NuMethod.m */; };
 		22EE2C3813A4750300895861 /* NuObjCRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9112B9E29B00B42E63 /* NuObjCRuntime.m */; };
 		22EE2C3A13A4750300895861 /* NuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9312B9E29B00B42E63 /* NuObject.m */; };
 		22EE2C3C13A4750300895861 /* NuOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9512B9E29B00B42E63 /* NuOperator.m */; };
-		22EE2C3D13A4750300895861 /* NuOverrides.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9612B9E29B00B42E63 /* NuOverrides.m */; };
 		22EE2C3F13A4750300895861 /* NuParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9812B9E29B00B42E63 /* NuParser.m */; };
 		22EE2C4113A4750300895861 /* NuPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9A12B9E29B00B42E63 /* NuPointer.m */; };
 		22EE2C4313A4750300895861 /* NuProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9C12B9E29B00B42E63 /* NuProfiler.m */; };
-		22EE2C4413A4750300895861 /* NuProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9D12B9E29B00B42E63 /* NuProtocol.m */; };
 		22EE2C4613A4750300895861 /* NuReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956D9F12B9E29B00B42E63 /* NuReference.m */; };
 		22EE2C4813A4750300895861 /* NuRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA112B9E29B00B42E63 /* NuRegex.m */; };
 		22EE2C4A13A4750300895861 /* NuStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 22956DA312B9E29B00B42E63 /* NuStack.m */; };
@@ -334,8 +324,6 @@
 		2283070311DDBBD100A5C690 /* test.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.nu; sourceTree = "<group>"; };
 		2283073111DDBE3100A5C690 /* nush */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nush; sourceTree = BUILT_PRODUCTS_DIR; };
 		2283073C11DDBE7300A5C690 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../main/main.m; sourceTree = SOURCE_ROOT; };
-		22956D7012B9E29B00B42E63 /* mach_override.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mach_override.c; sourceTree = "<group>"; };
-		22956D7112B9E29B00B42E63 /* mach_override.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mach_override.h; sourceTree = "<group>"; };
 		22956D7212B9E29B00B42E63 /* Nu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Nu.m; sourceTree = "<group>"; };
 		22956D7312B9E29B00B42E63 /* NuBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBlock.h; sourceTree = "<group>"; };
 		22956D7412B9E29B00B42E63 /* NuBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBlock.m; sourceTree = "<group>"; };
@@ -357,7 +345,6 @@
 		22956D8512B9E29B00B42E63 /* NuHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuHandler.h; sourceTree = "<group>"; };
 		22956D8612B9E29B00B42E63 /* NuHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuHandler.m; sourceTree = "<group>"; };
 		22956D8712B9E29B00B42E63 /* NuInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuInternals.h; sourceTree = "<group>"; };
-		22956D8812B9E29B00B42E63 /* NuIvars.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuIvars.m; sourceTree = "<group>"; };
 		22956D8912B9E29B00B42E63 /* NuMacro_0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuMacro_0.h; sourceTree = "<group>"; };
 		22956D8A12B9E29B00B42E63 /* NuMacro_0.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuMacro_0.m; sourceTree = "<group>"; };
 		22956D8B12B9E29B00B42E63 /* NuMacro_1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuMacro_1.h; sourceTree = "<group>"; };
@@ -371,14 +358,12 @@
 		22956D9312B9E29B00B42E63 /* NuObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuObject.m; sourceTree = "<group>"; };
 		22956D9412B9E29B00B42E63 /* NuOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuOperator.h; sourceTree = "<group>"; };
 		22956D9512B9E29B00B42E63 /* NuOperator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuOperator.m; sourceTree = "<group>"; };
-		22956D9612B9E29B00B42E63 /* NuOverrides.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuOverrides.m; sourceTree = "<group>"; };
 		22956D9712B9E29B00B42E63 /* NuParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuParser.h; sourceTree = "<group>"; };
 		22956D9812B9E29B00B42E63 /* NuParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuParser.m; sourceTree = "<group>"; };
 		22956D9912B9E29B00B42E63 /* NuPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuPointer.h; sourceTree = "<group>"; };
 		22956D9A12B9E29B00B42E63 /* NuPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuPointer.m; sourceTree = "<group>"; };
 		22956D9B12B9E29B00B42E63 /* NuProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuProfiler.h; sourceTree = "<group>"; };
 		22956D9C12B9E29B00B42E63 /* NuProfiler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuProfiler.m; sourceTree = "<group>"; };
-		22956D9D12B9E29B00B42E63 /* NuProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuProtocol.m; sourceTree = "<group>"; };
 		22956D9E12B9E29B00B42E63 /* NuReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuReference.h; sourceTree = "<group>"; };
 		22956D9F12B9E29B00B42E63 /* NuReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuReference.m; sourceTree = "<group>"; };
 		22956DA012B9E29B00B42E63 /* NuRegex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuRegex.h; sourceTree = "<group>"; };
@@ -391,7 +376,6 @@
 		22956DA712B9E29B00B42E63 /* NuSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuSymbol.h; sourceTree = "<group>"; };
 		22956DA812B9E29B00B42E63 /* NuSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuSymbol.m; sourceTree = "<group>"; };
 		22956DA912B9E29B00B42E63 /* NuTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuTestHelper.m; sourceTree = "<group>"; };
-		22956DAA12B9E29B00B42E63 /* NuTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuTypes.h; sourceTree = "<group>"; };
 		22956DAB12B9E29B00B42E63 /* NuVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuVersion.h; sourceTree = "<group>"; };
 		22956DAC12B9E29B00B42E63 /* st.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = st.c; sourceTree = "<group>"; };
 		22956DAD12B9E29B00B42E63 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
@@ -612,8 +596,6 @@
 		2242766A11DD73E500940005 /* objc */ = {
 			isa = PBXGroup;
 			children = (
-				22956D7012B9E29B00B42E63 /* mach_override.c */,
-				22956D7112B9E29B00B42E63 /* mach_override.h */,
 				22956D7212B9E29B00B42E63 /* Nu.m */,
 				22956D7312B9E29B00B42E63 /* NuBlock.h */,
 				22956D7412B9E29B00B42E63 /* NuBlock.m */,
@@ -635,7 +617,6 @@
 				22956D8512B9E29B00B42E63 /* NuHandler.h */,
 				22956D8612B9E29B00B42E63 /* NuHandler.m */,
 				22956D8712B9E29B00B42E63 /* NuInternals.h */,
-				22956D8812B9E29B00B42E63 /* NuIvars.m */,
 				22956D8912B9E29B00B42E63 /* NuMacro_0.h */,
 				22956D8A12B9E29B00B42E63 /* NuMacro_0.m */,
 				22956D8B12B9E29B00B42E63 /* NuMacro_1.h */,
@@ -649,14 +630,12 @@
 				22956D9312B9E29B00B42E63 /* NuObject.m */,
 				22956D9412B9E29B00B42E63 /* NuOperator.h */,
 				22956D9512B9E29B00B42E63 /* NuOperator.m */,
-				22956D9612B9E29B00B42E63 /* NuOverrides.m */,
 				22956D9712B9E29B00B42E63 /* NuParser.h */,
 				22956D9812B9E29B00B42E63 /* NuParser.m */,
 				22956D9912B9E29B00B42E63 /* NuPointer.h */,
 				22956D9A12B9E29B00B42E63 /* NuPointer.m */,
 				22956D9B12B9E29B00B42E63 /* NuProfiler.h */,
 				22956D9C12B9E29B00B42E63 /* NuProfiler.m */,
-				22956D9D12B9E29B00B42E63 /* NuProtocol.m */,
 				22956D9E12B9E29B00B42E63 /* NuReference.h */,
 				22956D9F12B9E29B00B42E63 /* NuReference.m */,
 				22956DA012B9E29B00B42E63 /* NuRegex.h */,
@@ -669,7 +648,6 @@
 				22956DA712B9E29B00B42E63 /* NuSymbol.h */,
 				22956DA812B9E29B00B42E63 /* NuSymbol.m */,
 				22956DA912B9E29B00B42E63 /* NuTestHelper.m */,
-				22956DAA12B9E29B00B42E63 /* NuTypes.h */,
 				22956DAB12B9E29B00B42E63 /* NuVersion.h */,
 				22956DAC12B9E29B00B42E63 /* st.c */,
 				22956DAD12B9E29B00B42E63 /* st.h */,
@@ -841,7 +819,6 @@
 				22B78A3711DE98AF0022EE11 /* pcrecpparg.h in Headers */,
 				22B78A3911DE98AF0022EE11 /* pcreposix.h in Headers */,
 				22B78A3B11DE98AF0022EE11 /* ucp.h in Headers */,
-				22956DAF12B9E29B00B42E63 /* mach_override.h in Headers */,
 				22956DB112B9E29B00B42E63 /* NuBlock.h in Headers */,
 				22956DB312B9E29B00B42E63 /* NuBridge.h in Headers */,
 				22956DB512B9E29B00B42E63 /* NuBridgeSupport.h in Headers */,
@@ -868,7 +845,6 @@
 				22956DE012B9E29B00B42E63 /* NuStack.h in Headers */,
 				22956DE212B9E29B00B42E63 /* NuSuper.h in Headers */,
 				22956DE512B9E29B00B42E63 /* NuSymbol.h in Headers */,
-				22956DE812B9E29B00B42E63 /* NuTypes.h in Headers */,
 				22956DE912B9E29B00B42E63 /* NuVersion.h in Headers */,
 				22956DEB12B9E29B00B42E63 /* st.h in Headers */,
 				2276E5E013A5E4AB006A166B /* NuProperty.h in Headers */,
@@ -1092,7 +1068,6 @@
 				22EE2C9013A47D9F00895861 /* pcre_version.c in Sources */,
 				22EE2C9113A47D9F00895861 /* pcre_xclass.c in Sources */,
 				22EE2C9513A47D9F00895861 /* pcreposix.c in Sources */,
-				22EE2C1813A4750300895861 /* mach_override.c in Sources */,
 				22EE2C1A13A4750300895861 /* Nu.m in Sources */,
 				22EE2C1C13A4750300895861 /* NuBlock.m in Sources */,
 				22EE2C1E13A4750300895861 /* NuBridge.m in Sources */,
@@ -1103,18 +1078,15 @@
 				22EE2C2913A4750300895861 /* NuException.m in Sources */,
 				22EE2C2B13A4750300895861 /* NuExtensions.m in Sources */,
 				22EE2C2D13A4750300895861 /* NuHandler.m in Sources */,
-				22EE2C2F13A4750300895861 /* NuIvars.m in Sources */,
 				22EE2C3113A4750300895861 /* NuMacro_0.m in Sources */,
 				22EE2C3313A4750300895861 /* NuMacro_1.m in Sources */,
 				22EE2C3613A4750300895861 /* NuMethod.m in Sources */,
 				22EE2C3813A4750300895861 /* NuObjCRuntime.m in Sources */,
 				22EE2C3A13A4750300895861 /* NuObject.m in Sources */,
 				22EE2C3C13A4750300895861 /* NuOperator.m in Sources */,
-				22EE2C3D13A4750300895861 /* NuOverrides.m in Sources */,
 				22EE2C3F13A4750300895861 /* NuParser.m in Sources */,
 				22EE2C4113A4750300895861 /* NuPointer.m in Sources */,
 				22EE2C4313A4750300895861 /* NuProfiler.m in Sources */,
-				22EE2C4413A4750300895861 /* NuProtocol.m in Sources */,
 				22EE2C4613A4750300895861 /* NuReference.m in Sources */,
 				22EE2C4813A4750300895861 /* NuRegex.m in Sources */,
 				22EE2C4A13A4750300895861 /* NuStack.m in Sources */,
@@ -1161,7 +1133,6 @@
 				22B78A3311DE98AF0022EE11 /* pcre_version.c in Sources */,
 				22B78A3411DE98AF0022EE11 /* pcre_xclass.c in Sources */,
 				22B78A3811DE98AF0022EE11 /* pcreposix.c in Sources */,
-				22956DAE12B9E29B00B42E63 /* mach_override.c in Sources */,
 				22956DB012B9E29B00B42E63 /* Nu.m in Sources */,
 				22956DB212B9E29B00B42E63 /* NuBlock.m in Sources */,
 				22956DB412B9E29B00B42E63 /* NuBridge.m in Sources */,
@@ -1172,18 +1143,15 @@
 				22956DC012B9E29B00B42E63 /* NuException.m in Sources */,
 				22956DC212B9E29B00B42E63 /* NuExtensions.m in Sources */,
 				22956DC412B9E29B00B42E63 /* NuHandler.m in Sources */,
-				22956DC612B9E29B00B42E63 /* NuIvars.m in Sources */,
 				22956DC812B9E29B00B42E63 /* NuMacro_0.m in Sources */,
 				22956DCA12B9E29B00B42E63 /* NuMacro_1.m in Sources */,
 				22956DCD12B9E29B00B42E63 /* NuMethod.m in Sources */,
 				22956DCF12B9E29B00B42E63 /* NuObjCRuntime.m in Sources */,
 				22956DD112B9E29B00B42E63 /* NuObject.m in Sources */,
 				22956DD312B9E29B00B42E63 /* NuOperator.m in Sources */,
-				22956DD412B9E29B00B42E63 /* NuOverrides.m in Sources */,
 				22956DD612B9E29B00B42E63 /* NuParser.m in Sources */,
 				22956DD812B9E29B00B42E63 /* NuPointer.m in Sources */,
 				22956DDA12B9E29B00B42E63 /* NuProfiler.m in Sources */,
-				22956DDB12B9E29B00B42E63 /* NuProtocol.m in Sources */,
 				22956DDD12B9E29B00B42E63 /* NuReference.m in Sources */,
 				22956DDF12B9E29B00B42E63 /* NuRegex.m in Sources */,
 				22956DE112B9E29B00B42E63 /* NuStack.m in Sources */,

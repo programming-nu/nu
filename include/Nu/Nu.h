@@ -32,7 +32,6 @@ limitations under the License.
 #import <Nu/NuMacro_1.h>
 #import <Nu/NuMain.h>
 #import <Nu/NuInternals.h>
-#import <Nu/NuTypes.h>
 #import <Nu/NuObject.h>
 #import <Nu/NuOperator.h>
 #import <Nu/NuParser.h>

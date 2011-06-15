@@ -21,7 +21,6 @@
 #import "NuMacro_1.h"
 #import "NuMain.h"
 #import "NuInternals.h"
-#import "NuTypes.h"
 #import "NuObject.h"
 #import "NuOperator.h"
 #import "NuParser.h"
