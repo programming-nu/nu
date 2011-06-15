@@ -472,11 +472,7 @@ extern id Nu__null;
 
 + (NSString *) stringWithCharacter:(unichar) c
 {
-    #ifdef DARWIN
     return [self stringWithFormat:@"%C", c];
-    #else
-    return [self stringWithFormat:@"%c", (char ) c];
-    #endif
 }
 
 // Convert a string into a symbol.
@@ -573,20 +569,13 @@ extern id Nu__null;
         NSString *outputFileName = [NSString stringWithCString:output_filename encoding:NSUTF8StringEncoding];
         NSString *fullCommand;
         if (input) {
-            if ([input isKindOfClass:[NSData class]])
+            if ([input isKindOfClass:[NSData class]]) {
                 [input writeToFile:inputFileName atomically:NO];
-            else if ([input isKindOfClass:[NSString class]])
-                #ifdef DARWIN
+            } else if ([input isKindOfClass:[NSString class]]) {
                 [input writeToFile:inputFileName atomically:NO encoding:NSUTF8StringEncoding error:nil];
-            #else
-            [input writeToFile:inputFileName atomically:NO];
-            #endif
-            else
-            #ifdef DARWIN
+            } else {
                 [[input stringValue] writeToFile:inputFileName atomically:NO encoding:NSUTF8StringEncoding error:nil];
-            #else
-            [[input stringValue] writeToFile:inputFileName atomically:NO];
-            #endif
+            }
             fullCommand = [NSString stringWithFormat:@"%@ < %@ > %@", command, inputFileName, outputFileName];
         }
         else {
@@ -770,13 +759,9 @@ extern id Nu__null;
 {
     if (filename == Nu__null) return nil;
 	NSError *error;
-#ifdef DARWIN
     NSDictionary *attributes = [[NSFileManager defaultManager]
 								attributesOfItemAtPath:[filename stringByExpandingTildeInPath]
 								error:&error];
-#else
-    NSDictionary *attributes = [[NSFileManager defaultManager] fileAttributesAtPath:[filename stringByExpandingTildeInPath] traverseLink:YES];
-#endif
     return [attributes valueForKey:NSFileModificationDate];
 }
 
@@ -790,11 +775,7 @@ extern id Nu__null;
     if (result == -1) {
         return nil;
     }
-    #ifdef DARWIN
     return [NSDate dateWithTimeIntervalSince1970:sb.st_ctimespec.tv_sec];
-    #else
-    return [NSDate dateWithTimeIntervalSince1970:sb.st_ctime];
-    #endif
 }
 
 + (id) modificationTimeForFileNamed:(NSString *) filename
@@ -807,11 +788,7 @@ extern id Nu__null;
     if (result == -1) {
         return nil;
     }
-    #ifdef DARWIN
     return [NSDate dateWithTimeIntervalSince1970:sb.st_mtimespec.tv_sec];
-    #else
-    return [NSDate dateWithTimeIntervalSince1970:sb.st_mtime];
-    #endif
 }
 
 + (int) directoryExistsNamed:(NSString *) filename
@@ -909,7 +886,6 @@ extern id Nu__null;
 
 - (NSString *) typeString
 {
-    #ifdef DARWIN
     // in 10.5, we can do this:
     // return [self _typeString];
     NSMutableString *result = [NSMutableString stringWithFormat:@"%s", [self methodReturnType]];
@@ -919,10 +895,6 @@ extern id Nu__null;
         [result appendFormat:@"%s", [self getArgumentTypeAtIndex:i]];
     }
     return result;
-    #else
-    //return [NSString stringWithCString:types];
-    return [NSString stringWithCString:_methodTypes];
-    #endif
 }
 
 @end

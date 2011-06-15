@@ -1566,11 +1566,7 @@ limitations under the License.
             }
         }
         if (fileName) {
-            #ifdef DARWIN
             NSString *string = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:nil];
-            #else
-            NSString *string = [NSString stringWithContentsOfFile:fileName];
-            #endif
             if (string) {
                 id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
                 [body evalWithContext:context];
@@ -1822,7 +1818,7 @@ limitations under the License.
 
 @end
 
-#if defined(DARWIN) && !defined(IPHONE)
+#if !defined(IPHONE)
 #import <Cocoa/Cocoa.h>
 
 @interface Nu_beep_operator : NuOperator {}
@@ -1895,17 +1891,7 @@ limitations under the License.
 @implementation Nu_uname_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    #if defined DARWIN
     return @"Darwin";
-    #elif defined FREEBSD
-    return @"FreeBSD";
-    #elif defined OPENSOLARIS
-    return @"OpenSolaris";
-    #elif defined LINUX
-    return @"Linux";
-    #else
-    return @"Unknown";
-    #endif
 }
 
 @end
@@ -2214,7 +2200,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("let",      Nu_let_operator);
 
     install("load",     Nu_load_operator);
-    #if defined(DARWIN) && !defined(IPHONE)
+    #if !defined(IPHONE)
     install("beep",     Nu_beep_operator);
     #endif
 

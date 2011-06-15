@@ -107,23 +107,15 @@ extern id Nu__null;
             // That's for another day.
             // For now, I just substitute each gensym name with its expansion.
             //
-            #ifdef DARWIN
             NSMutableString *tempString = [NSMutableString stringWithString:car];
-            #else
-            NSString *tempString = [NSString stringWithString:car];
-            #endif
             //NSLog(@"checking %@", tempString);
             NSEnumerator *gensymEnumerator = [gensyms objectEnumerator];
             NuSymbol *gensymSymbol;
             while ((gensymSymbol = [gensymEnumerator nextObject])) {
                 //NSLog(@"gensym is %@", [gensymSymbol stringValue]);
-                #ifdef DARWIN
                 [tempString replaceOccurrencesOfString:[gensymSymbol stringValue]
                     withString:[NSString stringWithFormat:@"%@%@", prefix, [gensymSymbol stringValue]]
                     options:0 range:NSMakeRange(0, [tempString length])];
-                #else
-                tempString = [tempString stringByReplacingString:[gensymSymbol stringValue] withString:[NSString stringWithFormat:@"%@%@", prefix, [gensymSymbol stringValue]]];
-                #endif
             }
             //NSLog(@"setting string to %@", tempString);
             [newBody setCar:tempString];

@@ -9,11 +9,11 @@
          continueAfterRunningActions = "No"
          isPathRelative = "0"
          filePath = "/Volumes/Users/tim/Desktop/Repositories/nu/objc/NuClass.m"
-         timestampString = "329696440.2529"
+         timestampString = "329806178.235263"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "295"
-         endingLineNumber = "295"
+         startingLineNumber = "277"
+         endingLineNumber = "277"
          landmarkName = "-instanceVariableNames"
          landmarkType = "5">
       </FileBreakpoint>

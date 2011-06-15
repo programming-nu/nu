@@ -16,9 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #import "st.h"
-#ifndef DARWIN
-#define __USE_GNU
-#endif
 #import <Foundation/Foundation.h>
 #ifdef IPHONE
 #import <CoreGraphics/CoreGraphics.h>
@@ -561,11 +558,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             }
             const char *selectorName = [nu_value cStringUsingEncoding:NSUTF8StringEncoding];
             if (selectorName) {
-                #ifdef DARWIN
                 *((SEL *) objc_value) = sel_registerName(selectorName);
-                #else
-                *((SEL *) objc_value) = sel_register_name(selectorName);
-                #endif
                 return NO;
             }
             else {
@@ -585,17 +578,10 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             ) {
                 NSRect *rect = (NSRect *) objc_value;
                 id cursor = nu_value;
-                #ifdef DARWIN
                 rect->origin.x = (CGFloat) [[cursor car] doubleValue];            cursor = [cursor cdr];
                 rect->origin.y = (CGFloat) [[cursor car] doubleValue];            cursor = [cursor cdr];
                 rect->size.width = (CGFloat) [[cursor car] doubleValue];          cursor = [cursor cdr];
                 rect->size.height = (CGFloat) [[cursor car] doubleValue];
-                #else
-                rect->origin.x = (double) [[cursor car] doubleValue];            cursor = [cursor cdr];
-                rect->origin.y = (double) [[cursor car] doubleValue];            cursor = [cursor cdr];
-                rect->size.width = (double) [[cursor car] doubleValue];          cursor = [cursor cdr];
-                rect->size.height = (double) [[cursor car] doubleValue];
-                #endif
                 //NSLog(@"nu->rect: %x %f %f %f %f", (void *) rect, rect->origin.x, rect->origin.y, rect->size.width, rect->size.height);
                 return NO;
             }
@@ -659,11 +645,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                     return NO;
                 }
                 else {
-                    #ifdef DARWIN
                     NSLog(@"can't convert value of type %s to a pointer to strings", class_getName([nu_value class]));
-                    #else
-                    NSLog(@"can't convert value of type %s to a pointer to strings", class_get_class_name([nu_value class]));
-                    #endif
                     *((char ***) objc_value) = NULL;
                     return NO;
                 }
@@ -699,11 +681,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 return NO;
             }
             else {
-                #ifdef DARWIN
                 NSLog(@"can't convert value of type %s to CLASS", class_getName([nu_value class]));
-                #else
-                NSLog(@"can't convert value of type %s to CLASS", class_get_class_name([nu_value class]));
-                #endif
                 *((id *) objc_value) = 0;
                 return NO;
             }
@@ -794,11 +772,7 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         case ':':
         {
             SEL sel = *((SEL *)objc_value);
-            #ifdef DARWIN
             return [[NSString stringWithCString:sel_getName(sel) encoding:NSUTF8StringEncoding] retain];
-            #else
-            return [[NSString stringWithCString:sel_get_name(sel) encoding:NSUTF8StringEncoding] retain];
-            #endif
         }
         case '{':
         {
@@ -931,11 +905,7 @@ static void raise_argc_exception(SEL s, int count, int given)
     if (given != count) {
         [NSException raise:@"NuIncorrectNumberOfArguments"
             format:@"Incorrect number of arguments to selector %s. Received %d but expected %d",
-            #ifdef DARWIN
             sel_getName(s),
-            #else
-            sel_get_name(s),
-            #endif
             given,
             count];
     }
@@ -969,35 +939,19 @@ void nu_note_placeholders()
     #endif
 }
 
-#ifdef DARWIN
 id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
-#else
-id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
-#endif
 {
     // this call seems to force the class's +initialize method to be called.
     [target class];
 
-    #ifdef DARWIN
     //NSLog(@"calling ObjC method %s with target of class %@", sel_getName(method_getName(m)), [target class]);
-    #else
-    //SEL sel = method_getName(m);
-    //const char *name = sel_get_name(sel);
-    //Class targetClass = [target class];
-    //NSLog(@"calling ObjC method %s with target of class %@", sel_get_name(method_getName(m)), [target class]);
-    #endif
-
     IMP imp = method_getImplementation(m);
 
     // if the imp has an associated block, this is a nu-to-nu call.
     // skip going through the ObjC runtime and evaluate the block directly.
     NuBlock *block = nil;
     if (nu_block_table && st_lookup(nu_block_table, (unsigned long)imp, (unsigned long *)&block)) {
-        #ifdef DARWIN
         //NSLog(@"nu calling nu method %s of class %@", sel_getName(method_getName(m)), [target class]);
-        #else
-        //NSLog(@"nu calling nu method %s of class %@", sel_get_name(method_getName(m)), [target class]);
-        #endif
         id arguments = [[NuCell alloc] init];
         id cursor = arguments;
         int argc = [args count];
@@ -1098,19 +1052,11 @@ id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args)
             // Either they are owned by an existing object or are autoreleased.
             // Since these methods create new objects that aren't autoreleased, we autorelease them.
             // But we must never release placeholders.
-            #ifdef DARWIN
             bool already_retained =               // see Anguish/Buck/Yacktman, p. 104
                 (s == @selector(alloc)) || (s == @selector(allocWithZone:))
                 || (s == @selector(copy)) || (s == @selector(copyWithZone:))
                 || (s == @selector(mutableCopy)) || (s == @selector(mutableCopyWithZone:))
                 || (s == @selector(new));
-            #else
-            bool already_retained =               // see Anguish/Buck/Yacktman, p. 104
-                sel_eq(s, @selector(alloc)) || sel_eq(s, @selector(allocWithZone:))
-                || sel_eq(s, @selector(copy)) || sel_eq(s, @selector(copyWithZone:))
-                || sel_eq(s, @selector(mutableCopy)) || sel_eq(s, @selector(mutableCopyWithZone:))
-                || sel_eq(s, @selector(new));
-            #endif
             //NSLog(@"already retained? %d", already_retained);
             if (already_retained) {
                 // Make sure this isn't an instance of a placeholder class.
@@ -1234,11 +1180,7 @@ char **generate_userdata(SEL sel, NuBlock *block, const char *signature)
     int argument_count = [methodSignature numberOfArguments];
     char **userdata = (char **) malloc ((argument_count+3) * sizeof(char*));
     userdata[0] = (char *) malloc (2 + strlen(return_type_string));
-    #ifdef DARWIN
     const char *methodName = sel_getName(sel);
-    #else
-    const char *methodName = sel_get_name(sel);
-    #endif
     BOOL returnsRetainedResult = NO;
     if ((!strcmp(methodName, "alloc")) ||
         (!strcmp(methodName, "allocWithZone:")) ||
@@ -1274,11 +1216,7 @@ IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
     int argument_count = 0;
     while (userdata[argument_count] != 0) argument_count++;
     #if 0
-    #ifdef DARWIN
     const char *methodName = sel_getName(sel);
-    #else
-    const char *methodName = sel_get_name(sel);
-    #endif
     NSLog(@"using libffi to construct handler for method %s with %d arguments and signature %s", methodName, argument_count, signature);
     #endif
     ffi_type **argument_types = (ffi_type **) malloc ((argument_count+1) * sizeof(ffi_type *));
@@ -1322,11 +1260,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 {
     const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     const char *signature_str = [signature cStringUsingEncoding:NSUTF8StringEncoding];
-    #ifdef DARWIN
     SEL selector = sel_registerName(method_name_str);
-    #else
-    SEL selector = sel_register_name(method_name_str);
-    #endif
 
     //NuSymbolTable *symbolTable = [[block context] objectForKey:SYMBOLS_KEY];
     //[[block context] setPossiblyNullObject:[[NuClass alloc] initWithClass:c] forKey:[symbolTable symbolWithCString:"_class"]];
@@ -1342,18 +1276,12 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     if (!nu_block_table) nu_block_table = st_init_numtable();
     // watch for problems caused by these ugly casts...
     st_insert(nu_block_table, (long) imp, (long) block);
-    #ifdef DARWIN
     #ifndef IPHONE
     [[NSGarbageCollector defaultCollector] disableCollectorForPointer: block];
     #endif
-    #endif
     // insert the method handler in the class method table
     nu_class_replaceMethod(c, selector, imp, signature_str);
-    #ifdef DARWIN
     //NSLog(@"setting handler for %s(%s) in class %s", method_name_str, signature_str, class_getName(c));
-    #else
-    //NSLog(@"setting handler for %s(%s) in class %s", method_name_str, signature_str, class_get_class_name(c));
-    #endif
     return [NSNull null];
 }
 
@@ -1753,11 +1681,7 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
 
         if ((returnType == Nu__null) || ([argumentTypes length] < [argumentNames length])) {
             // look up the signature
-            #ifdef DARWIN
             SEL selector = sel_registerName([methodName cStringUsingEncoding:NSUTF8StringEncoding]);
-            #else
-            SEL selector = sel_register_name([methodName cStringUsingEncoding:NSUTF8StringEncoding]);
-            #endif
             NSMethodSignature *methodSignature = [classToExtend instanceMethodSignatureForSelector:selector];
 
             if (!methodSignature)
@@ -1795,15 +1719,9 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
         [[block context]
             setPossiblyNullObject:methodName
             forKey:[symbolTable symbolWithCString:"_method"]];
-        #ifdef DARWIN
         return add_method_to_class(
             addClassMethod ? object_getClass(classToExtend) : classToExtend,
             methodName, signature, block);
-        #else
-        return add_method_to_class(
-            addClassMethod ? classToExtend->class_pointer : classToExtend,
-            methodName, signature, block);
-        #endif
     }
     else {
         // not good. you probably forgot the "is" in your method declaration.

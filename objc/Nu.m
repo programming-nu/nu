@@ -165,11 +165,7 @@ int NuMain(int argc, const char *argv[])
                 else {
                     // collect the command-line arguments
                     [[NuApplication sharedApplication] setArgc:argc argv:argv startingAtIndex:i+1];
-#ifdef DARWIN
                     id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding error:NULL];
-#else
-                    id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
-#endif
                     if (string) {
                         id script = [parser parse:string asIfFromFilename:argv[i]];
                         [parser eval:script];
@@ -189,20 +185,11 @@ int NuMain(int argc, const char *argv[])
 #endif
             [parser release];
 
-#ifndef FREEBSD
-            // FreeBSD infinite loop on emptyPool/dealloc
-#endif
             return 0;
         }
         // if there's no file, run at the terminal
         else {
-            #if defined(DARWIN) || defined(FREEBSD)
-            if (!isatty(stdin->_file))
-	    #elif defined(OPENSOLARIS)
-	    if (!isatty(fileno(stdin)))
-            #else
-                if (!isatty(stdin->_fileno))
-            #endif
+            if (!isatty(stdin->_file))	   
             {
                 NuParser *parser = [[NuParser alloc] init];
                 id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
@@ -236,7 +223,6 @@ int NuMain(int argc, const char *argv[])
     return 0;
 }
 
-#ifdef DARWIN
 static void transplant_nu_methods(Class destination, Class source)
 {
     if (!nu_copyInstanceMethod(destination, source, @selector(evalWithArguments:context:)))
@@ -250,19 +236,12 @@ static void transplant_nu_methods(Class destination, Class source)
     if (!nu_copyInstanceMethod(destination, source, @selector(handleUnknownMessage:withContext:)))
         NSLog(@"method copy failed");
 }
-#endif
 
 void NuInit()
 {
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
-
-        #ifdef DARWIN
-        // note known placeholder classes
-//        extern void nu_note_placeholders();
-//       nu_note_placeholders();
-        #endif
 
         // check UTF8 support in PCRE
         void *pcre_query_result = 0;
@@ -285,7 +264,6 @@ void NuInit()
         [NSString include: [NuClass classWithClass:[NuEnumerable class]]];
         [pool drain];
 
-        #ifdef DARWIN
         #ifndef IPHONE
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
@@ -293,22 +271,6 @@ void NuInit()
 
         void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();
-
-	#ifndef MAC_OS_X_VERSION_10_7
-        // Stop NSView from complaining when we retain alloc-ed views.
-        //Class NSView = NSClassFromString(@"NSView");
-        //[NSView exchangeInstanceMethod:@selector(retain) withMethod:@selector(nuRetain)];
-	#endif
-
-	#ifndef __DARWIN_10_6_AND_LATER
-	#ifndef MAC_OS_X_VERSION_10_7
-        // Enable support for protocols in Nu.  Apple doesn't have an API for this, so we use our own.
-        //extern void nu_initProtocols();
-        //nu_initProtocols();
-        // if you don't like making Protocol a subclass of NSObject (see nu_initProtocols), you can do this instead.
-        // transplant_nu_methods([Protocol class], [NSObject class]);
-	#endif
-	#endif
 
         #ifndef MININUSH
         // Load some standard files
@@ -322,12 +284,7 @@ void NuInit()
         #endif
         #endif
 
-        #else
-	// Non-Apple platforms
-        #ifndef MININUSH
-        [[Nu parser] parseEval:@"(load \"nu\")"];
-        #endif
-        #endif
+        
     }
 }
 

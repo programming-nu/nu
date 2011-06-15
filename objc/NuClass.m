@@ -89,11 +89,7 @@
 - (NSString *) name
 {
     //	NSLog(@"calling NuClass name for object %@", self);
-#ifdef DARWIN
     return [NSString stringWithCString:class_getName(c) encoding:NSUTF8StringEncoding];
-#else
-    return [NSString stringWithCString:class_get_class_name(c) encoding:NSUTF8StringEncoding];
-#endif
 }
 
 - (NSString *) stringValue
@@ -110,11 +106,7 @@
 {
     NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
-#ifdef DARWIN
     Method *method_list = class_copyMethodList(object_getClass([self wrappedClass]), &method_count);
-#else
-    Method_t *method_list = class_copyMethodList(object_get_class([self wrappedClass]), &method_count);
-#endif
     int i;
     for (i = 0; i < method_count; i++) {
         [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
@@ -128,11 +120,7 @@
 {
     NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
-#ifdef DARWIN
     Method *method_list = class_copyMethodList([self wrappedClass], &method_count);
-#else
-    Method_t *method_list = class_copyMethodList([self wrappedClass], &method_count);
-#endif
     int i;
     for (i = 0; i < method_count; i++) {
         [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
@@ -177,22 +165,12 @@
     const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     NuMethod *method = Nu__null;
     unsigned int method_count;
-#ifdef DARWIN
     Method *method_list = class_copyMethodList(object_getClass([self wrappedClass]), &method_count);
-#else
-    Method_t *method_list = class_copyMethodList(object_get_class([self wrappedClass]), &method_count);
-#endif
     int i;
     for (i = 0; i < method_count; i++) {
-#ifdef DARWIN
         if (!strcmp(methodNameString, sel_getName(method_getName(method_list[i])))) {
             method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
         }
-#else
-        if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
-            method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
-        }
-#endif
     }
     free(method_list);
     return method;
@@ -203,22 +181,12 @@
     const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     NuMethod *method = Nu__null;
     unsigned int method_count;
-#ifdef DARWIN
     Method *method_list = class_copyMethodList([self wrappedClass], &method_count);
-#else
-    Method_t *method_list = class_copyMethodList([self wrappedClass], &method_count);
-#endif
     int i;
     for (i = 0; i < method_count; i++) {
-#ifdef DARWIN
         if (!strcmp(methodNameString, sel_getName(method_getName(method_list[i])))) {
             method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
         }
-#else
-        if (!strcmp(methodNameString, sel_get_name(method_getName(method_list[i])))) {
-            method = [[[NuMethod alloc] initWithMethod:method_list[i]] autorelease];
-        }
-#endif
     }
     free(method_list);
     return method;
@@ -233,11 +201,7 @@
 - (id) addClassMethod:(NSString *)methodName signature:(NSString *)signature body:(NuBlock *)block
 {
     NSLog(@"adding class method %@", methodName);
-#ifdef DARWIN
     return add_method_to_class(object_getClass(c), /* c->isa, */ methodName, signature, block);
-#else
-    return add_method_to_class(c->class_pointer, methodName, signature, block);
-#endif
 }
 
 - (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature

@@ -108,7 +108,7 @@ END)
 (set @cflags "-Wall -g -std=gnu99 -fPIC")
 
 (ifDarwin
-         (then (set @cflags (+ @cflags " -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard}"))
+         (then (set @cflags (+ @cflags " -g -O2 -DMACOSX #{@sdk} #{@leopard}"))
                (set @mflags_nogc "-fobjc-exceptions")
                (set @mflags (+ @mflags_nogc " -fobjc-gc"))) ;; To use garbage collection, add this flag: "-fobjc-gc"
          (else (set @cflags "-Wall -g -std=gnu99 -fPIC")

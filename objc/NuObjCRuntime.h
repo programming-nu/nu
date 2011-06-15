@@ -21,52 +21,12 @@ limitations under the License.
 */
 #import <objc/objc.h>
 
-#ifdef DARWIN
 #import <objc/runtime.h>
-#else
-#import <objc/objc-api.h>
-#endif
 #import <Foundation/Foundation.h>
-#ifdef DARWIN
 #ifdef IPHONE
 #import "ffi.h"
 #else
 #import "ffi/ffi.h"
-#endif
-#else
-
-#import "ffi.h"
-
-#define bool char
-#define true 1
-#define false 0
-
-#define Ivar Ivar_t
-
-
-Class objc_getClass(const char *name);
-void class_addMethods(Class, struct objc_method_list *);
-BOOL class_addProtocol(Class cls, Protocol *protocol);
-BOOL class_conformsToProtocol(Class cls, Protocol *protocol);
-Protocol **class_copyProtocolList(Class cls, unsigned int *outCount);
-Method_t class_getInstanceMethod(Class cls, SEL name);
-Ivar_t class_getInstanceVariable(Class cls, const char *name);
-
-
-const char *ivar_getName(Ivar_t v);
-unsigned method_getArgumentInfo(struct objc_method *m, int arg, const char **type, int *offset);
-unsigned int method_getNumberOfArguments(Method_t m);
-SEL method_getName(Method_t m);
-void objc_addClass(Class myClass);
-const char **objc_copyClassNamesForImage(const char *image, unsigned int *outCount);
-const char **objc_copyImageNames(unsigned int *outCount);
-Protocol **objc_copyProtocolList(unsigned int *outCount);
-void *objc_getClasses(void);
-int objc_getClassList(Class *buffer, int bufferCount);
-Protocol *objc_getProtocol(const char *name);
-struct objc_method_description *protocol_copyMethodDescriptionList(Protocol *p, BOOL isRequiredMethod, BOOL isInstanceMethod, unsigned int *outCount);
-Protocol **protocol_copyProtocolList(Protocol *proto, unsigned int *outCount);
-SEL sel_getUid(const char *str);
 #endif
 
 #ifndef LEOPARD_OBJC2
@@ -75,16 +35,11 @@ SEL sel_getUid(const char *str);
 // They aren't rocket science, so I wrote equivalent versions.
 #import <stddef.h>
 Ivar *class_copyIvarList(Class cls, unsigned int *outCount);
-#ifdef DARWIN
 Method *class_copyMethodList(Class cls, unsigned int *outCount);
-#else
-Method_t *class_copyMethodList(Class cls, unsigned int *outCount);
-#endif
 Class class_getSuperclass(Class cls);
 const char *ivar_getName(Ivar v);
 ptrdiff_t ivar_getOffset(Ivar v);
 const char *ivar_getTypeEncoding(Ivar v);
-#ifdef DARWIN
 char *method_copyArgumentType(Method m, unsigned int index);
 char *method_copyReturnType(Method m);
 void method_getArgumentType(Method m, unsigned int index, char *dst, size_t dst_len);
@@ -92,25 +47,13 @@ IMP method_getImplementation(Method m);
 SEL method_getName(Method m);
 void method_getReturnType(Method m, char *dst, size_t dst_len);
 const char *method_getTypeEncoding(Method m);
-#else
-char *method_copyArgumentType(Method_t m, unsigned int index);
-char *method_copyReturnType(Method_t m);
-void method_getArgumentType(Method_t m, unsigned int index, char *dst, size_t dst_len);
-IMP method_getImplementation(Method_t m);
-SEL method_getName(Method_t m);
-void method_getReturnType(Method_t m, char *dst, size_t dst_len);
-const char *method_getTypeEncoding(Method_t m);
-#endif
+
 
 Class objc_allocateClassPair(Class superclass, const char *name, size_t extraBytes);
 void objc_registerClassPair(Class cls);
 Class object_getClass(id obj);
 const char *class_getName(Class c);
-#ifdef DARWIN
 void method_exchangeImplementations(Method method1, Method method2);
-#else
-void method_exchangeImplementations(Method_t method1, Method_t method2);
-#endif
 Ivar class_getInstanceVariable(Class c, const char *name);
 #endif
 #endif

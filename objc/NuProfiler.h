@@ -16,10 +16,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifdef DARWIN
 #include <mach/mach.h>
 #include <mach/mach_time.h>
-#endif
 
 #import <Foundation/Foundation.h>
 

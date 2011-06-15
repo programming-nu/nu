@@ -67,20 +67,16 @@ static int deallocationCount = 0;
 
 + (void) resetDeallocationCount
 {
-#ifdef DARWIN
 #ifndef IPHONE
 	[[NSGarbageCollector defaultCollector] collectExhaustively];
-#endif
 #endif
     deallocationCount = 0;
 }
 
 + (int) deallocationCount
 {
-#ifdef DARWIN
 #ifndef IPHONE
 	[[NSGarbageCollector defaultCollector] collectExhaustively];
-#endif
 #endif
     return deallocationCount;
 }

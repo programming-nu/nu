@@ -21,11 +21,7 @@ limitations under the License.
 #import "NuSymbol.h"
 
 id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlock *block);
-#ifdef DARWIN
 id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args);
-#else
-id nu_calling_objc_method_handler(id target, Method_t m, NSMutableArray *args);
-#endif
 id get_nu_value_from_objc_value(void *objc_value, const char *typeString);
 int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *typeString);
 void *value_buffer_for_objc_type(const char *typeString);

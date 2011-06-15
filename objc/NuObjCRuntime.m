@@ -23,172 +23,17 @@ limitations under the License.
 #ifndef IPHONE
 #undef __OBJC2__
 #endif
-#ifdef DARWIN
+
 #define LEOPARD_OBJC2
-#endif
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#ifdef DARWIN
 #ifndef IPHONE
 #include <objc/objc-class.h>
 #endif
-#endif
 #include <math.h>
 #import <Foundation/Foundation.h> // for NSException
-
-#ifndef DARWIN
-
-// it seems that in the GNU runtime, this function is supposed to get the metaclass,
-// but in the NeXT runtime, it gets the class.
-/*
-Method_t class_getClassMethod (MetaClass class, SEL op)
-{
-    return class_get_class_method(class->class_pointer, op);
-}
-*/
-
-Class objc_getClass (const char *name)
-{
-    return objc_lookup_class(name);
-}
-
-/*
-void class_add_method_list (Class class, MethodList_t list);
-
-void class_addMethods(Class cls, struct objc_method_list *methods)
-{
-    class_add_method_list(cls, methods);
-}
-*/
-
-BOOL class_addProtocol(Class cls, Protocol *protocol)
-{
-    return NO;
-}
-
-BOOL class_conformsToProtocol(Class cls, Protocol *protocol)
-{
-    return NO;
-}
-
-Protocol **class_copyProtocolList(Class cls, unsigned int *outCount)
-{
-    return 0;
-}
-
-/*
-Method_t class_getInstanceMethod(Class cls, SEL name)
-{
-    return class_get_instance_method(cls, name);
-}
-*/
-
-Ivar_t class_getInstanceVariable(Class cls, const char *name)
-{
-    struct objc_ivar_list *ivar_list = cls->ivars;
-    if (!ivar_list) {
-        if (cls->super_class)
-            return class_getInstanceVariable(cls->super_class, name);
-        else
-            return NULL;
-    }
-    int count = ivar_list->ivar_count;
-    for (int i = 0; i < count; i++) {
-        if (!strcmp(name, ivar_list->ivar_list[i].ivar_name)) {
-            return &(ivar_list->ivar_list[i]);
-        }
-    }
-    if (cls->super_class)
-        return class_getInstanceVariable(cls->super_class, name);
-    else
-        return NULL;
-}
-
-/*
-struct objc_method_list *class_nextMethodList(Class cls, void **methodList)
-{
-    if (!(*methodList)) {
-        *methodList = cls->methods;
-    }
-    else {
-        *methodList = (* (MethodList_t *) methodList)->method_next;
-    }
-    return *methodList;
-}
-*/
-
-char *method_get_nth_argument (struct objc_method *m, arglist_t argframe, int arg, const char **type);
-
-unsigned method_getArgumentInfo(struct objc_method *m, int arg, const char **type, int *offset)
-{
-    union arglist argframe;
-    method_get_nth_argument(m, &argframe, arg, type);
-    return 0;
-}
-
-int method_get_number_of_arguments (struct objc_method *);
-
-unsigned int method_getNumberOfArguments(Method_t m)
-{
-    //unused
-    //const char *methodTypes = m->method_types;
-    int count = method_get_number_of_arguments(m);
-    return count;
-}
-
-extern void __objc_add_class_to_hash(Class);
-void objc_addClass(Class myClass)
-{
-    __objc_add_class_to_hash(myClass);
-}
-
-const char **objc_copyClassNamesForImage(const char *image, unsigned int *outCount)
-{
-    return 0;
-}
-
-const char **objc_copyImageNames(unsigned int *outCount)
-{
-    return 0;
-}
-
-Protocol **objc_copyProtocolList(unsigned int *outCount)
-{
-    return 0;
-}
-
-void *objc_getClasses(void)
-{
-    return 0;
-}
-
-int objc_getClassList(Class *buffer, int bufferCount)
-{
-    return 0;
-}
-
-Protocol *objc_getProtocol(const char *name)
-{
-    return 0;
-}
-
-struct objc_method_description *protocol_copyMethodDescriptionList(Protocol *p, BOOL isRequiredMethod, BOOL isInstanceMethod, unsigned int *outCount)
-{
-    return 0;
-}
-
-Protocol **protocol_copyProtocolList(Protocol *proto, unsigned int *outCount)
-{
-    return 0;
-}
-
-SEL sel_getUid(const char *str)
-{
-    return sel_get_uid(str);
-}
-#endif
 
 #ifdef IPHONE
 #import "objc/runtime.h"
@@ -241,11 +86,7 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
     }
     struct objc_method_list *method_list = (struct objc_method_list *) malloc (sizeof (struct objc_method_list));
     method_list->method_count = 1;
-#ifdef DARWIN
     method_list->method_list[0].method_name = name;
-#else
-    method_list->method_list[0].method_name = sel_get_name(name);
-#endif
     method_list->method_list[0].method_types = strdup(types);
     method_list->method_list[0].method_imp = imp;
     class_addMethods(cls, method_list);
@@ -268,12 +109,7 @@ Ivar *class_copyIvarList(Class cls, unsigned int *outCount)
     return list;
 }
 
-
-#ifdef DARWIN
 Method *class_copyMethodList(Class cls, unsigned int *outCount)
-#else
-Method_t *class_copyMethodList(Class cls, unsigned int *outCount)
-#endif
 {
     // first count the methods
     int count = 0;
@@ -282,11 +118,7 @@ Method_t *class_copyMethodList(Class cls, unsigned int *outCount)
     while (( mlist = class_nextMethodList( cls, &iterator ) ))
         count += mlist->method_count;
     // then copy the methods into the list
-#ifdef DARWIN
     Method *list = (Method *) malloc (count * sizeof(Method));
-#else
-    Method_t *list = (Method_t *) malloc (count * sizeof(Method));
-#endif
     int index = 0;
     iterator = 0;
     while (( mlist = class_nextMethodList( cls, &iterator ) )) {
@@ -306,39 +138,23 @@ Class class_getSuperclass(Class cls)
 }
 
 
-#ifdef DARWIN
 const char *ivar_getName(Ivar v)
-#else
-const char *ivar_getName(Ivar_t v)
-#endif
 {
     return v->ivar_name;
 }
 
-#ifdef DARWIN
 ptrdiff_t ivar_getOffset(Ivar v)
-#else
-ptrdiff_t ivar_getOffset(Ivar_t v)
-#endif
 {
     return (ptrdiff_t) v->ivar_offset;
 }
 
-#ifdef DARWIN
 const char *ivar_getTypeEncoding(Ivar v)
-#else
-const char *ivar_getTypeEncoding(Ivar_t v)
-#endif
 {
     return v->ivar_type;
 }
 #endif
 
-#ifdef DARWIN
 char *method_copyArgumentType(Method m, unsigned int index)
-#else
-char *method_copyArgumentType(Method_t m, unsigned int index)
-#endif
 {
     int offset;
     const char *type;
@@ -348,11 +164,7 @@ char *method_copyArgumentType(Method_t m, unsigned int index)
     return copy;
 }
 
-#ifdef DARWIN
 void method_getArgumentType(Method m, unsigned int index, char *dst, size_t dst_len)
-#else
-void method_getArgumentType(Method_t m, unsigned int index, char *dst, size_t dst_len)
-#endif
 {
     int offset;
     const char *type;
@@ -361,50 +173,30 @@ void method_getArgumentType(Method_t m, unsigned int index, char *dst, size_t ds
     nu_markEndOfObjCTypeString(dst, dst_len);
 }
 
-#ifdef DARWIN
 char *method_copyReturnType(Method m)
-#else
-char *method_copyReturnType(Method_t m)
-#endif
 {
     char *type = strdup(m->method_types);
     nu_markEndOfObjCTypeString(type, strlen(type));
     return type;
 }
 
-#ifdef DARWIN
 void method_getReturnType(Method m, char *dst, size_t dst_len)
-#else
-void method_getReturnType(Method_t m, char *dst, size_t dst_len)
-#endif
 {
     strncpy(dst, m->method_types, dst_len);
     nu_markEndOfObjCTypeString(dst, dst_len);
 }
 
-#ifdef DARWIN
 IMP method_getImplementation(Method m)
-#else
-IMP method_getImplementation(Method_t m)
-#endif
 {
     return m->method_imp;
 }
 
-#ifdef DARWIN
 SEL method_getName(Method m)
-#else
-SEL method_getName(Method_t m)
-#endif
 {
     return m->method_name;
 }
 
-#ifdef DARWIN
 const char *method_getTypeEncoding(Method m)
-#else
-const char *method_getTypeEncoding(Method_t m)
-#endif
 {
     return m->method_types;
 }
@@ -428,7 +220,6 @@ static struct objc_method_list** method_list_alloc(int cnt)
 }
 #ifndef IPHONE
 // this function was taken from RubyCocoa
-#ifdef DARWIN
 Class objc_allocateClassPair(Class super_class, const char *name, size_t extraBytes)
 {thisnevergetscompiled
     Class c = alloc_from_default_zone(sizeof(struct objc_class));
@@ -460,44 +251,6 @@ Class objc_allocateClassPair(Class super_class, const char *name, size_t extraBy
     isa->protocols = NULL;
     return c;
 }
-#else
-Class objc_allocateClassPair(Class super_class, const char *name, size_t extraBytes)
-{
-    Class c = alloc_from_default_zone(sizeof(struct objc_class));
-    Class isa = alloc_from_default_zone(sizeof(struct objc_class));
-    struct objc_method_list **mlp0, **mlp1;
-    mlp0 = NULL;                                  // method_list_alloc(16);
-    mlp1 = NULL;                                  // method_list_alloc(4);
-
-    c->subclass_list = NULL;
-    c->class_pointer = isa;
-    c->super_class = super_class->name;           // gnu runtime
-    c->name = strdup(name);
-    c->version = 0;
-    c->info = _CLS_CLASS;                         //  + _CLS_METHOD_ARRAY;
-    c->instance_size = super_class ? super_class->instance_size : 0;
-    c->ivars = NULL;
-    c->methods = mlp0;
-    //c->cache = NULL;
-    c->protocols = NULL;
-    void __objc_install_premature_dtable (Class class);
-    __objc_install_premature_dtable (c);          // gnu runtime
-
-    isa->subclass_list = NULL;
-    isa->class_pointer = super_class->class_pointer->class_pointer;
-    isa->super_class = super_class ? super_class->class_pointer : 0;
-    isa->name = c->name;
-    isa->version = 5;
-    isa->info = _CLS_META + _CLS_INITIALIZED;     //  + _CLS_METHOD_ARRAY;
-    isa->instance_size = super_class->class_pointer->instance_size;
-    isa->ivars = NULL;
-    isa->methods = mlp1;
-    //isa->cache = NULL;
-    isa->protocols = NULL;
-    __objc_install_premature_dtable (isa);        // gnu runtime
-    return c;
-}
-#endif
 #endif
 #ifndef IPHONE
 void objc_registerClassPair(Class cls)
@@ -507,11 +260,7 @@ void objc_registerClassPair(Class cls)
 
 Class object_getClass(id obj)
 {
-#ifdef DARWIN
     return obj->isa;
-#else
-    return obj->class_pointer;
-#endif
 }
 
 const char *class_getName(Class c)
@@ -520,11 +269,7 @@ const char *class_getName(Class c)
 }
 #endif
 
-#ifdef DARWIN
 void method_exchangeImplementations(Method method1, Method method2)
-#else
-void method_exchangeImplementations(Method_t method1, Method_t method2)
-#endif
 {
     char *temp_types = method1->method_types;
     method1->method_types = method2->method_types;
@@ -569,7 +314,7 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
 
 void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature)
 {
-    #if (defined(__x86_64__) && defined(DARWIN)) || defined(IPHONE)
+    #if (defined(__x86_64__)) || defined(IPHONE)
     extern size_t size_of_objc_type(const char *typeString);
     size_t size = size_of_objc_type(signature);
     uint8_t alignment = log2(size);
@@ -620,11 +365,7 @@ void class_addInstanceVariable_withSignature(Class thisClass, const char *variab
 
 BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector)
 {
-#ifdef DARWIN
     Method m = class_getInstanceMethod(sourceClass, selector);
-#else
-    Method_t m = class_getInstanceMethod(sourceClass, selector);
-#endif
     if (!m) return NO;
 
     IMP imp = method_getImplementation(m);
@@ -639,21 +380,12 @@ BOOL nu_objectIsKindOfClass(id object, Class class)
 {
     if (object == NULL)
         return NO;
-#ifdef DARWIN    
     Class classCursor = object_getClass(object);
     while (classCursor) {
         if (classCursor == class) return YES;
         classCursor = class_getSuperclass(classCursor);
     }
     return NO;    
-#else
-    Class classCursor = object->class_pointer;
-    while (classCursor) {
-        if (classCursor == class) return YES;
-        classCursor = class_getSuperclass(classCursor);
-    }
-    return NO;
-#endif
 }
 
 // This function attempts to recognize the return type from a method signature.

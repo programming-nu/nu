@@ -85,7 +85,6 @@
 - (NSString *) selectorName
 {
     NSMutableArray *selectorStrings = [NSMutableArray array];
-#ifdef DARWIN
     [selectorStrings addObject:[[self symbol] stringValue]];
     id p = parent;
     while ([p symbol]) {
@@ -97,14 +96,6 @@
     for (i = 0; i < max/2; i++) {
         [selectorStrings exchangeObjectAtIndex:i withObjectAtIndex:(max - i - 1)];
     }
-#else
-    [selectorStrings insertObject:[[self symbol] stringValue] atIndex:0];
-    id p = parent;
-    while ([p symbol]) {
-        [selectorStrings insertObject:[[p symbol] stringValue] atIndex:0];
-        p = [p parent];
-    }
-#endif
     return [selectorStrings componentsJoinedByString:@""];
 }
 
@@ -114,11 +105,7 @@
     if (!child) {
         child = [[[NuSelectorCache alloc] initWithSymbol:childSymbol parent:self] autorelease];
         NSString *selectorString = [child selectorName];
-#ifdef DARWIN
         [child setSelector:sel_registerName([selectorString cStringUsingEncoding:NSUTF8StringEncoding])];
-#else
-        [child setSelector:sel_register_name([selectorString cStringUsingEncoding:NSUTF8StringEncoding])];
-#endif
         [children setValue:child forKey:(id)childSymbol];
     }
     return child;
@@ -140,11 +127,7 @@
 
 - (NSString *) stringValue
 {
-#ifdef DARWIN
     return [NSString stringWithFormat:@"<%s:%x>", class_getName(object_getClass(self)), (long) self];
-#else
-    return [NSString stringWithFormat:@"<%s:%x>", class_get_class_name(object_get_class(self)), (long) self];
-#endif
 }
 
 - (id) car
@@ -207,11 +190,7 @@
     id target = self;
     
     // Look up the appropriate method to call for the specified selector.
-#ifdef DARWIN
     Method m;
-#else
-    Method_t m = 0;
-#endif
         // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
         BOOL isAClass = (object_getClass(self) == [NuClass class]);
         if (isAClass) {
@@ -223,18 +202,10 @@
             if (m)
                 target = wrappedClass;
             else
-#ifdef DARWIN
                 m = class_getInstanceMethod(object_getClass(self), sel);
-#else
-            m = class_get_instance_method(object_getClass(self), sel);
-#endif
         }
         else {
-#ifdef DARWIN
             m = class_getInstanceMethod(object_getClass(self), sel);
-#else
-            m = class_get_instance_method(object_getClass(self), sel);
-#endif
             if (!m) m = class_getClassMethod(object_getClass(self), sel);
         }
     id result = Nu__null;
@@ -421,11 +392,7 @@
 {
     NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
-#ifdef DARWIN
     Method *method_list = class_copyMethodList(object_getClass([self class]), &method_count);
-#else
-    Method_t *method_list = class_copyMethodList(object_getClass([self class]), &method_count);
-#endif
     int i;
     for (i = 0; i < method_count; i++) {
         [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
@@ -439,11 +406,7 @@
 {
     NSMutableArray *array = [NSMutableArray array];
     unsigned int method_count;
-#ifdef DARWIN
     Method *method_list = class_copyMethodList([self class], &method_count);
-#else
-    Method_t *method_list = class_copyMethodList([self class], &method_count);
-#endif
     int i;
     for (i = 0; i < method_count; i++) {
         [array addObject:[[[NuMethod alloc] initWithMethod:method_list[i]] autorelease]];
@@ -504,11 +467,7 @@
     if (s) {
         // the subclass's superclass must be the current class!
         if (c != [s superclass]) {
-#ifdef DARWIN
             NSLog(@"Warning: Class %s already exists and is not a subclass of %s", name, class_getName(c));
-#else
-            NSLog(@"Warning: Class %s already exists and is not a subclass of %s", name, class_get_class_name(c));
-#endif
         }
     }
     else {
@@ -542,11 +501,7 @@
     Class thisClass = [self class];
     Class otherClass = [prototypeClass wrappedClass];
     const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
-#ifdef DARWIN
     SEL selector = sel_registerName(method_name_str);
-#else
-    SEL selector = sel_register_name(method_name_str);
-#endif
     BOOL result = nu_copyInstanceMethod(thisClass, otherClass, selector);
     return result;
 }
@@ -577,20 +532,12 @@
 
 + (NSString *) help
 {
-#ifdef DARWIN
     return [NSString stringWithFormat:@"This is a class named %s.", class_getName([self class])];
-#else
-    return [NSString stringWithFormat:@"This is a class named %s.", class_get_class_name([self class])];
-#endif
 }
 
 - (NSString *) help
 {
-#ifdef DARWIN
     return [NSString stringWithFormat:@"This is an instance of %s.", class_getName([self class])];
-#else
-    return [NSString stringWithFormat:@"This is an instance of %s.", class_get_class_name([self class])];
-#endif
 }
 
 // adapted from the CocoaDev MethodSwizzling page
@@ -598,33 +545,19 @@
 + (BOOL) exchangeInstanceMethod:(SEL)sel1 withMethod:(SEL)sel2
 {
     Class myClass = [self class];
-#ifdef DARWIN
     Method method1 = NULL, method2 = NULL;
-#else
-    Method_t method1 = NULL, method2 = NULL;
-#endif
     
     // First, look for the methods
-#ifdef DARWIN
     method1 = class_getInstanceMethod(myClass, sel1);
     method2 = class_getInstanceMethod(myClass, sel2);
-#else
-    method1 = class_get_instance_method(myClass, sel1);
-    method2 = class_get_instance_method(myClass, sel2);
-#endif
     // If both are found, swizzle them
     if ((method1 != NULL) && (method2 != NULL)) {
         method_exchangeImplementations(method1, method2);
         return true;
     }
     else {
-#ifdef DARWIN
         if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel1));
         if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel2));
-#else
-        if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel1));
-        if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel2));
-#endif
         return false;
     }
     
@@ -634,11 +567,7 @@
 + (BOOL) exchangeClassMethod:(SEL)sel1 withMethod:(SEL)sel2
 {
     Class myClass = [self class];
-#ifdef DARWIN
     Method method1 = NULL, method2 = NULL;
-#else
-    Method_t method1 = NULL, method2 = NULL;
-#endif
     
     // First, look for the methods
     method1 = class_getClassMethod(myClass, sel1);
@@ -650,13 +579,8 @@
         return true;
     }
     else {
-#ifdef DARWIN
         if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel1));
         if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_getName(sel2));
-#else
-        if (method1 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel1));
-        if (method2 == NULL) NSLog(@"swap failed: can't find %s", sel_get_name(sel2));
-#endif
         return false;
     }
     
@@ -673,11 +597,7 @@
         id value = [[cursor cdr] car];
         id label = ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) ? [key labelName] : key;
         if ([label isEqualToString:@"action"] && [self respondsToSelector:@selector(setAction:)]) {
-#ifdef DARWIN
             SEL selector = sel_registerName([value cStringUsingEncoding:NSUTF8StringEncoding]);
-#else
-            SEL selector = sel_register_name([value cStringUsingEncoding:NSUTF8StringEncoding]);
-#endif
             [(id<NuCanSetAction>) self setAction:selector];
         }
         else {

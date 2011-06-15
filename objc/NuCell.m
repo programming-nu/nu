@@ -260,7 +260,6 @@ limitations under the License.
     {
         value = [car evalWithContext:context];
 
-        #ifdef DARWIN
         if (NU_LIST_EVAL_BEGIN_ENABLED()) {
             if ((self->line != -1) && (self->file != -1)) {
                 NU_LIST_EVAL_BEGIN(nu_parsedFilename(self->file), self->line);
@@ -269,13 +268,11 @@ limitations under the License.
                 NU_LIST_EVAL_BEGIN("", 0);
             }
         }
-        #endif
         // to improve error reporting,
         // add the currently-evaluating expression to the context
         [context setObject:self forKey:[[NuSymbolTable sharedSymbolTable] symbolWithString:@"_expression"]];
         result = [value evalWithArguments:cdr context:context];
 
-        #ifdef DARWIN
         if (NU_LIST_EVAL_END_ENABLED()) {
             if ((self->line != -1) && (self->file != -1)) {
                 NU_LIST_EVAL_END(nu_parsedFilename(self->file), self->line);
@@ -284,7 +281,6 @@ limitations under the License.
                 NU_LIST_EVAL_END("", 0);
             }
         }
-        #endif
     }
     @catch (NuException* nuException) {
         [self addToException:nuException value:[car stringValue]];
