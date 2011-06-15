@@ -52,8 +52,6 @@ Protocol **class_copyProtocolList(Class cls, unsigned int *outCount);
 Method_t class_getInstanceMethod(Class cls, SEL name);
 Ivar_t class_getInstanceVariable(Class cls, const char *name);
 
-// defined as a macro in GNUstep
-// struct objc_method_list *class_nextMethodList( Class cls, void **methods);
 
 const char *ivar_getName(Ivar_t v);
 unsigned method_getArgumentInfo(struct objc_method *m, int arg, const char **type, int *offset);
@@ -129,7 +127,3 @@ void nu_markEndOfObjCTypeString(char *type, size_t len);
 // This makes it safe to insert nil into container classes
 void nu_swizzleContainerClasses();
 
-#ifdef GNUSTEP
-// defined as a macro in GNUstep
-// Method_t class_getClassMethod (MetaClass class, SEL op);
-#endif

@@ -61,9 +61,10 @@
 
 - (id) initWithClass:(Class) class
 {
-    [super init];
-    c = class;
-    isRegistered = YES;                           // unless we explicitly set otherwise
+    if ((self = [super init])) {
+        c = class;
+        isRegistered = YES;                           // unless we explicitly set otherwise
+    }
     return self;
 }
 
@@ -292,7 +293,7 @@
 - (NSArray *) instanceVariableNames {
     NSMutableArray *names = [NSMutableArray array];
     
-    int ivarCount;
+    unsigned int ivarCount;
     Ivar *ivarList = class_copyIvarList(c, &ivarCount);
     
     NSLog(@"%d ivars", ivarCount);

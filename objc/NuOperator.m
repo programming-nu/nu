@@ -1533,28 +1533,6 @@ limitations under the License.
 @interface Nu_load_operator : NuOperator {}
 @end
 
-#ifdef GNUSTEP
-id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable)
-{
-    NSString *fullPath = [NSString stringWithFormat:@"/usr/local/share/libNu/nu/%@.nu", nuFileName];
-    if ([NSFileManager fileExistsNamed:fullPath]) {
-        NSString *string = [NSString stringWithContentsOfFile:fullPath];
-        id value = Nu__null;
-        if (string) {
-            id body = [parser parse:string asIfFromFilename:[fullPath cStringUsingEncoding:NSUTF8StringEncoding]];
-            value = [body evalWithContext:context];
-            return [symbolTable symbolWithCString:"t"];
-        }
-        else {
-            return nil;
-        }
-    }
-    else {
-        return nil;
-    }
-}
-#endif
-
 @implementation Nu_load_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
@@ -1567,16 +1545,6 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     if ([split count] == 2) {
         id frameworkName = [split objectAtIndex:0];
         id nuFileName = [split objectAtIndex:1];
-        #ifdef GNUSTEP
-        if ([frameworkName isEqual:@"Nu"]) {
-            if (loadNuLibraryFile(nuFileName, parser, context, symbolTable) == nil) {
-                [NSException raise:@"NuLoadFailed" format:@"unable to load %@", nuFileName];
-            }
-            else {
-                return [symbolTable symbolWithCString:"t"];
-            }
-        }
-        #endif
         NSBundle *framework = [NSBundle frameworkWithName:frameworkName];
         if ([framework loadNuFile:nuFileName withContext:context])
             return [symbolTable symbolWithCString:"t"];
@@ -1621,11 +1589,6 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         // next, try the main Nu bundle
         if ([Nu loadNuFile:resourceName fromBundleWithIdentifier:@"nu.programming.framework" withContext:context])
             return [symbolTable symbolWithCString:"t"];
-
-        #ifdef GNUSTEP
-        if (loadNuLibraryFile(resourceName, parser, context, symbolTable))
-            return [symbolTable symbolWithCString:"t"];
-        #endif
 
         // if no file was found, try to load a framework with the given name
         if ([NSBundle frameworkWithName:resourceName])

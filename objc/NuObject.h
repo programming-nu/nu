@@ -16,10 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#ifdef GNUSTEP
-#define bool char
-#endif
-
 #import <Foundation/Foundation.h>
 @class NuBlock;
 @class NuClass;

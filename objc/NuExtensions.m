@@ -301,12 +301,6 @@ extern id Nu__null;
     [self setObject:((anObject == nil) ? (id)[NSNull null] : anObject) forKey:aKey];
 }
 
-#ifdef GNUSTEP
-- (void) setValue:(id) value forKey:(id) key
-{
-    [self setObject:value forKey:key];
-}
-#endif
 @end
 
 @interface NuStringEnumerator : NSEnumerator
@@ -515,30 +509,6 @@ extern id Nu__null;
 {
    return [NuStringEnumerator enumeratorWithString:self];
 }
-
-#ifdef GNUSTEP
-/*
-+ (NSString *) stringWithCString:(const char *) cString encoding:(NSStringEncoding) encoding
-{
-    return [[[NSString alloc] initWithCString:cString] autorelease];
-}
-
-- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
-{
-    return [self cString];
-}
-*/
-
-- (NSString *) stringByReplacingOccurrencesOfString:(NSString *) before withString:(NSString *) after
-{
-    return [self stringByReplacingString:before withString:after];
-}
-
-+ (NSString *) stringWithContentsOfFile:(NSString *) filePath encoding:(NSStringEncoding) encoding error:(NSError **) error
-{
-    return [NSString stringWithContentsOfFile:filePath];
-}
-#endif
 
 - (id) each:(id) block
 {
@@ -934,28 +904,6 @@ extern id Nu__null;
 
 @end
 
-#ifdef DARWIN
-#ifndef IPHONE
-#import <Cocoa/Cocoa.h>
-
-@implementation NSView(Nu)
-
-- (id) nuRetain
-{
-    extern void nu_disableNSLog();
-    extern void nu_enableNSLog();
-    // Send
-    //    "NSView not correctly initialized. Did you forget to call super?”
-    // into a black hole.
-    nu_disableNSLog();
-    id result = [self nuRetain];
-    nu_enableNSLog();
-    return result;
-}
-
-@end
-#endif
-#endif
 
 @implementation NSMethodSignature(Nu)
 
@@ -978,74 +926,6 @@ extern id Nu__null;
 }
 
 @end
-
-#ifdef GNUSTEP
-@implementation NXConstantString (extra)
-- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
-{
-    return [self cString];
-}
-
-@end
-
-@implementation NSObject (morestuff)
-
-- (void)willChangeValueForKey:(NSString *)key
-{
-}
-
-- (void)didChangeValueForKey:(NSString *)key
-{
-}
-
-+ (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
-{
-    register const char *types = NULL;
-
-    if (aSelector == NULL)                        // invalid selector
-        return nil;
-
-    if (types == NULL) {
-        // lookup method for selector
-        struct objc_method *mth;
-        mth = (object_is_instance(self) ?
-            class_get_instance_method(self->class_pointer, aSelector)
-            : class_get_class_method(self->class_pointer, aSelector));
-        if (mth) types = mth->method_types;
-    }
-
-    if (types == NULL) {
-        /* construct a id-signature */
-        register const char *sel;
-        if ((sel = sel_get_name(aSelector))) {
-            register int colCount = 0;
-            static char *idSigs[] = {
-                "@@:", "@@:@", "@@:@@", "@@:@@@", "@@:@@@@", "@@:@@@@@",
-                "@@:@@@@@@", "@@:@@@@@@", "@@:@@@@@@@", "@@:@@@@@@@@"
-            };
-
-            while (*sel) {
-                if (*sel == ':')
-                    colCount++;
-                sel++;
-            }
-            types = idSigs[colCount];
-        }
-        else
-            return nil;
-    }
-
-    //    NSLog(@"types: %s", types);
-    return [NSMethodSignature signatureWithObjCTypes:types];
-}
-
-@end
-
-const char *stringValue(id object)
-{
-    return [[object stringValue] cString];
-}
-#endif
 
 @implementation NuAutomaticIvars
 

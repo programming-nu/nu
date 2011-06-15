@@ -212,9 +212,6 @@
 #else
     Method_t m = 0;
 #endif
-#ifdef GNUSTEP
-    if (sel) {
-#endif
         // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
         BOOL isAClass = (object_getClass(self) == [NuClass class]);
         if (isAClass) {
@@ -240,9 +237,6 @@
 #endif
             if (!m) m = class_getClassMethod(object_getClass(self), sel);
         }
-#ifdef GNUSTEP
-    }
-#endif
     id result = Nu__null;
     if (m) {
         // We have a method that matches the selector.

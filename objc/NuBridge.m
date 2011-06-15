@@ -1357,9 +1357,6 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     return [NSNull null];
 }
 
-#ifdef GNUSTEP
-#define __USE_GNU
-#endif
 #include <dlfcn.h>
 
 @implementation NuBridgedFunction
@@ -1403,6 +1400,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 {
     //NSLog(@"----------------------------------------");
     //NSLog(@"calling C function %s with signature %s", name, signature);
+    id result;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     char *return_type_identifier = strdup(signature);
@@ -1447,7 +1445,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
         arg_cursor = [arg_cursor cdr];
     }
     ffi_call(cif, FFI_FN(function), result_value, argument_values);
-    id result = get_nu_value_from_objc_value(result_value, return_type_identifier);
+    result = get_nu_value_from_objc_value(result_value, return_type_identifier);
 
     // free the value structures
     for (i = 0; i < argument_count; i++) {

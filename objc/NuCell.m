@@ -37,11 +37,12 @@ limitations under the License.
 
 - (id) init
 {
-    [super init];
-    car = Nu__null;
-    cdr = Nu__null;
-    file = -1;
-    line = -1;
+    if ((self = [super init])) {
+        car = Nu__null;
+        cdr = Nu__null;
+        file = -1;
+        line = -1;
+    }
     return self;
 }
 
@@ -497,9 +498,10 @@ limitations under the License.
 
 - (id) initWithCoder:(NSCoder *)coder
 {
-    [super init];
-    car = [[coder decodeObject] retain];
-    cdr = [[coder decodeObject] retain];
+    if ((self = [super init])) {
+        car = [[coder decodeObject] retain];
+        cdr = [[coder decodeObject] retain];
+    }
     return self;
 }
 

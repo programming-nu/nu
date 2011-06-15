@@ -28,7 +28,6 @@ limitations under the License.
 #import <Nu/NuException.h>
 #import <Nu/NuExtensions.h>
 #import <Nu/NuHandler.h>
-#import <Nu/mach_override.h>
 #import <Nu/NuMacro_0.h>
 #import <Nu/NuMacro_1.h>
 #import <Nu/NuMain.h>

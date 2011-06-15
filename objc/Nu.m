@@ -98,21 +98,12 @@ void NuMain_exceptionHandler(NSException* e)
     exit(1);
 }
 
-
-#ifdef DARWIN
 int NuMain(int argc, const char *argv[])
-#else
-int NuMain(int argc, const char *argv[], const char *envp[])
-#endif
 {
 	#ifdef IPHONE
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	#endif
 
-    #ifdef GNUSTEP
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [NSProcessInfo initializeWithArguments:(char **) argv count:argc environment:(char **) envp];
-    #endif
 
     void NuInit();
     NuInit();
@@ -239,10 +230,6 @@ int NuMain(int argc, const char *argv[], const char *envp[])
         NSLog(@"%@: %@", [exception name], [exception reason]);
     }
 
-    #ifdef GNUSTEP
-    [pool release];
-    #endif
-
 	#ifdef IPHONE
     [pool release];
 	#endif
@@ -273,8 +260,8 @@ void NuInit()
 
         #ifdef DARWIN
         // note known placeholder classes
-        extern void nu_note_placeholders();
-        nu_note_placeholders();
+//        extern void nu_note_placeholders();
+//       nu_note_placeholders();
         #endif
 
         // check UTF8 support in PCRE
