@@ -1,5 +1,5 @@
 /*!
-    @header regex.h
+    @header NuRegex.h
     @copyright Copyright (c) 2002 Aram Greenman. All rights reserved.
     @discussion Declarations for an Objective-C regular expression library.
 */

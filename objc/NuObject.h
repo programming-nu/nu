@@ -1,5 +1,5 @@
 /*!
-@header object.h
+@header NuObject.h
 @discussion Nu extensions to NSObject for higher-level programming.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

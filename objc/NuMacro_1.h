@@ -1,5 +1,5 @@
 /*!
-@header macro_1.h
+@header NuMacro_1.h
 @discussion Declarations for the NuMacro_1 class.
 @copyright Copyright (c) 2008 Jeff Buck
 

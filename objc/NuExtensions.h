@@ -1,5 +1,5 @@
 /*!
-@header extensions.h
+@header NuExtensions.h
 @discussion Nu extensions to various Objective-C types.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

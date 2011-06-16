@@ -215,10 +215,10 @@
      
      ;; Concisely append to a string using this method, which is equivalent to a call to appendString:.
      (- (void) << (id) object is
-         (if (not (string? object))
+        (if (not (string? object))
             (throw* "NSInvalidArgumentExpection"
                     "Attempt to append a non-string to a string"))
-            (else (self appendString:object))))
+        (else (self appendString:object))))
 
 (class NSObject
      
@@ -240,6 +240,11 @@
      (- XMLPropertyListRepresentation is
         (NSPropertyListSerialization dataFromPropertyList:self
              format:100 ;; NSPropertyListXMLFormat_v1_0
+             errorDescription:nil))
+     
+     (- OpenStepPropertyListRepresentation is
+        (NSPropertyListSerialization dataFromPropertyList:self
+             format:1 ;; NSPropertyListOpenStepFormat_v1_0
              errorDescription:nil))
      
      (- binaryPropertyListRepresentation is

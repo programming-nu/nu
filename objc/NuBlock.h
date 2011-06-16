@@ -1,5 +1,5 @@
 /*!
-@header block.h
+@header NuBlock.h
 @discussion Declarations for the NuBlock class.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

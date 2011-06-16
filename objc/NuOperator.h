@@ -1,5 +1,5 @@
 /*!
-@header operator.h
+@header NuOperator.h
 @discussion Declarations for the NuOperator class.
 Subclasses of this class provide Objective-C implementations of Nu operators.
 @copyright Copyright (c) 2007 Radtastical Inc.

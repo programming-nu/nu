@@ -1,5 +1,5 @@
 /*!
-@header bridge.h
+@header NuBridge.h
 @discussion The Nu bridge to Objective-C.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

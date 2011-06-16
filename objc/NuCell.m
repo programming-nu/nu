@@ -1,5 +1,5 @@
 /*!
-@file cell.m
+@file NuCell.m
 @description Nu cells.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

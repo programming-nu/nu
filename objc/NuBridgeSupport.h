@@ -1,5 +1,5 @@
 /*!
-@header bridgesupport.h
+@header NuBridgeSupport.h
 @discussion Nu reader for Apple BridgeSupport files.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

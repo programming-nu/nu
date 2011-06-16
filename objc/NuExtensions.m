@@ -1,5 +1,5 @@
 /*!
-@file extensions.m
+@file NuExtensions.m
 @description Nu extensions to basic Objective-C types.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

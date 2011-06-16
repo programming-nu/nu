@@ -1,5 +1,5 @@
 /*!
- @file object.m
+ @file NuObject.m
  @description Nu extensions to NSObject.
  @copyright Copyright (c) 2007 Radtastical Inc.
  

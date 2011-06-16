@@ -1,5 +1,5 @@
 /*!
-@file symbol.m
+@file NuSymbol.m
 @description A class for Nu symbols and symbol tables.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

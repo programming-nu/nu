@@ -1,5 +1,5 @@
 /*!
-@file stack.m
+@file NuStack.m
 @description A simple stack class used by the Nu parser.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

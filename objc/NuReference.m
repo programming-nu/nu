@@ -1,5 +1,5 @@
 /*!
-@file reference.m
+@file NuReference.m
 @description The Nu pointer wrapper.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

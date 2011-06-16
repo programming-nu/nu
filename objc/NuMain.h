@@ -1,5 +1,5 @@
 /*!
-@header main.h
+@header NuMain.h
 The public interface for the Nu programming language.
 Objective-C programs can call Nu scripts by simply including this file,
 which is built into the Nu framework.

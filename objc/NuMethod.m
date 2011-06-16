@@ -1,5 +1,5 @@
 /*!
-@file method.m
+@file NuMethod.m
 @description The Nu method abstraction.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

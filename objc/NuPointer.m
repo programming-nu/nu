@@ -1,5 +1,5 @@
 /*!
-@file pointer.m
+@file NuPointer.m
 @description The Nu pointer wrapper.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

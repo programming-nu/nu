@@ -1,5 +1,5 @@
 /*!
-@header profiler.h
+@header NuProfiler.h
 @discussion Nu profiling helpers.
 @copyright Copyright (c) 2009 Radtastical Inc.
 

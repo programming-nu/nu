@@ -1,5 +1,5 @@
 /*!
-@file handler.m
+@file NuHandler.m
 @description Nu support for precompiled method handlers.
 @copyright Copyright (c) 2008 Radtastical Inc.
 

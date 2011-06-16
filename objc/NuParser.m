@@ -1,5 +1,5 @@
 /*!
-@file parser.m
+@file NuParser.m
 @description Nu source file parser.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

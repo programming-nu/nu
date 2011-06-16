@@ -1,5 +1,5 @@
 /*!
-@header reference.h
+@header NuReference.h
 @discussion Declarations for the NuReference class,
 which represents pointers to Objective-C objects.
 @copyright Copyright (c) 2007 Radtastical Inc.

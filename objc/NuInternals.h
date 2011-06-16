@@ -1,5 +1,5 @@
 /*!
-@header nuinternals.h
+@header NuInternals.h
 @discussion Internal declarations for Nu.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

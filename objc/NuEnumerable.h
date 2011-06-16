@@ -1,5 +1,5 @@
 /*!
-@header enumerable.h
+@header NuEnumerable.h
 @discussion Declarations for the NuEnumerable mixin class.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

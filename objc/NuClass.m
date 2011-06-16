@@ -1,5 +1,5 @@
 /*!
- @file class.m
+ @file NuClass.m
  @description The Nu class abstraction.
  @copyright Copyright (c) 2007 Radtastical Inc.
  

@@ -1,5 +1,5 @@
 /*!
-@header parser.h
+@header NuParser.h
 @discussion Declarations for NuParser, the Nu source file parser.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

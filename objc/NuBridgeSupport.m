@@ -1,5 +1,5 @@
 /*!
-@file bridgesupport.m
+@file NuBridgeSupport.m
 @description Nu reader for Apple BridgeSupport files.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

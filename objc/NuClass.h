@@ -1,5 +1,5 @@
 /*!
-@header class.h
+@header NuClass.h
 @discussion Declarations for the NuClass class,
 which represents classes in the Objective-C runtime.
 @copyright Copyright (c) 2007 Radtastical Inc.

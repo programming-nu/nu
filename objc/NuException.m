@@ -1,5 +1,5 @@
 /*!
-@file exception.m
+@file NuException.m
 @discussion  NuException
 @copyright Copyright (c) 2007 Radtastical Inc.
 

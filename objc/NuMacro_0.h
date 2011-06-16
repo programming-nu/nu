@@ -1,5 +1,5 @@
 /*!
-@header macro_0.h
+@header NuMacro_0.h
 @discussion Declarations for the NuMacro_0 class.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

@@ -1,5 +1,5 @@
 /*!
-@header pointer.h
+@header NuPointer.h
 @discussion Declarations for the NuPointer class,
 which wrap pointers to arbitrary locations in memory.
 @copyright Copyright (c) 2007 Radtastical Inc.

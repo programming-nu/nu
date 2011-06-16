@@ -1,5 +1,5 @@
 /*!
-@header method.h
+@header NuMethod.h
 @discussion Declarations for the NuMethod class,
 which represents methods in the Objective-C runtime.
 @copyright Copyright (c) 2007 Radtastical Inc.

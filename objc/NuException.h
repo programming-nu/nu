@@ -1,5 +1,5 @@
 /*!
-@header exception.h
+@header NuException.h
 @discussion Declarations for the NuException class.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

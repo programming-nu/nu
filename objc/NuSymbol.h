@@ -1,5 +1,5 @@
 /*!
-@header symbol.h
+@header NuSymbol.h
 @discussion Declarations for Nu symbols.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

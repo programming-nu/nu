@@ -1,5 +1,5 @@
 /*!
-@header stack.h
+@header NuStack.h
 @discussion Declarations for a simple stack class.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

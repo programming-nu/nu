@@ -1,5 +1,5 @@
 /*!
- @file block.m
+ @file NuBlock.m
  @description Nu blocks.
  @copyright Copyright (c) 2007 Radtastical Inc.
  

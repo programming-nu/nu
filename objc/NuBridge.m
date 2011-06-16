@@ -1,5 +1,5 @@
 /*!
-@file bridge.m
+@file NuBridge.m
 @description The Nu bridge to Objective-C.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

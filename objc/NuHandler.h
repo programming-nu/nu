@@ -1,5 +1,5 @@
 /*!
-@header handler.h
+@header NuHandler.h
 @discussion Nu support for precompiled method handlers.
 @copyright Copyright (c) 2008 Radtastical Inc.
 

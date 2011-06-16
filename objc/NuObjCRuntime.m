@@ -1,5 +1,5 @@
 /*
-@file objc_runtime.m
+@file NuObjCRuntime.m
 @description Nu extensions to the Objective-C runtime.
 Includes replacements for Objective-C 2.0 enhancements that are
 only available in Apple's OS X 10.5 (Leopard).

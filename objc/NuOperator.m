@@ -1,5 +1,5 @@
 /*!
-@file operator.m
+@file NuOperator.m
 @description Nu operators.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

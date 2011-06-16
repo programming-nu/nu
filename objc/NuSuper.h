@@ -1,5 +1,5 @@
 /*!
-@header super.h
+@header NuSuper.h
 @discussion Declarations for NuSuper, a Nu proxy for object superclasses.
 NuSuper allows Nu method implementations to send messages to their superclass implementations.
 @copyright Copyright (c) 2007 Radtastical Inc.

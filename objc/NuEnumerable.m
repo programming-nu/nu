@@ -1,5 +1,5 @@
 /*!
-@file enumerable.m
+@file NuEnumerable.m
 @description The NuEnumerable mixin.
 This class implements methods that enumerate over collections of objects.
 The receiving class must have an objectEnumerator method that returns an NSEnumerator.

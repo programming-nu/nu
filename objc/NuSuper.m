@@ -1,5 +1,5 @@
 /*!
-@file super.m
+@file NuSuper.m
 @description A proxy for an object's superclass.
 @copyright Copyright (c) 2007 Radtastical Inc.
 

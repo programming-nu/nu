@@ -1,4 +1,4 @@
-// regex.m
+// NuRegex.m
 //
 // Copyright (c) 2002 Aram Greenman. All rights reserved.
 //

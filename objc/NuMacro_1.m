@@ -1,5 +1,5 @@
 /*!
-@file macro_1.m
+@file NuMacro_1.m
 @description Nu macros.
 
 Licensed under the Apache License, Version 2.0 (the "License");
