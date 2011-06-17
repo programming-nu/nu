@@ -48,11 +48,13 @@
     NSString *s;
     s = [NSString stringWithContentsOfFile:[[NSBundle mainBundle]
                                             pathForResource:@"nu" ofType:@"nu"]
-                                  encoding:NSUTF8StringEncoding];
+                                  encoding:NSUTF8StringEncoding
+                                     error:NULL];
     [[Nu sharedParser] parseEval:s];
     s = [NSString stringWithContentsOfFile:[[NSBundle mainBundle]
                                             pathForResource:@"test" ofType:@"nu"]
-                                  encoding:NSUTF8StringEncoding];
+                                  encoding:NSUTF8StringEncoding
+                                     error:NULL];
     [[Nu sharedParser] parseEval:s];
     
     [[Nu sharedParser] parseEval:@"(global uname (do () \"iOS\"))"];
@@ -70,7 +72,8 @@
         if (numberOfMatches) {
             NSLog(@"loading %@", filename);
             NSString *s = [NSString stringWithContentsOfFile:[resourceDirectory stringByAppendingPathComponent:filename]
-                                                    encoding:NSUTF8StringEncoding];
+                                                    encoding:NSUTF8StringEncoding
+                                                       error:NULL];
             [[Nu sharedParser] parseEval:s];
         }
     }

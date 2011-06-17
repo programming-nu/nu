@@ -131,16 +131,20 @@ id regexWithString(NSString *string)
         for (j = lastSlash+1; j < [string length]; j++) {
             unichar c = [string characterAtIndex:j];
             switch (c) {
-                case 'i': options += 1; break;
-                case 's': options += 2; break;
-                case 'x': options += 4; break;
-                case 'l': options += 8; break;
-                case 'm': options += 16; break;
+                case 'i': options += 1; break; // case insensitive NSRegularExpressionCaseInsensitive
+                case 's': options += 2; break; // dot all NSRegularExpressionDotMatchesLineSeparators
+                case 'x': options += 4; break; // extended 
+                case 'l': options += 8; break; // lazy
+                case 'm': options += 16; break; // multiline
                 default:
                     [NSException raise:@"NuParseError" format:@"unsupported regular expression option character: %C", c];
             }
         }
-        return [NuRegex regexWithPattern:[string substringWithRange:NSMakeRange(1, lastSlash-1)] options:options];
+        NSString *pattern = [string substringWithRange:NSMakeRange(1, lastSlash-1)];
+ //       return [NSRegularExpression regularExpressionWithPattern:pattern
+  //                                                       options:0 // options
+   //                                                        error:NULL];
+        return [NuRegex regexWithPattern:pattern options:options];
     }
     else {
         return nil;
