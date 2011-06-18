@@ -42,26 +42,6 @@
 - (NSString *)groupAtIndex:(int)idx;
 
 /*!
- @method groupNamed:
- Returns the part of the target string that matched the subpattern of the given name or nil if it wasn't matched. */
-- (NSString *)groupNamed:(NSString *)name;
-
-/*!
- @method range
- Returns the range of the target string that matched the pattern. */
-- (NSRange)range;
-
-/*!
- @method rangeAtIndex:
- Returns the range of the target string that matched the subpattern at the given index or {NSNotFound, 0} if it wasn't matched. The subpatterns are indexed in order of their opening parentheses, 0 is the entire pattern, 1 is the first capturing subpattern, and so on. */
-- (NSRange)rangeAtIndex:(int)idx;
-
-/*!
- @method rangeNamed:
- Returns the range of the target string that matched the subpattern of the given name or {NSNotFound, 0} if it wasn't matched. */
-- (NSRange)rangeNamed:(NSString *)name;
-
-/*!
  @method string
  Returns the target string. */
 - (NSString *)string;
@@ -111,35 +91,8 @@
 - (NSArray *)findAllInString:(NSString *)string range:(NSRange)range;
 
 /*!
- @method findEnumeratorInString:
- Calls findEnumeratorInString:range: using the full range of the target string. */
-- (NSEnumerator *)findEnumeratorInString:(NSString *)str;
-
-/*!
- @method findEnumeratorInString:range:
- Returns an enumerator for all non-overlapping occurrences of the regex in the given range of the target string. The objects returned by the enumerator are NuRegexMatches. */
-- (NSEnumerator *)findEnumeratorInString:(NSString *)str range:(NSRange)r;
-
-/*!
  @method replaceWithString:inString:
  Calls replaceWithString:inString:limit: with no limit. */
 - (NSString *)replaceWithString:(NSString *)rep inString:(NSString *)str;
-
-/*!
- @method replaceWithString:inString:limit:
- Returns the string created by replacing occurrences of the regex in the target string with the replacement string. If the limit is positive, no more than that many replacements will be made.
- 
- Captured subpatterns can be interpolated into the replacement string using the syntax $x or ${x} where x is the index or name of the subpattern. $0 and $&amp; both refer to the entire pattern. Additionally, the case modifier sequences \U...\E, \L...\E, \u, and \l are allowed in the replacement string. All other escape sequences are handled literally. */
-- (NSString *)replaceWithString:(NSString *)rep inString:(NSString *)str limit:(int)limit;
-
-/*!
- @method splitString:
- Call splitString:limit: with no limit. */
-- (NSArray *)splitString:(NSString *)str;
-
-/*!
- @method splitString:limit:
- Returns an array of strings created by splitting the target string at each occurrence of the pattern. If the limit is positive, no more than that many splits will be made. If there are captured subpatterns, they are returned in the array.  */
-- (NSArray *)splitString:(NSString *)str limit:(int)lim;
 
 @end
