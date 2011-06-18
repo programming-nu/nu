@@ -176,7 +176,7 @@ extern id Nu__null;
     return [self callWithArguments:cdr context:calling_context];
 }
 
-id getObjectFromContext(id context, id symbol)
+static id getObjectFromContext(id context, id symbol)
 {
     while (IS_NOT_NULL(context)) {
         id object = [context objectForKey:symbol];

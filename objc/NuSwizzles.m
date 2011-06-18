@@ -20,6 +20,7 @@ limitations under the License.
 #import <Foundation/Foundation.h>
 #import "NuClass.h"
 #import "NuObject.h"
+#import "NuObjCRuntime.h"
 
 @interface NSCFDictionarySwizzles : NSObject {}
 @end

@@ -2033,7 +2033,7 @@ limitations under the License.
 
 @end
 
-id evaluatedArguments(id cdr, NSMutableDictionary *context)
+static id evaluatedArguments(id cdr, NSMutableDictionary *context)
 {
     NuCell *evaluatedArguments = nil;
     id cursor = cdr;
@@ -2093,6 +2093,8 @@ id evaluatedArguments(id cdr, NSMutableDictionary *context)
 @end
 
 #define install(name, class) [(NuSymbol *) [symbolTable symbolWithCString:name] setValue:[[[class alloc] init] autorelease]]
+
+extern void load_builtins(NuSymbolTable *);
 
 void load_builtins(NuSymbolTable *symbolTable)
 {

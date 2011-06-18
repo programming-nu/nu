@@ -78,7 +78,7 @@ static NuApplication *_sharedApplication = 0;
 
 @end
 
-void write_arguments(int argc, char *argv[])
+static void write_arguments(int argc, char *argv[])
 {
     NSLog(@"launched with arguments");
     int i;
@@ -87,7 +87,7 @@ void write_arguments(int argc, char *argv[])
     }
 }
 
-void NuMain_exceptionHandler(NSException* e)
+static void NuMain_exceptionHandler(NSException* e)
 {
     printf("%s\n", [[e dump] cStringUsingEncoding:NSUTF8StringEncoding]);
     exit(1);
@@ -99,8 +99,6 @@ int NuMain(int argc, const char *argv[])
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	#endif
 
-
-    void NuInit();
     NuInit();
 
 #if 0

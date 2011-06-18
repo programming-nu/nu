@@ -132,7 +132,7 @@ static ffi_type ffi_type_nssize;
 static ffi_type ffi_type_nsrect;
 static ffi_type ffi_type_nsrange;
 
-void initialize_ffi_types(void)
+static void initialize_ffi_types(void)
 {
     if (initialized_ffi_types) return;
     initialized_ffi_types = true;
@@ -186,7 +186,7 @@ void initialize_ffi_types(void)
     ffi_type_nsrange.elements[2] = NULL;
 }
 
-char get_typeChar_from_typeString(const char *typeString)
+static char get_typeChar_from_typeString(const char *typeString)
 {
     int i = 0;
     char typeChar = typeString[i];
@@ -203,7 +203,7 @@ char get_typeChar_from_typeString(const char *typeString)
     return typeChar;
 }
 
-ffi_type *ffi_type_for_objc_type(const char *typeString)
+static ffi_type *ffi_type_for_objc_type(const char *typeString)
 {
     char typeChar = get_typeChar_from_typeString(typeString);
     switch (typeChar) {
@@ -426,7 +426,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
     switch (typeChar) {
         case '@':
         {
-            if ((nu_value == Nu__null)) {
+            if (nu_value == Nu__null) {
                 *((id *) objc_value) = nil;
                 return NO;
             }
@@ -917,7 +917,7 @@ static void raise_argc_exception(SEL s, int count, int given)
 static int placeholderCount = 0;
 static Class placeholderClass[MAXPLACEHOLDERS];
 
-void nu_note_placeholders()
+static void nu_note_placeholders()
 {
     // I don't like this. How can I automatically recognize placeholders?
     placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableArray");
@@ -1173,7 +1173,7 @@ static void objc_calling_nu_method_handler(ffi_cif* cif, void* returnvalue, void
     }
 }
 
-char **generate_userdata(SEL sel, NuBlock *block, const char *signature)
+static char **generate_userdata(SEL sel, NuBlock *block, const char *signature)
 {
     NSMethodSignature *methodSignature = [NSMethodSignature signatureWithObjCTypes:signature];
     const char *return_type_string = [methodSignature methodReturnType];
@@ -1206,7 +1206,7 @@ char **generate_userdata(SEL sel, NuBlock *block, const char *signature)
     return userdata;
 }
 
-IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
+static IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
 {
     char **userdata = generate_userdata(sel, block, signature);
     IMP imp = [NuHandlerWarehouse handlerWithSelector:sel block:block signature:signature userdata:userdata];

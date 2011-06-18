@@ -28,6 +28,9 @@ void *value_buffer_for_objc_type(const char *typeString);
 NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable);
 id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *context, BOOL addClassMethod);
 
+size_t size_of_objc_type(const char *typeString);
+
+
 /*!
     @class NuBridgedFunction
     @abstract The Nu wrapper for imported C functions.

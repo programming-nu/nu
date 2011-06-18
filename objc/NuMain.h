@@ -20,7 +20,9 @@ limitations under the License.
 */
 #import <Foundation/Foundation.h>
 
-void NuInit();
+void NuInit(void);
+
+int NuMain(int argc, const char *argv[]);
 
 @protocol NuParsing <NSObject>
 /*! Parse a string into a list of objects that can be evaluated. */
@@ -78,7 +80,7 @@ Used by bundle (aka framework) initializers.
 
 // Helpers for programmatic construction of Nu code.
 // Experimental. They may change or disappear in future releases.
-id _nunull();
+id _nunull(void);
 id _nustring(const char *string);
 id _nustring_with_length(const char *string, int length);
 id _nusymbol(const char *string);
@@ -88,6 +90,7 @@ id _nucell(id car, id cdr);
 id _nuregex(const char *pattern, int options);
 id _nuregex_with_length(const char *pattern, int length, int options);
 id _nulist(id firstObject,...);
+id _nudata(const void *bytes, int length);
 
 @protocol NuCell <NSObject>
 - (void) setCar:(id) car;

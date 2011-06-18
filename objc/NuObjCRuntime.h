@@ -68,5 +68,5 @@ BOOL nu_objectIsKindOfClass(id object, Class class);
 void nu_markEndOfObjCTypeString(char *type, size_t len);
 
 // This makes it safe to insert nil into container classes
-void nu_swizzleContainerClasses();
+void nu_swizzleContainerClasses(void);
 

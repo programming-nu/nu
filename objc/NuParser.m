@@ -70,7 +70,7 @@ extern const char *nu_parsedFilename(int i)
 - (int) interact;
 @end
 
-id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTable)
+static id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTable)
 {
     char c = ((char *) bytes)[length];
     ((char *) bytes)[length] = 0;
@@ -93,7 +93,7 @@ id atomWithBytesAndLength(const char *bytes, int length, NuSymbolTable *symbolTa
     return string;
 }
 
-id atomWithString(NSString *string, NuSymbolTable *symbolTable)
+static id atomWithString(NSString *string, NuSymbolTable *symbolTable)
 {
     const char *cstring = [string cStringUsingEncoding:NSUTF8StringEncoding];
     char *endptr;
@@ -112,7 +112,7 @@ id atomWithString(NSString *string, NuSymbolTable *symbolTable)
     return symbol;
 }
 
-id regexWithString(NSString *string)
+static id regexWithString(NSString *string)
 {
     // If the first character of the string is a forward slash, it's a regular expression literal.
     if (([string characterAtIndex:0] == '/') && ([string length] > 1)) {

@@ -57,7 +57,7 @@ limitations under the License.
 @end
 
 
-void Nu_defaultExceptionHandler(NSException* e)
+static void Nu_defaultExceptionHandler(NSException* e)
 {
     [e dump];
 }

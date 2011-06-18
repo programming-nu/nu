@@ -35,15 +35,19 @@ limitations under the License.
 #include <math.h>
 #import <Foundation/Foundation.h> // for NSException
 
+#include "NuObjCRuntime.h"
+
 #ifdef IPHONE
+
 #import "objc/runtime.h"
+
 IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types) {
 	return class_replaceMethod(cls, name, imp, types);
 }
 #endif
 
+
 #ifndef LEOPARD_OBJC2
-#include "NuObjCRuntime.h"
 #ifndef IPHONE
 BOOL class_hasMethod(Class cls, SEL name)
 {

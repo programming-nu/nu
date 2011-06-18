@@ -19,6 +19,7 @@ limitations under the License.
 #import <Foundation/Foundation.h>
 #import "NuCell.h"
 #import "NuStack.h"
+#import "NuMain.h"
 
 #define MAXDEPTH 1000
 
@@ -29,7 +30,7 @@ limitations under the License.
     @abstract A Nu language parser.
     @discussion Instances of this class are used to parse and evaluate Nu source text.
  */
-@interface NuParser : NSObject
+@interface NuParser : NSObject <NuParsing>
 {
     int state;
     int start;

@@ -89,6 +89,7 @@ typedef signed int   SINT64 __attribute__((__mode__(__DI__)));
 
 typedef float FLOAT32;
 
+    void ffi_prep_args(char *stack, extended_cif *ecif);
 
 #ifdef __cplusplus
 }
