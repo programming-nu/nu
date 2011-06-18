@@ -320,52 +320,42 @@ Returns an array of strings created by splitting the target string at each occur
 /*!
  @method regexWithPattern:
  Creates a new regex using the given pattern string. Returns nil if the pattern string is invalid. */
-+ (id)regexWithPattern:(NSString *)pat;
++ (id)regexWithPattern:(NSString *)pattern;
 
 /*!
  @method regexWithPattern:options:
  Creates a new regex using the given pattern string and option flags. Returns nil if the pattern string is invalid. */
-+ (id)regexWithPattern:(NSString *)pat options:(int)opts;
++ (id)regexWithPattern:(NSString *)pattern options:(int)options;
 
 /*!
  @method initWithPattern:
  Initializes the regex using the given pattern string. Returns nil if the pattern string is invalid. */
-- (id)initWithPattern:(NSString *)pat;
+- (id)initWithPattern:(NSString *)pattern;
 
 /*!
  @method initWithPattern:options:
  Initializes the regex using the given pattern string and option flags. Returns nil if the pattern string is invalid. */
-- (id)initWithPattern:(NSString *)pat options:(int)opts;
-
-/*!
- @method pattern
- Returns the pattern used to create the regex. */
-- (NSString *) pattern;
-
-/*!
- @method options
- Returns the options used to create the regex. */
-- (int) options;
+- (id)initWithPattern:(NSString *)pattern options:(int)options;
 
 /*!
  @method findInString:
  Calls findInString:range: using the full range of the target string. */
-- (NuRegexMatch *)findInString:(NSString *)str;
+- (NSTextCheckingResult *)findInString:(NSString *)string;
 
 /*!
  @method findInString:range:
  Returns an NuRegexMatch for the first occurrence of the regex in the given range of the target string or nil if none is found. */
-- (NuRegexMatch *)findInString:(NSString *)str range:(NSRange)r;
+- (NSTextCheckingResult *)findInString:(NSString *)string range:(NSRange)range;
 
 /*!
  @method findAllInString:
  Calls findAllInString:range: using the full range of the target string. */
-- (NSArray *)findAllInString:(NSString *)str;
+- (NSArray *)findAllInString:(NSString *)string;
 
 /*!
  @method findAllInString:range:
  Returns an array of all non-overlapping occurrences of the regex in the given range of the target string. The members of the array are NuRegexMatches. */
-- (NSArray *)findAllInString:(NSString *)str range:(NSRange)r;
+- (NSArray *)findAllInString:(NSString *)string range:(NSRange)range;
 
 /*!
  @method findEnumeratorInString:

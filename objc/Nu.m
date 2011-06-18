@@ -333,12 +333,12 @@ id _nucell(id car, id cdr)
 
 id _nuregex(const char *pattern, int options)
 {
-    return [NuRegex regexWithPattern:_nustring(pattern) options:options];
+    return [NSRegularExpression regexWithPattern:_nustring(pattern) options:options];
 }
 
 id _nuregex_with_length(const char *pattern, int length, int options)
 {
-    return [NuRegex regexWithPattern:_nustring_with_length(pattern, length) options:options];
+    return [NSRegularExpression regexWithPattern:_nustring_with_length(pattern, length) options:options];
 }
 
 id _nulist(id firstObject, ...)

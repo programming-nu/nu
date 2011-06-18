@@ -900,7 +900,7 @@ limitations under the License.
 {
     id value = [cdr car];
     value = [value evalWithContext:context];
-    return [NuRegex regexWithPattern:value];
+    return [NSRegularExpression regexWithPattern:value];
 }
 
 @end

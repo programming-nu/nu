@@ -540,7 +540,7 @@ static NuRegex *backrefPattern;
  @method regex
  The regular expression used to make this match. */
 - (NSRegularExpression *)regex {
-    return nil;
+    return [self regularExpression];
 }
 
 /*!
@@ -560,8 +560,14 @@ static NuRegex *backrefPattern;
 /*!
  @method groupAtIndex:
  Returns the part of the target string that matched the subpattern at the given index or nil if it wasn't matched. The subpatterns are indexed in order of their opening parentheses, 0 is the entire pattern, 1 is the first capturing subpattern, and so on. */
-- (NSString *)groupAtIndex:(int)idx {
-    return nil;
+- (NSString *)groupAtIndex:(int)i {
+    NSRange range = [self rangeAtIndex:i];
+    NSString *string = [self associatedObjectForKey:@"string"];
+    if (string) {
+        return [string substringWithRange:range];
+    } else {
+        return nil;
+    }
 }
 
 /*!
@@ -606,71 +612,78 @@ static NuRegex *backrefPattern;
 /*!
  @method regexWithPattern:
  Creates a new regex using the given pattern string. Returns nil if the pattern string is invalid. */
-+ (id)regexWithPattern:(NSString *)pat {
-    return nil;
++ (id)regexWithPattern:(NSString *)pattern {
+    return [self regularExpressionWithPattern:pattern
+                                      options:0
+                                        error:NULL];
 }
 
 /*!
  @method regexWithPattern:options:
  Creates a new regex using the given pattern string and option flags. Returns nil if the pattern string is invalid. */
-+ (id)regexWithPattern:(NSString *)pat options:(int)opts {
-    return nil;
++ (id)regexWithPattern:(NSString *)pattern options:(int)options {
+    return [self regularExpressionWithPattern:pattern
+                                      options:options
+                                        error:NULL]; 
 }
 
 /*!
  @method initWithPattern:
  Initializes the regex using the given pattern string. Returns nil if the pattern string is invalid. */
-- (id)initWithPattern:(NSString *)pat {
-    return nil;
+- (id)initWithPattern:(NSString *)pattern {
+    return [self initWithPattern:pattern 
+                         options:0
+                           error:NULL];
 }
 
 /*!
  @method initWithPattern:options:
  Initializes the regex using the given pattern string and option flags. Returns nil if the pattern string is invalid. */
-- (id)initWithPattern:(NSString *)pat options:(int)opts {
-    return nil;
+- (id)initWithPattern:(NSString *)pattern options:(int)options {
+    return [self initWithPattern:pattern
+                         options:options
+                           error:NULL];
 }
 
-/*!
- @method pattern
- Returns the pattern used to create the regex. */
-- (NSString *) pattern {
-    return nil;
-}
-
-/*!
- @method options
- Returns the options used to create the regex. */
-- (int) options {
-    return 0;
-}
 
 /*!
  @method findInString:
  Calls findInString:range: using the full range of the target string. */
-- (NuRegexMatch *)findInString:(NSString *)str {
-    return nil;
+- (NSTextCheckingResult *)findInString:(NSString *)string {
+    NSTextCheckingResult *result = [self firstMatchInString:string 
+                                                    options:0 
+                                                      range:NSMakeRange(0,[string length])];
+    if (result) {
+        [result setRetainedAssociatedObject:string forKey:@"string"];
+    }
+    return result;
 }
 
 /*!
  @method findInString:range:
  Returns an NuRegexMatch for the first occurrence of the regex in the given range of the target string or nil if none is found. */
-- (NuRegexMatch *)findInString:(NSString *)str range:(NSRange)r {
-    return nil;
+- (NSTextCheckingResult *)findInString:(NSString *)string range:(NSRange)range {
+    NSTextCheckingResult *result = [self firstMatchInString:string
+                                                    options:0 
+                                                      range:range];
+    if (result) {
+        [result setRetainedAssociatedObject:string forKey:@"string"];
+    }
+    return result;
 }
 
 /*!
  @method findAllInString:
  Calls findAllInString:range: using the full range of the target string. */
-- (NSArray *)findAllInString:(NSString *)str {
-    return nil;
+- (NSArray *)findAllInString:(NSString *)string {
+    return [self matchesInString:string options:0 range:NSMakeRange(0, [string length])];
 }
 
 /*!
  @method findAllInString:range:
  Returns an array of all non-overlapping occurrences of the regex in the given range of the target string. The members of the array are NuRegexMatches. */
-- (NSArray *)findAllInString:(NSString *)str range:(NSRange)r {
-    return nil;
+- (NSArray *)findAllInString:(NSString *)string range:(NSRange)range {
+    return [self matchesInString:string options:0 range:range];
 }
 
 /*!
@@ -690,8 +703,12 @@ static NuRegex *backrefPattern;
 /*!
  @method replaceWithString:inString:
  Calls replaceWithString:inString:limit: with no limit. */
-- (NSString *)replaceWithString:(NSString *)rep inString:(NSString *)str {
-    return nil;
+- (NSString *)replaceWithString:(NSString *)replacement inString:(NSString *)string {
+    return [self stringByReplacingMatchesInString:string 
+                                          options:0 
+                                            range:NSMakeRange(0, [string length])
+                                     withTemplate:replacement];
+
 }
 
 /*!
