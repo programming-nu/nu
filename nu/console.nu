@@ -110,7 +110,7 @@
                                 styleMask:(+ NSTitledWindowMask NSClosableWindowMask NSMiniaturizableWindowMask NSResizableWindowMask NSUtilityWindowMask)
                                 backing:NSBackingStoreBuffered
                                 defer:NO))
-          (set @console ((NuConsoleViewController alloc) initWithFrame: (list 0 0 (- (third ((self window) frame)) 17) (fourth ((self window) frame)))))
+          (set @console ((NuConsoleViewController alloc) initWithFrame: (list 0 0 (- (((self window) frame) objectAtIndex:2) 17) (((self window) frame) objectAtIndex:3))))
           (self setMyShowConsole:NO)
           (self addMenuItem)
           (set @exitWhenClosed NO)
@@ -371,7 +371,7 @@
      (- (NSRange) textView:(id) textview
           willChangeSelectionFromCharacterRange:(NSRange) oldRange
           toCharacterRange:(NSRange) newRange is
-          (if (and (eq (second newRange) 0)
+          (if (and (eq (newRange second) 0)
                    (< (first newRange) @startOfInput))
               (then oldRange)
               (else newRange)))

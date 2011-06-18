@@ -8,7 +8,7 @@
 
 (set @cflags " -g -fobjc-gc")
 
-(if (isSnowLeopard)
+(if (or (isSnowLeopard) (isLion))
     (then
          (set @ldflags " -framework Cocoa -framework Nu -framework Carbon -framework mach_inject_bundle -all_load ")
          (set @arch '("x86_64")))

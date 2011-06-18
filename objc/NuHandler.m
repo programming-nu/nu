@@ -70,6 +70,23 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             CGRect x = va_arg(ap, CGRect);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
+#else
+        else if (!strcmp(type, "{_NSRect={_NSPoint=dd}{_NSSize=dd}}")) {
+            NSRect x = va_arg(ap, NSRect);
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
+        else if (!strcmp(type, "{_NSPoint=dd}")) {
+            NSPoint x = va_arg(ap, NSPoint);
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
+        else if (!strcmp(type, "{_NSSize=dd}")) {
+            NSSize x = va_arg(ap, NSSize);
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
+        else if (!strcmp(type, "{_NSRange=QQ}")) {
+            NSRange x = va_arg(ap, NSRange);
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
 #endif
         else {
             NSLog(@"unsupported argument type %s, see objc/handler.m to add support for it", type);
@@ -141,7 +158,7 @@ static IMP handler_returning_void(void *userdata) {
 #define MAKE_HANDLER_WITH_TYPE(type) \
 static IMP handler_returning_ ## type (void* userdata) \
 { \
-return imp_implementationWithBlock(^(id receiver, ...) { \ 
+return imp_implementationWithBlock(^(id receiver, ...) { \
 struct handler_description description; \
 description.handler = NULL; \
 description.description = userdata; \
