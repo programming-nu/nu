@@ -1,23 +1,23 @@
 /*!
-@header NuException.h
-@discussion Declarations for the NuException class.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Original version by Peter Quade <pq@pqua.de>
-System stack trace support and other enhancements by Jeff Buck.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @header NuException.h
+ @discussion Declarations for the NuException class.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Original version by Peter Quade <pq@pqua.de>
+ System stack trace support and other enhancements by Jeff Buck.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import <Foundation/Foundation.h>
 
 @class NuCell;
@@ -29,11 +29,11 @@ limitations under the License.
 
 
 /*!
-	@class NuException
-	@abstract When something goes wrong in Nu.
-	@discussion A Nu Exception is a subclass of NSException, representing
-	errors during execution of Nu code. It has the ability to store trace information.
-	This information get's added during unwinding the stack by the NuCells.
+ @class NuException
+ @abstract When something goes wrong in Nu.
+ @discussion A Nu Exception is a subclass of NSException, representing
+ errors during execution of Nu code. It has the ability to store trace information.
+ This information get's added during unwinding the stack by the NuCells.
  */
 @interface NuException : NSException
 {
@@ -66,17 +66,17 @@ limitations under the License.
 
 
 /*! FIXME: doc */
-@interface NuTraceInfo : NSObject
-{
-    NSString*   filename;
-    int         lineNumber;
-    NSString*   function;
-}
-
-- (id)initWithFunction:(NSString *)function lineNumber:(int)lineNumber filename:(NSString *)filename;
-
-- (NSString *)filename;
-- (int)lineNumber;
-- (NSString *)function;
-
-@end
+ @interface NuTraceInfo : NSObject
+ {
+ NSString*   filename;
+ int         lineNumber;
+ NSString*   function;
+ }
+ 
+ - (id)initWithFunction:(NSString *)function lineNumber:(int)lineNumber filename:(NSString *)filename;
+ 
+ - (NSString *)filename;
+ - (int)lineNumber;
+ - (NSString *)function;
+ 
+ @end

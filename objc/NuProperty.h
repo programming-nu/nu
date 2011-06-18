@@ -22,7 +22,7 @@
 {
     objc_property_t p;
 }
-   
+
 /*! Create a property wrapper for the specified property (used from Objective-C). */
 + (NuProperty *) propertyWithProperty:(objc_property_t) property;
 /*! Initialize a property wrapper for the specified property (used from Objective-C). */

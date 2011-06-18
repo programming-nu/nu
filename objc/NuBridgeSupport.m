@@ -1,20 +1,20 @@
 /*!
-@file NuBridgeSupport.m
-@description Nu reader for Apple BridgeSupport files.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuBridgeSupport.m
+ @description Nu reader for Apple BridgeSupport files.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 #ifndef IPHONE
 
@@ -50,10 +50,10 @@ static NSString *getTypeStringFromNode(id node)
         return;
     else
         [frameworks setValue:framework forKey:framework];
-
+    
     NSString *xmlPath;                            // constants, enums, functions, and more are described in an XML file.
     NSString *dylibPath;                          // sometimes a dynamic library is included to provide implementations of inline functions.
-
+    
     if (path) {
         xmlPath = [NSString stringWithFormat:@"%@/Resources/BridgeSupport/%@.bridgesupport", path, framework];
         dylibPath = [NSString stringWithFormat:@"%@/Resources/BridgeSupport/%@.dylib", path, framework];
@@ -62,14 +62,14 @@ static NSString *getTypeStringFromNode(id node)
         xmlPath = [NSString stringWithFormat:@"/System/Library/Frameworks/%@.framework/Resources/BridgeSupport/%@.bridgesupport", framework, framework];
         dylibPath = [NSString stringWithFormat:@"/System/Library/Frameworks/%@.framework/Resources/BridgeSupport/%@.dylib", framework, framework];
     }
-
+    
     if ([NSFileManager fileExistsNamed:dylibPath])
         [self importLibrary:dylibPath];
-
+    
     NSMutableDictionary *constants = [BridgeSupport valueForKey:@"constants"];
     NSMutableDictionary *enums =     [BridgeSupport valueForKey:@"enums"];
     NSMutableDictionary *functions = [BridgeSupport valueForKey:@"functions"];
-
+    
     NSXMLDocument *xmlDocument = [[[NSXMLDocument alloc] initWithContentsOfURL:[NSURL fileURLWithPath:xmlPath] options:0 error:nil] autorelease];
     if (xmlDocument) {
         id node;
@@ -82,11 +82,11 @@ static NSString *getTypeStringFromNode(id node)
             }
             else if ([[node name] isEqual:@"constant"]) {
                 [constants setValue:getTypeStringFromNode(node)
-                    forKey:[[node attributeForName:@"name"] stringValue]];
+                             forKey:[[node attributeForName:@"name"] stringValue]];
             }
             else if ([[node name] isEqual:@"enum"]) {
                 [enums setValue:[NSNumber numberWithInt:[[[node attributeForName:@"value"] stringValue] intValue]]
-                    forKey:[[node attributeForName:@"name"] stringValue]];
+                         forKey:[[node attributeForName:@"name"] stringValue]];
             }
             else if ([[node name] isEqual:@"function"]) {
                 id name = [[node attributeForName:@"name"] stringValue];
@@ -126,7 +126,7 @@ static NSString *getTypeStringFromNode(id node)
     NuSymbolTable *symbolTable = [NuSymbolTable sharedSymbolTable];
     id BridgeSupport = [[symbolTable symbolWithString:@"BridgeSupport"] value];
     [[BridgeSupport objectForKey:@"frameworks"] removeAllObjects];
-
+    
     id key;
     for (int i = 0; i < 3; i++) {
         id dictionary = [BridgeSupport objectForKey:(i == 0) ? @"constants" : (i == 1) ? @"enums" : @"functions"];
@@ -142,10 +142,10 @@ static NSString *getTypeStringFromNode(id node)
 {
     NuSymbolTable *symbolTable = [NuSymbolTable sharedSymbolTable];
     id BridgeSupport = [[symbolTable symbolWithString:@"BridgeSupport"] value];
-
+    
     id result = [NSMutableString stringWithString:@"(global BridgeSupport\n"];
     id d, keyEnumerator, key;
-
+    
     [result appendString:@"        (dict\n"];
     d = [BridgeSupport objectForKey:@"constants"];
     [result appendString:@"             constants:\n"];
@@ -155,7 +155,7 @@ static NSString *getTypeStringFromNode(id node)
         [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" \"%@\"", key, [d objectForKey:key]]];
     }
     [result appendString:@")\n"];
-
+    
     d = [BridgeSupport objectForKey:@"enums"];
     [result appendString:@"             enums:\n"];
     [result appendString:@"             (dict"];
@@ -164,7 +164,7 @@ static NSString *getTypeStringFromNode(id node)
         [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" %@", key, [d objectForKey:key]]];
     }
     [result appendString:@")\n"];
-
+    
     d = [BridgeSupport objectForKey:@"functions"];
     [result appendString:@"             functions:\n"];
     [result appendString:@"             (dict"];
@@ -173,7 +173,7 @@ static NSString *getTypeStringFromNode(id node)
         [result appendString:[NSString stringWithFormat:@"\n                  \"%@\" \"%@\"", key, [d objectForKey:key]]];
     }
     [result appendString:@")\n"];
-
+    
     d = [BridgeSupport objectForKey:@"frameworks"];
     [result appendString:@"             frameworks:\n"];
     [result appendString:@"             (dict"];

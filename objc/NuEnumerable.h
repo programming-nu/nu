@@ -1,33 +1,33 @@
 /*!
-@header NuEnumerable.h
-@discussion Declarations for the NuEnumerable mixin class.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @header NuEnumerable.h
+ @discussion Declarations for the NuEnumerable mixin class.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import <Foundation/Foundation.h>
 #import "NuCell.h"
 #import "NuBlock.h"
 #import "NuOperator.h"
 
 /*!
-    @class NuEnumerable
-    @abstract The NuEnumerable mixin class.
-    @discussion This class implements methods that act on enumerated collections of objects.
-    It is designed to be mixed into a class using the include method that Nu adds to NSObject.
-    The receiving class must have an objectEnumerator method that returns an NSEnumerator.
-    Some methods in this class take a callable object as an argument; callable objects are those
-    that have evalWithArguments:context: defined.
+ @class NuEnumerable
+ @abstract The NuEnumerable mixin class.
+ @discussion This class implements methods that act on enumerated collections of objects.
+ It is designed to be mixed into a class using the include method that Nu adds to NSObject.
+ The receiving class must have an objectEnumerator method that returns an NSEnumerator.
+ Some methods in this class take a callable object as an argument; callable objects are those
+ that have evalWithArguments:context: defined.
  */
 @interface NuEnumerable : NSObject
 {
@@ -36,7 +36,7 @@ limitations under the License.
 /*! Iterate over each member of a collection, evaluating the provided callable item for each member. */
 - (id) each:(id) callable;
 /*! Iterate over each member of a collection, evaluating the provided block for each member.
-    The block is expected to take two arguments: the member and its index. */
+ The block is expected to take two arguments: the member and its index. */
 - (id) eachWithIndex:(NuBlock *) block;
 /*! Iterate over each member of a collection, returning an array containing the elements for which the provided block evaluates non-nil. */
 - (NSArray *) select:(NuBlock *) block;
@@ -45,7 +45,7 @@ limitations under the License.
 /*! Iterate over each member of a collection, applying the provided block to each member, and returning an array of the results. */
 - (NSArray *) map:(id) callable;
 /*! Iterate over each member of a collection, using the provided callable to combine members into a single return value.
-*/
+ */
 
 - (id) reduce:(id) callable from:(id) initial;
 
@@ -55,11 +55,11 @@ limitations under the License.
 
 @interface NSArray (Enumeration)
 /*! Repeatedly apply a function of two arguments to the elements of an array,
-working from right to left and beginning with the specified inital value. */
+ working from right to left and beginning with the specified inital value. */
 - (id) reduceLeft:(id)callable from:(id) initial;
 /*! Iterate over each member of an array in reverse order and beginning with the lastObject, evaluating the provided block for each member. */
 - (id) eachInReverse:(id) callable;
 /*! Return a sorted array using the specified block to compare array elements.
-The block should return -1, 0, or 1. */
+ The block should return -1, 0, or 1. */
 - (NSArray *) sortedArrayUsingBlock:(NuBlock *) block;
 @end

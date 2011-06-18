@@ -1,31 +1,31 @@
 /*!
-@header NuClass.h
-@discussion Declarations for the NuClass class,
-which represents classes in the Objective-C runtime.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @header NuClass.h
+ @discussion Declarations for the NuClass class,
+ which represents classes in the Objective-C runtime.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import <Foundation/Foundation.h>
 
 @class NuMethod;
 @class NuBlock;
 
 /*!
-    @class NuClass
-    @abstract A Nu wrapper for class representations in the Objective-C runtime.
-    @discussion NuClass provides an object wrapper for classes that are represented in the Objective-C runtime.
-    NuClass objects are used in the Nu language to manipulate and extend Objective-C classes.
+ @class NuClass
+ @abstract A Nu wrapper for class representations in the Objective-C runtime.
+ @discussion NuClass provides an object wrapper for classes that are represented in the Objective-C runtime.
+ NuClass objects are used in the Nu language to manipulate and extend Objective-C classes.
  */
 @interface NuClass : NSObject
 {
@@ -44,7 +44,7 @@ limitations under the License.
 /*! Get the class corresponding to the NuClass wrapper (used from Objective-C). */
 - (Class) wrappedClass;
 /*! Get an array of all classes known to the Objective-C runtime.
-Beware, some of these classes may be deprecated, undocumented, or otherwise unsafe to use. */
+ Beware, some of these classes may be deprecated, undocumented, or otherwise unsafe to use. */
 + (NSArray *) all;
 /*! Get the name of a class. */
 - (NSString *) name;

@@ -50,11 +50,12 @@
 
 - (NuSelectorCache *) init
 {
-    [super init];
-    symbol = nil;
-    parent = nil;
-    children = [[NSMutableDictionary alloc] init];
-    selector = NULL;
+    if ((self = [super init])) {
+        symbol = nil;
+        parent = nil;
+        children = [[NSMutableDictionary alloc] init];
+        selector = NULL;
+    }
     return self;
 }
 
@@ -74,11 +75,12 @@
 
 - (NuSelectorCache *) initWithSymbol:(NuSymbol *)s parent:(NuSelectorCache *)p
 {
-    [super init];
-    symbol = s;
-    parent = p;
-    children = [[NSMutableDictionary alloc] init];
-    selector = NULL;
+    if ((self = [super init])) {
+        symbol = s;
+        parent = p;
+        children = [[NSMutableDictionary alloc] init];
+        selector = NULL;
+    }
     return self;
 }
 
@@ -191,23 +193,23 @@
     
     // Look up the appropriate method to call for the specified selector.
     Method m;
-        // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
-        BOOL isAClass = (object_getClass(self) == [NuClass class]);
-        if (isAClass) {
-            // Class wrappers (objects of type NuClass) get special treatment. Instance methods are sent directly to the class wrapper object.
-            // But when a class method is sent to a class wrapper, the method is instead sent as a class method to the wrapped class.
-            // This makes it possible to call class methods from Nu, but there is no way to directly call class methods of NuClass from Nu.
-            id wrappedClass = [((NuClass *) self) wrappedClass];
-            m = class_getClassMethod(wrappedClass, sel);
-            if (m)
-                target = wrappedClass;
-            else
-                m = class_getInstanceMethod(object_getClass(self), sel);
-        }
-        else {
+    // instead of isMemberOfClass:, which may be blocked by an NSProtocolChecker
+    BOOL isAClass = (object_getClass(self) == [NuClass class]);
+    if (isAClass) {
+        // Class wrappers (objects of type NuClass) get special treatment. Instance methods are sent directly to the class wrapper object.
+        // But when a class method is sent to a class wrapper, the method is instead sent as a class method to the wrapped class.
+        // This makes it possible to call class methods from Nu, but there is no way to directly call class methods of NuClass from Nu.
+        id wrappedClass = [((NuClass *) self) wrappedClass];
+        m = class_getClassMethod(wrappedClass, sel);
+        if (m)
+            target = wrappedClass;
+        else
             m = class_getInstanceMethod(object_getClass(self), sel);
-            if (!m) m = class_getClassMethod(object_getClass(self), sel);
-        }
+    }
+    else {
+        m = class_getInstanceMethod(object_getClass(self), sel);
+        if (!m) m = class_getClassMethod(object_getClass(self), sel);
+    }
     id result = Nu__null;
     if (m) {
         // We have a method that matches the selector.

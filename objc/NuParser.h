@@ -1,20 +1,20 @@
 /*!
-@header NuParser.h
-@discussion Declarations for NuParser, the Nu source file parser.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @header NuParser.h
+ @discussion Declarations for NuParser, the Nu source file parser.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 #import <Foundation/Foundation.h>
 #import "NuCell.h"
@@ -26,9 +26,9 @@ limitations under the License.
 @class NuSymbolTable;
 
 /*!
-    @class NuParser
-    @abstract A Nu language parser.
-    @discussion Instances of this class are used to parse and evaluate Nu source text.
+ @class NuParser
+ @abstract A Nu language parser.
+ @discussion Instances of this class are used to parse and evaluate Nu source text.
  */
 @interface NuParser : NSObject <NuParsing>
 {
@@ -37,14 +37,14 @@ limitations under the License.
     int depth;
     int parens;
     int column;
-
+    
 	NSMutableArray* readerMacroStack;
 	int readerMacroDepth[MAXDEPTH];
-
+    
     int filenum;
     int linenum;
     int parseEscapes;
-
+    
     NuCell *root;
     NuCell *current;
     bool addToCar;
@@ -64,8 +64,8 @@ limitations under the License.
 /*! Get the top-level evaluation context that a parser uses for evaluation. */
 - (NSMutableDictionary *) context;
 /*! Parse Nu source into an expression, returning the NuCell at the top of the resulting expression.
-    Since parsing may produce multiple expressions, the top-level NuCell is a Nu <b>progn</b> operator.
-*/
+ Since parsing may produce multiple expressions, the top-level NuCell is a Nu <b>progn</b> operator.
+ */
 - (id) parse:(NSString *)string;
 /*! Call -parse: while specifying the name of the source file for the string to be parsed. */
 - (id) parse:(NSString *)string asIfFromFilename:(const char *) filename;
@@ -78,9 +78,9 @@ limitations under the License.
 /*! Set the value of a name in the parser's context. */
 - (void) setValue:(id)value forKey:(NSString *)string;
 /*! Returns true if the parser is currently parsing an incomplete Nu expression.
-    Presumably the rest of the expression will be passed in with a future
-    invocation of the parse: method.
-*/
+ Presumably the rest of the expression will be passed in with a future
+ invocation of the parse: method.
+ */
 - (BOOL) incomplete;
 /*! Reset the parse set after an error */
 - (void) reset;

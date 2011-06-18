@@ -1,20 +1,20 @@
 /*!
-@file NuSymbol.m
-@description A class for Nu symbols and symbol tables.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuSymbol.m
+ @description A class for Nu symbols and symbol tables.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import "st.h"
 #import "NuSymbol.h"
 #import "NuClass.h"
@@ -48,23 +48,23 @@ static NuSymbolTable *sharedSymbolTable = 0;
 - (id) symbolWithCString:(const char *)string
 {
     if (!symbol_table) symbol_table = st_init_strtable();
-
+    
     // If the symbol is already in the table, return it.
     NuSymbol *symbol;
     if (st_lookup(symbol_table, (st_data_t)string, (st_data_t *)&symbol))
         return symbol;
-
+    
     // If not, create it. Don't autorelease it; it is owned by the table.
     symbol = [[NuSymbol alloc] init];             // keep construction private
     symbol->string = strdup(string);
     // the symbol table does not use strong refs so make one here for each symbol
-    #ifndef IPHONE
+#ifndef IPHONE
     [[NSGarbageCollector defaultCollector] disableCollectorForPointer:symbol];
-    #endif
+#endif
     int len = strlen(string);
     symbol->isLabel = (string[len - 1] == ':');
     symbol->isGensym = (len > 2) && (string[0] == '_') && (string[1] == '_');
-
+    
     // Put the new symbol in the symbol table and return it.
     st_add_direct(symbol_table, (st_data_t)(symbol->string), (long) symbol);
     return symbol;
@@ -109,9 +109,9 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 {
     st_delete(symbol_table, (st_data_t *) &(symbol->string), 0);
     [symbol release];                             // on behalf of the table
-    #ifndef IPHONE
+#ifndef IPHONE
     [[NSGarbageCollector defaultCollector] enableCollectorForPointer:symbol];
-    #endif
+#endif
 }
 
 @end
@@ -185,7 +185,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
 
 - (id) evalWithContext:(NSMutableDictionary *)context
 {
-
+    
     char c = (char) [[self stringValue] characterAtIndex:0];
     // If the symbol is a class instance variable, find "self" and ask it for the ivar value.
     if (c == '@') {
@@ -196,13 +196,13 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
         id result = [object valueForIvar:ivarName];
         return result ? result : (id) [NSNull null];
     }
-
+    
     // Next, try to find the symbol in the local evaluation context.
     id valueInContext = [context lookupObjectForKey:self];
     if (valueInContext)
         return valueInContext;
-
-    #if 0
+    
+#if 0
     // if it's not there, try the next context up
     id parentContext = [context objectForKey:@"context"];
     if (parentContext) {
@@ -210,27 +210,27 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
         if (valueInContext)
             return valueInContext;
     }
-    #endif
-
+#endif
+    
     // Next, return the global value assigned to the value.
     if (value)
         return value;
-
+    
     // If the symbol is a label (ends in ':'), then it will evaluate to itself.
     if (isLabel)
         return self;
-
+    
     // If the symbol is still unknown, try to find a class with this name.
     id className = [self stringValue];
-                                                  // the symbol should retain its value.
+    // the symbol should retain its value.
     value = [[NuClass classWithName:className] retain];
     if (value)
         return value;
-
+    
     // Undefined globals evaluate to null.
     if (c == '$')
         return [NSNull null];
-
+    
     // Now we try looking in the bridge support dictionaries.
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuSymbol *bridgeSupportSymbol = [symbolTable symbolWithString:@"BridgeSupport"];
@@ -255,7 +255,7 @@ static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
             return value;
         }
     }
-
+    
     // Still-undefined symbols throw an exception.
     NSMutableString *errorDescription = [NSMutableString stringWithFormat:@"undefined symbol %@", [self stringValue]];
     id expression = [context lookupObjectForKey:[symbolTable symbolWithCString:"_expression"]];

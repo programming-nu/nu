@@ -1,23 +1,23 @@
 /*!
-@file NuException.m
-@discussion  NuException
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Added by Peter Quade <pq@pqua.de>
-System stack trace support and other enhancements by Jeff Buck.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuException.m
+ @discussion  NuException
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Added by Peter Quade <pq@pqua.de>
+ System stack trace support and other enhancements by Jeff Buck.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 //#define IMPORT_EXCEPTION_HANDLING_FRAMEWORK
 
@@ -36,12 +36,12 @@ limitations under the License.
 - (NSString*)dump
 {
     NSMutableString* dump = [NSMutableString stringWithString:@""];
-
+    
     // Print the system stack trace (10.6 only)
     if ([self respondsToSelector:@selector(callStackSymbols)])
     {
         [dump appendString:@"\nSystem stack trace:\n"];
-
+        
         NSArray* callStackSymbols = [self callStackSymbols];
         int count = [callStackSymbols count];
         for (int i = 0; i < count; i++)
@@ -50,7 +50,7 @@ limitations under the License.
             [dump appendString:@"\n"];
         }
     }
-
+    
     return dump;
 }
 
@@ -69,14 +69,14 @@ static BOOL NuException_verboseExceptionReporting = NO;
 + (void)setDefaultExceptionHandler
 {
     NSSetUncaughtExceptionHandler(*Nu_defaultExceptionHandler);
-
+    
 #ifdef IMPORT_EXCEPTION_HANDLING_FRAMEWORK
     [[NSExceptionHandler defaultExceptionHandler]
-        setExceptionHandlingMask:(NSHandleUncaughtExceptionMask
-                                    | NSHandleUncaughtSystemExceptionMask
-                                    | NSHandleUncaughtRuntimeErrorMask
-                                    | NSHandleTopLevelExceptionMask
-                                    | NSHandleOtherExceptionMask)];
+     setExceptionHandlingMask:(NSHandleUncaughtExceptionMask
+                               | NSHandleUncaughtSystemExceptionMask
+                               | NSHandleUncaughtRuntimeErrorMask
+                               | NSHandleTopLevelExceptionMask
+                               | NSHandleOtherExceptionMask)];
 #endif
 }
 
@@ -115,11 +115,12 @@ static BOOL NuException_verboseExceptionReporting = NO;
 
 - (NuException *)addFunction:(NSString *)function lineNumber:(int)line filename:(NSString *)filename
 {
-    NuTraceInfo* traceInfo = [[NuTraceInfo alloc] initWithFunction:function
-                                                        lineNumber:line
-                                                          filename:filename];
+    NuTraceInfo* traceInfo = [[[NuTraceInfo alloc] initWithFunction:function
+                                                         lineNumber:line
+                                                           filename:filename]
+                              autorelease];
     [stackTrace addObject:traceInfo];
-
+    
     return self;
 }
 
@@ -132,27 +133,27 @@ static BOOL NuException_verboseExceptionReporting = NO;
 - (NSString*)dumpExcludingTopLevelCount:(int)topLevelCount
 {
     NSMutableString* dump = [NSMutableString stringWithString:@"Nu uncaught exception: "];
-
+    
     [dump appendString:[NSString stringWithFormat:@"%@: %@\n", [self name], [self reason]]];
-
+    
     int count = [stackTrace count] - topLevelCount;
     for (int i = 0; i < count; i++)
     {
         NuTraceInfo* trace = [stackTrace objectAtIndex:i];
-
+        
         NSString* traceString = [NSString stringWithFormat:@"  from %@:%d: in %@\n",
-                                    [trace filename],
-                                    [trace lineNumber],
-                                    [trace function]];
-
+                                 [trace filename],
+                                 [trace lineNumber],
+                                 [trace function]];
+        
         [dump appendString:traceString];
     }
-
+    
     if (NuException_verboseExceptionReporting)
     {
         [dump appendString:[super dump]];
     }
-
+    
     return dump;
 }
 
@@ -169,7 +170,7 @@ static BOOL NuException_verboseExceptionReporting = NO;
 - (id)initWithFunction:(NSString *)aFunction lineNumber:(int)aLine filename:(NSString *)aFilename
 {
     self = [super init];
-
+    
     if (self)
     {
         filename = [aFilename retain];
@@ -183,7 +184,7 @@ static BOOL NuException_verboseExceptionReporting = NO;
 {
     [filename release];
     [function release];
-
+    
     [super dealloc];
 }
 

@@ -117,10 +117,11 @@ void nu_handler(void *return_value, struct handler_description *description, id 
 @implementation NuHandlers
 - (id) initWithHandlers:(struct handler_description *) h count:(int) count
 {
-    [super init];
-    handlers = h;
-    handler_count = count;
-    next_free_handler = 0;
+    if ((self = [super init])) {
+        handlers = h;
+        handler_count = count;
+        next_free_handler = 0;
+    }
     return self;
 }
 
@@ -140,16 +141,16 @@ static IMP handler_returning_void(void *userdata) {
 #define MAKE_HANDLER_WITH_TYPE(type) \
 static IMP handler_returning_ ## type (void* userdata) \
 { \
-    return imp_implementationWithBlock(^(id receiver, ...) { \ 
-        struct handler_description description; \
-        description.handler = NULL; \
-        description.description = userdata; \
-        va_list ap; \
-        va_start(ap, receiver); \
-        type result; \
-        nu_handler(&result, &description, receiver, ap); \
-        return result; \
-    }); \
+return imp_implementationWithBlock(^(id receiver, ...) { \ 
+struct handler_description description; \
+description.handler = NULL; \
+description.description = userdata; \
+va_list ap; \
+va_start(ap, receiver); \
+type result; \
+nu_handler(&result, &description, receiver, ap); \
+return result; \
+}); \
 }
 
 MAKE_HANDLER_WITH_TYPE(id)

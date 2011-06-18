@@ -1,20 +1,20 @@
 /*!
-@header NuObject.h
-@discussion Nu extensions to NSObject for higher-level programming.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @header NuObject.h
+ @discussion Nu extensions to NSObject for higher-level programming.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 #import <Foundation/Foundation.h>
 @class NuBlock;
@@ -22,16 +22,16 @@ limitations under the License.
 @class NuCell;
 
 /*!
-    @category NSObject(Nu)
-    @abstract NSObject extensions for Nu programming.
-*/
+ @category NSObject(Nu)
+ @abstract NSObject extensions for Nu programming.
+ */
 @interface NSObject(Nu)
 /*! Returns true.  In Nu, virtually all Objective-C classes are considered atoms. */
 - (bool) atom;
 /*!
-    Evaluation operator.  The Nu default is for an Objective-C object to evaluate to itself,
-    but certain subclasses (such as NuSymbol and NSString) behave differently.
-*/
+ Evaluation operator.  The Nu default is for an Objective-C object to evaluate to itself,
+ but certain subclasses (such as NuSymbol and NSString) behave differently.
+ */
 - (id) evalWithContext:(NSMutableDictionary *) context;
 /*! Gets the value of a specified instance variable. */
 - (id) valueForIvar:(NSString *) name;
@@ -65,11 +65,11 @@ limitations under the License.
 - (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context;
 
 /*! This method is automatically sent to a class whenever Nu code creates a subclass of that class.
-Its default implementation does nothing.  Override it to track subclassing. */
+ Its default implementation does nothing.  Override it to track subclassing. */
 + (id) inheritedByClass:(NuClass *) newClass;
 
 /*! Get a string providing a helpful description of an object.
-This method should be overridden by subclasses to be more helpful. */
+ This method should be overridden by subclasses to be more helpful. */
 - (NSString *) help;
 
 /*! Swap a pair of instance methods of the underlying class. */

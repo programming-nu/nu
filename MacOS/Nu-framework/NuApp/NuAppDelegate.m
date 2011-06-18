@@ -39,7 +39,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     self.window.backgroundColor = [UIColor greenColor];
     [self.window makeKeyAndVisible];
     
@@ -56,7 +56,7 @@
                                   encoding:NSUTF8StringEncoding
                                      error:NULL];
     [[Nu sharedParser] parseEval:s];
-        
+    
     NSString *resourceDirectory = [[NSBundle mainBundle] resourcePath];
     
     NSArray *files = [[NSFileManager defaultManager] 

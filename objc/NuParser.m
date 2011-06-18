@@ -1,20 +1,20 @@
 /*!
-@file NuParser.m
-@description Nu source file parser.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuParser.m
+ @description Nu source file parser.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 #import "NuParser.h"
 #import "NuSymbol.h"
@@ -235,14 +235,14 @@ static id regexWithString(NSString *string)
     [partial setString:@""];
     depth = 0;
     parens = 0;
-
+    
     [readerMacroStack removeAllObjects];
-
+    
     int i;
     for (i = 0; i < MAXDEPTH; i++) {
         readerMacroDepth[i] = 0;
     }
-
+    
     [root release];
     root = current = [[NuCell alloc] init];
     [root setFile:filenum line:linenum];
@@ -256,25 +256,26 @@ static id regexWithString(NSString *string)
 {
     extern id Nu__null;
     if (Nu__null == 0) Nu__null = [NSNull null];
-    [super init];
-
-    filenum = -1;
-    linenum = 1;
-    column = 0;
-    opens = [[NuStack alloc] init];
-    // attach to symbol table (or create one if we want a separate table per parser)
-    symbolTable = [[NuSymbolTable sharedSymbolTable] retain];
-    // create top-level context
-    context = [[NSMutableDictionary alloc] init];
-
-    readerMacroStack = [[NSMutableArray alloc] init];
-
-    [context setPossiblyNullObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
-    [context setPossiblyNullObject:symbolTable forKey:SYMBOLS_KEY];
-
-    partial = [[NSMutableString alloc] initWithString:@""];
-
-    [self reset];
+    if ((self = [super init])) {
+        
+        filenum = -1;
+        linenum = 1;
+        column = 0;
+        opens = [[NuStack alloc] init];
+        // attach to symbol table (or create one if we want a separate table per parser)
+        symbolTable = [[NuSymbolTable sharedSymbolTable] retain];
+        // create top-level context
+        context = [[NSMutableDictionary alloc] init];
+        
+        readerMacroStack = [[NSMutableArray alloc] init];
+        
+        [context setPossiblyNullObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
+        [context setPossiblyNullObject:symbolTable forKey:SYMBOLS_KEY];
+        
+        partial = [[NSMutableString alloc] initWithString:@""];
+        
+        [self reset];
+    }
     return self;
 }
 
@@ -301,7 +302,7 @@ static id regexWithString(NSString *string)
 - (void) addAtomCell:(id)atom
 {
     ParserDebug(@"addAtomCell: depth = %d  atom = %@", depth, [atom stringValue]);
-
+    
     NuCell *newCell;
     if (comments) {
         NuCellWithComments *newCellWithComments = [[[NuCellWithComments alloc] init] autorelease];
@@ -329,7 +330,7 @@ static id regexWithString(NSString *string)
 - (void) openListCell
 {
     ParserDebug(@"openListCell: depth = %d", depth);
-
+    
     depth++;
     NuCell *newCell = [[[NuCell alloc] init] autorelease];
     [newCell setFile:filenum line:linenum];
@@ -341,47 +342,47 @@ static id regexWithString(NSString *string)
         [current setCdr:newCell];
     }
     current = newCell;
-
+    
     addToCar = true;
 }
 
 - (void) openList
 {
     ParserDebug(@"openList: depth = %d", depth);
-
+    
     while ([readerMacroStack count] > 0) {
         ParserDebug(@"  openList: readerMacro");
-
+        
         [self openListCell];
         ++readerMacroDepth[depth];
         ParserDebug(@"  openList: ++RMD[%d] = %d", depth, readerMacroDepth[depth]);
         [self addAtomCell:
-        [symbolTable symbolWithString:
-        [readerMacroStack objectAtIndex:0]]];
-
+         [symbolTable symbolWithString:
+          [readerMacroStack objectAtIndex:0]]];
+        
         [readerMacroStack removeObjectAtIndex:0];
     }
-
+    
     [self openListCell];
 }
 
 - (void) addAtom:(id)atom
 {
     ParserDebug(@"addAtom: depth = %d  atom: %@", depth, [atom stringValue]);
-
+    
     while ([readerMacroStack count] > 0) {
         ParserDebug(@"  addAtom: readerMacro");
         [self openListCell];
         ++readerMacroDepth[depth];
         ParserDebug(@"  addAtom: ++RMD[%d] = %d", depth, readerMacroDepth[depth]);
         [self addAtomCell:
-        [symbolTable symbolWithString:[readerMacroStack objectAtIndex:0]]];
-
+         [symbolTable symbolWithString:[readerMacroStack objectAtIndex:0]]];
+        
         [readerMacroStack removeObjectAtIndex:0];
     }
-
+    
     [self addAtomCell:atom];
-
+    
     while (readerMacroDepth[depth] > 0) {
         --readerMacroDepth[depth];
         ParserDebug(@"  addAtom: --RMD[%d] = %d", depth, readerMacroDepth[depth]);
@@ -392,9 +393,9 @@ static id regexWithString(NSString *string)
 - (void) closeListCell
 {
     ParserDebug(@"closeListCell: depth = %d", depth);
-
+    
     --depth;
-
+    
     if (addToCar) {
         [current setCar:[NSNull null]];
     }
@@ -403,7 +404,7 @@ static id regexWithString(NSString *string)
         current = [stack pop];
     }
     addToCar = false;
-
+    
     while (readerMacroDepth[depth] > 0) {
         --readerMacroDepth[depth];
         ParserDebug(@"  closeListCell: --RMD[%d] = %d", depth, readerMacroDepth[depth]);
@@ -414,7 +415,7 @@ static id regexWithString(NSString *string)
 - (void) closeList
 {
     ParserDebug(@"closeList: depth = %d", depth);
-
+    
     [self closeListCell];
 }
 
@@ -549,13 +550,13 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
 -(id) parse:(NSString*)string
 {
     if (!string) return [NSNull null];            // don't crash, at least.
-
+    
     column = 0;
     if (state != PARSE_REGEX)
         [partial setString:@""];
     else
         [partial autorelease];
-
+    
     int i = 0;
     int imax = [string length];
     for (i = 0; i < imax; i++) {
@@ -646,16 +647,16 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                                     i = i + 2;
                                 }
                                 else if ((i + 5 < imax) &&
-                                    isalnum([string characterAtIndex:i+1]) &&
-                                    isalnum([string characterAtIndex:i+2]) &&
-                                    isalnum([string characterAtIndex:i+3]) &&
-                                    isalnum([string characterAtIndex:i+4]) &&
-                                ([string characterAtIndex:i+5] == '\'')) {
+                                         isalnum([string characterAtIndex:i+1]) &&
+                                         isalnum([string characterAtIndex:i+2]) &&
+                                         isalnum([string characterAtIndex:i+3]) &&
+                                         isalnum([string characterAtIndex:i+4]) &&
+                                         ([string characterAtIndex:i+5] == '\'')) {
                                     characterLiteralValue =
-                                        ((([string characterAtIndex:i+1]*256
-                                        + [string characterAtIndex:i+2])*256
-                                        + [string characterAtIndex:i+3])*256
-                                        + [string characterAtIndex:i+4]);
+                                    ((([string characterAtIndex:i+1]*256
+                                       + [string characterAtIndex:i+2])*256
+                                      + [string characterAtIndex:i+3])*256
+                                     + [string characterAtIndex:i+4]);
                                     isACharacterLiteral = true;
                                     i = i + 5;
                                 }
@@ -724,7 +725,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         break;
                     case '<':
                         if ((i+3 < imax) && ([string characterAtIndex:i+1] == '<')
-                        && (([string characterAtIndex:i+2] == '-') || ([string characterAtIndex:i+2] == '+'))) {
+                            && (([string characterAtIndex:i+2] == '-') || ([string characterAtIndex:i+2] == '+'))) {
                             // parse a here string
                             state = PARSE_HERESTRING;
                             parseEscapes = ([string characterAtIndex:i+2] == '+');
@@ -753,7 +754,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                 //NSLog(@"pattern %@", pattern);
                 if ((stri == [pattern characterAtIndex:0]) &&
                     (i + [pattern length] < imax) &&
-                ([pattern isEqual:[string substringWithRange:NSMakeRange(i, [pattern length])]])) {
+                    ([pattern isEqual:[string substringWithRange:NSMakeRange(i, [pattern length])]])) {
                     // everything up to here is the string
                     NSString *string = [[[NSString alloc] initWithString:partial] autorelease];
                     [partial setString:@""];
@@ -968,11 +969,11 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
 - (int) interact
 {
     printf("Nu Shell.\n");
-
+    
     char* homedir = getenv("HOME");
     char  history_file[FILENAME_MAX];
     int   valid_history_file = 0;
-
+    
     if (homedir) {                                // Not likely, but could be NULL
         // Since we're getting something from the shell environment,
         // try to be safe about it
@@ -988,25 +989,25 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
         system("stty -echo"); // Turn off echoing to avoid duplicated input. Surely there's a better way to do this.
         puts("It looks like you are running in the Xcode debugger console. Beware: command history is broken.");
     }
-
+    
     do {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         char *prompt = ([self incomplete] ? "- " : "% ");
-        #ifdef IPHONENOREADLINE
+#ifdef IPHONENOREADLINE
         puts(prompt);
         char line[1024];                          // careful
         int count = gets(line);
-        #else
+#else
         char *line = readline(prompt);
         if (line && *line && strcmp(line, "quit"))
             add_history (line);
-        #endif
+#endif
         if(!line || !strcmp(line, "quit")) {
             break;
         }
         else {
             id progn = nil;
-
+            
             @try
             {
                 progn = [[self parse:[NSString stringWithCString:line encoding:NSUTF8StringEncoding]] retain];
@@ -1017,18 +1018,18 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
             }
             @catch (id exception) {
                 printf("%s: %s\n",
-                    [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
-                    [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
+                       [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
+                       [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
                 [self reset];
             }
-
+            
             if (progn && (progn != [NSNull null])) {
                 id cursor = [progn cdr];
                 while (cursor && (cursor != [NSNull null])) {
                     if ([cursor car] != [NSNull null]) {
                         id expression = [cursor car];
                         //printf("evaluating %s\n", [[expression stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
-
+                        
                         @try
                         {
                             id result = [expression evalWithContext:context];
@@ -1048,8 +1049,8 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
                         }
                         @catch (id exception) {
                             printf("%s: %s\n",
-                                [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
-                                [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
+                                   [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
+                                   [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
                         }
                     }
                     cursor = [cursor cdr];
@@ -1059,11 +1060,11 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
         }
         [pool release];
     } while(1);
-
+    
     if (valid_history_file) {
         write_history(history_file);
     }
-
+    
     return 0;
 }
 #endif

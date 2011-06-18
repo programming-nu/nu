@@ -273,14 +273,14 @@
 
 - (NuProperty *) propertyWithName:(NSString *) name {
     objc_property_t property = class_getProperty(c, [name cStringUsingEncoding:NSUTF8StringEncoding]);
-
+    
     return [NuProperty propertyWithProperty:(objc_property_t) property];
 }
 
 - (NSArray *) properties {
     unsigned int property_count;
     objc_property_t *property_list = class_copyPropertyList(c, &property_count);
-  
+    
     NSMutableArray *properties = [NSMutableArray array];
     for (int i = 0; i < property_count; i++) {
         [properties addObject:[NuProperty propertyWithProperty:property_list[i]]];

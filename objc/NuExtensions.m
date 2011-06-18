@@ -1,20 +1,20 @@
 /*!
-@file NuExtensions.m
-@description Nu extensions to basic Objective-C types.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuExtensions.m
+ @description Nu extensions to basic Objective-C types.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import "NuInternals.h"
 #import "NuExtensions.h"
 #import "NuSymbol.h"
@@ -169,14 +169,14 @@ extern id Nu__null;
 {
     NSEnumerator *setEnumerator = [self objectEnumerator];
     NSObject *anObject = [setEnumerator nextObject];
-
+    
     if(!anObject)
         return nil;
-
+    
     NuCell *result = [[[NuCell alloc] init] autorelease];
     NuCell *cursor = result;
     [cursor setCar:anObject];
-
+    
     while ((anObject = [setEnumerator nextObject])) {
         [cursor setCdr:[[[NuCell alloc] init] autorelease]];
         cursor = [cursor cdr];
@@ -305,8 +305,8 @@ extern id Nu__null;
 
 @interface NuStringEnumerator : NSEnumerator
 {
-   NSString *string;
-   int index;
+    NSString *string;
+    int index;
 }
 @end
 
@@ -314,28 +314,28 @@ extern id Nu__null;
 
 + (NuStringEnumerator *) enumeratorWithString:(NSString *) string
 {
-   return [[[self alloc] initWithString:string] autorelease];
+    return [[[self alloc] initWithString:string] autorelease];
 }
 
 - (id) initWithString:(NSString *) s
 {
-   self = [super init];
-   string = [s retain];
-   index = 0;
-   return self;
+    self = [super init];
+    string = [s retain];
+    index = 0;
+    return self;
 }
 
 - (id) nextObject {
-   if (index < [string length]) {
-      return [NSNumber numberWithInt:[string characterAtIndex:index++]];
-   } else {
-      return nil;
-   }
+    if (index < [string length]) {
+        return [NSNumber numberWithInt:[string characterAtIndex:index++]];
+    } else {
+        return nil;
+    }
 }
 
 - (void) dealloc {
-   [string release];
-   [super dealloc];
+    [string release];
+    [super dealloc];
 }
 
 @end
@@ -503,7 +503,7 @@ extern id Nu__null;
 
 - (id) objectEnumerator
 {
-   return [NuStringEnumerator enumeratorWithString:self];
+    return [NuStringEnumerator enumeratorWithString:self];
 }
 
 - (id) each:(id) block
@@ -824,7 +824,7 @@ extern id Nu__null;
 + (NSBundle *) frameworkWithName:(NSString *) frameworkName
 {
     NSBundle *framework = nil;
-
+    
     // is the framework already loaded?
     NSArray *fw = [NSBundle allFrameworks];
     NSEnumerator *frameworkEnumerator = [fw objectEnumerator];
@@ -833,26 +833,26 @@ extern id Nu__null;
             return framework;
         }
     }
-
+    
     // first try the current directory
     framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"%@/%@.framework", [[NSFileManager defaultManager] currentDirectoryPath], frameworkName]];
-
+    
     // then /Library/Frameworks
     if (!framework)
         framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"/Library/Frameworks/%@.framework", frameworkName]];
-
+    
     // then /System/Library/Frameworks
     if (!framework)
         framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"/System/Library/Frameworks/%@.framework", frameworkName]];
-
+    
     // then /usr/frameworks
     if (!framework)
         framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"/usr/frameworks/%@.framework", frameworkName]];
-
+    
     // then /usr/local/frameworks
     if (!framework)
         framework = [NSBundle bundleWithPath:[NSString stringWithFormat:@"/usr/local/frameworks/%@.framework", frameworkName]];
-
+    
     if (framework) {
         if ([framework load])
             return framework;
@@ -924,7 +924,7 @@ extern id Nu__null;
                 id variableName0 = [[firstArgument substringWithRange:NSMakeRange(3,1)] lowercaseString];
                 id variableName1 = [firstArgument substringWithRange:NSMakeRange(4, [firstArgument length] - 5)];
                 [self setValue:[[[message cdr] car] evalWithContext:context]
-                    forIvar:[NSString stringWithFormat:@"%@%@", variableName0, variableName1]];
+                       forIvar:[NSString stringWithFormat:@"%@%@", variableName0, variableName1]];
                 return Nu__null;
             }
             @catch (id error) {

@@ -1,20 +1,20 @@
 /*!
-@file NuOperator.m
-@description Nu operators.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuOperator.m
+ @description Nu operators.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import "NuInternals.h"
 #import "NuOperator.h"
 #import "NuExtensions.h"
@@ -56,17 +56,19 @@ limitations under the License.
 @implementation NuReturnException
 - (id) initWithValue:(id) v
 {
-    [super initWithName:@"NuReturnException" reason:@"A return operator was evaluated" userInfo:nil];
-    value = [v retain];
-    blockForReturn = nil;
+    if ((self = [super initWithName:@"NuReturnException" reason:@"A return operator was evaluated" userInfo:nil])) {
+        value = [v retain];
+        blockForReturn = nil;
+    }
     return self;
 }
 
 - (id) initWithValue:(id) v blockForReturn:(id) b
 {
-    [super initWithName:@"NuReturnException" reason:@"A return operator was evaluated" userInfo:nil];
-    value = [v retain];
-    blockForReturn = b;                           // weak reference
+    if ((self = [super initWithName:@"NuReturnException" reason:@"A return operator was evaluated" userInfo:nil])) {
+        value = [v retain];
+        blockForReturn = b;                           // weak reference
+    }
     return self;
 }
 
@@ -342,26 +344,26 @@ limitations under the License.
     //id thenSymbol = [symbolTable symbolWithCString:"then"];
     id elseSymbol = [symbolTable symbolWithCString:"else"];
     //id elseifSymbol = [symbolTable symbolWithCString:"elseif"];
-
+    
     id result = Nu__null;
     id test = [[cdr car] evalWithContext:context];
-
+    
     bool testIsTrue = flip ^ nu_valueIsTrue(test);
     bool noneIsTrue = !testIsTrue;
-
+    
     id expressions = [cdr cdr];
     while (expressions && (expressions != Nu__null)) {
         id nextExpression = [expressions car];
         if (nu_objectIsKindOfClass(nextExpression, [NuCell class])) {
             /*if ([nextExpression car] == elseifSymbol) {
-                test = [[[[expressions car] cdr] car] evalWithContext:context];
-                testIsTrue = noneIsTrue && nu_valueIsTrue(test);
-                noneIsTrue = noneIsTrue && !testIsTrue;
-                if (testIsTrue)
-                    // skip the test:
-                    result = [[[nextExpression cdr] cdr] evalWithContext:context];
-            }
-            else */
+             test = [[[[expressions car] cdr] car] evalWithContext:context];
+             testIsTrue = noneIsTrue && nu_valueIsTrue(test);
+             noneIsTrue = noneIsTrue && !testIsTrue;
+             if (testIsTrue)
+             // skip the test:
+             result = [[[nextExpression cdr] cdr] evalWithContext:context];
+             }
+             else */
             if ([nextExpression car] == elseSymbol) {
                 if (noneIsTrue)
                     result = [nextExpression evalWithContext:context];
@@ -373,12 +375,12 @@ limitations under the License.
         }
         else {
             /*if (nextExpression == elseifSymbol) {
-                test = [[[expressions cdr] car] evalWithContext:context];
-                testIsTrue = noneIsTrue && nu_valueIsTrue(test);
-                noneIsTrue = noneIsTrue && !testIsTrue;
-                expressions = [expressions cdr];            // skip the test
-            }
-            else */
+             test = [[[expressions cdr] car] evalWithContext:context];
+             testIsTrue = noneIsTrue && nu_valueIsTrue(test);
+             noneIsTrue = noneIsTrue && !testIsTrue;
+             expressions = [expressions cdr];            // skip the test
+             }
+             else */
             if (nextExpression == elseSymbol) {
                 testIsTrue = noneIsTrue;
                 noneIsTrue = NO;
@@ -525,7 +527,7 @@ limitations under the License.
     id catchSymbol = [symbolTable symbolWithCString:"catch"];
     id finallySymbol = [symbolTable symbolWithCString:"finally"];
     id result = Nu__null;
-
+    
     @try
     {
         // evaluate all the expressions that are outside catch and finally blocks
@@ -612,10 +614,10 @@ limitations under the License.
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     //  NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-
+    
     id object = [[cdr car] evalWithContext:context];
     id result = Nu__null;
-
+    
     @synchronized(object) {
         // evaluate the rest of the expressions
         id expressions = [cdr cdr];
@@ -652,8 +654,8 @@ limitations under the License.
     // If we get here, it means someone called bq_comma
     // outside of a backquote
     [NSException raise:@"NuQuasiquoteEvalOutsideQuasiquote"
-        format:@"Comma must be inside a backquote"];
-
+                format:@"Comma must be inside a backquote"];
+    
     // Purely cosmetic...
     return Nu__null;
 }
@@ -670,8 +672,8 @@ limitations under the License.
     // If we get here, it means someone called bq_comma
     // outside of a backquote
     [NSException raise:@"NuQuasiquoteSpliceOutsideQuasiquote"
-        format:@"Comma-at must be inside a backquote"];
-
+                format:@"Comma-at must be inside a backquote"];
+    
     // Purely cosmetic...
     return Nu__null;
 }
@@ -693,20 +695,20 @@ limitations under the License.
 - (id) evalQuasiquote:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-
+    
     id quasiquote_eval = [symbolTable symbolWithString:@"quasiquote-eval"];
     id quasiquote_splice = [symbolTable symbolWithString:@"quasiquote-splice"];
-
+    
     QuasiLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
-
+    
     id result = Nu__null;
     id result_cursor = Nu__null;
     id cursor = cdr;
-
+    
     while (cursor && (cursor != Nu__null)) {
         id value;
         QuasiLog(@"quasiquote: [cursor car] == %@", [[cursor car] stringValue]);
-
+        
         if ([[cursor car] atom]) {
             // Treat it as a quoted value
             QuasiLog(@"quasiquote: Quoting cursor car: %@", [[cursor car] stringValue]);
@@ -723,20 +725,20 @@ limitations under the License.
         }
         else if ([[cursor car] car] == quasiquote_splice) {
             QuasiLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@",
-                [[[cursor car] cdr] stringValue]);
+                     [[[cursor car] cdr] stringValue]);
             value = [[[cursor car] cdr] evalWithContext:context];
             QuasiLog(@"  quasiquote-splice: Value: %@", [value stringValue]);
-
+            
             if (value != Nu__null && [value atom]) {
                 [NSException raise:@"NuQuasiquoteSpliceNoListError"
-                    format:@"An atom was passed to Quasiquote splicer.  Splicing can only splice a list."];
+                            format:@"An atom was passed to Quasiquote splicer.  Splicing can only splice a list."];
             }
-
+            
             id value_cursor = value;
-
+            
             while (value_cursor && (value_cursor != Nu__null)) {
                 id value_item = [value_cursor car];
-
+                
                 if (result_cursor == Nu__null) {
                     result_cursor = [[[NuCell alloc] init] autorelease];
                     result = result_cursor;
@@ -745,15 +747,15 @@ limitations under the License.
                     [result_cursor setCdr: [[[NuCell alloc] init] autorelease]];
                     result_cursor = [result_cursor cdr];
                 }
-
+                
                 [result_cursor setCar: value_item];
                 value_cursor = [value_cursor cdr];
             }
-
+            
             QuasiLog(@"  quasiquote-splice-append: result: %@", [result stringValue]);
-
+            
             cursor = [cursor cdr];
-
+            
             // Don't want to do the normal cursor handling at bottom of the loop
             // in this case as we've already done it in the splicing above...
             continue;
@@ -763,7 +765,7 @@ limitations under the License.
             value = [self evalQuasiquote:[cursor car] context:context];
             QuasiLog(@"quasiquote: leaving recursive call with value: %@", [value stringValue]);
         }
-
+        
         if (result == Nu__null) {
             result = [[[NuCell alloc] init] autorelease];
             result_cursor = result;
@@ -772,12 +774,12 @@ limitations under the License.
             [result_cursor setCdr:[[[NuCell alloc] init] autorelease]];
             result_cursor = [result_cursor cdr];
         }
-
+        
         [result_cursor setCar:value];
-
+        
         QuasiLog(@"quasiquote: result_cursor: %@", [result_cursor stringValue]);
         QuasiLog(@"quasiquote: result:        %@", [result stringValue]);
-
+        
         cursor = [cursor cdr];
     }
     QuasiLog(@"quasiquote: returning result = %@", [result stringValue]);
@@ -838,11 +840,11 @@ limitations under the License.
 @implementation Nu_set_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-
+    
     NuSymbol *symbol = [cdr car];
     id value = [[cdr cdr] car];
     id result = [value evalWithContext:context];
-
+    
     char c = (char) [[symbol stringValue] characterAtIndex:0];
     if (c == '$') {
         [symbol setValue:result];
@@ -854,7 +856,7 @@ limitations under the License.
         [object setValue:result forIvar:ivar];
     }
     else {
-        #ifndef CLOSE_ON_VALUES
+#ifndef CLOSE_ON_VALUES
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
         id classSymbol = [symbolTable symbolWithCString:"_class"];
         id searchContext = context;
@@ -868,7 +870,7 @@ limitations under the License.
             }
             searchContext = [searchContext objectForKey:PARENT_KEY];
         }
-        #endif
+#endif
         [context setPossiblyNullObject:result forKey:symbol];
     }
     return result;
@@ -882,7 +884,7 @@ limitations under the License.
 @implementation Nu_global_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-
+    
     NuSymbol *symbol = [cdr car];
     id value = [[cdr cdr] car];
     id result = [value evalWithContext:context];
@@ -931,10 +933,10 @@ limitations under the License.
     NuBlock *block = [[[NuBlock alloc] initWithParameters:args body:body context:context] autorelease];
     // this defines the function in the calling context, lexical closures make recursion possible
     [context setPossiblyNullObject:block forKey:symbol];
-    #ifdef CLOSE_ON_VALUES
+#ifdef CLOSE_ON_VALUES
     // in this case, we don't have closures, so we set this to allow recursion (but it creates a retain cycle)
     [[block context] setPossiblyNullObject:block forKey:symbol];
-    #endif
+#endif
     return block;
 }
 
@@ -966,9 +968,9 @@ limitations under the License.
 {
     id name = [cdr car];
     id body = [cdr cdr];
-
+    
     NuMacro_0 *macro = [[[NuMacro_0 alloc] initWithName:name body:body] autorelease];
-                                                  // this defines the function in the calling context
+    // this defines the function in the calling context
     [context setPossiblyNullObject:macro forKey:name];
     return macro;
 }
@@ -984,9 +986,9 @@ limitations under the License.
     id name = [cdr car];
     id args = [[cdr cdr] car];
     id body = [[cdr cdr] cdr];
-
+    
     NuMacro_1 *macro = [[[NuMacro_1 alloc] initWithName:name parameters:args body:body] autorelease];
-                                                  // this defines the function in the calling context
+    // this defines the function in the calling context
     [context setPossiblyNullObject:macro forKey:name];
     return macro;
 }
@@ -1002,14 +1004,14 @@ limitations under the License.
     id call = [cdr car];
     id name = [call car];
     id margs = [call cdr];
-
+    
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     id macro = [context objectForKey:[symbolTable symbolWithString:[name stringValue]]];
-
+    
     if (macro == nil) {
         [NSException raise:@"NuMacroxWrongType" format:@"macrox was called on an object which is not a macro"];
     }
-
+    
     id expanded = [macro expand1:margs context:context];
     return expanded;
 }
@@ -1455,7 +1457,7 @@ limitations under the License.
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuConsoleViewController *console = (NuConsoleViewController*)[[symbolTable symbolWithCString:"$$console"] value];
-
+    
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
@@ -1539,7 +1541,7 @@ limitations under the License.
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
     id resourceName = [[cdr car] evalWithContext:context];
-
+    
     // does the resourceName contain a colon? if so, it's a framework:nu-source-file pair.
     id split = [resourceName componentsSeparatedByString:@":"];
     if ([split count] == 2) {
@@ -1577,19 +1579,19 @@ limitations under the License.
                 return nil;
             }
         }
-
+        
         // if that failed, try to load the file the main application bundle
         if ([[NSBundle mainBundle] loadNuFile:resourceName withContext:context])
             return [symbolTable symbolWithCString:"t"];
-
+        
         // next, try the main Nu bundle
         if ([Nu loadNuFile:resourceName fromBundleWithIdentifier:@"nu.programming.framework" withContext:context])
             return [symbolTable symbolWithCString:"t"];
-
+        
         // if no file was found, try to load a framework with the given name
         if ([NSBundle frameworkWithName:resourceName])
             return [symbolTable symbolWithCString:"t"];
-
+        
         [NSException raise:@"NuLoadFailed" format:@"unable to load %@", resourceName];
         return nil;
     }
@@ -1604,10 +1606,10 @@ limitations under the License.
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
+    
     id arg_names = [[NuCell alloc] init];
     id arg_values = [[NuCell alloc] init];
-
+    
     id cursor = [cdr car];
     if ((cursor != [NSNull null]) && [[cursor car] atom]) {
         [arg_names setCar:[cursor car]];
@@ -1632,7 +1634,7 @@ limitations under the License.
     NuBlock *block = [[NuBlock alloc] initWithParameters:arg_names body:body context:context];
     id result = [[block evalWithArguments:arg_values context:context] retain];
     [block release];
-
+    
     [arg_names release];
     [arg_values release];
     [pool drain];
@@ -1651,24 +1653,24 @@ limitations under the License.
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     id className = [cdr car];
     id body;
-    #if defined(__x86_64__) || defined(IPHONE)
+#if defined(__x86_64__) || defined(IPHONE)
     Class newClass = nil;
-    #endif
-
+#endif
+    
     NuClass *childClass;
     //NSLog(@"class name: %@", className);
     if ([cdr cdr]
         && ([cdr cdr] != Nu__null)
         && [[[cdr cdr] car] isEqual: [symbolTable symbolWithCString:"is"]]
-    ) {
+        ) {
         id parentName = [[[cdr cdr] cdr] car];
         //NSLog(@"parent name: %@", [parentName stringValue]);
         Class parentClass = NSClassFromString([parentName stringValue]);
         if (!parentClass)
             [NSException raise:@"NuUndefinedSuperclass" format:@"undefined superclass %@", [parentName stringValue]];
-
-        #if defined(__x86_64__) || defined(IPHONE)
-
+        
+#if defined(__x86_64__) || defined(IPHONE)
+        
         newClass = objc_allocateClassPair(parentClass, [[className stringValue] cStringUsingEncoding:NSUTF8StringEncoding], 0);
         childClass = [NuClass classWithClass:newClass];
         [childClass setRegistered:NO];
@@ -1677,7 +1679,7 @@ limitations under the License.
         if ([parentClass respondsToSelector:@selector(inheritedByClass:)]) {
             [parentClass inheritedByClass:childClass];
         }
-
+        
         if (!childClass) {
             // This class may have already been defined previously
             // (perhaps by loading the same .nu file twice).
@@ -1691,11 +1693,11 @@ limitations under the License.
                 //    NSLog(@"Warning: attempting to re-define existing class: %@.  Ignoring.", [className stringValue]);
             }
         }
-
-        #else
+        
+#else
         [parentClass createSubclassNamed:[className stringValue]];
         childClass = [NuClass classWithName:[className stringValue]];
-        #endif
+#endif
         body = [[[cdr cdr] cdr] cdr];
     }
     else {
@@ -1708,16 +1710,16 @@ limitations under the License.
     if (body && (body != Nu__null)) {
         NuBlock *block = [[NuBlock alloc] initWithParameters:Nu__null body:body context:context];
         [[block context]
-            setPossiblyNullObject:childClass
-            forKey:[symbolTable symbolWithCString:"_class"]];
+         setPossiblyNullObject:childClass
+         forKey:[symbolTable symbolWithCString:"_class"]];
         result = [block evalWithArguments:Nu__null context:Nu__null];
         [block release];
     }
-    #if defined(__x86_64__) || defined(IPHONE)
+#if defined(__x86_64__) || defined(IPHONE)
     if (newClass && ([childClass isRegistered] == NO)) {
         [childClass registerClass];
     }
-    #endif
+#endif
     return result;
 }
 
@@ -1765,12 +1767,12 @@ limitations under the License.
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
-    #if defined(__x86_64__) || defined(IPHONE)
+#if defined(__x86_64__) || defined(IPHONE)
     // this will only work if the class is unregistered...
     if ([classWrapper isRegistered]) {
         [NSException raise:@"NuIvarAddedTooLate" format:@"instance variables must be added when a class is created and before any method declarations"];
     }
-    #endif
+#endif
     Class classToExtend = [classWrapper wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"instance variable declaration with no enclosing class declaration"];
@@ -1782,8 +1784,8 @@ limitations under the License.
         cursor = [cursor cdr];
         NSString *signature = signature_for_identifier(variableType, symbolTable);
         class_addInstanceVariable_withSignature(classToExtend,
-            [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
-            [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+                                                [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
+                                                [signature cStringUsingEncoding:NSUTF8StringEncoding]);
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
     return Nu__null;
@@ -2106,7 +2108,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     [(NuSymbol *) [symbolTable symbolWithCString:"nil"] setValue:Nu__null];
     [(NuSymbol *) [symbolTable symbolWithCString:"YES"] setValue:[NSNumber numberWithInt:1]];
     [(NuSymbol *) [symbolTable symbolWithCString:"NO"] setValue:[NSNumber numberWithInt:0]];
-
+    
     install("car",      Nu_car_operator);
     install("cdr",      Nu_cdr_operator);
     install("first",    Nu_car_operator);
@@ -2115,7 +2117,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("tail",     Nu_cdr_operator);
     install("atom",     Nu_atom_operator);
     install("defined",  Nu_defined_operator);
-
+    
     install("eq",       Nu_eq_operator);
     install("==",       Nu_eq_operator);
     install("ne",       Nu_neq_operator);
@@ -2128,10 +2130,10 @@ void load_builtins(NuSymbolTable *symbolTable)
     install(">=",       Nu_gte_operator);
     install("le",       Nu_lte_operator);
     install("<=",       Nu_lte_operator);
-
+    
     install("cons",     Nu_cons_operator);
     install("append",   Nu_append_operator);
-
+    
     install("cond",     Nu_cond_operator);
     install("case",     Nu_case_operator);
     install("if",       Nu_if_operator);
@@ -2143,92 +2145,92 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("continue", Nu_continue_operator);
     install("return",   Nu_return_operator);
     install("return-from",   Nu_return_from_operator);
-
+    
     install("try",      Nu_try_operator);
-
+    
     install("throw",    Nu_throw_operator);
     install("synchronized", Nu_synchronized_operator);
-
+    
     install("quote",    Nu_quote_operator);
     install("eval",     Nu_eval_operator);
-
+    
     install("context",  Nu_context_operator);
     install("set",      Nu_set_operator);
     install("global",   Nu_global_operator);
-
+    
     install("regex",    Nu_regex_operator);
-
+    
     install("def",      Nu_function_operator);
     install("function", Nu_function_operator);
     install("progn",    Nu_progn_operator);
     install("then",     Nu_progn_operator);
     install("else",     Nu_progn_operator);
-
+    
     install("macro-0",  Nu_macro_0_operator);
     install("macro-1",  Nu_macro_1_operator);
     install("macro",    Nu_macro_1_operator);
     install("macrox",   Nu_macrox_operator);
-
+    
     install("quasiquote",           Nu_quasiquote_operator);
     install("quasiquote-eval",      Nu_quasiquote_eval_operator);
     install("quasiquote-splice",    Nu_quasiquote_splice_operator);
-
+    
     install("+",        Nu_add_operator);
     install("-",        Nu_subtract_operator);
     install("*",        Nu_multiply_operator);
     install("/",        Nu_divide_operator);
     install("**",       Nu_exponentiation_operator);
     install("%",        Nu_modulus_operator);
-
+    
     install("&",        Nu_bitwiseand_operator);
     install("|",        Nu_bitwiseor_operator);
     install("<<",       Nu_leftshift_operator);
     install(">>",       Nu_rightshift_operator);
-
+    
     install("and",      Nu_and_operator);
     install("or",       Nu_or_operator);
     install("not",      Nu_not_operator);
-
+    
     install("min",      Nu_min_operator);
     install("max",      Nu_max_operator);
-
+    
     install("list",     Nu_list_operator);
-
+    
     install("do",       Nu_do_operator);
-
-    #ifndef IPHONE
+    
+#ifndef IPHONE
     install("gets",     Nu_gets_operator);
-    #endif
+#endif
     install("puts",     Nu_puts_operator);
     install("print",    Nu_print_operator);
-
+    
     //  install("label",    Nu_label_operator);
     install("let",      Nu_let_operator);
-
+    
     install("load",     Nu_load_operator);
-    #if !defined(IPHONE)
+#if !defined(IPHONE)
     install("beep",     Nu_beep_operator);
-    #endif
-
+#endif
+    
     install("uname",    Nu_uname_operator);
     install("system",   Nu_system_operator);
     install("exit",     Nu_exit_operator);
     install("sleep",    Nu_sleep_operator);
-
+    
     install("class",    Nu_class_operator);
     install("imethod",  Nu_imethod_operator);
     install("cmethod",  Nu_cmethod_operator);
     install("ivar",     Nu_ivar_operator);
     install("ivars",    Nu_ivars_operator);
     install("ivar-accessors", Nu_ivar_accessors_operator);
-
+    
     install("call",     Nu_call_operator);
     install("send",     Nu_send_operator);
-
+    
     install("array",    Nu_array_operator);
     install("dict",     Nu_dict_operator);
     install("parse",    Nu_parse_operator);
-
+    
     install("help",     Nu_help_operator);
     install("?",        Nu_help_operator);
     install("version",  Nu_version_operator);

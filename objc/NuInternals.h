@@ -1,20 +1,20 @@
 /*!
-@header NuInternals.h
-@discussion Internal declarations for Nu.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @header NuInternals.h
+ @discussion Internal declarations for Nu.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 // Execution contexts are NSMutableDictionaries that are keyed by
 // symbols.  Here we define two string keys that allow us to store
@@ -30,22 +30,22 @@ limitations under the License.
 #import <Foundation/Foundation.h>
 
 /*!
-    @class NuBreakException
-    @abstract Internal class used to implement the Nu break operator.
+ @class NuBreakException
+ @abstract Internal class used to implement the Nu break operator.
  */
 @interface NuBreakException : NSException {}
 @end
 
 /*!
-    @class NuContinueException
-    @abstract Internal class used to implement the Nu continue operator.
+ @class NuContinueException
+ @abstract Internal class used to implement the Nu continue operator.
  */
 @interface NuContinueException : NSException {}
 @end
 
 /*!
-    @class NuReturnException
-    @abstract Internal class used to implement the Nu return operator.
+ @class NuReturnException
+ @abstract Internal class used to implement the Nu return operator.
  */
 @interface NuReturnException : NSException
 {

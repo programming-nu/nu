@@ -1,29 +1,29 @@
 /*!
-@header NuExtensions.h
-@discussion Nu extensions to various Objective-C types.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @header NuExtensions.h
+ @discussion Nu extensions to various Objective-C types.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 #import <Foundation/Foundation.h>
 @class NuCell;
 @class NuBlock;
 
 /*!
-    @category NSNull(Nu)
-    @abstract NSNull extensions for Nu programming.
-    @discussion In Nu, nil is represented by <code>[NSNull null]</code>.
+ @category NSNull(Nu)
+ @abstract NSNull extensions for Nu programming.
+ @discussion In Nu, nil is represented by <code>[NSNull null]</code>.
  */
 @interface NSNull(Nu)
 /*! Returns false.  In Nu, nil is not an atom. */
@@ -37,8 +37,8 @@ limitations under the License.
 @end
 
 /*!
-    @category NSArray(Nu)
-    @abstract NSArray extensions for Nu programming.
+ @category NSArray(Nu)
+ @abstract NSArray extensions for Nu programming.
  */
 @interface NSArray(Nu)
 /*! Creates an array that contains the contents of a specified list. */
@@ -53,8 +53,8 @@ limitations under the License.
 @end
 
 /*!
-    @category NSMutableArray(Nu)
-    @abstract NSMutableArray extensions for Nu programming.
+ @category NSMutableArray(Nu)
+ @abstract NSMutableArray extensions for Nu programming.
  */
 @interface NSMutableArray(Nu)
 /*! Add the objects from the specified list to the array. */
@@ -68,8 +68,8 @@ limitations under the License.
 @end
 
 /*!
-    @category NSSet(Nu)
-    @abstract NSSet extensions for Nu programming.
+ @category NSSet(Nu)
+ @abstract NSSet extensions for Nu programming.
  */
 @interface NSSet(Nu)
 /*! Creates a set that contains the contents of a specified list. */
@@ -79,8 +79,8 @@ limitations under the License.
 @end
 
 /*!
-    @category NSSet(Nu)
-    @abstract NSSet extensions for Nu programming.
+ @category NSSet(Nu)
+ @abstract NSSet extensions for Nu programming.
  */
 @interface NSMutableSet(Nu)
 /*! Add an object to a set, automatically converting nil into [NSNull null]. */
@@ -88,28 +88,28 @@ limitations under the License.
 @end
 
 /*!
-    @category NSDictionary(Nu)
-    @abstract NSDictionary extensions for Nu programming.
+ @category NSDictionary(Nu)
+ @abstract NSDictionary extensions for Nu programming.
  */
 @interface NSDictionary(Nu)
 /*! Creates a dictionary that contains the contents of a specified list.
-    The list should be a sequence of interleaved keys and values.  */
+ The list should be a sequence of interleaved keys and values.  */
 + (NSDictionary *) dictionaryWithList:(id) list;
 /*! Look up an object by key, returning the specified default if no object is found. */
 - (id) objectForKey:(id)key withDefault:(id)defaultValue;
 @end
 
 /*!
-    @category NSMutableDictionary(Nu)
-    @abstract NSMutableDictionary extensions for Nu programming.
-    @discussion In Nu, NSMutableDictionaries are used to represent evaluation contexts.
-    Context keys are NuSymbols, and the associated objects are the symbols'
-    assigned values.
+ @category NSMutableDictionary(Nu)
+ @abstract NSMutableDictionary extensions for Nu programming.
+ @discussion In Nu, NSMutableDictionaries are used to represent evaluation contexts.
+ Context keys are NuSymbols, and the associated objects are the symbols'
+ assigned values.
  */
 @interface NSMutableDictionary(Nu)
 /*! Looks up the value associated with a key in the current context.
-    If no value is found, looks in the context's parent, continuing
-    upward until no more parent contexts are found. */
+ If no value is found, looks in the context's parent, continuing
+ upward until no more parent contexts are found. */
 - (id) lookupObjectForKey:(id)key;
 /*! Add an object to a dictionary, automatically converting nil into [NSNull null]. */
 - (void) setPossiblyNullObject:(id) anObject forKey:(id) aKey;
@@ -117,9 +117,9 @@ limitations under the License.
 @end
 
 /*!
-    @category NSData(Nu)
-    @abstract NSData extensions for Nu programming.
-    @discussion NSData extensions for Nu programming.
+ @category NSData(Nu)
+ @abstract NSData extensions for Nu programming.
+ @discussion NSData extensions for Nu programming.
  */
 @interface NSData(Nu)
 #ifndef IPHONE
@@ -135,16 +135,16 @@ limitations under the License.
 @end
 
 /*!
-    @category NSString(Nu)
-    @abstract NSString extensions for Nu programming.
-    @discussion NSString extensions for Nu programming.
+ @category NSString(Nu)
+ @abstract NSString extensions for Nu programming.
+ @discussion NSString extensions for Nu programming.
  */
 @interface NSString(Nu)
 /*! Get string consisting of a single carriage return character. */
 + (id) carriageReturn;
 /*!
-    Evaluation operator.  In Nu, strings may contain embedded Nu expressions that are evaluated when this method is called.
-    Expressions are wrapped in #{...} where the ellipses correspond to a Nu expression.
+ Evaluation operator.  In Nu, strings may contain embedded Nu expressions that are evaluated when this method is called.
+ Expressions are wrapped in #{...} where the ellipses correspond to a Nu expression.
  */
 - (id) evalWithContext:(NSMutableDictionary *) context;
 
@@ -183,8 +183,8 @@ limitations under the License.
 @end
 
 /*!
-    @category NSMutableString(Nu)
-    @abstract NSMutableString extensions for Nu programming.
+ @category NSMutableString(Nu)
+ @abstract NSMutableString extensions for Nu programming.
  */
 @interface NSMutableString(Nu)
 /*! Append a specified character to a string. */
@@ -192,34 +192,34 @@ limitations under the License.
 @end
 
 /*!
-    @category NSNumber(Nu)
-    @abstract NSNumber extensions for Nu programming.
+ @category NSNumber(Nu)
+ @abstract NSNumber extensions for Nu programming.
  */
 @interface NSNumber(Nu)
 /*!
-    Iterate a number of times corresponding to the message receiver.
-    On each iteration, evaluate the given block after passing in the iteration count.
-    Iteration counts begin at zero and end at n-1.
+ Iterate a number of times corresponding to the message receiver.
+ On each iteration, evaluate the given block after passing in the iteration count.
+ Iteration counts begin at zero and end at n-1.
  */
 - (id) times:(id) block;
 /*!
-    Iterate from the current value up to a specified limit.
-    On each iteration, evaluate the given block after passing in the index.
-    Indices begin at the receiver's value and end at the specified number.
+ Iterate from the current value up to a specified limit.
+ On each iteration, evaluate the given block after passing in the index.
+ Indices begin at the receiver's value and end at the specified number.
  */
 - (id) upTo:(id) number do:(id) block;
 /*!
-    Iterate from the current value down to a specified limit.
-    On each iteration, evaluate the given block after passing in the index.
-    Indices begin at the receiver's value and end at the specified number.
+ Iterate from the current value down to a specified limit.
+ On each iteration, evaluate the given block after passing in the index.
+ Indices begin at the receiver's value and end at the specified number.
  */
 - (id) downTo:(id) number do:(id) block;
 @end
 
 /*!
-    @class NuMath
-    @abstract A utility class that provides Nu access to common mathematical functions.
-    @discussion The NuMath class provides a few common mathematical functions as class methods.
+ @class NuMath
+ @abstract A utility class that provides Nu access to common mathematical functions.
+ @discussion The NuMath class provides a few common mathematical functions as class methods.
  */
 @interface NuMath : NSObject {}
 /*! Get the square root of a number. */
@@ -251,8 +251,8 @@ limitations under the License.
 @end
 
 /*!
-    @category NSBundle(Nu)
-    @abstract NSBundle extensions for Nu programming.
+ @category NSBundle(Nu)
+ @abstract NSBundle extensions for Nu programming.
  */
 @interface NSBundle (Nu)
 /*! Get or load a framework by name. */
@@ -262,8 +262,8 @@ limitations under the License.
 @end
 
 /*!
-    @category NSFileManager(Nu)
-    @abstract NSFileManager extensions for Nu programming.
+ @category NSFileManager(Nu)
+ @abstract NSFileManager extensions for Nu programming.
  */
 @interface NSFileManager (Nu)
 /*! Get the creation time for a file. */
@@ -277,8 +277,8 @@ limitations under the License.
 @end
 
 /*!
-    @category NSMethodSignature(Nu)
-    @abstract NSMethodSignature extensions for Nu programming.
+ @category NSMethodSignature(Nu)
+ @abstract NSMethodSignature extensions for Nu programming.
  */
 @interface NSMethodSignature (Nu)
 /*! Get the type string for a method signature. */
@@ -286,9 +286,9 @@ limitations under the License.
 @end
 
 /*!
-   @class NuAutomaticIvars
-   @abstract Include this class to get handleUnknownMessage:withContext: to emulate ivar accessors.
-   @discussion This class is used inside Nu to implement the ivars operator.
+ @class NuAutomaticIvars
+ @abstract Include this class to get handleUnknownMessage:withContext: to emulate ivar accessors.
+ @discussion This class is used inside Nu to implement the ivars operator.
  */
 @interface NuAutomaticIvars : NSObject
 {

@@ -1,22 +1,22 @@
 /*
-@file NuObjCRuntime.m
-@description Nu extensions to the Objective-C runtime.
-Includes replacements for Objective-C 2.0 enhancements that are
-only available in Apple's OS X 10.5 (Leopard).
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuObjCRuntime.m
+ @description Nu extensions to the Objective-C runtime.
+ Includes replacements for Objective-C 2.0 enhancements that are
+ only available in Apple's OS X 10.5 (Leopard).
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 // Undefine __OBJC2__ to get access to data structures in the ObjC runtime.
 // This triggers deprecation warnings on Leopard.
@@ -48,6 +48,8 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types) {
 
 
 #ifndef LEOPARD_OBJC2
+NEVER COMPILE ME
+
 #ifndef IPHONE
 BOOL class_hasMethod(Class cls, SEL name)
 {
@@ -231,7 +233,7 @@ Class objc_allocateClassPair(Class super_class, const char *name, size_t extraBy
     struct objc_method_list **mlp0, **mlp1;
     mlp0 = method_list_alloc(16);
     mlp1 = method_list_alloc(4);
-
+    
     c->isa = isa;
     c->super_class = super_class;
     c->name = strdup(name);
@@ -242,7 +244,7 @@ Class objc_allocateClassPair(Class super_class, const char *name, size_t extraBy
     c->methodLists = mlp0;
     c->cache = NULL;
     c->protocols = NULL;
-
+    
     isa->isa = super_class->isa->isa;
     isa->super_class = super_class ? super_class->isa : 0;
     isa->name = c->name;
@@ -278,7 +280,7 @@ void method_exchangeImplementations(Method method1, Method method2)
     char *temp_types = method1->method_types;
     method1->method_types = method2->method_types;
     method2->method_types = temp_types;
-
+    
     IMP temp_imp = method1->method_imp;
     method1->method_imp = method2->method_imp;
     method2->method_imp = temp_imp;
@@ -318,17 +320,17 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
 
 void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature)
 {
-    #if (defined(__x86_64__)) || defined(IPHONE)
+#if (defined(__x86_64__)) || defined(IPHONE)
     extern size_t size_of_objc_type(const char *typeString);
     size_t size = size_of_objc_type(signature);
     uint8_t alignment = log2(size);
     BOOL result = class_addIvar(thisClass, variableName, size, alignment, signature);
     if (!result) {
         [NSException raise:@"NuAddIvarFailed"
-            format:@"failed to add instance variable %s to class %s", variableName, class_getName(thisClass)];
+                    format:@"failed to add instance variable %s to class %s", variableName, class_getName(thisClass)];
     }
     //NSLog(@"adding ivar named %s to %s, result is %d", variableName, class_getName(thisClass), result);
-    #else
+#else
     struct objc_ivar_list *ivars = thisClass->ivars;
     if (ivars) {
         int i = 0;
@@ -364,14 +366,14 @@ void class_addInstanceVariable_withSignature(Class thisClass, const char *variab
         thisClass->ivars = new_ivar_list;
         thisClass->instance_size += size_of_objc_type(new_ivar->ivar_type);
     }
-    #endif
+#endif
 }
 
 BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector)
 {
     Method m = class_getInstanceMethod(sourceClass, selector);
     if (!m) return NO;
-
+    
     IMP imp = method_getImplementation(m);
     if (!imp) return NO;
     const char *signature = method_getTypeEncoding(m);

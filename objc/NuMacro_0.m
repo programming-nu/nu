@@ -1,20 +1,20 @@
 /*!
-@file NuMacro_0.m
-@description Nu macros.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuMacro_0.m
+ @description Nu macros.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import "NuMacro_0.h"
 #import "NuCell.h"
 #import "NuSymbol.h"
@@ -71,11 +71,12 @@ extern id Nu__null;
 
 - (id) initWithName:(NSString *)n body:(NuCell *)b
 {
-    [super init];
-    name = [n retain];
-    body = [b retain];
-    gensyms = [[NSMutableSet alloc] init];
-    [self collectGensyms:body];
+    if ((self = [super init])) {
+        name = [n retain];
+        body = [b retain];
+        gensyms = [[NSMutableSet alloc] init];
+        [self collectGensyms:body];
+    }
     return self;
 }
 
@@ -114,8 +115,8 @@ extern id Nu__null;
             while ((gensymSymbol = [gensymEnumerator nextObject])) {
                 //NSLog(@"gensym is %@", [gensymSymbol stringValue]);
                 [tempString replaceOccurrencesOfString:[gensymSymbol stringValue]
-                    withString:[NSString stringWithFormat:@"%@%@", prefix, [gensymSymbol stringValue]]
-                    options:0 range:NSMakeRange(0, [tempString length])];
+                                            withString:[NSString stringWithFormat:@"%@%@", prefix, [gensymSymbol stringValue]]
+                                               options:0 range:NSMakeRange(0, [tempString length])];
             }
             //NSLog(@"setting string to %@", tempString);
             [newBody setCar:tempString];
@@ -168,39 +169,39 @@ extern id Nu__null;
 - (id) expandAndEval:(id)cdr context:(NSMutableDictionary *)calling_context evalFlag:(BOOL)evalFlag
 {
     NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
-
+    
     // save the current value of margs
     id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
     // set the arguments to the special variable "margs"
     [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
     // evaluate the body of the block in the calling context (implicit progn)
-
+    
     // if the macro contains gensyms, give them a unique prefix
     int gensymCount = [[self gensyms] count];
     id gensymPrefix = nil;
     if (gensymCount > 0) {
         gensymPrefix = [NSString stringWithFormat:@"g%ld", [NuMath random]];
     }
-
+    
     id bodyToEvaluate = (gensymCount == 0)
-        ? (id)body : [self body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
-
+    ? (id)body : [self body:body withGensymPrefix:gensymPrefix symbolTable:symbolTable];
+    
     // uncomment this to get the old (no gensym) behavior.
     //bodyToEvaluate = body;
     //NSLog(@"evaluating %@", [bodyToEvaluate stringValue]);
-
+    
     id value = [self expandUnquotes:bodyToEvaluate withContext:calling_context];
-
+    
 	if (evalFlag)
 	{
 		id cursor = value;
-
+        
 	    while (cursor && (cursor != Nu__null)) {
 	        value = [[cursor car] evalWithContext:calling_context];
 	        cursor = [cursor cdr];
 	    }
 	}
-
+    
     // restore the old value of margs
     if (old_margs == nil) {
         [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
@@ -208,8 +209,8 @@ extern id Nu__null;
     else {
         [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
     }
-
-    #if 0
+    
+#if 0
     // I would like to remove gensym values and symbols at the end of a macro's execution,
     // but there is a problem with this: the gensym assignments could be used in a closure,
     // and deleting them would cause that to break. See the testIvarAccessorMacro unit
@@ -223,7 +224,7 @@ extern id Nu__null;
         [calling_context removeObjectForKey:gensymSymbol];
         [symbolTable removeSymbol:gensymSymbol];
     }
-    #endif
+#endif
     return value;
 }
 

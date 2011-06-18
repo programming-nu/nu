@@ -1,20 +1,20 @@
 /*!
-@file NuCell.m
-@description Nu cells.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuCell.m
+ @description Nu cells.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import "NuCell.h"
 #import "NuSymbol.h"
 #import "NuExtensions.h"
@@ -90,7 +90,7 @@ limitations under the License.
 - (BOOL) isEqual:(id) other
 {
     if (nu_objectIsKindOfClass(other, [NuCell class])
-    && [[self car] isEqual:[other car]] && [[self cdr] isEqual:[other cdr]]) {
+        && [[self car] isEqual:[other car]] && [[self cdr] isEqual:[other cdr]]) {
         return YES;
     }
     else {
@@ -241,7 +241,7 @@ limitations under the License.
 - (void) addToException:(NuException*)e value:(id)value
 {
     const char *parsedFilename = nu_parsedFilename(self->file);
-
+    
     if (parsedFilename) {
         NSString* filename = [NSString stringWithCString:parsedFilename encoding:NSUTF8StringEncoding];
         [e addFunction:value lineNumber:[self line] filename:filename];
@@ -255,11 +255,11 @@ limitations under the License.
 {
     id value = nil;
     id result = nil;
-
+    
     @try
     {
         value = [car evalWithContext:context];
-
+        
         if (NU_LIST_EVAL_BEGIN_ENABLED()) {
             if ((self->line != -1) && (self->file != -1)) {
                 NU_LIST_EVAL_BEGIN(nu_parsedFilename(self->file), self->line);
@@ -272,7 +272,7 @@ limitations under the License.
         // add the currently-evaluating expression to the context
         [context setObject:self forKey:[[NuSymbolTable sharedSymbolTable] symbolWithString:@"_expression"]];
         result = [value evalWithArguments:cdr context:context];
-
+        
         if (NU_LIST_EVAL_END_ENABLED()) {
             if ((self->line != -1) && (self->file != -1)) {
                 NU_LIST_EVAL_END(nu_parsedFilename(self->file), self->line);
@@ -289,18 +289,18 @@ limitations under the License.
     @catch (NSException* e) {
         if (   nu_objectIsKindOfClass(e, [NuBreakException class])
             || nu_objectIsKindOfClass(e, [NuContinueException class])
-        || nu_objectIsKindOfClass(e, [NuReturnException class])) {
+            || nu_objectIsKindOfClass(e, [NuReturnException class])) {
             @throw e;
         }
         else {
             NuException* nuException = [[NuException alloc] initWithName:[e name]
-                reason:[e reason]
-                userInfo:[e userInfo]];
+                                                                  reason:[e reason]
+                                                                userInfo:[e userInfo]];
             [self addToException:nuException value:[car stringValue]];
             @throw nuException;
         }
     }
-
+    
     return result;
 }
 

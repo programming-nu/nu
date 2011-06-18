@@ -1,22 +1,22 @@
 /*!
-@file NuEnumerable.m
-@description The NuEnumerable mixin.
-This class implements methods that enumerate over collections of objects.
-The receiving class must have an objectEnumerator method that returns an NSEnumerator.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuEnumerable.m
+ @description The NuEnumerable mixin.
+ This class implements methods that enumerate over collections of objects.
+ The receiving class must have an objectEnumerator method that returns an NSEnumerator.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 #import "NuEnumerable.h"
 #import "NuObjCRuntime.h"
@@ -208,10 +208,10 @@ limitations under the License.
 - (id) maximum:(NuBlock *) block
 {
     id bestObject = nil;
-
+    
     id args = [[NuCell alloc] init];
     [args setCdr:[[[NuCell alloc] init] autorelease]];
-
+    
     if (nu_objectIsKindOfClass(block, [NuBlock class])) {
         NSEnumerator *enumerator = [self objectEnumerator];
         id object;
@@ -290,11 +290,11 @@ static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
     [args setCdr:[[[NuCell alloc] init] autorelease]];
     [args setCar:a];
     [[args cdr] setCar:b];
-
+    
     // cast context as a block
     NuBlock *block = (NuBlock *)context;
     id result = [block evalWithArguments:args context:nil];
-
+    
     [args release];
     return [result intValue];
 }

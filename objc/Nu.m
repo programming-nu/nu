@@ -1,20 +1,20 @@
 /*!
-@file nu.m
-@description Top-level Nu functions.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file nu.m
+ @description Top-level Nu functions.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import <AvailabilityMacros.h>
 
 #import "NuParser.h"
@@ -95,110 +95,110 @@ static void NuMain_exceptionHandler(NSException* e)
 
 int NuMain(int argc, const char *argv[])
 {
-	#ifdef IPHONE
+#ifdef IPHONE
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	#endif
-
+#endif
+    
     NuInit();
-
+    
 #if 0
     NSSetUncaughtExceptionHandler(&NuMain_exceptionHandler);
     [[NSExceptionHandler defaultExceptionHandler]
-        setExceptionHandlingMask:(    NSHandleUncaughtExceptionMask
-                                    | NSHandleUncaughtSystemExceptionMask
-                                    | NSHandleUncaughtRuntimeErrorMask
-                                    | NSHandleTopLevelExceptionMask
-                                    | NSHandleOtherExceptionMask)];
+     setExceptionHandlingMask:(    NSHandleUncaughtExceptionMask
+                               | NSHandleUncaughtSystemExceptionMask
+                               | NSHandleUncaughtRuntimeErrorMask
+                               | NSHandleTopLevelExceptionMask
+                               | NSHandleOtherExceptionMask)];
 #endif
-
+    
     @try
     {
         @autoreleasepool {
-
-        // first we try to load main.nu from the application bundle.
-        NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
-        if (main_path) {
-            NSString *main_nu = [NSString stringWithContentsOfFile:main_path encoding:NSUTF8StringEncoding error:nil];
-            if (main_nu) {
-                NuParser *parser = [[NuParser alloc] init];
-                id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
-                [parser eval:script];
-                [parser release];
-                //[pool release];
-                return 0;
+            
+            // first we try to load main.nu from the application bundle.
+            NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
+            if (main_path) {
+                NSString *main_nu = [NSString stringWithContentsOfFile:main_path encoding:NSUTF8StringEncoding error:nil];
+                if (main_nu) {
+                    NuParser *parser = [[NuParser alloc] init];
+                    id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
+                    [parser eval:script];
+                    [parser release];
+                    //[pool release];
+                    return 0;
+                }
             }
-        }
-        // if that doesn't work, use the arguments to decide what to execute
-        else if (argc > 1) {
-            NuParser *parser = [[NuParser alloc] init];
-            id script, result;
-            bool didSomething = false;
-            bool goInteractive = false;
-            int i = 1;
-            bool fileEvaluated = false;           // only evaluate one filename
-            while ((i < argc) && !fileEvaluated) {
-                if (!strcmp(argv[i], "-e")) {
-                    i++;
-                    script = [parser parse:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
-                    result = [parser eval:script];
-                    didSomething = true;
-                }
-                else if (!strcmp(argv[i], "-f")) {
-                    i++;
-                    script = [parser parse:[NSString stringWithFormat:@"(load \"%s\")", argv[i]] asIfFromFilename:argv[i]];
-                    result = [parser eval:script];
-                }
-                else if (!strcmp(argv[i], "-v")) {
-                    printf("Nu %s (%s)\n", NU_VERSION, NU_RELEASE_DATE);
-                    didSomething = true;
-                }
-                else if (!strcmp(argv[i], "-i")) {
-                    goInteractive = true;
-                }
-                else {
-                    // collect the command-line arguments
-                    [[NuApplication sharedApplication] setArgc:argc argv:argv startingAtIndex:i+1];
-                    id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding error:NULL];
-                    if (string) {
-                        id script = [parser parse:string asIfFromFilename:argv[i]];
-                        [parser eval:script];
-                        fileEvaluated = true;
+            // if that doesn't work, use the arguments to decide what to execute
+            else if (argc > 1) {
+                NuParser *parser = [[NuParser alloc] init];
+                id script, result;
+                bool didSomething = false;
+                bool goInteractive = false;
+                int i = 1;
+                bool fileEvaluated = false;           // only evaluate one filename
+                while ((i < argc) && !fileEvaluated) {
+                    if (!strcmp(argv[i], "-e")) {
+                        i++;
+                        script = [parser parse:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding]];
+                        result = [parser eval:script];
+                        didSomething = true;
+                    }
+                    else if (!strcmp(argv[i], "-f")) {
+                        i++;
+                        script = [parser parse:[NSString stringWithFormat:@"(load \"%s\")", argv[i]] asIfFromFilename:argv[i]];
+                        result = [parser eval:script];
+                    }
+                    else if (!strcmp(argv[i], "-v")) {
+                        printf("Nu %s (%s)\n", NU_VERSION, NU_RELEASE_DATE);
+                        didSomething = true;
+                    }
+                    else if (!strcmp(argv[i], "-i")) {
+                        goInteractive = true;
                     }
                     else {
-                        // complain somehow. Throw an exception?
-                        NSLog(@"Error: can't open file named %s", argv[i]);
+                        // collect the command-line arguments
+                        [[NuApplication sharedApplication] setArgc:argc argv:argv startingAtIndex:i+1];
+                        id string = [NSString stringWithContentsOfFile:[NSString stringWithCString:argv[i] encoding:NSUTF8StringEncoding] encoding:NSUTF8StringEncoding error:NULL];
+                        if (string) {
+                            id script = [parser parse:string asIfFromFilename:argv[i]];
+                            [parser eval:script];
+                            fileEvaluated = true;
+                        }
+                        else {
+                            // complain somehow. Throw an exception?
+                            NSLog(@"Error: can't open file named %s", argv[i]);
+                        }
+                        didSomething = true;
                     }
-                    didSomething = true;
+                    i++;
                 }
-                i++;
-            }
 #ifndef IPHONE
-            if (!didSomething || goInteractive)
-                [parser interact];
+                if (!didSomething || goInteractive)
+                    [parser interact];
 #endif
-            [parser release];
-
-            return 0;
-        }
-        // if there's no file, run at the terminal
-        else {
-            if (!isatty(stdin->_file))	   
-            {
-                NuParser *parser = [[NuParser alloc] init];
-                id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
-                id script = [parser parse:string asIfFromFilename:"stdin"];
-                [parser eval:script];
                 [parser release];
-                //[pool release];
+                
+                return 0;
             }
+            // if there's no file, run at the terminal
             else {
-               // [pool release];
+                if (!isatty(stdin->_file))	   
+                {
+                    NuParser *parser = [[NuParser alloc] init];
+                    id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+                    id script = [parser parse:string asIfFromFilename:"stdin"];
+                    [parser eval:script];
+                    [parser release];
+                    //[pool release];
+                }
+                else {
+                    // [pool release];
 #ifndef IPHONE
-                return [NuParser main];
+                    return [NuParser main];
 #endif
+                }
             }
         }
-    }
     }
 	@catch (NuException* nuException)
     {
@@ -209,10 +209,10 @@ int NuMain(int argc, const char *argv[])
         NSLog(@"Terminating due to uncaught exception (below):");
         NSLog(@"%@: %@", [exception name], [exception reason]);
     }
-
-	#ifdef IPHONE
+    
+#ifdef IPHONE
     [pool release];
-	#endif
+#endif
     return 0;
 }
 
@@ -235,25 +235,25 @@ void NuInit()
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
-
+        
         Nu__null = [NSNull null];
-
+        
         // add enumeration to collection classes
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         [NSArray include: [NuClass classWithClass:[NuEnumerable class]]];
         [NSSet include: [NuClass classWithClass:[NuEnumerable class]]];
         [NSString include: [NuClass classWithClass:[NuEnumerable class]]];
         [pool drain];
-
-        #ifndef IPHONE
+        
+#ifndef IPHONE
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
-
+        
         void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();
-
-        #ifndef MININUSH
+        
+#ifndef MININUSH
         // Load some standard files
         // Warning: since these loads are performed without a context, the non-global symbols defined in them
         // will not be available to other Nu scripts or at the console.  These loads should only be used
@@ -262,9 +262,9 @@ void NuInit()
         [Nu loadNuFile:@"bridgesupport" fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
-        #endif
-        #endif
-
+#endif
+#endif
+        
         
     }
 }
@@ -386,7 +386,7 @@ id _nulist(id firstObject, ...)
     else {
         if ([bundleIdentifier isEqual:@"nu.programming.framework"]) {
             // try to read it if it's baked in
-
+            
             @try
             {
                 id baked_function = [NuBridgedFunction functionWithName:[NSString stringWithFormat:@"baked_%@", fileName] signature:@"@"];

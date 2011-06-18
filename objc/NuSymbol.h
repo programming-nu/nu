@@ -1,20 +1,20 @@
 /*!
-@header NuSymbol.h
-@discussion Declarations for Nu symbols.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @header NuSymbol.h
+ @discussion Declarations for Nu symbols.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 #import <Foundation/Foundation.h>
 #import "NuInternals.h"
@@ -22,10 +22,10 @@ limitations under the License.
 @class NuSymbol;
 
 /*!
-    @class NuSymbolTable
-    @abstract The Nu symbol table class.
-    @discussion Instances of NuSymbolTable manage collections of NuSymbol objects.
-    By default, one NuSymbolTable object is shared by all NuParser objects and execution contexts in a process.
+ @class NuSymbolTable
+ @abstract The Nu symbol table class.
+ @discussion Instances of NuSymbolTable manage collections of NuSymbol objects.
+ By default, one NuSymbolTable object is shared by all NuParser objects and execution contexts in a process.
  */
 @interface NuSymbolTable : NSObject
 {
@@ -49,21 +49,21 @@ limitations under the License.
 @end
 
 /*!
-    @class NuSymbol
-    @abstract The Nu symbol class.
-    @discussion Instances of NuSymbol are used to uniquely represent strings in parsed Nu expressions.
-    NuSymbol objects are used as keys in local evaluation contexts (typically of type NSMutableDictionary)
-    and each NuSymbol may also have a global value bound to it.
-    Symbols ending in a colon (':') are considered "labels" which evaluate to themselves without error,
-    and when a label is found at the head of the list,
-    the list is considered to be a special type of list called a property list.
-    Each member of a property list is evaluated and the resulting list is returned with no further evaluation.
+ @class NuSymbol
+ @abstract The Nu symbol class.
+ @discussion Instances of NuSymbol are used to uniquely represent strings in parsed Nu expressions.
+ NuSymbol objects are used as keys in local evaluation contexts (typically of type NSMutableDictionary)
+ and each NuSymbol may also have a global value bound to it.
+ Symbols ending in a colon (':') are considered "labels" which evaluate to themselves without error,
+ and when a label is found at the head of the list,
+ the list is considered to be a special type of list called a property list.
+ Each member of a property list is evaluated and the resulting list is returned with no further evaluation.
  */
 @interface NuSymbol : NSObject <NSCoding>
 {
     NuSymbolTable *table;
     id value;
-    @public                                       // only for use by the symbol table
+@public                                       // only for use by the symbol table
     char *string;
     bool isLabel;
     bool isGensym;                                // in macro evaluation, symbol is replaced with an automatically-generated unique symbol.

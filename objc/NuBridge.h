@@ -1,20 +1,20 @@
 /*!
-@header NuBridge.h
-@discussion The Nu bridge to Objective-C.
-@copyright Copyright (c) 2007 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @header NuBridge.h
+ @discussion The Nu bridge to Objective-C.
+ @copyright Copyright (c) 2007 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 #import "NuOperator.h"
 #import "NuObjCRuntime.h"
 #import "NuCell.h"
@@ -32,37 +32,37 @@ size_t size_of_objc_type(const char *typeString);
 
 
 /*!
-    @class NuBridgedFunction
-    @abstract The Nu wrapper for imported C functions.
-    @discussion Instances of this class wrap functions imported from C.
-
-    Because NuBridgedFunction is a subclass of NuOperator, Nu expressions that
-    begin with NuBridgedFunction instances are treated as operator calls.
-
-    In general, operators may or may not evaluate their arguments,
-    but for NuBridgedFunctions, all arguments are evaluated.
-    The resulting values are then passed to the bridged C function
-using the foreign function interface (libFFI).
-
-The C function's return value is converted into a Nu object and returned.
-
-Here is an example showing the use of this class from Nu.
-The example imports and calls the C function <b>NSApplicationMain</b>.
-
-<div style="margin-left:2em;">
-<code>
-(set NSApplicationMain<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;(NuBridgedFunction<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;functionWithName:"NSApplicationMain" <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;signature:"ii^*"))<br/><br/>
-(NSApplicationMain 0 nil)
-</code>
-</div>
-
-The signature string used to create a NuBridgedFunction must be a valid Objective-C type signature.
-In the future, convenience methods may be added to make those signatures easier to generate.
-But in practice, this has not been much of a problem.
-*/
+ @class NuBridgedFunction
+ @abstract The Nu wrapper for imported C functions.
+ @discussion Instances of this class wrap functions imported from C.
+ 
+ Because NuBridgedFunction is a subclass of NuOperator, Nu expressions that
+ begin with NuBridgedFunction instances are treated as operator calls.
+ 
+ In general, operators may or may not evaluate their arguments,
+ but for NuBridgedFunctions, all arguments are evaluated.
+ The resulting values are then passed to the bridged C function
+ using the foreign function interface (libFFI).
+ 
+ The C function's return value is converted into a Nu object and returned.
+ 
+ Here is an example showing the use of this class from Nu.
+ The example imports and calls the C function <b>NSApplicationMain</b>.
+ 
+ <div style="margin-left:2em;">
+ <code>
+ (set NSApplicationMain<br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;(NuBridgedFunction<br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;functionWithName:"NSApplicationMain" <br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;signature:"ii^*"))<br/><br/>
+ (NSApplicationMain 0 nil)
+ </code>
+ </div>
+ 
+ The signature string used to create a NuBridgedFunction must be a valid Objective-C type signature.
+ In the future, convenience methods may be added to make those signatures easier to generate.
+ But in practice, this has not been much of a problem.
+ */
 @interface NuBridgedFunction : NuOperator
 {
     char *name;
@@ -71,33 +71,33 @@ But in practice, this has not been much of a problem.
 }
 
 /*! Create a wrapper for a C function with the specified name and signature.
-    The function is looked up using the <b>dlsym()</b> function and the wrapper is
-    constructed using libFFI. If the result of this method is assigned to a
-    symbol, that symbol may be used as the name of the bridged function.
+ The function is looked up using the <b>dlsym()</b> function and the wrapper is
+ constructed using libFFI. If the result of this method is assigned to a
+ symbol, that symbol may be used as the name of the bridged function.
  */
 + (NuBridgedFunction *) functionWithName:(NSString *)name signature:(NSString *)signature;
 /*! Initialize a wrapper for a C function with the specified name and signature.
-    The function is looked up using the <b>dlsym()</b> function and the wrapper is
-    constructed using libFFI. If the result of this method is assigned to a
-    symbol, that symbol may be used as the name of the bridged function.
+ The function is looked up using the <b>dlsym()</b> function and the wrapper is
+ constructed using libFFI. If the result of this method is assigned to a
+ symbol, that symbol may be used as the name of the bridged function.
  */
 - (NuBridgedFunction *) initWithName:(NSString *)name signature:(NSString *)signature;
 /*! Evaluate a bridged function with the specified arguments and context.
-    Arguments must be in a Nu list.
+ Arguments must be in a Nu list.
  */
 - (id) evalWithArguments:(id)arguments context:(NSMutableDictionary *)context;
 @end
 
 /*!
-    @class NuBridgedConstant
-    @abstract The Nu wrapper for imported C constants.
-    @discussion This class can be used to import constants defined in C code.
-    The signature string used to import a constant must be a valid Objective-C type signature.
-*/
+ @class NuBridgedConstant
+ @abstract The Nu wrapper for imported C constants.
+ @discussion This class can be used to import constants defined in C code.
+ The signature string used to import a constant must be a valid Objective-C type signature.
+ */
 @interface NuBridgedConstant : NSObject {}
 /*! Look up the value of a constant with specified name and type.
-    The function is looked up using the <b>dlsym()</b> function.
-    The returned value is of the type specified by the signature argument.
+ The function is looked up using the <b>dlsym()</b> function.
+ The returned value is of the type specified by the signature argument.
  */
 + (id) constantWithName:(NSString *) name signature:(NSString *) signature;
 
@@ -111,7 +111,7 @@ But in practice, this has not been much of a problem.
  @discussion This class makes a C block that wraps a nu block using a supplied
  Objective-C-style function signature. This works by copying a dummy c block and
  then writing over its function pointer with a libFFI-generated closure function.
-*/
+ */
 @interface NuBridgedBlock : NSObject
 {
 	NuBlock *nuBlock;
@@ -120,13 +120,13 @@ But in practice, this has not been much of a problem.
 }
 
 /*! Returns a C block that wraps the supplied nu block using the supplied
-	Objective-C-style function signature.
-*/
+ Objective-C-style function signature.
+ */
 +(id)cBlockWithNuBlock:(NuBlock*)nb signature:(NSString*)sig;
 
 /*! Initializes a NuBridgedBlock object using a NuBlock and an Objective-C-style
-	function signature. A C block is generated during the initialization.
-*/
+ function signature. A C block is generated during the initialization.
+ */
 -(id)initWithNuBlock:(NuBlock*)nb signature:(NSString*)sig;
 
 /*! Returns the NuBlock associated with the NuBridgedBlock object.
