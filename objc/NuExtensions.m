@@ -197,17 +197,20 @@ extern id Nu__null;
 @end
 
 @implementation NSDictionary(Nu)
+
 + (NSDictionary *) dictionaryWithList:(id) list
 {
     NSMutableDictionary *d = [NSMutableDictionary dictionary];
     id cursor = list;
     while (cursor && (cursor != Nu__null) && ([cursor cdr]) && ([cursor cdr] != Nu__null)) {
-        id key = [cursor car];
-        id value = [[cursor cdr] car];
+        id key = [cursor car];        
         if ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) {
-            [d setValue:value forKey:[key labelName]];
-        }
-        else {
+            key = [key labelName];
+        }        
+        id value = [[cursor cdr] car];
+        if (!value || [value isEqual:[NSNull null]]) {
+            [d removeObjectForKey:key];
+        } else {
             [d setValue:value forKey:key];
         }
         cursor = [[cursor cdr] cdr];

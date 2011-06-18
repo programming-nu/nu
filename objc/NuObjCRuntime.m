@@ -320,7 +320,7 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
 
 void class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature)
 {
-#if (defined(__x86_64__)) || defined(IPHONE)
+#if defined(__x86_64__) || defined(IPHONE) 
     extern size_t size_of_objc_type(const char *typeString);
     size_t size = size_of_objc_type(signature);
     uint8_t alignment = log2(size);

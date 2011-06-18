@@ -14,14 +14,10 @@ ifeq ($(shell test -e /usr/lib/libffi.dylib && echo yes), yes)
 	# Use the libffi that ships with OS X.
 	FFI_LIB = -L/usr/lib -lffi
 	FFI_INCLUDE = -I/usr/include/ffi
-	# assume that our system is at least on Leopard 
-	LEOPARD_CFLAGS = -DLEOPARD_OBJC2 
 else
 	# Use the libffi that is distributed with Nu.
 	FFI_LIB = -L./libffi -lffi
 	FFI_INCLUDE = -I./libffi/include
-	# assume that our system is pre-Leopard 
-	LEOPARD_CFLAGS =
 endif
 
 ifeq ($(shell test -e $(DEVROOT)/SDKs/MacOSX10.7.sdk && echo yes), yes)
@@ -55,7 +51,7 @@ CFLAGS += -DHAVE_CONFIG_H
 
 ifeq ($(SYSTEM), Darwin)
 	CC = $(DEVROOT)/usr/bin/clang
-	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS) $(LION_CFLAGS)  
+	CFLAGS += -DMACOSX -DDARWIN $(LION_CFLAGS)  
 else
 #	CFLAGS += -DLINUX
 #	MFLAGS += -fconstant-string-class=NSConstantString

@@ -913,32 +913,6 @@ static void raise_argc_exception(SEL s, int count, int given)
 
 #define BUFSIZE 500
 
-#define MAXPLACEHOLDERS 100
-static int placeholderCount = 0;
-static Class placeholderClass[MAXPLACEHOLDERS];
-
-static void nu_note_placeholders()
-{
-    // I don't like this. How can I automatically recognize placeholders?
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableArray");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderArray");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableDictionary");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderDictionary");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderString");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderValue");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderNumber");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderSet");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableSet");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSPlaceholderMutableString");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSManagedObjectModel");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSXMLDocument");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"NSBitmapImageRep");
-#ifdef IPHONE
-    placeholderClass[placeholderCount++] = NSClassFromString(@"UINavigationController");
-    placeholderClass[placeholderCount++] = NSClassFromString(@"UIWindow");
-#endif
-}
-
 id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
 {
     // this call seems to force the class's +initialize method to be called.
@@ -1050,8 +1024,8 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
             // NSLog(@"retain count %d", [result retainCount]);
             // Return values should not require a release.
             // Either they are owned by an existing object or are autoreleased.
+            // Exceptions to this rule are handled below.
             // Since these methods create new objects that aren't autoreleased, we autorelease them.
-            // But we must never release placeholders.
             bool already_retained =               // see Anguish/Buck/Yacktman, p. 104
             (s == @selector(alloc)) || (s == @selector(allocWithZone:))
             || (s == @selector(copy)) || (s == @selector(copyWithZone:))
@@ -1059,23 +1033,7 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
             || (s == @selector(new));
             //NSLog(@"already retained? %d", already_retained);
             if (already_retained) {
-                // Make sure this isn't an instance of a placeholder class.
-                // We should never release instances of placeholder classes;
-                // If you release one, you can never use it again (obviously!).
-                // Suggestion to Apple: install no-op versions of release methods on all placeholder classes.
-                // Here we protect ourselves against the ones we know about.
-                Class resultClass = [result class];
-                bool found = false;
-                for (i = 0; i < placeholderCount; i++) {
-                    if (resultClass == placeholderClass[i]) {
-                        //NSLog(@"preserving object of class %@", resultClass);
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    [result autorelease];
-                }
+                [result autorelease];                
             }
             for (i = 0; i < [args count]; i++) {
                 if (argument_needs_retained[i])
@@ -1522,74 +1480,74 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
                 finished = YES;
             }
         }
-        else if ([cursor car] == voidstar_symbol) {
+        else if (cursor_car == voidstar_symbol) {
             [signature appendString:@"^v"];
             finished = YES;
         }
-        else if ([cursor car] == idstar_symbol) {
+        else if (cursor_car == idstar_symbol) {
             [signature appendString:@"^@"];
             finished = YES;
         }
-        else if ([cursor car] == int_symbol) {
+        else if (cursor_car == int_symbol) {
             [signature appendString:@"i"];
             finished = YES;
         }
-        else if ([cursor car] == long_symbol) {
+        else if (cursor_car == long_symbol) {
             [signature appendString:@"l"];
             finished = YES;
         }
-        else if ([cursor car] == NSComparisonResult_symbol) {
+        else if (cursor_car == NSComparisonResult_symbol) {
             if (sizeof(NSComparisonResult) == 4)
                 [signature appendString:@"i"];
             else
                 [signature appendString:@"q"];
             finished = YES;
         }
-        else if ([cursor car] == BOOL_symbol) {
+        else if (cursor_car == BOOL_symbol) {
             [signature appendString:@"C"];
             finished = YES;
         }
-        else if ([cursor car] == double_symbol) {
+        else if (cursor_car == double_symbol) {
             [signature appendString:@"d"];
             finished = YES;
         }
-        else if ([cursor car] == float_symbol) {
+        else if (cursor_car == float_symbol) {
             [signature appendString:@"f"];
             finished = YES;
         }
-        else if ([cursor car] == NSRect_symbol) {
+        else if (cursor_car == NSRect_symbol) {
             [signature appendString:@NSRECT_SIGNATURE0];
             finished = YES;
         }
-        else if ([cursor car] == NSPoint_symbol) {
+        else if (cursor_car == NSPoint_symbol) {
             [signature appendString:@NSPOINT_SIGNATURE0];
             finished = YES;
         }
-        else if ([cursor car] == NSSize_symbol) {
+        else if (cursor_car == NSSize_symbol) {
             [signature appendString:@NSSIZE_SIGNATURE0];
             finished = YES;
         }
-        else if ([cursor car] == NSRange_symbol) {
+        else if (cursor_car == NSRange_symbol) {
             [signature appendString:@NSRANGE_SIGNATURE];
             finished = YES;
         }        
-        else if ([cursor car] == CGRect_symbol) {
+        else if (cursor_car == CGRect_symbol) {
             [signature appendString:@CGRECT_SIGNATURE0];
             finished = YES;
         }
-        else if ([cursor car] == CGPoint_symbol) {
+        else if (cursor_car == CGPoint_symbol) {
             [signature appendString:@CGPOINT_SIGNATURE];
             finished = YES;
         }
-        else if ([cursor car] == CGSize_symbol) {
+        else if (cursor_car == CGSize_symbol) {
             [signature appendString:@CGSIZE_SIGNATURE];
             finished = YES;
         }                
-        else if ([cursor car] == SEL_symbol) {
+        else if (cursor_car == SEL_symbol) {
             [signature appendString:@":"];
             finished = YES;
         }
-        else if ([cursor car] == Class_symbol) {
+        else if (cursor_car == Class_symbol) {
             [signature appendString:@"#"];
             finished = YES;
         }
