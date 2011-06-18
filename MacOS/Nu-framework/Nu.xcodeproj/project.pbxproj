@@ -145,37 +145,6 @@
 		22956DE912B9E29B00B42E63 /* NuVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956DAB12B9E29B00B42E63 /* NuVersion.h */; };
 		22956DEA12B9E29B00B42E63 /* st.c in Sources */ = {isa = PBXBuildFile; fileRef = 22956DAC12B9E29B00B42E63 /* st.c */; };
 		22956DEB12B9E29B00B42E63 /* st.h in Headers */ = {isa = PBXBuildFile; fileRef = 22956DAD12B9E29B00B42E63 /* st.h */; };
-		22B78A1B11DE98AF0022EE11 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B789FA11DE98AF0022EE11 /* config.h */; };
-		22B78A1D11DE98AF0022EE11 /* pcre.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B789FC11DE98AF0022EE11 /* pcre.h */; };
-		22B78A1E11DE98AF0022EE11 /* pcre_chartables.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B789FD11DE98AF0022EE11 /* pcre_chartables.c */; };
-		22B78A1F11DE98AF0022EE11 /* pcre_compile.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B789FE11DE98AF0022EE11 /* pcre_compile.c */; };
-		22B78A2011DE98AF0022EE11 /* pcre_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B789FF11DE98AF0022EE11 /* pcre_config.c */; };
-		22B78A2111DE98AF0022EE11 /* pcre_dfa_exec.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0011DE98AF0022EE11 /* pcre_dfa_exec.c */; };
-		22B78A2211DE98AF0022EE11 /* pcre_exec.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0111DE98AF0022EE11 /* pcre_exec.c */; };
-		22B78A2311DE98AF0022EE11 /* pcre_fullinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0211DE98AF0022EE11 /* pcre_fullinfo.c */; };
-		22B78A2411DE98AF0022EE11 /* pcre_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0311DE98AF0022EE11 /* pcre_get.c */; };
-		22B78A2511DE98AF0022EE11 /* pcre_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0411DE98AF0022EE11 /* pcre_globals.c */; };
-		22B78A2611DE98AF0022EE11 /* pcre_info.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0511DE98AF0022EE11 /* pcre_info.c */; };
-		22B78A2711DE98AF0022EE11 /* pcre_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A0611DE98AF0022EE11 /* pcre_internal.h */; };
-		22B78A2811DE98AF0022EE11 /* pcre_maketables.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0711DE98AF0022EE11 /* pcre_maketables.c */; };
-		22B78A2911DE98AF0022EE11 /* pcre_newline.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0811DE98AF0022EE11 /* pcre_newline.c */; };
-		22B78A2A11DE98AF0022EE11 /* pcre_ord2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0911DE98AF0022EE11 /* pcre_ord2utf8.c */; };
-		22B78A2B11DE98AF0022EE11 /* pcre_refcount.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0A11DE98AF0022EE11 /* pcre_refcount.c */; };
-		22B78A2C11DE98AF0022EE11 /* pcre_scanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A0B11DE98AF0022EE11 /* pcre_scanner.h */; };
-		22B78A2D11DE98AF0022EE11 /* pcre_stringpiece.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A0C11DE98AF0022EE11 /* pcre_stringpiece.h */; };
-		22B78A2E11DE98AF0022EE11 /* pcre_study.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0D11DE98AF0022EE11 /* pcre_study.c */; };
-		22B78A2F11DE98AF0022EE11 /* pcre_tables.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0E11DE98AF0022EE11 /* pcre_tables.c */; };
-		22B78A3011DE98AF0022EE11 /* pcre_try_flipped.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0F11DE98AF0022EE11 /* pcre_try_flipped.c */; };
-		22B78A3111DE98AF0022EE11 /* pcre_ucd.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1011DE98AF0022EE11 /* pcre_ucd.c */; };
-		22B78A3211DE98AF0022EE11 /* pcre_valid_utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1111DE98AF0022EE11 /* pcre_valid_utf8.c */; };
-		22B78A3311DE98AF0022EE11 /* pcre_version.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1211DE98AF0022EE11 /* pcre_version.c */; };
-		22B78A3411DE98AF0022EE11 /* pcre_xclass.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1311DE98AF0022EE11 /* pcre_xclass.c */; };
-		22B78A3511DE98AF0022EE11 /* pcrecpp.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A1411DE98AF0022EE11 /* pcrecpp.h */; };
-		22B78A3611DE98AF0022EE11 /* pcrecpp_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A1511DE98AF0022EE11 /* pcrecpp_internal.h */; };
-		22B78A3711DE98AF0022EE11 /* pcrecpparg.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A1611DE98AF0022EE11 /* pcrecpparg.h */; };
-		22B78A3811DE98AF0022EE11 /* pcreposix.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1711DE98AF0022EE11 /* pcreposix.c */; };
-		22B78A3911DE98AF0022EE11 /* pcreposix.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A1811DE98AF0022EE11 /* pcreposix.h */; };
-		22B78A3B11DE98AF0022EE11 /* ucp.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B78A1A11DE98AF0022EE11 /* ucp.h */; };
 		22EE2BF813A4731600895861 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22EE2BF713A4731600895861 /* UIKit.framework */; };
 		22EE2BFA13A4731600895861 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22EE2BF913A4731600895861 /* Foundation.framework */; };
 		22EE2BFC13A4731600895861 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22EE2BFB13A4731600895861 /* CoreGraphics.framework */; };
@@ -217,27 +186,6 @@
 		22EE2C6C13A4757B00895861 /* prep_cif.c in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C6313A4757B00895861 /* prep_cif.c */; };
 		22EE2C6D13A4757B00895861 /* raw_api.c in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C6413A4757B00895861 /* raw_api.c */; };
 		22EE2C6F13A4757B00895861 /* types.c in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C6613A4757B00895861 /* types.c */; };
-		22EE2C7B13A47D9F00895861 /* pcre_chartables.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B789FD11DE98AF0022EE11 /* pcre_chartables.c */; };
-		22EE2C7C13A47D9F00895861 /* pcre_compile.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B789FE11DE98AF0022EE11 /* pcre_compile.c */; };
-		22EE2C7D13A47D9F00895861 /* pcre_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B789FF11DE98AF0022EE11 /* pcre_config.c */; };
-		22EE2C7E13A47D9F00895861 /* pcre_dfa_exec.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0011DE98AF0022EE11 /* pcre_dfa_exec.c */; };
-		22EE2C7F13A47D9F00895861 /* pcre_exec.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0111DE98AF0022EE11 /* pcre_exec.c */; };
-		22EE2C8013A47D9F00895861 /* pcre_fullinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0211DE98AF0022EE11 /* pcre_fullinfo.c */; };
-		22EE2C8113A47D9F00895861 /* pcre_get.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0311DE98AF0022EE11 /* pcre_get.c */; };
-		22EE2C8213A47D9F00895861 /* pcre_globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0411DE98AF0022EE11 /* pcre_globals.c */; };
-		22EE2C8313A47D9F00895861 /* pcre_info.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0511DE98AF0022EE11 /* pcre_info.c */; };
-		22EE2C8513A47D9F00895861 /* pcre_maketables.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0711DE98AF0022EE11 /* pcre_maketables.c */; };
-		22EE2C8613A47D9F00895861 /* pcre_newline.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0811DE98AF0022EE11 /* pcre_newline.c */; };
-		22EE2C8713A47D9F00895861 /* pcre_ord2utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0911DE98AF0022EE11 /* pcre_ord2utf8.c */; };
-		22EE2C8813A47D9F00895861 /* pcre_refcount.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0A11DE98AF0022EE11 /* pcre_refcount.c */; };
-		22EE2C8B13A47D9F00895861 /* pcre_study.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0D11DE98AF0022EE11 /* pcre_study.c */; };
-		22EE2C8C13A47D9F00895861 /* pcre_tables.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0E11DE98AF0022EE11 /* pcre_tables.c */; };
-		22EE2C8D13A47D9F00895861 /* pcre_try_flipped.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A0F11DE98AF0022EE11 /* pcre_try_flipped.c */; };
-		22EE2C8E13A47D9F00895861 /* pcre_ucd.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1011DE98AF0022EE11 /* pcre_ucd.c */; };
-		22EE2C8F13A47D9F00895861 /* pcre_valid_utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1111DE98AF0022EE11 /* pcre_valid_utf8.c */; };
-		22EE2C9013A47D9F00895861 /* pcre_version.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1211DE98AF0022EE11 /* pcre_version.c */; };
-		22EE2C9113A47D9F00895861 /* pcre_xclass.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1311DE98AF0022EE11 /* pcre_xclass.c */; };
-		22EE2C9513A47D9F00895861 /* pcreposix.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B78A1711DE98AF0022EE11 /* pcreposix.c */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -379,37 +327,6 @@
 		22956DAB12B9E29B00B42E63 /* NuVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuVersion.h; sourceTree = "<group>"; };
 		22956DAC12B9E29B00B42E63 /* st.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = st.c; sourceTree = "<group>"; };
 		22956DAD12B9E29B00B42E63 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
-		22B789FA11DE98AF0022EE11 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		22B789FC11DE98AF0022EE11 /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcre.h; sourceTree = "<group>"; };
-		22B789FD11DE98AF0022EE11 /* pcre_chartables.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_chartables.c; sourceTree = "<group>"; };
-		22B789FE11DE98AF0022EE11 /* pcre_compile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_compile.c; sourceTree = "<group>"; };
-		22B789FF11DE98AF0022EE11 /* pcre_config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_config.c; sourceTree = "<group>"; };
-		22B78A0011DE98AF0022EE11 /* pcre_dfa_exec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_dfa_exec.c; sourceTree = "<group>"; };
-		22B78A0111DE98AF0022EE11 /* pcre_exec.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_exec.c; sourceTree = "<group>"; };
-		22B78A0211DE98AF0022EE11 /* pcre_fullinfo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_fullinfo.c; sourceTree = "<group>"; };
-		22B78A0311DE98AF0022EE11 /* pcre_get.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_get.c; sourceTree = "<group>"; };
-		22B78A0411DE98AF0022EE11 /* pcre_globals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_globals.c; sourceTree = "<group>"; };
-		22B78A0511DE98AF0022EE11 /* pcre_info.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_info.c; sourceTree = "<group>"; };
-		22B78A0611DE98AF0022EE11 /* pcre_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcre_internal.h; sourceTree = "<group>"; };
-		22B78A0711DE98AF0022EE11 /* pcre_maketables.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_maketables.c; sourceTree = "<group>"; };
-		22B78A0811DE98AF0022EE11 /* pcre_newline.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_newline.c; sourceTree = "<group>"; };
-		22B78A0911DE98AF0022EE11 /* pcre_ord2utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_ord2utf8.c; sourceTree = "<group>"; };
-		22B78A0A11DE98AF0022EE11 /* pcre_refcount.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_refcount.c; sourceTree = "<group>"; };
-		22B78A0B11DE98AF0022EE11 /* pcre_scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcre_scanner.h; sourceTree = "<group>"; };
-		22B78A0C11DE98AF0022EE11 /* pcre_stringpiece.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcre_stringpiece.h; sourceTree = "<group>"; };
-		22B78A0D11DE98AF0022EE11 /* pcre_study.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_study.c; sourceTree = "<group>"; };
-		22B78A0E11DE98AF0022EE11 /* pcre_tables.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_tables.c; sourceTree = "<group>"; };
-		22B78A0F11DE98AF0022EE11 /* pcre_try_flipped.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_try_flipped.c; sourceTree = "<group>"; };
-		22B78A1011DE98AF0022EE11 /* pcre_ucd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_ucd.c; sourceTree = "<group>"; };
-		22B78A1111DE98AF0022EE11 /* pcre_valid_utf8.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_valid_utf8.c; sourceTree = "<group>"; };
-		22B78A1211DE98AF0022EE11 /* pcre_version.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_version.c; sourceTree = "<group>"; };
-		22B78A1311DE98AF0022EE11 /* pcre_xclass.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcre_xclass.c; sourceTree = "<group>"; };
-		22B78A1411DE98AF0022EE11 /* pcrecpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcrecpp.h; sourceTree = "<group>"; };
-		22B78A1511DE98AF0022EE11 /* pcrecpp_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcrecpp_internal.h; sourceTree = "<group>"; };
-		22B78A1611DE98AF0022EE11 /* pcrecpparg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcrecpparg.h; sourceTree = "<group>"; };
-		22B78A1711DE98AF0022EE11 /* pcreposix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pcreposix.c; sourceTree = "<group>"; };
-		22B78A1811DE98AF0022EE11 /* pcreposix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pcreposix.h; sourceTree = "<group>"; };
-		22B78A1A11DE98AF0022EE11 /* ucp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ucp.h; sourceTree = "<group>"; };
 		22EE2BF413A4731600895861 /* NuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22EE2BF713A4731600895861 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		22EE2BF913A4731600895861 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -488,7 +405,6 @@
 			children = (
 				223061D013A54EDC00B67882 /* test */,
 				22EE2C5513A4757B00895861 /* libffi */,
-				22B789F911DE98AF0022EE11 /* pcre */,
 				2283073C11DDBE7300A5C690 /* main.m */,
 				228306F311DDBBD100A5C690 /* nu */,
 				224276FC11DD748600940005 /* include */,
@@ -699,45 +615,6 @@
 			path = ../../nu;
 			sourceTree = SOURCE_ROOT;
 		};
-		22B789F911DE98AF0022EE11 /* pcre */ = {
-			isa = PBXGroup;
-			children = (
-				22B789FA11DE98AF0022EE11 /* config.h */,
-				22B789FC11DE98AF0022EE11 /* pcre.h */,
-				22B789FD11DE98AF0022EE11 /* pcre_chartables.c */,
-				22B789FE11DE98AF0022EE11 /* pcre_compile.c */,
-				22B789FF11DE98AF0022EE11 /* pcre_config.c */,
-				22B78A0011DE98AF0022EE11 /* pcre_dfa_exec.c */,
-				22B78A0111DE98AF0022EE11 /* pcre_exec.c */,
-				22B78A0211DE98AF0022EE11 /* pcre_fullinfo.c */,
-				22B78A0311DE98AF0022EE11 /* pcre_get.c */,
-				22B78A0411DE98AF0022EE11 /* pcre_globals.c */,
-				22B78A0511DE98AF0022EE11 /* pcre_info.c */,
-				22B78A0611DE98AF0022EE11 /* pcre_internal.h */,
-				22B78A0711DE98AF0022EE11 /* pcre_maketables.c */,
-				22B78A0811DE98AF0022EE11 /* pcre_newline.c */,
-				22B78A0911DE98AF0022EE11 /* pcre_ord2utf8.c */,
-				22B78A0A11DE98AF0022EE11 /* pcre_refcount.c */,
-				22B78A0B11DE98AF0022EE11 /* pcre_scanner.h */,
-				22B78A0C11DE98AF0022EE11 /* pcre_stringpiece.h */,
-				22B78A0D11DE98AF0022EE11 /* pcre_study.c */,
-				22B78A0E11DE98AF0022EE11 /* pcre_tables.c */,
-				22B78A0F11DE98AF0022EE11 /* pcre_try_flipped.c */,
-				22B78A1011DE98AF0022EE11 /* pcre_ucd.c */,
-				22B78A1111DE98AF0022EE11 /* pcre_valid_utf8.c */,
-				22B78A1211DE98AF0022EE11 /* pcre_version.c */,
-				22B78A1311DE98AF0022EE11 /* pcre_xclass.c */,
-				22B78A1411DE98AF0022EE11 /* pcrecpp.h */,
-				22B78A1511DE98AF0022EE11 /* pcrecpp_internal.h */,
-				22B78A1611DE98AF0022EE11 /* pcrecpparg.h */,
-				22B78A1711DE98AF0022EE11 /* pcreposix.c */,
-				22B78A1811DE98AF0022EE11 /* pcreposix.h */,
-				22B78A1A11DE98AF0022EE11 /* ucp.h */,
-			);
-			name = pcre;
-			path = ../../pcre;
-			sourceTree = SOURCE_ROOT;
-		};
 		22EE2BF613A4731600895861 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -809,16 +686,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				224276FF11DD748600940005 /* Nu.h in Headers */,
-				22B78A1B11DE98AF0022EE11 /* config.h in Headers */,
-				22B78A1D11DE98AF0022EE11 /* pcre.h in Headers */,
-				22B78A2711DE98AF0022EE11 /* pcre_internal.h in Headers */,
-				22B78A2C11DE98AF0022EE11 /* pcre_scanner.h in Headers */,
-				22B78A2D11DE98AF0022EE11 /* pcre_stringpiece.h in Headers */,
-				22B78A3511DE98AF0022EE11 /* pcrecpp.h in Headers */,
-				22B78A3611DE98AF0022EE11 /* pcrecpp_internal.h in Headers */,
-				22B78A3711DE98AF0022EE11 /* pcrecpparg.h in Headers */,
-				22B78A3911DE98AF0022EE11 /* pcreposix.h in Headers */,
-				22B78A3B11DE98AF0022EE11 /* ucp.h in Headers */,
 				22956DB112B9E29B00B42E63 /* NuBlock.h in Headers */,
 				22956DB312B9E29B00B42E63 /* NuBridge.h in Headers */,
 				22956DB512B9E29B00B42E63 /* NuBridgeSupport.h in Headers */,
@@ -1047,27 +914,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22EE2C7B13A47D9F00895861 /* pcre_chartables.c in Sources */,
-				22EE2C7C13A47D9F00895861 /* pcre_compile.c in Sources */,
-				22EE2C7D13A47D9F00895861 /* pcre_config.c in Sources */,
-				22EE2C7E13A47D9F00895861 /* pcre_dfa_exec.c in Sources */,
-				22EE2C7F13A47D9F00895861 /* pcre_exec.c in Sources */,
-				22EE2C8013A47D9F00895861 /* pcre_fullinfo.c in Sources */,
-				22EE2C8113A47D9F00895861 /* pcre_get.c in Sources */,
-				22EE2C8213A47D9F00895861 /* pcre_globals.c in Sources */,
-				22EE2C8313A47D9F00895861 /* pcre_info.c in Sources */,
-				22EE2C8513A47D9F00895861 /* pcre_maketables.c in Sources */,
-				22EE2C8613A47D9F00895861 /* pcre_newline.c in Sources */,
-				22EE2C8713A47D9F00895861 /* pcre_ord2utf8.c in Sources */,
-				22EE2C8813A47D9F00895861 /* pcre_refcount.c in Sources */,
-				22EE2C8B13A47D9F00895861 /* pcre_study.c in Sources */,
-				22EE2C8C13A47D9F00895861 /* pcre_tables.c in Sources */,
-				22EE2C8D13A47D9F00895861 /* pcre_try_flipped.c in Sources */,
-				22EE2C8E13A47D9F00895861 /* pcre_ucd.c in Sources */,
-				22EE2C8F13A47D9F00895861 /* pcre_valid_utf8.c in Sources */,
-				22EE2C9013A47D9F00895861 /* pcre_version.c in Sources */,
-				22EE2C9113A47D9F00895861 /* pcre_xclass.c in Sources */,
-				22EE2C9513A47D9F00895861 /* pcreposix.c in Sources */,
 				22EE2C1A13A4750300895861 /* Nu.m in Sources */,
 				22EE2C1C13A4750300895861 /* NuBlock.m in Sources */,
 				22EE2C1E13A4750300895861 /* NuBridge.m in Sources */,
@@ -1112,27 +958,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22B78A1E11DE98AF0022EE11 /* pcre_chartables.c in Sources */,
-				22B78A1F11DE98AF0022EE11 /* pcre_compile.c in Sources */,
-				22B78A2011DE98AF0022EE11 /* pcre_config.c in Sources */,
-				22B78A2111DE98AF0022EE11 /* pcre_dfa_exec.c in Sources */,
-				22B78A2211DE98AF0022EE11 /* pcre_exec.c in Sources */,
-				22B78A2311DE98AF0022EE11 /* pcre_fullinfo.c in Sources */,
-				22B78A2411DE98AF0022EE11 /* pcre_get.c in Sources */,
-				22B78A2511DE98AF0022EE11 /* pcre_globals.c in Sources */,
-				22B78A2611DE98AF0022EE11 /* pcre_info.c in Sources */,
-				22B78A2811DE98AF0022EE11 /* pcre_maketables.c in Sources */,
-				22B78A2911DE98AF0022EE11 /* pcre_newline.c in Sources */,
-				22B78A2A11DE98AF0022EE11 /* pcre_ord2utf8.c in Sources */,
-				22B78A2B11DE98AF0022EE11 /* pcre_refcount.c in Sources */,
-				22B78A2E11DE98AF0022EE11 /* pcre_study.c in Sources */,
-				22B78A2F11DE98AF0022EE11 /* pcre_tables.c in Sources */,
-				22B78A3011DE98AF0022EE11 /* pcre_try_flipped.c in Sources */,
-				22B78A3111DE98AF0022EE11 /* pcre_ucd.c in Sources */,
-				22B78A3211DE98AF0022EE11 /* pcre_valid_utf8.c in Sources */,
-				22B78A3311DE98AF0022EE11 /* pcre_version.c in Sources */,
-				22B78A3411DE98AF0022EE11 /* pcre_xclass.c in Sources */,
-				22B78A3811DE98AF0022EE11 /* pcreposix.c in Sources */,
 				22956DB012B9E29B00B42E63 /* Nu.m in Sources */,
 				22956DB212B9E29B00B42E63 /* NuBlock.m in Sources */,
 				22956DB412B9E29B00B42E63 /* NuBridge.m in Sources */,

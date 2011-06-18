@@ -118,7 +118,7 @@
 
 ;; returns an array of filenames matching a given pattern
 (function filelist (pattern)
-     (set regex (NuRegex regexWithPattern:pattern))
+     (set regex (NSRegularExpression regexWithPattern:pattern))
      (set results ((NSMutableSet alloc) init))
      (let (enumerator ((NSFileManager defaultManager) enumeratorAtPath:"."))
           (while (set filename (enumerator nextObject))

@@ -28,11 +28,6 @@ limitations under the License.
 #import "NuClass.h"
 #import "NuEnumerable.h"
 #import <unistd.h>
-#ifdef OPENSOLARIS
-#import "pcre/pcre.h"
-#else
-#import "pcre.h"
-#endif
 
 #import "NuException.h"
 
@@ -242,18 +237,6 @@ void NuInit()
     static int initialized = 0;
     if (!initialized) {
         initialized = 1;
-
-        // check UTF8 support in PCRE
-        void *pcre_query_result = 0;
-        pcre_config(PCRE_CONFIG_UTF8, &pcre_query_result);
-        if (pcre_query_result == 0) {
-            NSLog(@"Sorry, this build of Nu can't be used.");
-            NSLog(@"The problem is with the PCRE (Perl-Compatible Regular Expression) library.");
-            NSLog(@"Nu requires a PCRE that supports UTF8-encoded strings; the current one doesn't.");
-            NSLog(@"Please see the notes/PCRE file in the Nu source distribution for more details.");
-            NSLog(@"It includes instructions for building a PCRE that will work well with Nu.");
-            exit(-1);
-        }
 
         Nu__null = [NSNull null];
 

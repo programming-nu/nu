@@ -8,53 +8,40 @@ SYSTEM = $(shell uname)
 
 PREFIX ?= /usr/local
 
-ifeq ($(SYSTEM), Darwin)
+DEVROOT = $(shell xcode-select -print-path)
 
-        DEVROOT = $(shell xcode-select -print-path)
+ifeq ($(shell test -e /usr/lib/libffi.dylib && echo yes), yes)
+	# Use the libffi that ships with OS X.
+	FFI_LIB = -L/usr/lib -lffi
+	FFI_INCLUDE = -I/usr/include/ffi
+	# assume that our system is at least on Leopard 
+	LEOPARD_CFLAGS = -DLEOPARD_OBJC2 
+else
+	# Use the libffi that is distributed with Nu.
+	FFI_LIB = -L./libffi -lffi
+	FFI_INCLUDE = -I./libffi/include
+	# assume that our system is pre-Leopard 
+	LEOPARD_CFLAGS =
+endif
 
-	ifeq ($(shell test -e /usr/lib/libffi.dylib && echo yes), yes)
-		# Use the libffi that ships with OS X.
-		FFI_LIB = -L/usr/lib -lffi
-		FFI_INCLUDE = -I/usr/include/ffi
-		# assume that our system is at least on Leopard 
-		LEOPARD_CFLAGS = -DLEOPARD_OBJC2 
-	else
-		# Use the libffi that is distributed with Nu.
-		FFI_LIB = -L./libffi -lffi
-		FFI_INCLUDE = -I./libffi/include
-		# assume that our system is pre-Leopard 
-		LEOPARD_CFLAGS =
-	endif
-
-	ifeq ($(shell test -e $(DEVROOT)/SDKs/MacOSX10.7.sdk && echo yes), yes)
-                LION_CFLAGS = -isysroot $(DEVROOT)/SDKs/MacOSX10.7.sdk
-        else
-                LION_CFLAGS =
-        endif
-
-else # GNUstep
-	FFI_LIB=-lffi
-	FFI_INCLUDE=
+ifeq ($(shell test -e $(DEVROOT)/SDKs/MacOSX10.7.sdk && echo yes), yes)
+        LION_CFLAGS = -isysroot $(DEVROOT)/SDKs/MacOSX10.7.sdk
+else
+        LION_CFLAGS =
 endif
 
 INCLUDES = $(FFI_INCLUDE) -I./include
 
-ifeq ($(SYSTEM), Darwin)
-	ifeq ($(shell test -d $(PREFIX)/include && echo yes), yes)
-		INCLUDES += -I$(PREFIX)/include
-	endif
-	FRAMEWORKS = -framework Cocoa
-	LIBS = -lobjc -lreadline
-	ifeq ($(shell test -d $(PREFIX)/lib && echo yes), yes)
-		LIBDIRS += -L$(PREFIX)/lib
-	endif
-else
-	FRAMEWORKS =
-	LIBS = -lm -lpcre -lreadline -lgnustep-base
-	LIBDIRS =
+ifeq ($(shell test -d $(PREFIX)/include && echo yes), yes)
+	INCLUDES += -I$(PREFIX)/include
+endif
+FRAMEWORKS = -framework Cocoa
+LIBS = -lobjc -lreadline
+ifeq ($(shell test -d $(PREFIX)/lib && echo yes), yes)
+	LIBDIRS += -L$(PREFIX)/lib
 endif
 
-C_FILES = $(wildcard objc/*.c) $(wildcard pcre/*.c)
+C_FILES = $(wildcard objc/*.c) 
 OBJC_FILES = $(wildcard objc/*.m) $(wildcard main/*.m)
 GCC_FILES = $(OBJC_FILES) $(C_FILES)
 GCC_OBJS = $(patsubst %.m, %.o, $(OBJC_FILES)) $(patsubst %.c, %.o, $(C_FILES))
@@ -68,7 +55,7 @@ CFLAGS += -DHAVE_CONFIG_H
 
 ifeq ($(SYSTEM), Darwin)
 	CC = $(DEVROOT)/usr/bin/clang
-	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS) $(LION_CFLAGS) -Ipcre 
+	CFLAGS += -DMACOSX -DDARWIN $(LEOPARD_CFLAGS) $(LION_CFLAGS)  
 else
 #	CFLAGS += -DLINUX
 #	MFLAGS += -fconstant-string-class=NSConstantString
@@ -116,7 +103,7 @@ mininush: $(GCC_OBJS)
 
 .PHONY: clean
 clean:
-	rm -f objc/*.o main/*.o pcre/*.o
+	rm -f objc/*.o main/*.o 
 
 .PHONY: clobber
 clobber: clean
