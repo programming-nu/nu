@@ -1,7 +1,7 @@
 /*!
 @header NuHandler.h
-@discussion Nu support for precompiled method handlers.
-@copyright Copyright (c) 2008 Radtastical Inc.
+@discussion Nu support for block-based method handlers.
+@copyright Copyright (c) 2008,2011 Radtastical Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

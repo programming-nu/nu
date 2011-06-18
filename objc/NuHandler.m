@@ -1,20 +1,20 @@
 /*!
-@file NuHandler.m
-@description Nu support for precompiled method handlers.
-@copyright Copyright (c) 2008 Radtastical Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
+ @file NuHandler.m
+ @description Nu support for block-based method handlers.
+ @copyright Copyright (c) 2008,2011 Radtastical Inc.
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+ http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 
 #import "NuHandler.h"
 #import "NuCell.h"
@@ -33,7 +33,7 @@ static id collect_arguments(struct handler_description *description, va_list ap)
     while((type = description->description[2+i])) {
         [cursor setCdr:[[[NuCell alloc] init] autorelease]];
         cursor = [cursor cdr];
-        //NSLog(@"argument type %d: %s", i, type);
+        // NSLog(@"argument type %d: %s", i, type);
         if (!strcmp(type, "@")) {
             [cursor setCar:va_arg(ap, id)];
         }
@@ -48,7 +48,7 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
         else if (!strcmp(type, "f")) {
-                                                  // calling this w/ float crashes on intel
+            // calling this w/ float crashes on intel
             double x = (double) va_arg(ap, double);
             //NSLog(@"argument is %f", *((float *) &x));
             ap = ap - sizeof(float);              // messy, messy...
@@ -64,13 +64,13 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             //NSLog(@"argument is %lf", x);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
-        #ifdef IPHONE
+#ifdef IPHONE
         else if (!strcmp(type, "{CGRect={CGPoint=ff}{CGSize=ff}}")
-        || (!strcmp(type, "{CGRect=\"origin\"{CGPoint=\"x\"f\"y\"f}\"size\"{CGSize=\"width\"f\"height\"f}}"))) {
+                 || (!strcmp(type, "{CGRect=\"origin\"{CGPoint=\"x\"f\"y\"f}\"size\"{CGSize=\"width\"f\"height\"f}}"))) {
             CGRect x = va_arg(ap, CGRect);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
-        #endif
+#endif
         else {
             NSLog(@"unsupported argument type %s, see objc/handler.m to add support for it", type);
         }
@@ -82,21 +82,23 @@ static id collect_arguments(struct handler_description *description, va_list ap)
 // helper function called by method handlers
 void nu_handler(void *return_value, struct handler_description *description, id receiver, va_list ap)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    id arguments = collect_arguments(description, ap);
-    NuBlock *block = (NuBlock *) description->description[1];
-    id result = [block evalWithArguments:[arguments cdr] context:nil self:receiver];
-    if (description->description[0][1] == '@') {
-        [result retain];
-        if (description->description[0][0] == '!') {
+    id result;
+    @autoreleasepool {
+        NuBlock *block = (NuBlock *) description->description[1];
+        // NSLog(@"handling %@", [block stringValue]);
+        id arguments = collect_arguments(description, ap);
+        result = [block evalWithArguments:[arguments cdr] context:nil self:receiver];
+        if (description->description[0][1] == '@') {
             [result retain];
+            if (description->description[0][0] == '!') {
+                [result retain];
+            }
         }
+        if (return_value) {
+            set_objc_value_from_nu_value(return_value, result, description->description[0]+1);
+        }
+        [arguments release];
     }
-    if (return_value) {
-        set_objc_value_from_nu_value(return_value, result, description->description[0]+1);
-    }
-    [arguments release];
-    [pool drain];
     if (description->description[0][1] == '@') {
         [result autorelease];
     }
@@ -104,7 +106,7 @@ void nu_handler(void *return_value, struct handler_description *description, id 
 
 @interface NuHandlers : NSObject
 {
-    @public
+@public
     struct handler_description *handlers;
     int handler_count;
     int next_free_handler;
@@ -124,6 +126,134 @@ void nu_handler(void *return_value, struct handler_description *description, id 
 
 @end
 
+static IMP handler_returning_void(void *userdata) {
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver);  
+        nu_handler(0, &description, receiver, ap);     
+    });
+}
+
+static IMP handler_returning_id(void *userdata) { 
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver); 
+        id result;
+        nu_handler(&result, &description, receiver, ap); 
+        return result;
+    });
+}
+
+static IMP handler_returning_int(void *userdata) { 
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver); 
+        int result;
+        nu_handler(&result, &description, receiver, ap); 
+        return result;
+    });
+}
+
+static IMP handler_returning_bool(void *userdata) { 
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver); 
+        BOOL result;
+        nu_handler(&result, &description, receiver, ap); 
+        return result;
+    });
+}
+
+static IMP handler_returning_float(void *userdata) { 
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver); 
+        float result;
+        nu_handler(&result, &description, receiver, ap); 
+        return result;
+    });
+}
+
+static IMP handler_returning_double(void *userdata) { 
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver); 
+        double result;
+        nu_handler(&result, &description, receiver, ap); 
+        return result;
+    });
+}
+
+static IMP handler_returning_cgrect(void *userdata) { 
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver); 
+        CGRect result;
+        nu_handler(&result, &description, receiver, ap); 
+        return result;
+    });
+}
+
+static IMP handler_returning_cgpoint(void *userdata) { 
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver); 
+        CGPoint result;
+        nu_handler(&result, &description, receiver, ap); 
+        return result;
+    });
+}
+
+static IMP handler_returning_cgsize(void *userdata) { 
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver); 
+        CGSize result;
+        nu_handler(&result, &description, receiver, ap); 
+        return result;
+    });
+}
+
+static IMP handler_returning_nsrange(void *userdata) { 
+    return imp_implementationWithBlock(^(id receiver, ...) {
+        struct handler_description description;
+        description.handler = NULL;
+        description.description = userdata;
+        va_list ap; 
+        va_start(ap, receiver); 
+        NSRange result;
+        nu_handler(&result, &description, receiver, ap); 
+        return result;
+    });
+}
+
 static NSMutableDictionary *handlerWarehouse = nil;
 
 @implementation NuHandlerWarehouse
@@ -140,12 +270,43 @@ static NSMutableDictionary *handlerWarehouse = nil;
 
 + (IMP) handlerWithSelector:(SEL)sel block:(NuBlock *)block signature:(const char *) signature userdata:(char **) userdata
 {
+    NSString *returnType = [NSString stringWithCString:userdata[0]+1 encoding:NSUTF8StringEncoding];
+    if ([returnType isEqualToString:@"v"]) {  
+        return handler_returning_void(userdata);
+    } 
+    else if ([returnType isEqualToString:@"@"]) {
+        return handler_returning_id(userdata);
+    }
+    else if ([returnType isEqualToString:@"i"]) {
+        return handler_returning_int(userdata);
+    }  
+    else if ([returnType isEqualToString:@"C"]) {
+        return handler_returning_bool(userdata);
+    }
+    else if ([returnType isEqualToString:@"f"]) {
+        return handler_returning_float(userdata);
+    }
+    else if ([returnType isEqualToString:@"d"]) {
+        return handler_returning_double(userdata);
+    }    
+    else if ([returnType isEqualToString:@"{_CGRect={_CGPoint=ff}{_CGSize=ff}}"]) {
+        return handler_returning_cgrect(userdata);
+    }
+    else if ([returnType isEqualToString:@"{_CGPoint=ff}"]) {
+        return handler_returning_cgpoint(userdata);
+    }
+    else if ([returnType isEqualToString:@"{_CGSize=ff}"]) {
+        return handler_returning_cgsize(userdata);
+    }
+    else if ([returnType isEqualToString:@"{_NSRange=II}"]) {
+        return handler_returning_nsrange(userdata);
+    }
+    // the following is deprecated. Now that we can create IMPs from blocks, we don't need handler pools.
     if (!handlerWarehouse) {
         return NULL;
     }
-    NuHandlers *handlers =
-        [handlerWarehouse objectForKey:[NSString stringWithCString:userdata[0]+1 encoding:NSUTF8StringEncoding]];
-    if (handlers) {
+    NuHandlers *handlers = [handlerWarehouse objectForKey:returnType];            
+    if (handlers) {        
         if (handlers->next_free_handler < handlers->handler_count) {
             handlers->handlers[handlers->next_free_handler].description = userdata;
             IMP handler = handlers->handlers[handlers->next_free_handler].handler;
