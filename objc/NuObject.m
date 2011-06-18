@@ -520,18 +520,6 @@
     return true;
 }
 
-/*
- + (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
- {
- Class thisClass = [self class];
- size_t size_of_objc_type(const char *typeString);
- 
- class_addInstanceVariable_withSignature(thisClass, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
- 
- return Nu__null;
- }
- */
-
 + (NSString *) help
 {
     return [NSString stringWithFormat:@"This is a class named %s.", class_getName([self class])];

@@ -207,7 +207,7 @@
 - (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
 {
     //NSLog(@"adding instance variable %@", variableName);
-    class_addInstanceVariable_withSignature(c, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+    nu_class_addInstanceVariable_withSignature(c, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
     return Nu__null;
 }
 

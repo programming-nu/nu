@@ -1783,7 +1783,7 @@
         id variableName = [cursor car];
         cursor = [cursor cdr];
         NSString *signature = signature_for_identifier(variableType, symbolTable);
-        class_addInstanceVariable_withSignature(classToExtend,
+        nu_class_addInstanceVariable_withSignature(classToExtend,
                                                 [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
                                                 [signature cStringUsingEncoding:NSUTF8StringEncoding]);
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
