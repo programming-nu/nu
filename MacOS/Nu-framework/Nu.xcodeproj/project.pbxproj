@@ -69,6 +69,7 @@
 		2230622B13A54EDC00B67882 /* test_undo.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061FD13A54EDC00B67882 /* test_undo.nu */; };
 		2230622C13A54EDC00B67882 /* test_varargs.nu in Resources */ = {isa = PBXBuildFile; fileRef = 223061FE13A54EDC00B67882 /* test_varargs.nu */; };
 		224276FF11DD748600940005 /* Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 224276FE11DD748600940005 /* Nu.h */; };
+		2248579013AC5BDF00934342 /* handlers.m in Sources */ = {isa = PBXBuildFile; fileRef = 2248578F13AC5BDF00934342 /* handlers.m */; };
 		2276E5E013A5E4AB006A166B /* NuProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 2276E5DE13A5E4AB006A166B /* NuProperty.h */; };
 		2276E5E113A5E4AB006A166B /* NuProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 2276E5DF13A5E4AB006A166B /* NuProperty.m */; };
 		2276E5E213A5E4AB006A166B /* NuProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 2276E5DF13A5E4AB006A166B /* NuProperty.m */; };
@@ -228,7 +229,6 @@
 		223061E513A54EDC00B67882 /* test_math.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_math.nu; sourceTree = "<group>"; };
 		223061E613A54EDC00B67882 /* test_memory.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_memory.nu; sourceTree = "<group>"; };
 		223061E713A54EDC00B67882 /* test_nu.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_nu.nu; sourceTree = "<group>"; };
-		223061E813A54EDC00B67882 /* test_nu.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = test_nu.rb; sourceTree = "<group>"; };
 		223061E913A54EDC00B67882 /* test_numbers.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_numbers.nu; sourceTree = "<group>"; };
 		223061EA13A54EDC00B67882 /* test_onlisp.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_onlisp.nu; sourceTree = "<group>"; };
 		223061EB13A54EDC00B67882 /* test_operators.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_operators.nu; sourceTree = "<group>"; };
@@ -252,6 +252,7 @@
 		223061FD13A54EDC00B67882 /* test_undo.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_undo.nu; sourceTree = "<group>"; };
 		223061FE13A54EDC00B67882 /* test_varargs.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_varargs.nu; sourceTree = "<group>"; };
 		224276FE11DD748600940005 /* Nu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu.h; sourceTree = "<group>"; };
+		2248578F13AC5BDF00934342 /* handlers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = handlers.m; path = ../../../util/handlers.m; sourceTree = "<group>"; };
 		2276E5DE13A5E4AB006A166B /* NuProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuProperty.h; sourceTree = "<group>"; };
 		2276E5DF13A5E4AB006A166B /* NuProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuProperty.m; sourceTree = "<group>"; };
 		228306F411DDBBD100A5C690 /* beautify.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = beautify.nu; sourceTree = "<group>"; };
@@ -481,7 +482,6 @@
 				223061E513A54EDC00B67882 /* test_math.nu */,
 				223061E613A54EDC00B67882 /* test_memory.nu */,
 				223061E713A54EDC00B67882 /* test_nu.nu */,
-				223061E813A54EDC00B67882 /* test_nu.rb */,
 				223061E913A54EDC00B67882 /* test_numbers.nu */,
 				223061EA13A54EDC00B67882 /* test_onlisp.nu */,
 				223061EB13A54EDC00B67882 /* test_operators.nu */,
@@ -629,6 +629,7 @@
 		22EE2BFF13A4731600895861 /* NuApp */ = {
 			isa = PBXGroup;
 			children = (
+				2248578F13AC5BDF00934342 /* handlers.m */,
 				22EE2C0813A4731600895861 /* NuAppDelegate.h */,
 				22EE2C0913A4731600895861 /* NuAppDelegate.m */,
 				22EE2C0013A4731600895861 /* Supporting Files */,
@@ -951,6 +952,7 @@
 				22EE2C6D13A4757B00895861 /* raw_api.c in Sources */,
 				22EE2C6F13A4757B00895861 /* types.c in Sources */,
 				2276E5E213A5E4AB006A166B /* NuProperty.m in Sources */,
+				2248579013AC5BDF00934342 /* handlers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
