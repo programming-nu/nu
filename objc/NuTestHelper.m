@@ -15,9 +15,23 @@ limitations under the License.
 */
 
 #import <Foundation/Foundation.h>
+
+#ifdef IPHONE
+#import <CoreGraphics/CoreGraphics.h>
+#endif
+
 #import "NuMain.h"
 
 static BOOL verbose_helper = false;
+
+@protocol NuTestProxy <NSObject>
+
+- (CGRect) CGRectValue;
+- (CGPoint) CGPointValue;
+- (CGSize) CGSizeValue;
+- (NSRange) NSRangeValue;    
+    
+@end
 
 @interface NuTestHelper : NSObject
 {
@@ -81,6 +95,22 @@ static int deallocationCount = 0;
 	[[NSGarbageCollector defaultCollector] collectExhaustively];
 #endif
     return deallocationCount;
+}
+
++ (CGRect) getCGRectFromProxy:(id<NuTestProxy>) proxy {
+    return [proxy CGRectValue];
+}
+
++ (CGPoint) getCGPointFromProxy:(id<NuTestProxy>) proxy {
+    return [proxy CGPointValue];
+}
+
++ (CGSize) getCGSizeFromProxy:(id<NuTestProxy>) proxy {
+    return [proxy CGSizeValue];
+}
+
++ (NSRange) getNSRangeFromProxy:(id<NuTestProxy>) proxy {
+    return [proxy NSRangeValue];
 }
 
 @end

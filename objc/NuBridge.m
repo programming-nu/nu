@@ -1415,6 +1415,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
 static NuSymbol *oneway_symbol, *in_symbol, *out_symbol, *inout_symbol, *bycopy_symbol, *byref_symbol, *const_symbol,
 *void_symbol, *star_symbol, *id_symbol, *voidstar_symbol, *idstar_symbol, *int_symbol, *long_symbol, *NSComparisonResult_symbol,
 *BOOL_symbol, *double_symbol, *float_symbol, *NSRect_symbol, *NSPoint_symbol, *NSSize_symbol, *NSRange_symbol,
+*CGRect_symbol, *CGPoint_symbol, *CGSize_symbol,
 *SEL_symbol, *Class_symbol;
 
 
@@ -1442,6 +1443,9 @@ static void prepare_symbols(NuSymbolTable *symbolTable)
     NSPoint_symbol = [symbolTable symbolWithCString:"NSPoint"];
     NSSize_symbol = [symbolTable symbolWithCString:"NSSize"];
     NSRange_symbol = [symbolTable symbolWithCString:"NSRange"];
+    CGRect_symbol = [symbolTable symbolWithCString:"CGRect"];
+    CGPoint_symbol = [symbolTable symbolWithCString:"CGPoint"];
+    CGSize_symbol = [symbolTable symbolWithCString:"CGSize"];    
     SEL_symbol = [symbolTable symbolWithCString:"SEL"];
     Class_symbol = [symbolTable symbolWithCString:"Class"];
 }
@@ -1568,7 +1572,19 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
         else if ([cursor car] == NSRange_symbol) {
             [signature appendString:@NSRANGE_SIGNATURE];
             finished = YES;
+        }        
+        else if ([cursor car] == CGRect_symbol) {
+            [signature appendString:@CGRECT_SIGNATURE0];
+            finished = YES;
         }
+        else if ([cursor car] == CGPoint_symbol) {
+            [signature appendString:@CGPOINT_SIGNATURE];
+            finished = YES;
+        }
+        else if ([cursor car] == CGSize_symbol) {
+            [signature appendString:@CGSIZE_SIGNATURE];
+            finished = YES;
+        }                
         else if ([cursor car] == SEL_symbol) {
             [signature appendString:@":"];
             finished = YES;
