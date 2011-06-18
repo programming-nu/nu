@@ -143,7 +143,6 @@ id regexWithString(NSString *string)
         return [NSRegularExpression regularExpressionWithPattern:pattern
                                                          options:options
                                                            error:NULL];
-        //return [NuRegex regexWithPattern:pattern options:options];
     }
     else {
         return nil;

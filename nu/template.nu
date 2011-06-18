@@ -72,7 +72,7 @@
           
           ;; first, replace each embedded nu expression with code that
           ;; appends the value of the expression to the result
-          (set p-expression /<%= ((?U).*) %>/)
+          (set p-expression /<%= (.*?) %>/)
           (while (set match (p-expression findInString:text))
                  (text replaceCharactersInRange:(match range)
                        withString:<<-END-TEMPLATE

@@ -17,6 +17,7 @@
 #endif
 
 #import "NuRegex.h"
+#import "NuObject.h"
 #import <Foundation/Foundation.h>
 
 // defined for Nu. TB
@@ -676,14 +677,28 @@ static NuRegex *backrefPattern;
  @method findAllInString:
  Calls findAllInString:range: using the full range of the target string. */
 - (NSArray *)findAllInString:(NSString *)string {
-    return [self matchesInString:string options:0 range:NSMakeRange(0, [string length])];
+    NSArray *result = [self matchesInString:string
+                                    options:0 
+                                      range:NSMakeRange(0, [string length])];
+    if (result) {
+        for (NSObject *match in result) {
+            [match setRetainedAssociatedObject:string forKey:@"string"];
+        }
+    }
+    return result;
 }
 
 /*!
  @method findAllInString:range:
  Returns an array of all non-overlapping occurrences of the regex in the given range of the target string. The members of the array are NuRegexMatches. */
 - (NSArray *)findAllInString:(NSString *)string range:(NSRange)range {
-    return [self matchesInString:string options:0 range:range];
+    NSArray *result = [self matchesInString:string options:0 range:range];
+    if (result) {
+        for (NSObject *match in result) {
+            [match setRetainedAssociatedObject:string forKey:@"string"];
+        }
+    }
+    return result;
 }
 
 /*!
