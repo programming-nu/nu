@@ -91,7 +91,7 @@
           ;; Patterns like (head . tail) recurse.
           ((and (pair? pat)
                 (pair? (pat cdr))
-                (eq '. (second pat))
+                (eq '. (pat second))
                 (pair? ((pat cdr) cdr))
                 (eq nil (((pat cdr) cdr) cdr)))
            (let ((bindings1 (destructure (pat 0) (seq 0)))
@@ -103,8 +103,8 @@
           ((and (pair? pat)
                 (eq 'quote (pat 0))
                 (pair? (pat cdr))
-                (symbol? (second pat)))
-           (if (eq (second pat) seq)
+                (symbol? (pat second)))
+           (if (eq (pat second) seq)
                (then '())  ; literal symbol match produces no bindings
                (else (throw* "NuMatchException"
                              "Failed match of literal symbol #{pat} to #{seq}"))))
@@ -152,7 +152,7 @@
           ;; Patterns like (head . tail)
           ((and (pair? pat)
                 (pair? (cdr pat))
-                (eq '. (second pat))
+                (eq '. (pat second))
                 (pair? (cdr (cdr pat)))
                 (eq nil (cdr (cdr (cdr pat)))))
            ;(puts "mdest: (h . t):  #{pat}  #{seq}")
@@ -164,9 +164,9 @@
           ((and (pair? pat)
                 (eq 'quote (car pat))
                 (pair? (cdr pat))
-                (symbol? (second pat)))
+                (symbol? (pat second)))
            ;(puts "mdest: 'Literal:  #{pat}  #{seq}")
-           (if (eq (second pat) seq)
+           (if (eq (pat second) seq)
                (then '())  ; literal symbol match produces no bindings
                (else (throw* "NuMatchException"
                              "Failed match of literal symbol #{pat} to #{seq}"))))

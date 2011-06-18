@@ -5,11 +5,12 @@
 
 (class TestBridge is NuTestCase
      (- (id) testConstants is
+        (if (eq (uname) "Darwin")
         (set floatTypeSignature (if (eq (Nu sizeOfPointer) 8) (then "d") (else "f")))
         (assert_equal 0 (NuBridgedConstant constantWithName:"NSBlack" signature:floatTypeSignature))
         (assert_equal 1 (NuBridgedConstant constantWithName:"NSWhite" signature:floatTypeSignature))
         (assert_equal '(0 0 0 0) (NuBridgedConstant constantWithName:"NSZeroRect" signature:"{_NSRect}"))
-        (assert_equal (NSApplication sharedApplication) (NuBridgedConstant constantWithName:"NSApp" signature:"@")))
+        (assert_equal (NSApplication sharedApplication) (NuBridgedConstant constantWithName:"NSApp" signature:"@"))))
      
      (- (id) testFunctions is
         (set strcmp (NuBridgedFunction functionWithName:"strcmp" signature:"i**"))

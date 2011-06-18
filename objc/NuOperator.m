@@ -1891,7 +1891,11 @@ limitations under the License.
 @implementation Nu_uname_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
+#ifdef IPHONE
+    return @"iOS";
+#else
     return @"Darwin";
+#endif
 }
 
 @end

@@ -18,17 +18,6 @@
 (global NSUTF8StringEncoding 4)
 (global NSLog (NuBridgedFunction functionWithName:"NSLog" signature:"v@"))
 
-;; Warning! I want to deprecate these.
-(global second  (do (my-list) (car (cdr my-list))))
-(global third   (do (my-list) (car (cdr (cdr my-list)))))
-(global fourth  (do (my-list) (car (cdr (cdr (cdr my-list))))))
-(global fifth   (do (my-list) (car (cdr (cdr (cdr (cdr my-list)))))))
-(global sixth   (do (my-list) (car (cdr (cdr (cdr (cdr (cdr my-list))))))))
-(global seventh (do (my-list) (car (cdr (cdr (cdr (cdr (cdr (cdr my-list)))))))))
-(global eighth  (do (my-list) (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr my-list))))))))))
-(global ninth   (do (my-list) (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr my-list)))))))))))
-(global tenth   (do (my-list) (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr my-list))))))))))))
-
 (global rand
         (do (maximum)
             (let ((r (NuMath random)))
@@ -159,7 +148,7 @@
                            (else (do (a b) (a compare:b)))))
             (((apply array ls) sortedArrayUsingBlock:block) list)))
 
-(if (eq (uname) "Darwin") ;; throw is currently only available with the Darwin runtime
+(if (or (eq (uname) "Darwin") (eq (uname "iOS"))) ;; throw is currently only available with the Darwin runtime
     (then
          ;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
          ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
@@ -184,8 +173,6 @@
          (global assert (macro-0 _ (NSLog "warning: assert is unavailable")))
          (global throw* (macro-0 _ (NSLog "warning: throw* is unavailable")))
          (global throw  (macro-0 _ (NSLog "warning: throw is unavailable")))))
-
-
 
 
 ;; Returns an array of filenames matching a given pattern.
@@ -221,22 +208,6 @@
         (else (self appendString:object))))
 
 (class NSObject
-     
-     ;; Write objects as XML property lists (only for NSData, NSString, NSNumber, NSDate, NSArray, and NSDictionary objects)
-     (- writeToPropertyList:name is
-        (set xmlData (NSPropertyListSerialization dataFromPropertyList:self
-                          format:100 ;; NSPropertyListXMLFormat_v1_0
-                          errorDescription:nil))
-        (if xmlData (xmlData writeToFile:name atomically:YES)
-            (else (puts ((error value) description)))))
-     
-     ;; Read objects from property lists
-     (+ readFromPropertyList:name is
-        (NSPropertyListSerialization propertyListFromData:(NSData dataWithContentsOfFile:name)
-             mutabilityOption:0 ;; NSPropertyListImmutable
-             format:nil
-             errorDescription:nil))
-     
      (- XMLPropertyListRepresentation is
         (NSPropertyListSerialization dataFromPropertyList:self
              format:100 ;; NSPropertyListXMLFormat_v1_0

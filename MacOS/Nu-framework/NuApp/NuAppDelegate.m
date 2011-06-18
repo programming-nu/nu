@@ -56,9 +56,7 @@
                                   encoding:NSUTF8StringEncoding
                                      error:NULL];
     [[Nu sharedParser] parseEval:s];
-    
-    [[Nu sharedParser] parseEval:@"(global uname (do () \"iOS\"))"];
-    
+        
     NSString *resourceDirectory = [[NSBundle mainBundle] resourcePath];
     
     NSArray *files = [[NSFileManager defaultManager] 
@@ -78,7 +76,7 @@
         }
     }
     [regex release];
-    
+    NSLog(@"running tests");
     [[Nu sharedParser] parseEval:@"(NuTestCase runAllTests)"];
     NSLog(@"ok");    
     return YES;

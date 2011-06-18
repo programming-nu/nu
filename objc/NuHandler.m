@@ -137,122 +137,35 @@ static IMP handler_returning_void(void *userdata) {
     });
 }
 
-static IMP handler_returning_id(void *userdata) { 
-    return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
-        description.handler = NULL;
-        description.description = userdata;
-        va_list ap; 
-        va_start(ap, receiver); 
-        id result;
-        nu_handler(&result, &description, receiver, ap); 
-        return result;
-    });
+#define MAKE_HANDLER_WITH_TYPE(type) \
+static IMP handler_returning_ ## type (void* userdata) \
+{ \
+    return imp_implementationWithBlock(^(id receiver, ...) { \ 
+        struct handler_description description; \
+        description.handler = NULL; \
+        description.description = userdata; \
+        va_list ap; \
+        va_start(ap, receiver); \
+        type result; \
+        nu_handler(&result, &description, receiver, ap); \
+        return result; \
+    }); \
 }
 
-static IMP handler_returning_int(void *userdata) { 
-    return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
-        description.handler = NULL;
-        description.description = userdata;
-        va_list ap; 
-        va_start(ap, receiver); 
-        int result;
-        nu_handler(&result, &description, receiver, ap); 
-        return result;
-    });
-}
-
-static IMP handler_returning_bool(void *userdata) { 
-    return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
-        description.handler = NULL;
-        description.description = userdata;
-        va_list ap; 
-        va_start(ap, receiver); 
-        BOOL result;
-        nu_handler(&result, &description, receiver, ap); 
-        return result;
-    });
-}
-
-static IMP handler_returning_float(void *userdata) { 
-    return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
-        description.handler = NULL;
-        description.description = userdata;
-        va_list ap; 
-        va_start(ap, receiver); 
-        float result;
-        nu_handler(&result, &description, receiver, ap); 
-        return result;
-    });
-}
-
-static IMP handler_returning_double(void *userdata) { 
-    return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
-        description.handler = NULL;
-        description.description = userdata;
-        va_list ap; 
-        va_start(ap, receiver); 
-        double result;
-        nu_handler(&result, &description, receiver, ap); 
-        return result;
-    });
-}
-
-static IMP handler_returning_cgrect(void *userdata) { 
-    return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
-        description.handler = NULL;
-        description.description = userdata;
-        va_list ap; 
-        va_start(ap, receiver); 
-        CGRect result;
-        nu_handler(&result, &description, receiver, ap); 
-        return result;
-    });
-}
-
-static IMP handler_returning_cgpoint(void *userdata) { 
-    return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
-        description.handler = NULL;
-        description.description = userdata;
-        va_list ap; 
-        va_start(ap, receiver); 
-        CGPoint result;
-        nu_handler(&result, &description, receiver, ap); 
-        return result;
-    });
-}
-
-static IMP handler_returning_cgsize(void *userdata) { 
-    return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
-        description.handler = NULL;
-        description.description = userdata;
-        va_list ap; 
-        va_start(ap, receiver); 
-        CGSize result;
-        nu_handler(&result, &description, receiver, ap); 
-        return result;
-    });
-}
-
-static IMP handler_returning_nsrange(void *userdata) { 
-    return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
-        description.handler = NULL;
-        description.description = userdata;
-        va_list ap; 
-        va_start(ap, receiver); 
-        NSRange result;
-        nu_handler(&result, &description, receiver, ap); 
-        return result;
-    });
-}
+MAKE_HANDLER_WITH_TYPE(id)
+MAKE_HANDLER_WITH_TYPE(int)
+MAKE_HANDLER_WITH_TYPE(bool)
+MAKE_HANDLER_WITH_TYPE(float)
+MAKE_HANDLER_WITH_TYPE(double)
+MAKE_HANDLER_WITH_TYPE(CGRect)
+MAKE_HANDLER_WITH_TYPE(CGPoint)
+MAKE_HANDLER_WITH_TYPE(CGSize)
+#ifndef IPHONE
+MAKE_HANDLER_WITH_TYPE(NSRect)
+MAKE_HANDLER_WITH_TYPE(NSPoint)
+MAKE_HANDLER_WITH_TYPE(NSSize)
+#endif
+MAKE_HANDLER_WITH_TYPE(NSRange)
 
 static NSMutableDictionary *handlerWarehouse = nil;
 
@@ -289,17 +202,34 @@ static NSMutableDictionary *handlerWarehouse = nil;
     else if ([returnType isEqualToString:@"d"]) {
         return handler_returning_double(userdata);
     }    
-    else if ([returnType isEqualToString:@"{_CGRect={_CGPoint=ff}{_CGSize=ff}}"]) {
-        return handler_returning_cgrect(userdata);
+    else if ([returnType isEqualToString:@"{CGRect={CGPoint=ff}{CGSize=ff}}"]) {
+        return handler_returning_CGRect(userdata);
     }
-    else if ([returnType isEqualToString:@"{_CGPoint=ff}"]) {
-        return handler_returning_cgpoint(userdata);
+    else if ([returnType isEqualToString:@"{CGPoint=ff}"]) {
+        return handler_returning_CGPoint(userdata);
     }
-    else if ([returnType isEqualToString:@"{_CGSize=ff}"]) {
-        return handler_returning_cgsize(userdata);
+    else if ([returnType isEqualToString:@"{CGSize=ff}"]) {
+        return handler_returning_CGSize(userdata);
     }
     else if ([returnType isEqualToString:@"{_NSRange=II}"]) {
-        return handler_returning_nsrange(userdata);
+        return handler_returning_NSRange(userdata);
+    } 
+#ifndef IPHONE
+    else if ([returnType isEqualToString:@"{_NSRect={_NSPoint=dd}{_NSSize=dd}}"]) {
+        return handler_returning_NSRect(userdata);
+    }
+    else if ([returnType isEqualToString:@"{_NSPoint=dd}"]) {
+        return handler_returning_NSPoint(userdata);
+    }
+    else if ([returnType isEqualToString:@"{_NSSize=dd}"]) {
+        return handler_returning_NSSize(userdata);
+    }
+    else if ([returnType isEqualToString:@"{_NSRange=QQ}"]) {
+        return handler_returning_NSRange(userdata);
+    }
+#endif
+    else {
+        NSLog(@"UNKNOWN RETURN TYPE %@", returnType);
     }
     // the following is deprecated. Now that we can create IMPs from blocks, we don't need handler pools.
     if (!handlerWarehouse) {

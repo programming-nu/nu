@@ -1,7 +1,7 @@
 ;; test_regex.nu
 ;;  tests for Nu regular expression support.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
+;;  Copyright (c) 2007,2011 Tim Burks, Radtastical Inc.
 
 (class TestRegex is NuTestCase
      
@@ -10,27 +10,29 @@
         (set match (r findInString:"abcdefghijklmnopqrstuvwxyz"))
         (assert_equal 24 ((match groupAtIndex:1) length)))
      
-     (if (eq (uname) "Darwin") ;; requires UTF-8
-         (- (id) testScrapeWithOperator is
-            (set s (NSString stringWithContentsOfFile:"test/test.html" encoding:NSUTF8StringEncoding error:nil))
-            (set r (regex <<-END
+     (- (id) testScrapeWithOperator is
+        (set s (NSString stringWithContentsOfFile:((NSBundle mainBundle) pathForResource:"test" ofType:"html")))
+        (unless s
+                (set s (NSString stringWithContentsOfFile:"test/test.html" encoding:NSUTF8StringEncoding error:nil)))
+        (set r (regex <<-END
 <a href="/search([^\"]*)"END))
-            (set matches (r findAllInString:s))
-            (assert_equal 10 (matches count))
-            (assert_equal "?q=bicycle+pedal&amp;hl=en&amp;start=10&amp;sa=N" ((matches lastObject) groupAtIndex:1))))
+        (set matches (r findAllInString:s))
+        (assert_equal 10 (matches count))
+        (assert_equal "?q=bicycle+pedal&amp;hl=en&amp;start=10&amp;sa=N" ((matches lastObject) groupAtIndex:1)))
      
      (- (id) testRegex is
         (set match (/a(.*)z/ findInString:"abcdefghijklmnopqrstuvwxyz"))
         (assert_equal 24 ((match groupAtIndex:1) length)))
      
-     (if (eq (uname) "Darwin") ;; requires UTF-8
-         (- (id) testRegexScraping is
-            (set s (NSString stringWithContentsOfFile:"test/test.html" encoding:NSUTF8StringEncoding error:nil))
-            (set r /<a href="\/search([^"]*)"/)
-            (set matches (r findAllInString:s))
-            (assert_equal 10 (matches count))
-            (assert_equal "?q=bicycle+pedal&amp;hl=en&amp;start=10&amp;sa=N"
-                 ((matches lastObject) groupAtIndex:1))))
+     (- (id) testRegexScraping is
+        (set s (NSString stringWithContentsOfFile:((NSBundle mainBundle) pathForResource:"test" ofType:"html")))
+        (unless s
+                (set s (NSString stringWithContentsOfFile:"test/test.html" encoding:NSUTF8StringEncoding error:nil)))
+        (set r /<a href="\/search([^"]*)"/)
+        (set matches (r findAllInString:s))
+        (assert_equal 10 (matches count))
+        (assert_equal "?q=bicycle+pedal&amp;hl=en&amp;start=10&amp;sa=N"
+             ((matches lastObject) groupAtIndex:1)))
      
      (- (id) testExtendedRegex is
         (set r /foo  # comment

@@ -67,11 +67,11 @@
                    (((testClass alloc) init) run))))
           
           (puts "")
-          (puts "All: completed #{$tests} tests/#{$assertions} assertions/#{$failures} failures/#{$errors} errors")
+          (NSLog "All: completed #{$tests} tests/#{$assertions} assertions/#{$failures} failures/#{$errors} errors")
           (puts "")
           (if (or $failures $errors)
-              (then (puts "FAILURE (#{$failures} failures, #{$errors} errors)"))
-              (else (puts "SUCCESS (0 failures, 0 errors)")))
+              (then (NSLog "FAILURE (#{$failures} failures, #{$errors} errors)"))
+              (else (NSLog "SUCCESS (0 failures, 0 errors)")))
           (+ $failures $errors))
      
      ;; Run all the test cases for a particular instance of NuTestCase.
