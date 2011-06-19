@@ -113,10 +113,10 @@ END)
 (set @cflags (+ @cflags " -DHAVE_CONFIG_H"))
 
 (ifDarwin
-         (then (set @arch '("x86_64")))) ;; optionally add "ppc" or "ppc64" to the list
+         (then (set @arch '("i386")))) ;; optionally add "ppc" or "ppc64" to the list
 
 (if (or isSnowLeopard isLion)
-	(then (set @arch (append @arch '("i386")))))
+	(then (set @arch (append @arch '("x86_64")))))
 
 (set @includes
      ((@inc_dirs map: (do (inc) " -I#{inc}")) join))

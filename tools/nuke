@@ -855,7 +855,6 @@ END)
 ;; an instance method of a NukeProject; so all instance variables in a Nukefile
 ;; belong to the NukeProject instance.
 (class NukeProject is NSObject
-     (ivar (id) datamodels (id) tasks (id) framework_install_path )
      
      ;; Get the dictionary of tasks managed by a project.
      (- (id) tasks is @tasks)
