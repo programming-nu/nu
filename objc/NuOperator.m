@@ -1731,6 +1731,7 @@
 @implementation Nu_cmethod_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
+    NSLog(@"The cmethod operator is deprecated. Please replace it with '+' in your code.");
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
     [classWrapper registerClass];
@@ -1748,6 +1749,7 @@
 @implementation Nu_imethod_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
+    NSLog(@"The imethod operator is deprecated. Please replace it with '-' in your code.");
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
     [classWrapper registerClass];
@@ -1767,12 +1769,10 @@
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
-#if defined(__x86_64__) || defined(IPHONE)
     // this will only work if the class is unregistered...
     if ([classWrapper isRegistered]) {
-        [NSException raise:@"NuIvarAddedTooLate" format:@"instance variables must be added when a class is created and before any method declarations"];
+        [NSException raise:@"NuIvarAddedTooLate" format:@"explicit instance variables must be added when a class is created and before any method declarations"];
     }
-#endif
     Class classToExtend = [classWrapper wrappedClass];
     if (!classToExtend)
         [NSException raise:@"NuMisplacedDeclaration" format:@"instance variable declaration with no enclosing class declaration"];
@@ -1799,6 +1799,7 @@
 @implementation Nu_ivars_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
+    NSLog(@"The ivars operator is unnecessary. Please remove it from your source.");
     return Nu__null;
 }
 
@@ -1810,11 +1811,7 @@
 @implementation Nu_ivar_accessors_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
-    [classWrapper registerClass];
-    Class classToExtend = [classWrapper wrappedClass];
-    [classToExtend include:[NuClass classWithClass:[NuAutomaticIvars class]]];
+    NSLog(@"The ivar-accessors operator is unnecessary. Please remove it from your source.");
     return Nu__null;
 }
 
@@ -2160,7 +2157,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     
     install("regex",    Nu_regex_operator);
     
-    install("def",      Nu_function_operator);
+    // install("def",      Nu_function_operator); // did anyone use this?
     install("function", Nu_function_operator);
     install("progn",    Nu_progn_operator);
     install("then",     Nu_progn_operator);

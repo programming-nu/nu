@@ -230,7 +230,10 @@ static NSMutableDictionary *handlerWarehouse = nil;
     }
 #endif
     else {
+#ifdef IPHONE 
+        // this is only a problem on iOS. 
         NSLog(@"UNKNOWN RETURN TYPE %@", returnType);
+#endif
     }
     // the following is deprecated. Now that we can create IMPs from blocks, we don't need handler pools.
     if (!handlerWarehouse) {

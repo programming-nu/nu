@@ -38,8 +38,7 @@
 ;;
 ;; <code>% nutest test/test_*.nu</code>
 ;;
-(class NuTestCase is NSObject
-     (ivar (id) failures (id) assertions (id) errors)
+(class NuTestCase is NSObject     
      
      ;; By overriding this method, we detect each time a class is defined in Nu that inherits from this class.
      (+ (id) inheritedByClass:(id) testClass is

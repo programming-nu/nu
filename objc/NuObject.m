@@ -272,14 +272,15 @@
     return Nu__null;
 }
 
-- (id) handleUnknownMessage:(id) cdr withContext:(NSMutableDictionary *) context
+
+- (id) handleUnknownMessage:(id) message withContext:(NSMutableDictionary *) context
 {
     // Collect the method selector and arguments.
     // This seems like a bottleneck, and it also lacks flexibility.
     // Replacing explicit string building with the selector cache reduced runtimes by around 20%.
     // Methods with variadic arguments (NSArray arrayWithObjects:...) are not supported.
     NSMutableArray *args = [NSMutableArray array];
-    id cursor = cdr;
+    id cursor = message;
     SEL sel = 0;
     id nextSymbol = [cursor car];
     if (nu_objectIsKindOfClass(nextSymbol, [NuSymbol class])) {
@@ -336,9 +337,48 @@
         return result;
     }
     
+#define AUTOMATIC_IVAR_ACCESSORS
+#ifdef AUTOMATIC_IVAR_ACCESSORS
+    //NSLog(@"attempting to access ivar %@", [message stringValue]);
+    int message_length = [message length];
+    if (message_length == 1) {
+        // try to automatically get an ivar
+        @try
+        {
+            NSString *ivarName = [[message car] stringValue];
+            //NSLog(@"looking for ivar %@", ivarName);
+            // ivar name is the first (only) token of the message
+            id result = [self valueForIvar:ivarName];
+            // NSLog(@"returning %@ = %@", ivarName, [result description]);
+            return result;
+        }
+        @catch (id error) {
+            //NSLog(@"skipping this error: %@", [error description]);
+            // no ivar, keep going
+        }
+    }
+    else if (message_length == 2) {
+        // try to automatically set an ivar
+        if ([[[[message car] stringValue] substringWithRange:NSMakeRange(0,3)] isEqualToString:@"set"]) {
+            @try
+            {
+                id firstArgument = [[message car] stringValue];
+                id variableName0 = [[firstArgument substringWithRange:NSMakeRange(3,1)] lowercaseString];
+                id variableName1 = [firstArgument substringWithRange:NSMakeRange(4, [firstArgument length] - 5)];
+                [self setValue:[[[message cdr] car] evalWithContext:context]
+                       forIvar:[NSString stringWithFormat:@"%@%@", variableName0, variableName1]];
+                return Nu__null;
+            }
+            @catch (id error) {
+                // NSLog(@"skipping this error: %@", [error description]);
+                // no ivar, keep going
+            }
+        }
+    }
+#endif
     NuCell *cell = [[[NuCell alloc] init] autorelease];
-    [cell setCar: self];
-    [cell setCdr: cdr];
+    [cell setCar:self];
+    [cell setCdr:message];
     [NSException raise:@"NuUnknownMessage"
                 format:@"unable to find message handler for %@",
      [cell stringValue]];
@@ -352,7 +392,13 @@
         // look for sparse ivar storage
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (sparseIvars) {
-            return [sparseIvars objectForKey:name];
+            // NSLog(@"sparse %@", [sparseIvars description]);
+            id result = [sparseIvars objectForKey:name];
+            if (result) {
+                return result;
+            } else {
+                NSLog(@"NO VALUE");
+            }
         }
         [NSException raise:@"NuNoInstanceVariable"
                     format:@"Unable to get ivar named %@ for object %@",

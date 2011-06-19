@@ -34,6 +34,10 @@
             (assert_equal '(3 4) (v frameOrigin)))
          
          (- (id) testRange is
+            ;; I couldn't find a class that stored ranges inside it
+            ;; (the way that NSView has internal NSRects), so I made one.
+            (class ThingWithRange is NSObject
+                 (ivar (NSRange) range))
             (set rangeThing ((ThingWithRange alloc) init))
             (assert_equal '(0 0) (rangeThing range))
             (rangeThing setRange:'(1 2))
@@ -46,10 +50,4 @@
          (- (NSSize) frameSize is
             (list ((self frame) third) ((self frame) fourth)))
          (- (NSPoint) frameOrigin is
-            (list ((self frame) first) ((self frame) second))))
-    
-    ;; I couldn't find a class that stored ranges inside it
-    ;; (the way that NSView has internal NSRects), so I made one.
-    (class ThingWithRange is NSObject
-         (ivar (NSRange) range)
-         (ivar-accessors)))
+            (list ((self frame) first) ((self frame) second)))))

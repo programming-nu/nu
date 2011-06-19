@@ -43,9 +43,7 @@
              
              (- testIvarReleaseOnDealloc is
                 (class IvarReleaseHelper is NuTestHelper
-                     ;;(ivar (id) x) ;; currently declared ivars are not released, this is consistent with unretained outlets
-                     (ivars)
-                     (ivar-accessors)
+                     ;;(ivar (id) x) ;; currently declared ivars are not released, this is consistent with unretained outlets                     
                      (set myDeallocationCount 0) ;; closure gives this variable class scope.
                      (+ (int) myDeallocationCount is myDeallocationCount)
                      (- (void) dealloc is

@@ -29,32 +29,30 @@
         (assert_equal nil (>= 3 2 1 2))
         (assert_equal nil (>= "a" "b")))
      
-     (if (eq (uname) "Darwin") ;; I think the problem here is with method declaration
-         (- testCustomComparison is
-            
-            (class NumericString is NSObject
-                 (ivar (id) string)
-                 (+ stringWithString:s is ((self alloc) initWithString:s))
-                 (- initWithString:s is
-                    (self init)
-                    (set @string s)
-                    self)
-                 (- stringValue is @string)
-                 (- description is @string)
-                 (- (int) compare:(id) other is
-                    ((@string intValue) compare:((other stringValue) intValue))))
-            
-            (set x (NumericString stringWithString:"123"))
-            (set y (NumericString stringWithString:"45"))
-            (set z (NumericString stringWithString:"12"))
-            
-            (set a ((array x y z) sort))
-            
-            (assert_equal "12" ((a 0) stringValue))
-            (assert_equal "45" ((a 1) stringValue))
-            (assert_equal "123" ((a 2) stringValue))
-            
-            (assert_equal nil (<= x y))
-            (assert_equal nil (< x y))
-            (assert_equal t   (>= x y))
-            (assert_equal t   (> x y)))))
+     (- testCustomComparison is
+        
+        (class NumericString is NSObject
+             (+ stringWithString:s is ((self alloc) initWithString:s))
+             (- initWithString:s is
+                (self init)
+                (set @string s)
+                self)
+             (- stringValue is @string)
+             (- description is @string)
+             (- (int) compare:(id) other is
+                ((@string intValue) compare:((other stringValue) intValue))))
+        
+        (set x (NumericString stringWithString:"123"))
+        (set y (NumericString stringWithString:"45"))
+        (set z (NumericString stringWithString:"12"))
+        
+        (set a ((array x y z) sort))
+        
+        (assert_equal "12" ((a 0) stringValue))
+        (assert_equal "45" ((a 1) stringValue))
+        (assert_equal "123" ((a 2) stringValue))
+        
+        (assert_equal nil (<= x y))
+        (assert_equal nil (< x y))
+        (assert_equal t   (>= x y))
+        (assert_equal t   (> x y))))

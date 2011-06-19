@@ -245,15 +245,15 @@ void NuInit()
         [NSString include: [NuClass classWithClass:[NuEnumerable class]]];
         [pool drain];
         
-#ifndef IPHONE
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
         
+        // swizzle container classes to allow us to add nil to collections (as NSNull).
         void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();
         
-#ifndef MININUSH
+#if !defined(MININUSH) && !defined(IPHONE)
         // Load some standard files
         // Warning: since these loads are performed without a context, the non-global symbols defined in them
         // will not be available to other Nu scripts or at the console.  These loads should only be used
@@ -263,9 +263,6 @@ void NuInit()
         [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
 #endif
-#endif
-        
-        
     }
 }
 
