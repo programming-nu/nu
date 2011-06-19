@@ -150,7 +150,6 @@
      (ivar (id) action)			 ;; a block which performs the necessary build action
      (ivar (int) isFile)		 ;; if nonzero, task is a file task
      (ivar (id) result)			 ;; the result of executing the task
-     (ivar-accessors)
      
      ;; @discussion Create a task with a specified name.
      (- (id) initWithName:(id) name is
@@ -856,7 +855,7 @@ END)
 ;; an instance method of a NukeProject; so all instance variables in a Nukefile
 ;; belong to the NukeProject instance.
 (class NukeProject is NSObject
-     (ivars)
+     (ivar (id) datamodels (id) tasks (id) framework_install_path )
      
      ;; Get the dictionary of tasks managed by a project.
      (- (id) tasks is @tasks)

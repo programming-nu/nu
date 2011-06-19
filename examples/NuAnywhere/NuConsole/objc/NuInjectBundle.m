@@ -12,6 +12,7 @@
 - (id) run:(id) object
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSLog(@"starting");
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *main_path = [bundle pathForResource:@"main" ofType:@"nu"];
     if (main_path) {

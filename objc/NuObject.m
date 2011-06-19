@@ -343,18 +343,10 @@
     int message_length = [message length];
     if (message_length == 1) {
         // try to automatically get an ivar
-        @try
-        {
-            NSString *ivarName = [[message car] stringValue];
-            //NSLog(@"looking for ivar %@", ivarName);
-            // ivar name is the first (only) token of the message
+        NSString *ivarName = [[message car] stringValue];
+        if ([self hasValueForIvar:ivarName]) {
             id result = [self valueForIvar:ivarName];
-            // NSLog(@"returning %@ = %@", ivarName, [result description]);
             return result;
-        }
-        @catch (id error) {
-            //NSLog(@"skipping this error: %@", [error description]);
-            // no ivar, keep going
         }
     }
     else if (message_length == 2) {
@@ -397,19 +389,38 @@
             if (result) {
                 return result;
             } else {
-                NSLog(@"NO VALUE");
+                return Nu__null;
             }
-        }
-        [NSException raise:@"NuNoInstanceVariable"
-                    format:@"Unable to get ivar named %@ for object %@",
-         name, self];
-        
+        }        
         return Nu__null;
     }
     void *location = (void *)&(((char *)self)[ivar_getOffset(v)]);
     id result = get_nu_value_from_objc_value(location, ivar_getTypeEncoding(v));
     return result;
 }
+
+- (BOOL) hasValueForIvar:(NSString *) name
+{
+    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
+    if (!v) {
+        // look for sparse ivar storage
+        NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
+        if (sparseIvars) {
+            // NSLog(@"sparse %@", [sparseIvars description]);
+            id result = [sparseIvars objectForKey:name];
+            if (result) {
+                return YES;
+            } else {
+                return NO;
+            }
+        }        
+        return NO;
+    }
+    void *location = (void *)&(((char *)self)[ivar_getOffset(v)]);
+    id result = get_nu_value_from_objc_value(location, ivar_getTypeEncoding(v));
+    return YES;
+}
+
 
 - (void) setValue:(id) value forIvar:(NSString *)name
 {
