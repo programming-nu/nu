@@ -45,17 +45,8 @@
     
     NuInit();
     
-    NSString *s;
-    s = [NSString stringWithContentsOfFile:[[NSBundle mainBundle]
-                                            pathForResource:@"nu" ofType:@"nu"]
-                                  encoding:NSUTF8StringEncoding
-                                     error:NULL];
-    [[Nu sharedParser] parseEval:s];
-    s = [NSString stringWithContentsOfFile:[[NSBundle mainBundle]
-                                            pathForResource:@"test" ofType:@"nu"]
-                                  encoding:NSUTF8StringEncoding
-                                     error:NULL];
-    [[Nu sharedParser] parseEval:s];
+    [[Nu sharedParser] parseEval:@"(load \"nu.nu\""];
+    [[Nu sharedParser] parseEval:@"(load \"test.nu\""];
     
     NSString *resourceDirectory = [[NSBundle mainBundle] resourcePath];
     
