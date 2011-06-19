@@ -45,8 +45,8 @@
     
     NuInit();
     
-    [[Nu sharedParser] parseEval:@"(load \"nu.nu\""];
-    [[Nu sharedParser] parseEval:@"(load \"test.nu\""];
+    [[Nu sharedParser] parseEval:@"(load \"nu\")"];
+    [[Nu sharedParser] parseEval:@"(load \"test\")"];
     
     NSString *resourceDirectory = [[NSBundle mainBundle] resourcePath];
     

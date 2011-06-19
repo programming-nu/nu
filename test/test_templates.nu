@@ -3,7 +3,6 @@
 ;;
 ;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
-(if (eq (uname) "Darwin")
 (load "template")
 
 (class TestTemplates is NuTestCase
@@ -34,4 +33,4 @@ END)
         (set result (eval template))
         (assert_equal goal result)))
 
-)
+

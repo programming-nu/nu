@@ -27,23 +27,20 @@
         (assert_equal "24" "#{(* 6 4)}"))
      
      (- (id) testOctalEscapedStrings is
-        (if (eq (uname) "Darwin") ;; requires UTF-8
-            (assert_equal 0 ("\000" characterAtIndex:0)))
+        (assert_equal 0 ("\000" characterAtIndex:0))
         (assert_equal 1 ("\001" characterAtIndex:0))
         (assert_equal 255 ("\377" characterAtIndex:0)))
      
      (- (id) testHexEscapedStrings is
-        (if (eq (uname) "Darwin") ;; requires UTF-8
-            (assert_equal 0 ("\x00" characterAtIndex:0)))
+        (assert_equal 0 ("\x00" characterAtIndex:0))
         (assert_equal 1 ("\x01" characterAtIndex:0))
         (assert_equal 255 ("\xfF" characterAtIndex:0)))
      
-     (if (eq (uname) "Darwin") ;; requires UTF-8
-         (- (id) testUnicodeEscapedStrings is
-            (assert_equal 0 ("\u0000" characterAtIndex:0))
-            (assert_equal 1 ("\u0001" characterAtIndex:0))
-            (assert_equal 255 ("\u00ff" characterAtIndex:0))
-            (assert_equal 65535 ("\uFfFf" characterAtIndex:0))))
+     (- (id) testUnicodeEscapedStrings is
+        (assert_equal 0 ("\u0000" characterAtIndex:0))
+        (assert_equal 1 ("\u0001" characterAtIndex:0))
+        (assert_equal 255 ("\u00ff" characterAtIndex:0))
+        (assert_equal 65535 ("\uFfFf" characterAtIndex:0)))
      
      (- (id) testEscapedHereStrings is
         (set x <<+END
@@ -73,14 +70,13 @@
         (assert_equal 1 (x characterAtIndex:1))
         (assert_equal 255 (x characterAtIndex:2)))
      
-     (if (eq (uname) "Darwin") ;; requires UTF-8
-         (- (id) testUnicodeEscapedHereStrings is
-            (set x <<+END
+     (- (id) testUnicodeEscapedHereStrings is
+        (set x <<+END
 \u0000\u0001\u00ff\uFfFfEND)
-            (assert_equal 0 (x characterAtIndex:0))
-            (assert_equal 1 (x characterAtIndex:1))
-            (assert_equal 255 (x characterAtIndex:2))
-            (assert_equal 65535 (x characterAtIndex:3))))
+        (assert_equal 0 (x characterAtIndex:0))
+        (assert_equal 1 (x characterAtIndex:1))
+        (assert_equal 255 (x characterAtIndex:2))
+        (assert_equal 65535 (x characterAtIndex:3)))
      
      (- (id) testExplicitlyUnescapedStrings is
         (assert_equal 92 (-"\n" characterAtIndex:0))
