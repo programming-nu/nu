@@ -42,7 +42,6 @@
 ;; @abstract A Nu code beautifier.
 ;; @discussion This class is used by nubile, the standalone Nu code beautifier, to automatically indent Nu code.
 (class NuBeautifier is NSObject
-     (ivars)
      
      (+ (id) beautify:(id) text is
         (set b ((NuBeautifier alloc) init))

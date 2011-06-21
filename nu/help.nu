@@ -216,9 +216,6 @@ The string is not followed by a carriage return.END)
 (class-help Nu_load_operator <<-END
 This operator loads a file or bundle.END)
 
-(class-help Nu_beep_operator <<-END
-This operator causes the system to beep.END)
-
 (class-help Nu_class_operator <<-END
 This operator defines or extends a class.
 If a subclass is specified, presumably a new

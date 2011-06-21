@@ -34,6 +34,9 @@
 #ifndef IPHONE
 #include <readline/readline.h>
 #endif
+#ifdef IPHONE
+#include <UIKit/UIKit.h>
+#endif
 #include <stdlib.h>
 #include <unistd.h>
 
@@ -1784,8 +1787,8 @@
         cursor = [cursor cdr];
         NSString *signature = signature_for_identifier(variableType, symbolTable);
         nu_class_addInstanceVariable_withSignature(classToExtend,
-                                                [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
-                                                [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+                                                   [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
+                                                   [signature cStringUsingEncoding:NSUTF8StringEncoding]);
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
     return Nu__null;
@@ -1816,22 +1819,6 @@
 }
 
 @end
-
-#if !defined(IPHONE)
-#import <Cocoa/Cocoa.h>
-
-@interface Nu_beep_operator : NuOperator {}
-@end
-
-@implementation Nu_beep_operator
-- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
-{
-    NSBeep();
-    return Nu__null;
-}
-
-@end
-#endif
 
 @interface Nu_system_operator : NuOperator {}
 @end
@@ -1890,11 +1877,20 @@
 @implementation Nu_uname_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
+    if (!cdr || (cdr == Nu__null)) {
 #ifdef IPHONE
-    return @"iOS";
+        return @"iOS";
 #else
-    return @"Darwin";
+        return @"Darwin";
 #endif
+    }
+    if ([[[cdr car] stringValue] isEqualToString:@"systemName"]) {
+#ifdef IPHONE
+        return [[UIDevice currentDevice] systemName];
+#else
+        return @"Macintosh";
+#endif       
+    }
 }
 
 @end
@@ -2205,9 +2201,6 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("let",      Nu_let_operator);
     
     install("load",     Nu_load_operator);
-#if !defined(IPHONE)
-    install("beep",     Nu_beep_operator);
-#endif
     
     install("uname",    Nu_uname_operator);
     install("system",   Nu_system_operator);

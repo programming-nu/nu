@@ -13,9 +13,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8DC2EF4F0486A6940098B216"
-               BuildableName = "Nu.framework"
-               BlueprintName = "Nu"
+               BlueprintIdentifier = "2283073011DDBE3100A5C690"
+               BuildableName = "nush"
+               BlueprintName = "nush"
                ReferencedContainer = "container:Nu.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,21 +32,43 @@
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.GDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
-      displayScaleIsEnabled = "NO"
-      displayScale = "1.00"
       launchStyle = "0"
-      useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug">
+      useCustomWorkingDirectory = "YES"
+      customWorkingDirectory = "/Volumes/Users/tim/Desktop/Repositories/nu"
+      buildConfiguration = "Debug"
+      enablesOpenGLESFrameCapture = "YES">
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "2283073011DDBE3100A5C690"
+            BuildableName = "nush"
+            BlueprintName = "nush"
+            ReferencedContainer = "container:Nu.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "tools/nutest tests.nu"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
-      displayScaleIsEnabled = "NO"
-      displayScale = "1.00"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release">
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "2283073011DDBE3100A5C690"
+            BuildableName = "nush"
+            BlueprintName = "nush"
+            ReferencedContainer = "container:Nu.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

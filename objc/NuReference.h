@@ -27,7 +27,7 @@
  
  <div style="margin-left:2em">
  <code>
- (imethod (id) save is<br/>
+ (- (id) save is<br/>
  &nbsp;&nbsp;(set perror ((NuReference alloc) init))<br/>
  &nbsp;&nbsp;(set result ((self managedObjectContext) save:perror))<br/>
  &nbsp;&nbsp;(unless result<br/>

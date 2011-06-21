@@ -38,7 +38,8 @@
  The Nu <b>macro</b> operator uses blocks to create macros.
  Since macros evaluate in their callers' contexts, no context information is kept for blocks used to create macros.
  
- The <b>imethod</b> and <b>cmethod</b> operators use blocks to create new method implementations.
+ When used in a class context, the <b>-</b> and <b>+</b> operators 
+ use blocks to create new method implementations.
  When a block is called as a method implementation, its context includes the symbols
  <b>self</b> and <b>super</b>. This allows method implementations to send messages to
  the owning object and its superclass.
