@@ -186,6 +186,9 @@
 		22B3B50313B0386600B3AB31 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50213B0386600B3AB31 /* UIKit.framework */; };
 		22B3B50513B0388C00B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50413B0388C00B3AB31 /* Foundation.framework */; };
 		22B3B50713B038D000B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50613B038D000B3AB31 /* Foundation.framework */; };
+		22E695F813B6A21700355FA0 /* NuPropertyListExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 22E695F613B6A21700355FA0 /* NuPropertyListExtensions.h */; };
+		22E695F913B6A21700355FA0 /* NuPropertyListExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E695F713B6A21700355FA0 /* NuPropertyListExtensions.m */; };
+		22E695FA13B6A21700355FA0 /* NuPropertyListExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E695F713B6A21700355FA0 /* NuPropertyListExtensions.m */; };
 		22EE2C0413A4731600895861 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 22EE2C0213A4731600895861 /* InfoPlist.strings */; };
 		22EE2C0613A4731600895861 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0513A4731600895861 /* main.m */; };
 		22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0913A4731600895861 /* NuAppDelegate.m */; };
@@ -345,6 +348,8 @@
 		22B3B50213B0386600B3AB31 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		22B3B50413B0388C00B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		22B3B50613B038D000B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		22E695F613B6A21700355FA0 /* NuPropertyListExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuPropertyListExtensions.h; sourceTree = "<group>"; };
+		22E695F713B6A21700355FA0 /* NuPropertyListExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuPropertyListExtensions.m; sourceTree = "<group>"; };
 		22EE2BF413A4731600895861 /* NuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22EE2C0113A4731600895861 /* NuApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NuApp-Info.plist"; sourceTree = "<group>"; };
 		22EE2C0313A4731600895861 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -594,6 +599,8 @@
 				22B3B45713B0359300B3AB31 /* NuProfiler.m */,
 				22B3B45913B0359300B3AB31 /* NuProperty.h */,
 				22B3B45A13B0359300B3AB31 /* NuProperty.m */,
+				22E695F613B6A21700355FA0 /* NuPropertyListExtensions.h */,
+				22E695F713B6A21700355FA0 /* NuPropertyListExtensions.m */,
 				22B3B45C13B0359300B3AB31 /* NuReference.h */,
 				22B3B45D13B0359300B3AB31 /* NuReference.m */,
 				22B3B45F13B0359300B3AB31 /* NuRegex.h */,
@@ -690,6 +697,7 @@
 				22B3B4F313B0359300B3AB31 /* NuSymbol.h in Headers */,
 				22B3B4FC13B0359300B3AB31 /* NuVersion.h in Headers */,
 				22B3B4FF13B0359300B3AB31 /* st.h in Headers */,
+				22E695F813B6A21700355FA0 /* NuPropertyListExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -930,6 +938,7 @@
 				225F62D013B04256002DD16B /* prep_cif.c in Sources */,
 				225F62D113B04256002DD16B /* raw_api.c in Sources */,
 				225F62D313B04256002DD16B /* types.c in Sources */,
+				22E695FA13B6A21700355FA0 /* NuPropertyListExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -966,6 +975,7 @@
 				22B3B4F413B0359300B3AB31 /* NuSymbol.m in Sources */,
 				22B3B4F813B0359300B3AB31 /* NuTestHelper.m in Sources */,
 				22B3B4FD13B0359300B3AB31 /* st.c in Sources */,
+				22E695F913B6A21700355FA0 /* NuPropertyListExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

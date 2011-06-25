@@ -1,6 +1,7 @@
 /*!
- @header NuProperty.h
- @discussion Declarations for NuProperty, a wrapper for ObjC properties
+ @header NuPropertyListExtensions.h
+ @discussion Extensions to allow simper property list access.
+ which wrap pointers to arbitrary locations in memory.
  @copyright Copyright (c) 2011 Radtastical Inc.
  
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,18 +16,20 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-
 #import <Foundation/Foundation.h>
-#import <objc/runtime.h>
 
-@interface NuProperty : NSObject
-{
-    objc_property_t p;
-}
+@interface NSObject (NuPropertyListExtensions) 
 
-/*! Create a property wrapper for the specified property (used from Objective-C). */
-+ (NuProperty *) propertyWithProperty:(objc_property_t) property;
-/*! Initialize a property wrapper for the specified property (used from Objective-C). */
-- (id) initWithProperty:(objc_property_t) property;
+/*! Return the XML property list representation of the object. */
+- (NSData *) XMLPropertyListRepresentation;
 
+/*! Return the binary property list representation of the object. */
+- (NSData *) binaryPropertyListRepresentation;
+
+@end
+
+@interface NSData (NuPropertyListExtensions) 
+
+/*! Return the (immutable) property list value of the associated data. */
+- (id) propertyListValue;
 @end

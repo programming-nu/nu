@@ -30,11 +30,11 @@
          (exit result))
      result)
 
-(macro-0 ifDarwin (eval (append '(if (eq (uname) "Darwin")) margs)))
-(macro-0 ifLinux (eval (append '(if (eq (uname) "Linux")) margs)))
-(macro-0 ifFreeBSD (eval (append '(if (eq (uname) "FreeBSD")) margs)))
-(macro-0 ifOpenSolaris (eval (append '(if (eq (uname) "OpenSolaris")) margs)))
-(macro-0 ifGNUstep (eval (append '(if (not (eq (uname) "Darwin"))) margs)))
+(macro ifDarwin (*body) `(if (eq (uname) "Darwin") ,@*body))
+(macro ifLinux (*body) `(if (eq (uname) "Linux") ,@*body))
+(macro ifFreeBSD (*body) `(if (eq (uname) "FreeBSD") ,@*body))
+(macro ifOpenSolaris (*body) `(if (eq (uname) "OpenSolaris") ,@*body))
+(macro ifGNUstep (*body) `(if (ne (uname) "Darwin") ,@*body))
 
 (function isDarwin () (eq (uname) "Darwin"))
 (function isLinux () (eq (uname) "Linux"))

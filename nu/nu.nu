@@ -207,29 +207,6 @@
                     "Attempt to append a non-string to a string"))
         (else (self appendString:object))))
 
-(class NSObject
-     (- XMLPropertyListRepresentation is
-        (NSPropertyListSerialization dataFromPropertyList:self
-             format:100 ;; NSPropertyListXMLFormat_v1_0
-             errorDescription:nil))
-     
-     (- OpenStepPropertyListRepresentation is
-        (NSPropertyListSerialization dataFromPropertyList:self
-             format:1 ;; NSPropertyListOpenStepFormat_v1_0
-             errorDescription:nil))
-     
-     (- binaryPropertyListRepresentation is
-        (NSPropertyListSerialization dataFromPropertyList:self
-             format:200 ;; NSPropertyListBinaryFormat_v1_0
-             errorDescription:nil)))
-
-(class NSData
-     (- propertyListValue is
-        (NSPropertyListSerialization propertyListFromData:self
-             mutabilityOption:0 ;; NSPropertyListImmutable
-             format:nil
-             errorDescription:nil)))
-
 (if (eq (uname) "Darwin")
     (class NuCell
          ;; Convert a list into an NSRect. The list must have at least four elements.
