@@ -1415,7 +1415,8 @@
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuConsoleViewController *console = (NuConsoleViewController*)[[symbolTable symbolWithCString:"$$console"] value];
+    NuConsoleViewController *console = (NuConsoleViewController*)
+    [[symbolTable symbolWithCString:"$$console"] value];
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
@@ -1891,6 +1892,7 @@
         return @"Macintosh";
 #endif       
     }
+    return nil;
 }
 
 @end

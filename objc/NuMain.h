@@ -81,14 +81,14 @@ int NuMain(int argc, const char *argv[]);
 // Helpers for programmatic construction of Nu code.
 // Experimental. They may change or disappear in future releases.
 id _nunull(void);
-id _nustring(const char *string);
-id _nustring_with_length(const char *string, int length);
-id _nusymbol(const char *string);
-id _nusymbol_with_length(const char *string, int length);
+id _nustring(const unsigned char *string);
+id _nustring_with_length(const unsigned char *string, int length);
+id _nusymbol(const unsigned char *string);
+id _nusymbol_with_length(const unsigned char *string, int length);
 id _nunumberd(double d);
 id _nucell(id car, id cdr);
-id _nuregex(const char *pattern, int options);
-id _nuregex_with_length(const char *pattern, int length, int options);
+id _nuregex(const unsigned char *pattern, int options);
+id _nuregex_with_length(const unsigned char *pattern, int length, int options);
 id _nulist(id firstObject,...);
 id _nudata(const void *bytes, int length);
 

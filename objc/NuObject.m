@@ -416,8 +416,8 @@
         }        
         return NO;
     }
-    void *location = (void *)&(((char *)self)[ivar_getOffset(v)]);
-    id result = get_nu_value_from_objc_value(location, ivar_getTypeEncoding(v));
+    //void *location = (void *)&(((char *)self)[ivar_getOffset(v)]);
+    //id result = get_nu_value_from_objc_value(location, ivar_getTypeEncoding(v));
     return YES;
 }
 

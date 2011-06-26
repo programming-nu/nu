@@ -258,17 +258,18 @@
     NSMutableArray *names = [NSMutableArray array];
     
     unsigned int ivarCount;
-    Ivar *ivarList = class_copyIvarList(c, &ivarCount);
+    // Ivar *ivarList = class_copyIvarList(c, &ivarCount);
     
     NSLog(@"%d ivars", ivarCount);
     return names;
 }
 
 - (BOOL) addPropertyWithName:(NSString *) name {
-    const objc_property_t attributes[10];
+    const objc_property_attribute_t attributes[10];
     unsigned int attributeCount = 0;
     return class_addProperty(c, [name cStringUsingEncoding:NSUTF8StringEncoding],
-                             &attributes, attributeCount);    
+                              attributes, 
+                             attributeCount);    
 }
 
 - (NuProperty *) propertyWithName:(NSString *) name {

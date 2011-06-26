@@ -951,7 +951,7 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
 
 - (void) setValue:(id)value forKey:(NSString *)string
 {
-    [context setValue:value forKey:[symbolTable symbolWithString:string]];
+    [context setObject:value forKey:[symbolTable symbolWithString:string]];
 }
 
 - (NSString *) parseEval:(NSString *)string

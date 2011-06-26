@@ -96,6 +96,6 @@
 /*! Remove all associated objects. */
 - (void) removeAssociatedObjects;
 
-- (id) attemptAutomaticIvarAccess:(id) message withContext:(NSMutableDictionary *) context returningSuccess:(BOOL *) success;
+- (BOOL) hasValueForIvar:(NSString *) name;
 
 @end

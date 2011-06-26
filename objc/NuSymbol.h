@@ -35,13 +35,13 @@
 /*! Get the shared NuSymbolTable object. */
 + (NuSymbolTable *) sharedSymbolTable;
 /*! Get a symbol with the specified string. */
-- (id) symbolWithString:(NSString *)string;
+- (NuSymbol *) symbolWithString:(NSString *)string;
 /*! Get a symbol with the specified C string. */
-- (id) symbolWithCString:(const char *)string;
+- (NuSymbol *) symbolWithCString:(const char *)string;
 /*! Get a symbol with the specified string of bytes. */
-- (id) symbolWithBytes:(const void *)bytes length:(unsigned)length;
+- (NuSymbol *) symbolWithBytes:(const void *)bytes length:(unsigned)length;
 /*! Lookup a symbol in a symbol table. */
-- (id) lookup:(const char *) string;
+- (NuSymbol *) lookup:(const char *) string;
 /*! Get an array containing all of the symbols in a symbol table. */
 - (NSArray *) all;
 /*! Remove a symbol from the symbol table */

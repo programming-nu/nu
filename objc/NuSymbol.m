@@ -45,7 +45,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
 }
 
 // Designated initializer
-- (id) symbolWithCString:(const char *)string
+- (NuSymbol *) symbolWithCString:(const char *)string
 {
     if (!symbol_table) symbol_table = st_init_strtable();
     
@@ -70,12 +70,12 @@ static NuSymbolTable *sharedSymbolTable = 0;
     return symbol;
 }
 
-- (id) symbolWithString:(NSString *)string
+- (NuSymbol *) symbolWithString:(NSString *)string
 {
     return [self symbolWithCString:[string cStringUsingEncoding:NSUTF8StringEncoding]];
 }
 
-- (id) symbolWithBytes:(const void *)bytes length:(unsigned)length
+- (NuSymbol *) symbolWithBytes:(const void *)bytes length:(unsigned)length
 {
     char buffer[1024];                            // overrun risk!!
     strncpy(buffer, bytes, length);
@@ -83,7 +83,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
     return [self symbolWithCString:buffer];
 }
 
-- (id) lookup:(const char *) string
+- (NuSymbol *) lookup:(const char *) string
 {
     NuSymbol *symbol;
     return st_lookup(symbol_table, (st_data_t)string, (st_data_t *)&symbol) ? (id)symbol : nil;
