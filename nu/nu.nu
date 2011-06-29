@@ -203,9 +203,8 @@
      ;; Concisely append to a string using this method, which is equivalent to a call to appendString:.
      (- (void) << (id) object is
         (if (not (string? object))
-            (throw* "NSInvalidArgumentExpection"
-                    "Attempt to append a non-string to a string"))
-        (else (self appendString:object))))
+            (then (self appendString:(object stringValue)))
+            (else (self appendString:object)))))
 
 (if (eq (uname) "Darwin")
     (class NuCell
