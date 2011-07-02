@@ -15,7 +15,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-#import "st.h"
 #import "NuSymbol.h"
 #import "NuClass.h"
 #import "NuObject.h"
@@ -45,28 +44,27 @@ static NuSymbolTable *sharedSymbolTable = 0;
 }
 
 // Designated initializer
-- (NuSymbol *) symbolWithCString:(const char *)string
+- (NuSymbol *) symbolWithCString:(const char *)cstring
 {
-    if (!symbol_table) symbol_table = st_init_strtable();
+    if (!symbol_table) symbol_table = [[NSMutableDictionary alloc] init];
     
+    NSString *string = [NSString stringWithCString:cstring encoding:NSUTF8StringEncoding];
     // If the symbol is already in the table, return it.
-    NuSymbol *symbol;
-    if (st_lookup(symbol_table, (st_data_t)string, (st_data_t *)&symbol))
+    NuSymbol *symbol = [symbol_table objectForKey:string];
+    if (symbol) {
         return symbol;
+    }
     
     // If not, create it. Don't autorelease it; it is owned by the table.
     symbol = [[NuSymbol alloc] init];             // keep construction private
-    symbol->string = strdup(string);
+    symbol->string = strdup(cstring);
     // the symbol table does not use strong refs so make one here for each symbol
-#ifndef IPHONE
-    [[NSGarbageCollector defaultCollector] disableCollectorForPointer:symbol];
-#endif
-    int len = strlen(string);
-    symbol->isLabel = (string[len - 1] == ':');
-    symbol->isGensym = (len > 2) && (string[0] == '_') && (string[1] == '_');
+    int len = strlen(cstring);
+    symbol->isLabel = (cstring[len - 1] == ':');
+    symbol->isGensym = (len > 2) && (cstring[0] == '_') && (cstring[1] == '_');
     
     // Put the new symbol in the symbol table and return it.
-    st_add_direct(symbol_table, (st_data_t)(symbol->string), (long) symbol);
+    [symbol_table setObject:symbol forKey:string];
     return symbol;
 }
 
@@ -83,35 +81,19 @@ static NuSymbolTable *sharedSymbolTable = 0;
     return [self symbolWithCString:buffer];
 }
 
-- (NuSymbol *) lookup:(const char *) string
+- (NuSymbol *) lookup:(const char *) cstring
 {
-    NuSymbol *symbol;
-    return st_lookup(symbol_table, (st_data_t)string, (st_data_t *)&symbol) ? (id)symbol : nil;
-}
-
-// helper function for "all" method
-static int add_to_array(st_data_t k, st_data_t v, st_data_t d)
-{
-    NuSymbol *symbol = (NuSymbol *) v;
-    NSMutableArray *array = (NSMutableArray *) d;
-    [array addObject:symbol];
-    return ST_CONTINUE;
+    return [symbol_table objectForKey:[NSString stringWithCString:cstring encoding:NSUTF8StringEncoding]];
 }
 
 - (NSArray *) all
 {
-    NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
-    st_foreach(symbol_table, add_to_array, (long) array);
-    return array;
+    return [symbol_table allValues];
 }
 
 - (void) removeSymbol:(NuSymbol *) symbol
 {
-    st_delete(symbol_table, (st_data_t *) &(symbol->string), 0);
-    [symbol release];                             // on behalf of the table
-#ifndef IPHONE
-    [[NSGarbageCollector defaultCollector] enableCollectorForPointer:symbol];
-#endif
+    [symbol_table removeObjectForKey:[symbol stringValue]];
 }
 
 @end

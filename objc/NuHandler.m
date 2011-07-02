@@ -64,13 +64,17 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             //NSLog(@"argument is %lf", x);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
-#ifdef IPHONE
         else if (!strcmp(type, "{CGRect={CGPoint=ff}{CGSize=ff}}")
                  || (!strcmp(type, "{CGRect=\"origin\"{CGPoint=\"x\"f\"y\"f}\"size\"{CGSize=\"width\"f\"height\"f}}"))) {
             CGRect x = va_arg(ap, CGRect);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
-#else
+        else if (!strcmp(type, "{CGRect={CGPoint=dd}{CGSize=dd}}")
+                 || (!strcmp(type, "{CGRect=\"origin\"{CGPoint=\"x\"d\"y\"d}\"size\"{CGSize=\"width\"d\"height\"d}}"))) {
+            CGRect x = va_arg(ap, CGRect);
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
+#ifndef IPHONE
         else if (!strcmp(type, "{_NSRect={_NSPoint=dd}{_NSSize=dd}}")) {
             NSRect x = va_arg(ap, NSRect);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];

@@ -15,7 +15,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-#import "st.h"
 #import <Foundation/Foundation.h>
 #ifdef IPHONE
 #import <CoreGraphics/CoreGraphics.h>
@@ -72,7 +71,7 @@
  * V oneway
  */
 
-st_table *nu_block_table = NULL;
+NSMutableDictionary *nu_block_table = nil;
 
 #ifdef __x86_64__
 
@@ -924,8 +923,8 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
     // if the imp has an associated block, this is a nu-to-nu call.
     // skip going through the ObjC runtime and evaluate the block directly.
     NuBlock *block = nil;
-    if (nu_block_table && st_lookup(nu_block_table, (unsigned long)imp, (unsigned long *)&block)) {
-        //NSLog(@"nu calling nu method %s of class %@", sel_getName(method_getName(m)), [target class]);
+    if (nu_block_table && 
+        ((block = [nu_block_table objectForKey:[NSNumber numberWithUnsignedLong:(unsigned long)imp]]))) {
         id arguments = [[NuCell alloc] init];
         id cursor = arguments;
         int argc = [args count];
@@ -1231,12 +1230,9 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     
     // save the block in a hash table keyed by the imp.
     // this will let us introspect methods and optimize nu-to-nu method calls
-    if (!nu_block_table) nu_block_table = st_init_numtable();
+    if (!nu_block_table) nu_block_table = [[NSMutableDictionary alloc] init];
     // watch for problems caused by these ugly casts...
-    st_insert(nu_block_table, (long) imp, (long) block);
-#ifndef IPHONE
-    [[NSGarbageCollector defaultCollector] disableCollectorForPointer: block];
-#endif
+    [nu_block_table setObject:block forKey:[NSNumber numberWithUnsignedLong:(unsigned long) imp]];
     // insert the method handler in the class method table
     nu_class_replaceMethod(c, selector, imp, signature_str);
     //NSLog(@"setting handler for %s(%s) in class %s", method_name_str, signature_str, class_getName(c));

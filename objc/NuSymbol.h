@@ -29,7 +29,7 @@
  */
 @interface NuSymbolTable : NSObject
 {
-    struct st_table *symbol_table;
+    NSMutableDictionary *symbol_table;
 }
 
 /*! Get the shared NuSymbolTable object. */

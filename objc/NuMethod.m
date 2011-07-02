@@ -15,7 +15,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-#import "st.h"
 #import "NuMethod.h"
 #import "NuExtensions.h"
 
@@ -85,14 +84,15 @@
     return result;
 }
 
-extern st_table *nu_block_table;
 
 - (NuBlock *) block
 {
     IMP imp = method_getImplementation(m);
     NuBlock *block = nil;
-    if (nu_block_table)
-        st_lookup(nu_block_table, (unsigned long)imp, (unsigned long *)&block);
+    extern NSMutableDictionary *nu_block_table;
+    if (nu_block_table) {
+        block = [nu_block_table objectForKey:[NSNumber numberWithUnsignedLong:(unsigned long)imp]];
+    }
     return block;
 }
 

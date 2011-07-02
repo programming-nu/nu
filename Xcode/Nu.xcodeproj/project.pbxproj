@@ -180,9 +180,6 @@
 		22B3B4F813B0359300B3AB31 /* NuTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46D13B0359300B3AB31 /* NuTestHelper.m */; };
 		22B3B4F913B0359300B3AB31 /* NuTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46D13B0359300B3AB31 /* NuTestHelper.m */; };
 		22B3B4FC13B0359300B3AB31 /* NuVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B46F13B0359300B3AB31 /* NuVersion.h */; };
-		22B3B4FD13B0359300B3AB31 /* st.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B47013B0359300B3AB31 /* st.c */; };
-		22B3B4FE13B0359300B3AB31 /* st.c in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B47013B0359300B3AB31 /* st.c */; };
-		22B3B4FF13B0359300B3AB31 /* st.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B47113B0359300B3AB31 /* st.h */; };
 		22B3B50313B0386600B3AB31 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50213B0386600B3AB31 /* UIKit.framework */; };
 		22B3B50513B0388C00B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50413B0388C00B3AB31 /* Foundation.framework */; };
 		22B3B50713B038D000B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50613B038D000B3AB31 /* Foundation.framework */; };
@@ -343,8 +340,6 @@
 		22B3B46B13B0359300B3AB31 /* NuSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuSymbol.m; sourceTree = "<group>"; };
 		22B3B46D13B0359300B3AB31 /* NuTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuTestHelper.m; sourceTree = "<group>"; };
 		22B3B46F13B0359300B3AB31 /* NuVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuVersion.h; sourceTree = "<group>"; };
-		22B3B47013B0359300B3AB31 /* st.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = st.c; sourceTree = "<group>"; };
-		22B3B47113B0359300B3AB31 /* st.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = st.h; sourceTree = "<group>"; };
 		22B3B50213B0386600B3AB31 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		22B3B50413B0388C00B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		22B3B50613B038D000B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -614,8 +609,6 @@
 				22B3B46B13B0359300B3AB31 /* NuSymbol.m */,
 				22B3B46D13B0359300B3AB31 /* NuTestHelper.m */,
 				22B3B46F13B0359300B3AB31 /* NuVersion.h */,
-				22B3B47013B0359300B3AB31 /* st.c */,
-				22B3B47113B0359300B3AB31 /* st.h */,
 			);
 			name = objc;
 			path = ../objc;
@@ -696,7 +689,6 @@
 				22B3B4EA13B0359300B3AB31 /* NuSuper.h in Headers */,
 				22B3B4F313B0359300B3AB31 /* NuSymbol.h in Headers */,
 				22B3B4FC13B0359300B3AB31 /* NuVersion.h in Headers */,
-				22B3B4FF13B0359300B3AB31 /* st.h in Headers */,
 				22E695F813B6A21700355FA0 /* NuPropertyListExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -930,7 +922,6 @@
 				22B3B4F013B0359300B3AB31 /* NuSwizzles.m in Sources */,
 				22B3B4F513B0359300B3AB31 /* NuSymbol.m in Sources */,
 				22B3B4F913B0359300B3AB31 /* NuTestHelper.m in Sources */,
-				22B3B4FE13B0359300B3AB31 /* st.c in Sources */,
 				225F62CB13B04256002DD16B /* ffi-iphone.c in Sources */,
 				225F62CC13B04256002DD16B /* ffi-iphonesimulator.c in Sources */,
 				225F62CD13B04256002DD16B /* iphone-sysv.S in Sources */,
@@ -974,7 +965,6 @@
 				22B3B4EF13B0359300B3AB31 /* NuSwizzles.m in Sources */,
 				22B3B4F413B0359300B3AB31 /* NuSymbol.m in Sources */,
 				22B3B4F813B0359300B3AB31 /* NuTestHelper.m in Sources */,
-				22B3B4FD13B0359300B3AB31 /* st.c in Sources */,
 				22E695F913B6A21700355FA0 /* NuPropertyListExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
