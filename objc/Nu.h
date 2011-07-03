@@ -23,8 +23,6 @@
 #pragma mark -
 #pragma mark Symbol Table
 
-@class NuSymbolTable;
-
 /*!
  @class NuSymbol
  @abstract The Nu symbol class.
@@ -37,15 +35,6 @@
  Each member of a property list is evaluated and the resulting list is returned with no further evaluation.
  */
 @interface NuSymbol : NSObject <NSCoding>
-{
-    NuSymbolTable *table;
-    id value;
-@public                                       // only for use by the symbol table
-    char *string;
-    bool isLabel;
-    bool isGensym;                                // in macro evaluation, symbol is replaced with an automatically-generated unique symbol.
-    NSString *stringValue;			  // let's keep this for efficiency
-}
 
 /*! Get the global value of a symbol. */
 - (id) value;
@@ -53,8 +42,6 @@
 - (void) setValue:(id)v;
 /*! Get an object of type NSString representing the symbol. */
 - (NSString *) stringValue;
-/*! Get a char * representing the symbol. */
-- (const char *) string;
 /*! Returns true if a symbol is a label. */
 - (bool) isLabel;
 /*! Returns true if a symbol is to be replaced by a generated symbol (which only occurs during macro evaluation). */
@@ -68,8 +55,6 @@
 /*! Get a description of a symbol.  This is equivalent to a call to stringValue. */
 - (NSString *) description;
 
-- (void)encodeWithCoder:(NSCoder *)coder;
-- (id) initWithCoder:(NSCoder *)coder;
 @end
 
 /*!
@@ -79,20 +64,13 @@
  By default, one NuSymbolTable object is shared by all NuParser objects and execution contexts in a process.
  */
 @interface NuSymbolTable : NSObject
-{
-    NSMutableDictionary *symbol_table;
-}
 
 /*! Get the shared NuSymbolTable object. */
 + (NuSymbolTable *) sharedSymbolTable;
 /*! Get a symbol with the specified string. */
 - (NuSymbol *) symbolWithString:(NSString *)string;
-/*! Get a symbol with the specified C string. */
-- (NuSymbol *) symbolWithCString:(const char *)string;
-/*! Get a symbol with the specified string of bytes. */
-- (NuSymbol *) symbolWithBytes:(const void *)bytes length:(unsigned)length;
 /*! Lookup a symbol in a symbol table. */
-- (NuSymbol *) lookup:(const char *) string;
+- (NuSymbol *) lookup:(NSString *) string;
 /*! Get an array containing all of the symbols in a symbol table. */
 - (NSArray *) all;
 /*! Remove a symbol from the symbol table */
@@ -116,12 +94,6 @@
  In Nu, nil is represented with the <code>[NSNull null]</code> object.
  */
 @interface NuCell : NSObject <NSCoding>
-{
-    id car;
-    id cdr;
-    int file;
-    int line;
-}
 
 /*! Create a new cell with a specifed car and cdr. */
 + (id) cellWithCar:(id)car cdr:(id)cdr;
@@ -181,14 +153,12 @@
  Comments can then be parsed with Nu code, typically to produce documentation.
  */
 @interface NuCellWithComments : NuCell
-{
-    id comments;
-}
 
 /*! Get a string containing the comments that preceded a list element. */
 - (id) comments;
 /*! Set the comments string for a list element. */
 - (void) setComments:(id) comments;
+
 @end
 
 #pragma mark -
@@ -200,18 +170,15 @@
  @discussion A simple stack class used by the Nu parser.
  */
 @interface NuStack : NSObject
-{
-    NSMutableArray *storage;
-}
+
 /*! Push an object onto the stack. */
 - (void) push:(id) object;
 /*! Pop an object from the top of the stack. Return nil if the stack is empty. */
 - (id) pop;
 /*! Return the current stack depth. */
 - (NSUInteger) depth;
-@end
 
-#define NU_MAX_PARSER_MACRO_DEPTH 1000
+@end
 
 /*!
  @class NuParser
@@ -219,33 +186,6 @@
  @discussion Instances of this class are used to parse and evaluate Nu source text.
  */
 @interface NuParser : NSObject
-{
-    int state;
-    int start;
-    int depth;
-    int parens;
-    int column;
-    
-	NSMutableArray* readerMacroStack;
-	int readerMacroDepth[NU_MAX_PARSER_MACRO_DEPTH];
-    
-    int filenum;
-    int linenum;
-    int parseEscapes;
-    
-    NuCell *root;
-    NuCell *current;
-    bool addToCar;
-    NSMutableString *hereString;
-    bool hereStringOpened;
-    NuStack *stack;
-    NuStack *opens;
-    NuSymbolTable *symbolTable;
-    NSMutableDictionary *context;
-    NSMutableString *partial;
-    NSMutableString *comments;
-    NSString *pattern;                            // used for herestrings
-}
 
 /*! Get the symbol table used by a parser. */
 - (NuSymbolTable *) symbolTable;
@@ -310,11 +250,6 @@
  the owning object and its superclass.
  */
 @interface NuBlock : NSObject
-{
-	NuCell *parameters;
-    NuCell *body;
-	NSMutableDictionary *context;
-}
 
 /*! Create a block.  Requires a list of parameters, the code to be executed, and an execution context. */
 - (id) initWithParameters:(NuCell *)a body:(NuCell *)b context:(NSMutableDictionary *)c;
@@ -361,11 +296,7 @@
  symbols are called "gensyms".
  */
 @interface NuMacro_0 : NSObject
-{
-    NSString *name;
-    NuCell *body;
-	NSMutableSet *gensyms;
-}
+
 /*! Construct a macro. */
 + (id) macroWithName:(NSString *)name body:(NuCell *)body;
 /*! Get the name of a macro. */
@@ -415,9 +346,6 @@
  (macro inc! (n) `(set ,n (+ ,n 1)))
  */
 @interface NuMacro_1 : NuMacro_0
-{
-	NuCell *parameters;
-}
 
 /*! Construct a macro. */
 + (id) macroWithName:(NSString *)name parameters:(NuCell*)args body:(NuCell *)body;
@@ -429,6 +357,7 @@
 - (id) evalWithArguments:(id)margs context:(NSMutableDictionary *)calling_context;
 /*! Expand a macro in its context. */
 - (id) expand1:(id)margs context:(NSMutableDictionary *)calling_context;
+
 @end
 
 /*!
@@ -443,8 +372,7 @@
  but many special forms exist that evaluate their arguments zero or multiple times.
  */
 @interface NuOperator : NSObject
-{
-}
+
 /*! Evaluate an operator with a list of arguments and an execution context.
  This method calls callWithArguments:context: and should not be overridden.
  */
@@ -492,11 +420,6 @@
  But in practice, this has not been much of a problem.
  */
 @interface NuBridgedFunction : NuOperator
-{
-    char *name;
-    char *signature;
-    void *function;
-}
 
 /*! Create a wrapper for a C function with the specified name and signature.
  The function is looked up using the <b>dlsym()</b> function and the wrapper is
@@ -540,11 +463,6 @@
  then writing over its function pointer with a libFFI-generated closure function.
  */
 @interface NuBridgedBlock : NSObject
-{
-	NuBlock *nuBlock;
-	
-	id cBlock;
-}
 
 /*! Returns a C block that wraps the supplied nu block using the supplied
  Objective-C-style function signature.
@@ -576,11 +494,6 @@
  @discussion The NuPointer class provides a wrapper for pointers to arbitrary locations in memory.
  */
 @interface NuPointer : NSObject
-{
-    void *pointer;
-    NSString *typeString;
-    bool thePointerIsMine;
-}
 
 /*! Get the value of the pointer. Don't call this from Nu. */
 - (void *) pointer;
@@ -617,10 +530,6 @@
  </div>
  */
 @interface NuReference : NSObject
-{
-    id *pointer;
-    bool thePointerIsMine;
-}
 
 /*! Get the value of the referenced object. */
 - (id) value;
@@ -646,9 +555,6 @@
  NuMethod objects are used in the Nu language to manipulate Objective-C methods.
  */
 @interface NuMethod : NSObject
-{
-    Method m;
-}
 
 /*! Initialize a NuMethod for a given Objective-C method (used from Objective-C) */
 - (id) initWithMethod:(Method) method;
@@ -677,10 +583,6 @@
  NuClass objects are used in the Nu language to manipulate and extend Objective-C classes.
  */
 @interface NuClass : NSObject
-{
-    Class c;
-    BOOL isRegistered;
-}
 
 /*! Create a class wrapper for the specified class (used from Objective-C). */
 + (NuClass *) classWithClass:(Class) class;
@@ -739,10 +641,6 @@
  Typically, there is no need to directly interact with this class from Nu.
  */
 @interface NuSuper : NSObject
-{
-    id object;
-    Class class;
-}
 
 /*! Create a NuSuper proxy for an object with a specified class.
  Note that the object class must be explicitly specified.
@@ -766,9 +664,6 @@
  @discussion Preliminary and incomplete.
  */
 @interface NuProperty : NSObject
-{
-    objc_property_t p;
-}
 
 /*! Create a property wrapper for the specified property (used from Objective-C). */
 + (NuProperty *) propertyWithProperty:(objc_property_t) property;
@@ -783,7 +678,7 @@
  @abstract A reader for Apple's BridgeSupport files.
  @discussion Methods of this class are used to read Apple's BridgeSupport files.
  */
-@interface NuBridgeSupport : NSObject {}
+@interface NuBridgeSupport : NSObject 
 /*! Import a dynamic library at the specified path. */
 + (void)importLibrary:(NSString *) libraryPath;
 /*! Import a BridgeSupport description of a framework from a specified path.  Store the results in the specified dictionary. */
@@ -803,9 +698,6 @@
  This information gets added during unwinding the stack by the NuCells.
  */
 @interface NuException : NSException
-{
-    NSMutableArray* stackTrace;
-}
 
 + (void)setDefaultExceptionHandler;
 + (void)setVerbose:(BOOL)flag;
@@ -833,14 +725,8 @@
 @end
 
 @interface NuTraceInfo : NSObject
-{
-    NSString*   filename;
-    int         lineNumber;
-    NSString*   function;
-}
 
 - (id)initWithFunction:(NSString *)function lineNumber:(int)lineNumber filename:(NSString *)filename;
-
 - (NSString *)filename;
 - (int)lineNumber;
 - (NSString *)function;
@@ -860,8 +746,6 @@
  that have evalWithArguments:context: defined.
  */
 @interface NuEnumerable : NSObject
-{
-}
 
 /*! Iterate over each member of a collection, evaluating the provided callable item for each member. */
 - (id) each:(id) callable;
@@ -879,6 +763,7 @@
 - (id) reduce:(id) callable from:(id) initial;
 /*! Iterate over each member of a collection, applying the provided selector to each member, and returning an array of the results. */
 - (NSArray *) mapSelector:(SEL) selector;
+
 @end
 
 #pragma mark -
@@ -1301,30 +1186,7 @@
 #pragma mark -
 #pragma mark Profiler (Experimental)
 
-@interface NuProfileStackElement : NSObject
-{
-@public
-    NSString *name;
-    uint64_t start;
-    NuProfileStackElement *parent;
-}
-
-@end
-
-@interface NuProfileTimeSlice : NSObject
-{
-@public
-    float time;
-    int count;
-}
-
-@end
-
 @interface NuProfiler : NSObject
-{
-    NSMutableDictionary *sections;
-    NuProfileStackElement *stack;
-}
 
 + (NuProfiler *) defaultProfiler;
 
@@ -1338,7 +1200,7 @@
  @abstract A utility class that provides Nu access to common mathematical functions.
  @discussion The NuMath class provides a few common mathematical functions as class methods.
  */
-@interface NuMath : NSObject {}
+@interface NuMath : NSObject
 /*! Get the square root of a number. */
 + (double) sqrt: (double) x;
 /*! Get the square of a number. */

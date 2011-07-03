@@ -43,7 +43,7 @@ GCC_FILES = $(OBJC_FILES) $(C_FILES)
 GCC_OBJS = $(patsubst %.m, %.o, $(OBJC_FILES)) $(patsubst %.c, %.o, $(C_FILES))
 
 CC = gcc
-CFLAGS = -g -Wall -DMININUSH -std=gnu99 
+CFLAGS = -g -Wall -DMININUSH 
 MFLAGS = -fobjc-exceptions
 
 # required to compile bundled PCRE source

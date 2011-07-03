@@ -113,7 +113,7 @@ END)
 (set @cflags (+ @cflags " -DHAVE_CONFIG_H"))
 
 (ifDarwin
-         (then (set @arch '("i386")))) ;; optionally add "ppc" or "ppc64" to the list
+         (then (set @arch '()))) ;; optionally add "ppc" or "ppc64" to the list
 
 (if (or isSnowLeopard isLion)
 	(then (set @arch (append @arch '("x86_64")))))

@@ -443,9 +443,9 @@ id _nudata(const void *bytes, int length)
 	return [NSData dataWithBytes:bytes length:length];
 }
 
-id _nusymbol(const unsigned char *string)
+id _nusymbol(const unsigned char *cstring)
 {
-    return [[NuSymbolTable sharedSymbolTable] symbolWithCString:(const char *) string];
+    return [[NuSymbolTable sharedSymbolTable] symbolWithString:_nustring(cstring)];
 }
 
 id _nusymbol_with_length(const unsigned char *string, int length)
@@ -566,6 +566,13 @@ id _nulist(id firstObject, ...)
 
 // NuBlock.m
 
+@interface NuBlock ()
+{
+	NuCell *parameters;
+    NuCell *body;
+	NSMutableDictionary *context;
+}
+@end
 
 @implementation NuBlock
 
@@ -651,7 +658,7 @@ id _nulist(id firstObject, ...)
     
 	// Insert the implicit variable "*args".  It contains the entire parameter list.
 	NuSymbolTable *symbolTable = [evaluation_context objectForKey:SYMBOLS_KEY];
-	[evaluation_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
+	[evaluation_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithString:@"*args"]];
     
     while (plist && (plist != Nu__null)) {
         id parameter = [plist car];
@@ -748,8 +755,8 @@ static id getObjectFromContext(id context, id symbol)
         NuSymbolTable *symbolTable = [evaluation_context objectForKey:SYMBOLS_KEY];
         // look up one level for the _class value, but allow for it to be higher (in the perverse case of nested method declarations).
         NuClass *c = getObjectFromContext([context objectForKey:PARENT_KEY], [symbolTable symbolWithString:@"_class"]);
-        [evaluation_context setPossiblyNullObject:object forKey:[symbolTable symbolWithCString:"self"]];
-        [evaluation_context setPossiblyNullObject:[NuSuper superWithObject:object ofClass:[c wrappedClass]] forKey:[symbolTable symbolWithCString:"super"]];
+        [evaluation_context setPossiblyNullObject:object forKey:[symbolTable symbolWithString:@"self"]];
+        [evaluation_context setPossiblyNullObject:[NuSuper superWithObject:object ofClass:[c wrappedClass]] forKey:[symbolTable symbolWithString:@"super"]];
     }
     while (plist && (plist != Nu__null) && vlist && (vlist != Nu__null)) {
         id arg = [plist car];
@@ -1992,7 +1999,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     SEL selector = sel_registerName(method_name_str);
     
     //NuSymbolTable *symbolTable = [[block context] objectForKey:SYMBOLS_KEY];
-    //[[block context] setPossiblyNullObject:[[NuClass alloc] initWithClass:c] forKey:[symbolTable symbolWithCString:"_class"]];
+    //[[block context] setPossiblyNullObject:[[NuClass alloc] initWithClass:c] forKey:[symbolTable symbolWithString:@"_class"]];
     
     IMP imp = construct_method_handler(selector, block, signature_str);
     if (imp == NULL) {
@@ -2013,6 +2020,14 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     //NSLog(@"setting handler for %s(%s) in class %s", method_name_str, signature_str, class_getName(c));
     return [NSNull null];
 }
+
+@interface NuBridgedFunction () 
+{
+    char *name;
+    char *signature;
+    void *function;
+}
+@end
 
 @implementation NuBridgedFunction
 
@@ -2148,33 +2163,33 @@ static NuSymbol *oneway_symbol, *in_symbol, *out_symbol, *inout_symbol, *bycopy_
 
 static void prepare_symbols(NuSymbolTable *symbolTable)
 {
-    oneway_symbol = [symbolTable symbolWithCString:"oneway"];
-    in_symbol = [symbolTable symbolWithCString:"in"];
-    out_symbol = [symbolTable symbolWithCString:"out"];
-    inout_symbol = [symbolTable symbolWithCString:"inout"];
-    bycopy_symbol = [symbolTable symbolWithCString:"bycopy"];
-    byref_symbol = [symbolTable symbolWithCString:"byref"];
-    const_symbol = [symbolTable symbolWithCString:"const"];
-    void_symbol = [symbolTable symbolWithCString:"void"];
-    star_symbol = [symbolTable symbolWithCString:"*"];
-    id_symbol = [symbolTable symbolWithCString:"id"];
-    voidstar_symbol = [symbolTable symbolWithCString:"void*"];
-    idstar_symbol = [symbolTable symbolWithCString:"id*"];
-    int_symbol = [symbolTable symbolWithCString:"int"];
-    long_symbol = [symbolTable symbolWithCString:"long"];
-    NSComparisonResult_symbol = [symbolTable symbolWithCString:"NSComparisonResult"];
-    BOOL_symbol = [symbolTable symbolWithCString:"BOOL"];
-    double_symbol = [symbolTable symbolWithCString:"double"];
-    float_symbol = [symbolTable symbolWithCString:"float"];
-    NSRect_symbol = [symbolTable symbolWithCString:"NSRect"];
-    NSPoint_symbol = [symbolTable symbolWithCString:"NSPoint"];
-    NSSize_symbol = [symbolTable symbolWithCString:"NSSize"];
-    NSRange_symbol = [symbolTable symbolWithCString:"NSRange"];
-    CGRect_symbol = [symbolTable symbolWithCString:"CGRect"];
-    CGPoint_symbol = [symbolTable symbolWithCString:"CGPoint"];
-    CGSize_symbol = [symbolTable symbolWithCString:"CGSize"];    
-    SEL_symbol = [symbolTable symbolWithCString:"SEL"];
-    Class_symbol = [symbolTable symbolWithCString:"Class"];
+    oneway_symbol = [symbolTable symbolWithString:@"oneway"];
+    in_symbol = [symbolTable symbolWithString:@"in"];
+    out_symbol = [symbolTable symbolWithString:@"out"];
+    inout_symbol = [symbolTable symbolWithString:@"inout"];
+    bycopy_symbol = [symbolTable symbolWithString:@"bycopy"];
+    byref_symbol = [symbolTable symbolWithString:@"byref"];
+    const_symbol = [symbolTable symbolWithString:@"const"];
+    void_symbol = [symbolTable symbolWithString:@"void"];
+    star_symbol = [symbolTable symbolWithString:@"*"];
+    id_symbol = [symbolTable symbolWithString:@"id"];
+    voidstar_symbol = [symbolTable symbolWithString:@"void*"];
+    idstar_symbol = [symbolTable symbolWithString:@"id*"];
+    int_symbol = [symbolTable symbolWithString:@"int"];
+    long_symbol = [symbolTable symbolWithString:@"long"];
+    NSComparisonResult_symbol = [symbolTable symbolWithString:@"NSComparisonResult"];
+    BOOL_symbol = [symbolTable symbolWithString:@"BOOL"];
+    double_symbol = [symbolTable symbolWithString:@"double"];
+    float_symbol = [symbolTable symbolWithString:@"float"];
+    NSRect_symbol = [symbolTable symbolWithString:@"NSRect"];
+    NSPoint_symbol = [symbolTable symbolWithString:@"NSPoint"];
+    NSSize_symbol = [symbolTable symbolWithString:@"NSSize"];
+    NSRange_symbol = [symbolTable symbolWithString:@"NSRange"];
+    CGRect_symbol = [symbolTable symbolWithString:@"CGRect"];
+    CGPoint_symbol = [symbolTable symbolWithString:@"CGPoint"];
+    CGSize_symbol = [symbolTable symbolWithString:@"CGSize"];    
+    SEL_symbol = [symbolTable symbolWithString:@"SEL"];
+    Class_symbol = [symbolTable symbolWithString:@"Class"];
 }
 
 NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
@@ -2338,7 +2353,7 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
     id selector = [[NuCell alloc] init];
     id argumentTypes = [NSNull null];
     id argumentNames = [NSNull null];
-    id isSymbol = [symbolTable symbolWithCString:"is"];
+    id isSymbol = [symbolTable symbolWithString:@"is"];
     id cursor = cdr;
     id selector_cursor = nil;
     id argumentTypes_cursor = nil;
@@ -2461,7 +2476,7 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
         NuBlock *block = [[[NuBlock alloc] initWithParameters:argumentNames body:body context:context] autorelease];
         [[block context]
          setPossiblyNullObject:methodName
-         forKey:[symbolTable symbolWithCString:"_method"]];
+         forKey:[symbolTable symbolWithString:@"_method"]];
         return add_method_to_class(
                                    addClassMethod ? object_getClass(classToExtend) : classToExtend,
                                    methodName, signature, block);
@@ -2481,6 +2496,13 @@ static id make_cblock (NuBlock *nuBlock, NSString *signature);
 static void objc_calling_nu_block_handler(ffi_cif* cif, void* returnvalue, void** args, void* userdata);
 char **generate_block_userdata(NuBlock *nuBlock, const char *signature);
 void *construct_block_handler(NuBlock *block, const char *signature);
+
+@interface NuBridgedBlock ()
+{
+	NuBlock *nuBlock;	
+	id cBlock;
+}
+@end
 
 @implementation NuBridgedBlock
 
@@ -2779,7 +2801,7 @@ static NSString *getTypeStringFromNode(id node)
         id dictionary = [BridgeSupport objectForKey:(i == 0) ? @"constants" : (i == 1) ? @"enums" : @"functions"];
         id keyEnumerator = [[dictionary allKeys] objectEnumerator];
         while ((key = [keyEnumerator nextObject])) {
-            if (![symbolTable lookup:[key cStringUsingEncoding:NSUTF8StringEncoding]])
+            if (![symbolTable lookup:key])
                 [dictionary removeObjectForKey:key];
         }
     }
@@ -2836,6 +2858,15 @@ static NSString *getTypeStringFromNode(id node)
 #endif
 
 // NuCell.m
+
+@interface NuCell ()
+{
+    id car;
+    id cdr;
+    int file;
+    int line;
+}
+@end
 
 @implementation NuCell
 
@@ -3323,6 +3354,12 @@ static NSString *getTypeStringFromNode(id node)
 - (int) line {return line;}
 @end
 
+@interface NuCellWithComments ()
+{
+    id comments;
+}
+@end
+
 @implementation NuCellWithComments
 
 - (void) dealloc
@@ -3346,6 +3383,13 @@ static NSString *getTypeStringFromNode(id node)
 
 // getting a specific method...
 // (set x (((Convert classMethods) select: (do (m) (eq (m name) "passRect:"))) objectAtIndex:0))
+
+@interface NuClass ()
+{
+    Class c;
+    BOOL isRegistered;
+}
+@end
 
 @implementation NuClass
 
@@ -3869,6 +3913,12 @@ static void Nu_defaultExceptionHandler(NSException* e)
 
 static BOOL NuException_verboseExceptionReporting = NO;
 
+@interface NuException () 
+{
+    NSMutableArray* stackTrace;
+}
+@end
+
 @implementation NuException
 
 + (void)setDefaultExceptionHandler
@@ -3969,8 +4019,15 @@ static BOOL NuException_verboseExceptionReporting = NO;
 
 @end
 
-@implementation NuTraceInfo
+@interface NuTraceInfo () 
+{
+    NSString*   filename;
+    int         lineNumber;
+    NSString*   function;
+}
+@end
 
+@implementation NuTraceInfo
 
 - (id)initWithFunction:(NSString *)aFunction lineNumber:(int)aLine filename:(NSString *)aFilename
 {
@@ -4926,7 +4983,7 @@ static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
             id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
             id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
             [body evalWithContext:context];
-            return [symbolTable symbolWithCString:"t"];
+            return [symbolTable symbolWithString:@"t"];
         }
         return nil;
     }
@@ -5205,6 +5262,14 @@ static NSMutableDictionary *handlerWarehouse = nil;
 @end
 
 // NuMacro_0.m
+@interface NuMacro_0 ()
+{
+    @protected
+    NSString *name;
+    NuCell *body;
+	NSMutableSet *gensyms;
+}
+@end
 
 @implementation NuMacro_0
 
@@ -5353,9 +5418,9 @@ static NSMutableDictionary *handlerWarehouse = nil;
     NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
     
     // save the current value of margs
-    id old_margs = [calling_context objectForKey:[symbolTable symbolWithCString:"margs"]];
+    id old_margs = [calling_context objectForKey:[symbolTable symbolWithString:@"margs"]];
     // set the arguments to the special variable "margs"
-    [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"margs"]];
+    [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithString:@"margs"]];
     // evaluate the body of the block in the calling context (implicit progn)
     
     // if the macro contains gensyms, give them a unique prefix
@@ -5386,10 +5451,10 @@ static NSMutableDictionary *handlerWarehouse = nil;
     
     // restore the old value of margs
     if (old_margs == nil) {
-        [calling_context removeObjectForKey:[symbolTable symbolWithCString:"margs"]];
+        [calling_context removeObjectForKey:[symbolTable symbolWithString:@"margs"]];
     }
     else {
-        [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithCString:"margs"]];
+        [calling_context setPossiblyNullObject:old_margs forKey:[symbolTable symbolWithString:@"margs"]];
     }
     
 #if 0
@@ -5434,6 +5499,12 @@ static NSMutableDictionary *handlerWarehouse = nil;
 #else
 #define Macro1Debug(arg...)
 #endif
+
+@interface NuMacro_1 ()
+{
+	NuCell *parameters;
+}
+@end
 
 @implementation NuMacro_1
 
@@ -5511,10 +5582,10 @@ static NSMutableDictionary *handlerWarehouse = nil;
     NuSymbolTable *symbolTable = [calling_context objectForKey:SYMBOLS_KEY];
     
     if (old_args == nil) {
-        [calling_context removeObjectForKey:[symbolTable symbolWithCString:"*args"]];
+        [calling_context removeObjectForKey:[symbolTable symbolWithString:@"*args"]];
     }
     else {
-        [calling_context setPossiblyNullObject:old_args forKey:[symbolTable symbolWithCString:"*args"]];
+        [calling_context setPossiblyNullObject:old_args forKey:[symbolTable symbolWithString:@"*args"]];
     }
 }
 
@@ -5679,8 +5750,8 @@ static NSMutableDictionary *handlerWarehouse = nil;
     Macro1Debug(@"---------------:");
     [self dumpContext:calling_context];
     
-    id old_args = [calling_context objectForKey:[symbolTable symbolWithCString:"*args"]];
-    [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
+    id old_args = [calling_context objectForKey:[symbolTable symbolWithString:@"*args"]];
+    [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithString:@"*args"]];
     
     id destructure;
     
@@ -5810,6 +5881,11 @@ static NSMutableDictionary *handlerWarehouse = nil;
 @end
 
 // NuMethod.m
+@interface NuMethod ()
+{
+    Method m;
+}
+@end
 
 @implementation NuMethod
 
@@ -6797,7 +6873,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
     id value = [cadr evalWithContext:context];
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     if ([value atom])
-        return [symbolTable symbolWithCString:"t"];
+        return [symbolTable symbolWithString:@"t"];
     else
         return Nu__null;
 }
@@ -6828,7 +6904,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
     }
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     if (is_defined)
-        return [symbolTable symbolWithCString:"t"];
+        return [symbolTable symbolWithString:@"t"];
     else
         return Nu__null;
 }
@@ -6852,7 +6928,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         current = next;
         cursor = [cursor cdr];
     }
-    return [symbolTable symbolWithCString:"t"];
+    return [symbolTable symbolWithString:@"t"];
 }
 
 @end
@@ -6875,7 +6951,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         return Nu__null;
     }
     else {
-        return [symbolTable symbolWithCString:"t"];
+        return [symbolTable symbolWithString:@"t"];
     }
 }
 
@@ -7004,9 +7080,9 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context flipped:(bool)flip
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    //id thenSymbol = [symbolTable symbolWithCString:"then"];
-    id elseSymbol = [symbolTable symbolWithCString:"else"];
-    //id elseifSymbol = [symbolTable symbolWithCString:"elseif"];
+    //id thenSymbol = [symbolTable symbolWithString:@"then"];
+    id elseSymbol = [symbolTable symbolWithString:@"else"];
+    //id elseifSymbol = [symbolTable symbolWithString:@"elseif"];
     
     id result = Nu__null;
     id test = [[cdr car] evalWithContext:context];
@@ -7187,8 +7263,8 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    id catchSymbol = [symbolTable symbolWithCString:"catch"];
-    id finallySymbol = [symbolTable symbolWithCString:"finally"];
+    id catchSymbol = [symbolTable symbolWithString:@"catch"];
+    id finallySymbol = [symbolTable symbolWithString:@"finally"];
     id result = Nu__null;
     
     @try
@@ -7514,14 +7590,14 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
     }
     else if (c == '@') {
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-        id object = [context lookupObjectForKey:[symbolTable symbolWithCString:"self"]];
+        id object = [context lookupObjectForKey:[symbolTable symbolWithString:@"self"]];
         id ivar = [[symbol stringValue] substringFromIndex:1];
         [object setValue:result forIvar:ivar];
     }
     else {
 #ifndef CLOSE_ON_VALUES
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-        id classSymbol = [symbolTable symbolWithCString:"_class"];
+        id classSymbol = [symbolTable symbolWithString:@"_class"];
         id searchContext = context;
         while (searchContext) {
             if ([searchContext objectForKey:symbol]) {
@@ -7715,10 +7791,10 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    if ([context objectForKey:[symbolTable symbolWithCString:"_class"]] && ![context objectForKey:[symbolTable symbolWithCString:"_method"]]) {
+    if ([context objectForKey:[symbolTable symbolWithString:@"_class"]] && ![context objectForKey:[symbolTable symbolWithString:@"_method"]]) {
         // we are inside a class declaration and outside a method declaration.
         // treat this as a "cmethod" call
-        NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+        NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithString:@"_class"]];
         [classWrapper registerClass];
         Class classToExtend = [classWrapper wrappedClass];
         return help_add_method_to_class(classToExtend, cdr, context, YES);
@@ -7774,10 +7850,10 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    if ([context objectForKey:[symbolTable symbolWithCString:"_class"]] && ![context objectForKey:[symbolTable symbolWithCString:"_method"]]) {
+    if ([context objectForKey:[symbolTable symbolWithString:@"_class"]] && ![context objectForKey:[symbolTable symbolWithString:@"_method"]]) {
         // we are inside a class declaration and outside a method declaration.
         // treat this as an "imethod" call
-        NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+        NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithString:@"_class"]];
         [classWrapper registerClass];
         Class classToExtend = [classWrapper wrappedClass];
         return help_add_method_to_class(classToExtend, cdr, context, NO);
@@ -7910,7 +7986,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         current = next;
         cursor = [cursor cdr];
     }
-    return [symbolTable symbolWithCString:"t"];
+    return [symbolTable symbolWithString:@"t"];
 }
 
 @end
@@ -7933,7 +8009,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         current = next;
         cursor = [cursor cdr];
     }
-    return [symbolTable symbolWithCString:"t"];
+    return [symbolTable symbolWithString:@"t"];
 }
 
 @end
@@ -7956,7 +8032,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         current = next;
         cursor = [cursor cdr];
     }
-    return [symbolTable symbolWithCString:"t"];
+    return [symbolTable symbolWithString:@"t"];
 }
 
 @end
@@ -7979,7 +8055,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         current = next;
         cursor = [cursor cdr];
     }
-    return [symbolTable symbolWithCString:"t"];
+    return [symbolTable symbolWithString:@"t"];
 }
 
 @end
@@ -8057,7 +8133,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
     id cursor = cdr;
     if (cursor && (cursor != Nu__null)) {
         id value = [[cursor car] evalWithContext:context];
-        return nu_valueIsTrue(value) ? Nu__null : [symbolTable symbolWithCString:"t"];
+        return nu_valueIsTrue(value) ? Nu__null : [symbolTable symbolWithString:@"t"];
     }
     return Nu__null;
 }
@@ -8076,7 +8152,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuConsoleViewController *console = (NuConsoleViewController*)
-    [[symbolTable symbolWithCString:"$$console"] value];
+    [[symbolTable symbolWithString:@"$$console"] value];
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
@@ -8120,7 +8196,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuConsoleViewController *console = (NuConsoleViewController*)[[symbolTable symbolWithCString:"$$console"] value];
+    NuConsoleViewController *console = (NuConsoleViewController*)[[symbolTable symbolWithString:@"$$console"] value];
     
     NSString *string;
     id cursor = cdr;
@@ -8213,7 +8289,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         id nuFileName = [split objectAtIndex:1];
         NSBundle *framework = [NSBundle frameworkWithName:frameworkName];
         if ([framework loadNuFile:nuFileName withContext:context])
-            return [symbolTable symbolWithCString:"t"];
+            return [symbolTable symbolWithString:@"t"];
         else {
             [NSException raise:@"NuLoadFailed" format:@"unable to load %@", resourceName];
             return nil;
@@ -8236,7 +8312,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
             if (string) {
                 id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
                 [body evalWithContext:context];
-                return [symbolTable symbolWithCString:"t"];
+                return [symbolTable symbolWithString:@"t"];
             }
             else {
                 [NSException raise:@"NuLoadFailed" format:@"unable to load %@", fileName];
@@ -8246,15 +8322,15 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         
         // if that failed, try to load the file the main application bundle
         if ([[NSBundle mainBundle] loadNuFile:resourceName withContext:context])
-            return [symbolTable symbolWithCString:"t"];
+            return [symbolTable symbolWithString:@"t"];
         
         // next, try the main Nu bundle
         if ([Nu loadNuFile:resourceName fromBundleWithIdentifier:@"nu.programming.framework" withContext:context])
-            return [symbolTable symbolWithCString:"t"];
+            return [symbolTable symbolWithString:@"t"];
         
         // if no file was found, try to load a framework with the given name
         if ([NSBundle frameworkWithName:resourceName])
-            return [symbolTable symbolWithCString:"t"];
+            return [symbolTable symbolWithString:@"t"];
         
         [NSException raise:@"NuLoadFailed" format:@"unable to load %@", resourceName];
         return nil;
@@ -8325,7 +8401,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
     //NSLog(@"class name: %@", className);
     if ([cdr cdr]
         && ([cdr cdr] != Nu__null)
-        && [[[cdr cdr] car] isEqual: [symbolTable symbolWithCString:"is"]]
+        && [[[cdr cdr] car] isEqual: [symbolTable symbolWithString:@"is"]]
         ) {
         id parentName = [[[cdr cdr] cdr] car];
         //NSLog(@"parent name: %@", [parentName stringValue]);
@@ -8375,7 +8451,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         NuBlock *block = [[NuBlock alloc] initWithParameters:Nu__null body:body context:context];
         [[block context]
          setPossiblyNullObject:childClass
-         forKey:[symbolTable symbolWithCString:"_class"]];
+         forKey:[symbolTable symbolWithString:@"_class"]];
         result = [block evalWithArguments:Nu__null context:Nu__null];
         [block release];
     }
@@ -8397,7 +8473,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 {
     NSLog(@"The cmethod operator is deprecated. Please replace it with '+' in your code.");
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithString:@"_class"]];
     [classWrapper registerClass];
     Class classToExtend = [classWrapper wrappedClass];
     if (!classToExtend)
@@ -8415,7 +8491,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 {
     NSLog(@"The imethod operator is deprecated. Please replace it with '-' in your code.");
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithString:@"_class"]];
     [classWrapper registerClass];
     Class classToExtend = [classWrapper wrappedClass];
     if (!classToExtend)
@@ -8432,7 +8508,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithCString:"_class"]];
+    NuClass *classWrapper = [context objectForKey:[symbolTable symbolWithString:@"_class"]];
     // this will only work if the class is unregistered...
     if ([classWrapper isRegistered]) {
         [NSException raise:@"NuIvarAddedTooLate" format:@"explicit instance variables must be added when a class is created and before any method declarations"];
@@ -8753,139 +8829,137 @@ static id evaluatedArguments(id cdr, NSMutableDictionary *context)
 
 @end
 
-#define install(name, class) [(NuSymbol *) [symbolTable symbolWithCString:name] setValue:[[[class alloc] init] autorelease]]
+#define install(name, class) [(NuSymbol *) [symbolTable symbolWithString:name] setValue:[[[class alloc] init] autorelease]]
 
 void load_builtins(NuSymbolTable *symbolTable);
 
 void load_builtins(NuSymbolTable *symbolTable)
 {
-    [(NuSymbol *) [symbolTable symbolWithCString:"t"] setValue:[symbolTable symbolWithCString:"t"]];
-    [(NuSymbol *) [symbolTable symbolWithCString:"nil"] setValue:Nu__null];
-    [(NuSymbol *) [symbolTable symbolWithCString:"YES"] setValue:[NSNumber numberWithInt:1]];
-    [(NuSymbol *) [symbolTable symbolWithCString:"NO"] setValue:[NSNumber numberWithInt:0]];
+    [(NuSymbol *) [symbolTable symbolWithString:@"t"] setValue:[symbolTable symbolWithString:@"t"]];
+    [(NuSymbol *) [symbolTable symbolWithString:@"nil"] setValue:Nu__null];
+    [(NuSymbol *) [symbolTable symbolWithString:@"YES"] setValue:[NSNumber numberWithInt:1]];
+    [(NuSymbol *) [symbolTable symbolWithString:@"NO"] setValue:[NSNumber numberWithInt:0]];
     
-    install("car",      Nu_car_operator);
-    install("cdr",      Nu_cdr_operator);
-    install("first",    Nu_car_operator);
-    install("rest",     Nu_cdr_operator);
-    install("head",     Nu_car_operator);
-    install("tail",     Nu_cdr_operator);
-    install("atom",     Nu_atom_operator);
-    install("defined",  Nu_defined_operator);
+    install(@"car",      Nu_car_operator);
+    install(@"cdr",      Nu_cdr_operator);
+    install(@"first",    Nu_car_operator);
+    install(@"rest",     Nu_cdr_operator);
+    install(@"head",     Nu_car_operator);
+    install(@"tail",     Nu_cdr_operator);
+    install(@"atom",     Nu_atom_operator);
+    install(@"defined",  Nu_defined_operator);
     
-    install("eq",       Nu_eq_operator);
-    install("==",       Nu_eq_operator);
-    install("ne",       Nu_neq_operator);
-    install("!=",       Nu_neq_operator);
-    install("gt",       Nu_greaterthan_operator);
-    install(">",        Nu_greaterthan_operator);
-    install("lt",       Nu_lessthan_operator);
-    install("<",        Nu_lessthan_operator);
-    install("ge",       Nu_gte_operator);
-    install(">=",       Nu_gte_operator);
-    install("le",       Nu_lte_operator);
-    install("<=",       Nu_lte_operator);
+    install(@"eq",       Nu_eq_operator);
+    install(@"==",       Nu_eq_operator);
+    install(@"ne",       Nu_neq_operator);
+    install(@"!=",       Nu_neq_operator);
+    install(@"gt",       Nu_greaterthan_operator);
+    install(@">",        Nu_greaterthan_operator);
+    install(@"lt",       Nu_lessthan_operator);
+    install(@"<",        Nu_lessthan_operator);
+    install(@"ge",       Nu_gte_operator);
+    install(@">=",       Nu_gte_operator);
+    install(@"le",       Nu_lte_operator);
+    install(@"<=",       Nu_lte_operator);
     
-    install("cons",     Nu_cons_operator);
-    install("append",   Nu_append_operator);
+    install(@"cons",     Nu_cons_operator);
+    install(@"append",   Nu_append_operator);
     
-    install("cond",     Nu_cond_operator);
-    install("case",     Nu_case_operator);
-    install("if",       Nu_if_operator);
-    install("unless",   Nu_unless_operator);
-    install("while",    Nu_while_operator);
-    install("until",    Nu_until_operator);
-    install("for",      Nu_for_operator);
-    install("break",    Nu_break_operator);
-    install("continue", Nu_continue_operator);
-    install("return",   Nu_return_operator);
-    install("return-from",   Nu_return_from_operator);
+    install(@"cond",     Nu_cond_operator);
+    install(@"case",     Nu_case_operator);
+    install(@"if",       Nu_if_operator);
+    install(@"unless",   Nu_unless_operator);
+    install(@"while",    Nu_while_operator);
+    install(@"until",    Nu_until_operator);
+    install(@"for",      Nu_for_operator);
+    install(@"break",    Nu_break_operator);
+    install(@"continue", Nu_continue_operator);
+    install(@"return",   Nu_return_operator);
+    install(@"return-from",   Nu_return_from_operator);
     
-    install("try",      Nu_try_operator);
+    install(@"try",      Nu_try_operator);
     
-    install("throw",    Nu_throw_operator);
-    install("synchronized", Nu_synchronized_operator);
+    install(@"throw",    Nu_throw_operator);
+    install(@"synchronized", Nu_synchronized_operator);
     
-    install("quote",    Nu_quote_operator);
-    install("eval",     Nu_eval_operator);
+    install(@"quote",    Nu_quote_operator);
+    install(@"eval",     Nu_eval_operator);
     
-    install("context",  Nu_context_operator);
-    install("set",      Nu_set_operator);
-    install("global",   Nu_global_operator);
+    install(@"context",  Nu_context_operator);
+    install(@"set",      Nu_set_operator);
+    install(@"global",   Nu_global_operator);
     
-    install("regex",    Nu_regex_operator);
+    install(@"regex",    Nu_regex_operator);
     
-    // install("def",      Nu_function_operator); // did anyone use this?
-    install("function", Nu_function_operator);
-    install("progn",    Nu_progn_operator);
-    install("then",     Nu_progn_operator);
-    install("else",     Nu_progn_operator);
+    install(@"function", Nu_function_operator);
+    install(@"progn",    Nu_progn_operator);
+    install(@"then",     Nu_progn_operator);
+    install(@"else",     Nu_progn_operator);
     
-    install("macro-0",  Nu_macro_0_operator);
-    install("macro-1",  Nu_macro_1_operator);
-    install("macro",    Nu_macro_1_operator);
-    install("macrox",   Nu_macrox_operator);
+    install(@"macro-0",  Nu_macro_0_operator);
+    install(@"macro-1",  Nu_macro_1_operator);
+    install(@"macro",    Nu_macro_1_operator);
+    install(@"macrox",   Nu_macrox_operator);
     
-    install("quasiquote",           Nu_quasiquote_operator);
-    install("quasiquote-eval",      Nu_quasiquote_eval_operator);
-    install("quasiquote-splice",    Nu_quasiquote_splice_operator);
+    install(@"quasiquote",           Nu_quasiquote_operator);
+    install(@"quasiquote-eval",      Nu_quasiquote_eval_operator);
+    install(@"quasiquote-splice",    Nu_quasiquote_splice_operator);
     
-    install("+",        Nu_add_operator);
-    install("-",        Nu_subtract_operator);
-    install("*",        Nu_multiply_operator);
-    install("/",        Nu_divide_operator);
-    install("**",       Nu_exponentiation_operator);
-    install("%",        Nu_modulus_operator);
+    install(@"+",        Nu_add_operator);
+    install(@"-",        Nu_subtract_operator);
+    install(@"*",        Nu_multiply_operator);
+    install(@"/",        Nu_divide_operator);
+    install(@"**",       Nu_exponentiation_operator);
+    install(@"%",        Nu_modulus_operator);
     
-    install("&",        Nu_bitwiseand_operator);
-    install("|",        Nu_bitwiseor_operator);
-    install("<<",       Nu_leftshift_operator);
-    install(">>",       Nu_rightshift_operator);
+    install(@"&",        Nu_bitwiseand_operator);
+    install(@"|",        Nu_bitwiseor_operator);
+    install(@"<<",       Nu_leftshift_operator);
+    install(@">>",       Nu_rightshift_operator);
     
-    install("and",      Nu_and_operator);
-    install("or",       Nu_or_operator);
-    install("not",      Nu_not_operator);
+    install(@"and",      Nu_and_operator);
+    install(@"or",       Nu_or_operator);
+    install(@"not",      Nu_not_operator);
     
-    install("min",      Nu_min_operator);
-    install("max",      Nu_max_operator);
+    install(@"min",      Nu_min_operator);
+    install(@"max",      Nu_max_operator);
     
-    install("list",     Nu_list_operator);
+    install(@"list",     Nu_list_operator);
     
-    install("do",       Nu_do_operator);
+    install(@"do",       Nu_do_operator);
     
 #ifndef IPHONE
-    install("gets",     Nu_gets_operator);
+    install(@"gets",     Nu_gets_operator);
 #endif
-    install("puts",     Nu_puts_operator);
-    install("print",    Nu_print_operator);
+    install(@"puts",     Nu_puts_operator);
+    install(@"print",    Nu_print_operator);
     
-    //  install("label",    Nu_label_operator);
-    install("let",      Nu_let_operator);
+    install(@"let",      Nu_let_operator);
     
-    install("load",     Nu_load_operator);
+    install(@"load",     Nu_load_operator);
     
-    install("uname",    Nu_uname_operator);
-    install("system",   Nu_system_operator);
-    install("exit",     Nu_exit_operator);
-    install("sleep",    Nu_sleep_operator);
+    install(@"uname",    Nu_uname_operator);
+    install(@"system",   Nu_system_operator);
+    install(@"exit",     Nu_exit_operator);
+    install(@"sleep",    Nu_sleep_operator);
     
-    install("class",    Nu_class_operator);
-    install("imethod",  Nu_imethod_operator);
-    install("cmethod",  Nu_cmethod_operator);
-    install("ivar",     Nu_ivar_operator);
-    install("ivars",    Nu_ivars_operator);
-    install("ivar-accessors", Nu_ivar_accessors_operator);
+    install(@"class",    Nu_class_operator);
+    install(@"imethod",  Nu_imethod_operator);
+    install(@"cmethod",  Nu_cmethod_operator);
+    install(@"ivar",     Nu_ivar_operator);
+    install(@"ivars",    Nu_ivars_operator);
+    install(@"ivar-accessors", Nu_ivar_accessors_operator);
     
-    install("call",     Nu_call_operator);
-    install("send",     Nu_send_operator);
+    install(@"call",     Nu_call_operator);
+    install(@"send",     Nu_send_operator);
     
-    install("array",    Nu_array_operator);
-    install("dict",     Nu_dict_operator);
-    install("parse",    Nu_parse_operator);
+    install(@"array",    Nu_array_operator);
+    install(@"dict",     Nu_dict_operator);
+    install(@"parse",    Nu_parse_operator);
     
-    install("help",     Nu_help_operator);
-    install("?",        Nu_help_operator);
-    install("version",  Nu_version_operator);
+    install(@"help",     Nu_help_operator);
+    install(@"?",        Nu_help_operator);
+    install(@"version",  Nu_version_operator);
 }
 
 // NuParser.m
@@ -8989,6 +9063,38 @@ static id regexWithString(NSString *string)
     }
 }
 
+#define NU_MAX_PARSER_MACRO_DEPTH 1000
+
+@interface NuParser ()
+{
+    int state;
+    int start;
+    int depth;
+    int parens;
+    int column;
+    
+	NSMutableArray* readerMacroStack;
+	int readerMacroDepth[NU_MAX_PARSER_MACRO_DEPTH];
+    
+    int filenum;
+    int linenum;
+    int parseEscapes;
+    
+    NuCell *root;
+    NuCell *current;
+    bool addToCar;
+    NSMutableString *hereString;
+    bool hereStringOpened;
+    NuStack *stack;
+    NuStack *opens;
+    NuSymbolTable *symbolTable;
+    NSMutableDictionary *context;
+    NSMutableString *partial;
+    NSMutableString *comments;
+    NSString *pattern;                            // used for herestrings
+}
+@end
+
 @implementation NuParser
 
 + (const char *) filename:(int)i
@@ -9086,7 +9192,7 @@ static id regexWithString(NSString *string)
     [root release];
     root = current = [[NuCell alloc] init];
     [root setFile:filenum line:linenum];
-    [root setCar:[symbolTable symbolWithCString:"progn"]];
+    [root setCar:[symbolTable symbolWithString:@"progn"]];
     addToCar = false;
     [stack release];
     stack = [[NuStack alloc] init];
@@ -9108,7 +9214,7 @@ static id regexWithString(NSString *string)
         
         readerMacroStack = [[NSMutableArray alloc] init];
         
-        [context setPossiblyNullObject:self forKey:[symbolTable symbolWithCString:"_parser"]];
+        [context setPossiblyNullObject:self forKey:[symbolTable symbolWithString:@"_parser"]];
         [context setPossiblyNullObject:symbolTable forKey:SYMBOLS_KEY];
         
         partial = [[NSMutableString alloc] initWithString:@""];
@@ -9121,7 +9227,7 @@ static id regexWithString(NSString *string)
 - (void) close
 {
     // break this retain cycle so the parser can be deleted.
-    [context setPossiblyNullObject:[NSNull null] forKey:[symbolTable symbolWithCString:"_parser"]];
+    [context setPossiblyNullObject:[NSNull null] forKey:[symbolTable symbolWithString:@"_parser"]];
 }
 
 - (void) dealloc
@@ -9921,6 +10027,14 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
 
 // NuPointer.m
  
+@interface NuPointer () 
+{
+    void *pointer;
+    NSString *typeString;
+    bool thePointerIsMine;
+}
+@end
+
 @implementation NuPointer
 
 - (id) init
@@ -9992,6 +10106,25 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
 
 // NuProfiler.h
 
+@interface NuProfileStackElement : NSObject
+{
+@public
+    NSString *name;
+    uint64_t start;
+    NuProfileStackElement *parent;
+}
+
+@end
+
+@interface NuProfileTimeSlice : NSObject
+{
+@public
+    float time;
+    int count;
+}
+
+@end
+
 @implementation NuProfileStackElement
 
 - (NSString *) name {return name;}
@@ -10015,6 +10148,13 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
     return [NSString stringWithFormat:@"time:%f count:%d", time, count];
 }
 
+@end
+
+@interface NuProfiler ()
+{
+    NSMutableDictionary *sections;
+    NuProfileStackElement *stack;
+}
 @end
 
 @implementation NuProfiler
@@ -10091,6 +10231,12 @@ static NuProfiler *defaultProfiler = nil;
 
 // NuProperty.m
 
+@interface NuProperty () 
+{
+    objc_property_t p;
+}
+@end
+
 @implementation NuProperty
 
 + (NuProperty *) propertyWithProperty:(objc_property_t) property {
@@ -10112,10 +10258,14 @@ static NuProfiler *defaultProfiler = nil;
 
 @end
 
-
-
-
 // NuReference.m
+
+@interface NuReference ()
+{
+    id *pointer;
+    bool thePointerIsMine;
+}
+@end
 
 @implementation NuReference
 
@@ -10328,6 +10478,12 @@ static NuProfiler *defaultProfiler = nil;
 
 // NuStack.m
 
+@interface NuStack () 
+{
+    NSMutableArray *storage;
+}
+@end
+
 @implementation NuStack
 - (id) init
 {
@@ -10386,6 +10542,12 @@ static NuProfiler *defaultProfiler = nil;
 @end
 
 // NuSuper.m
+@interface NuSuper ()
+{
+    id object;
+    Class class;
+}
+@end
 
 @implementation NuSuper
 
@@ -10513,6 +10675,23 @@ void nu_swizzleContainerClasses()
 
 // NuSymbol.m
 
+@interface NuSymbol ()
+{
+    NuSymbolTable *table;
+    id value;
+@public                                       // only for use by the symbol table
+    bool isLabel;
+    bool isGensym;                                // in macro evaluation, symbol is replaced with an automatically-generated unique symbol.
+    NSString *stringValue;			  // let's keep this for efficiency
+}
+@end
+
+@interface NuSymbolTable ()
+{
+    NSMutableDictionary *symbol_table;
+}
+@end
+
 void load_builtins(NuSymbolTable *);
 
 static NuSymbolTable *sharedSymbolTable = 0;
@@ -10535,12 +10714,10 @@ static NuSymbolTable *sharedSymbolTable = 0;
 }
 
 // Designated initializer
-- (NuSymbol *) symbolWithCString:(const char *)cstring
+- (NuSymbol *) symbolWithString:(NSString *)string
 {
     if (!symbol_table) symbol_table = [[NSMutableDictionary alloc] init];
-    
-    NSString *string = [NSString stringWithCString:cstring encoding:NSUTF8StringEncoding];
-    
+        
     // If the symbol is already in the table, return it.
     NuSymbol *symbol;
     symbol = [symbol_table objectForKey:string];
@@ -10550,8 +10727,9 @@ static NuSymbolTable *sharedSymbolTable = 0;
     
     // If not, create it. Don't autorelease it; it is owned by the table.
     symbol = [[NuSymbol alloc] init];             // keep construction private
-    symbol->string = strdup(cstring);
+    symbol->stringValue = [string copy];
     
+    const char *cstring = [string cStringUsingEncoding:NSUTF8StringEncoding];
     NSUInteger len = strlen(cstring);
     symbol->isLabel = (cstring[len - 1] == ':');
     symbol->isGensym = (len > 2) && (cstring[0] == '_') && (cstring[1] == '_');
@@ -10561,22 +10739,9 @@ static NuSymbolTable *sharedSymbolTable = 0;
     return symbol;
 }
 
-- (NuSymbol *) symbolWithString:(NSString *)string
+- (NuSymbol *) lookup:(NSString *) string
 {
-    return [self symbolWithCString:[string cStringUsingEncoding:NSUTF8StringEncoding]];
-}
-
-- (NuSymbol *) symbolWithBytes:(const void *)bytes length:(unsigned)length
-{
-    char buffer[1024];                            // overrun risk!!
-    strncpy(buffer, bytes, length);
-    buffer[length] = 0;
-    return [self symbolWithCString:buffer];
-}
-
-- (NuSymbol *) lookup:(const char *) string
-{
-    return [symbol_table objectForKey:[NSString stringWithCString:string encoding:NSUTF8StringEncoding]];
+    return [symbol_table objectForKey:string];
 }
 
 - (NSArray *) all
@@ -10595,7 +10760,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
 
 - (void) dealloc
 {
-    free(string);
+    [stringValue release];
     [super dealloc];
 }
 
@@ -10618,26 +10783,17 @@ static NuSymbolTable *sharedSymbolTable = 0;
 
 - (NSString *) description
 {
-    if (!stringValue)
-        stringValue = [[NSString alloc] initWithCString:string encoding:NSUTF8StringEncoding];
     return stringValue;
 }
 
 - (NSString *) stringValue
 {
-    if (!stringValue)
-        stringValue = [[NSString alloc] initWithCString:string encoding:NSUTF8StringEncoding];
     return stringValue;
 }
 
 - (int) intValue
 {
     return (value == [NSNull null]) ? 0 : 1;
-}
-
-- (const char *) string
-{
-    return string;
 }
 
 - (bool) isGensym
@@ -10665,7 +10821,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
     // If the symbol is a class instance variable, find "self" and ask it for the ivar value.
     if (c == '@') {
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-        id object = [context lookupObjectForKey:[symbolTable symbolWithCString:"self"]];
+        id object = [context lookupObjectForKey:[symbolTable symbolWithString:@"self"]];
         if (!object) return [NSNull null];
         id ivarName = [[self stringValue] substringFromIndex:1];
         id result = [object valueForIvar:ivarName];
@@ -10733,7 +10889,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
     
     // Still-undefined symbols throw an exception.
     NSMutableString *errorDescription = [NSMutableString stringWithFormat:@"undefined symbol %@", [self stringValue]];
-    id expression = [context lookupObjectForKey:[symbolTable symbolWithCString:"_expression"]];
+    id expression = [context lookupObjectForKey:[symbolTable symbolWithString:@"_expression"]];
     if (expression) {
         [errorDescription appendFormat:@" while evaluating expression %@", [expression stringValue]];
         const char *filename = nu_parsedFilename([expression file]);
@@ -10747,7 +10903,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
 
 - (NSComparisonResult) compare:(NuSymbol *) anotherSymbol
 {
-    return strcmp(string, anotherSymbol->string);
+    return [stringValue compare:anotherSymbol->stringValue];
 }
 
 - (id) copyWithZone:(NSZone *) zone

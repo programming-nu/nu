@@ -8,31 +8,7 @@
 
 #import "NuAppDelegate.h"
 
-#import "NuBlock.h"
-#import "NuBridgeSupport.h"
-#import "NuCell.h"
-#import "NuClass.h"
-#import "NuDtrace.h"
-#import "NuEnumerable.h"
-#import "NuException.h"
-#import "NuExtensions.h"
-#import "NuHandler.h"
-#import "NuMacro_0.h"
-#import "NuMacro_1.h"
-#import "NuMain.h"
-#import "NuInternals.h"
-#import "NuObject.h"
-#import "NuOperator.h"
-#import "NuParser.h"
-#import "NuPointer.h"
-#import "NuProfiler.h"
-#import "NuReference.h"
-#import "NuRegex.h"
-#import "NuStack.h"
-#import "NuSuper.h"
-#import "NuSymbol.h"
-#import "NuVersion.h"
-
+#import "Nu.h"
 
 @implementation NuAppDelegate
 @synthesize window;

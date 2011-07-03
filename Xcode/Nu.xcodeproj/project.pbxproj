@@ -902,7 +902,7 @@
 					"$(SRCROOT)/../objc",
 				);
 				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../build/i386\"",
@@ -945,7 +945,7 @@
 					"$(SRCROOT)/../objc",
 				);
 				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../build/i386\"",
