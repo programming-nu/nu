@@ -72,28 +72,28 @@
 // NuObjCRuntime.h
 
 // We'd like for this to be in the ObjC2 API, but it isn't.
-void nu_class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature);
+static void nu_class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature);
 
 // These are handy.
-IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types);
-BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector);
-BOOL nu_objectIsKindOfClass(id object, Class class);
-void nu_markEndOfObjCTypeString(char *type, size_t len);
+static IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types);
+static BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector);
+static BOOL nu_objectIsKindOfClass(id object, Class class);
+static void nu_markEndOfObjCTypeString(char *type, size_t len);
 
 // This makes it safe to insert nil into container classes
-void nu_swizzleContainerClasses(void);
+static void nu_swizzleContainerClasses(void);
 
 #define IS_NOT_NULL(xyz) ((xyz) && (((id) (xyz)) != Nu__null))
 
-id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlock *block);
-id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args);
-id get_nu_value_from_objc_value(void *objc_value, const char *typeString);
-int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *typeString);
-void *value_buffer_for_objc_type(const char *typeString);
-NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable);
-id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *context, BOOL addClassMethod);
+static id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlock *block);
+static id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args);
+static id get_nu_value_from_objc_value(void *objc_value, const char *typeString);
+static int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *typeString);
+static void *value_buffer_for_objc_type(const char *typeString);
+static NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable);
+static id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *context, BOOL addClassMethod);
 
-size_t size_of_objc_type(const char *typeString);
+static size_t size_of_objc_type(const char *typeString);
 
 // NuHandler.h
 
@@ -112,10 +112,10 @@ struct handler_description
 + (IMP) handlerWithSelector:(SEL)sel block:(NuBlock *)block signature:(const char *) signature userdata:(char **) userdata;
 @end
 
-void nu_handler(void *return_value, 
-                struct handler_description *description, 
-                id receiver, 
-                va_list ap);
+static void nu_handler(void *return_value, 
+                       struct handler_description *description, 
+                       id receiver, 
+                       va_list ap);
 
 
 // NuInternals.h
@@ -159,10 +159,10 @@ void nu_handler(void *return_value,
 @end
 
 // use this to test a value for "truth"
-bool nu_valueIsTrue(id value);
+static bool nu_valueIsTrue(id value);
 
 // use this to get the filename for a NuCell created by the parser
-const char *nu_parsedFilename(int i);
+static const char *nu_parsedFilename(int i);
 
 
 /*
@@ -213,7 +213,7 @@ __dtrace_isenabled$nu$list_eval_end$v1()
 
 static id Nu__null = 0;
 
-bool nu_valueIsTrue(id value)
+static bool nu_valueIsTrue(id value)
 {
     bool result = value && (value != Nu__null);
     if (result && nu_objectIsKindOfClass(value, [NSNumber class])) {
@@ -230,11 +230,11 @@ bool nu_valueIsTrue(id value)
 
 @end
 
-static NuApplication *_sharedApplication = 0;
-
 @implementation NuApplication
+
 + (NuApplication *) sharedApplication
 {
+    static NuApplication *_sharedApplication = 0;
     if (!_sharedApplication)
         _sharedApplication = [[NuApplication alloc] init];
     return _sharedApplication;
@@ -256,19 +256,12 @@ static NuApplication *_sharedApplication = 0;
 
 @end
 
-
 int NuMain(int argc, const char *argv[])
 {
-#if TARGET_OS_IPHONE
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-#endif
-    
-    NuInit();
-    
-    @try
-    {
-        @autoreleasepool {
-            
+    @autoreleasepool {        
+        NuInit();        
+        @try
+        {                
             // first we try to load main.nu from the application bundle.
             NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
             if (main_path) {
@@ -278,7 +271,6 @@ int NuMain(int argc, const char *argv[])
                     id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
                     [parser eval:script];
                     [parser release];
-                    //[pool release];
                     return 0;
                 }
             }
@@ -331,7 +323,6 @@ int NuMain(int argc, const char *argv[])
                     [parser interact];
 #endif
                 [parser release];
-                
                 return 0;
             }
             // if there's no file, run at the terminal
@@ -343,30 +334,25 @@ int NuMain(int argc, const char *argv[])
                     id script = [parser parse:string asIfFromFilename:"stdin"];
                     [parser eval:script];
                     [parser release];
-                    //[pool release];
                 }
                 else {
-                    // [pool release];
 #if !TARGET_OS_IPHONE
                     return [NuParser main];
 #endif
-                }
+                }                
             }
         }
+        @catch (NuException* nuException)
+        {
+            printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
+        }
+        @catch (id exception)
+        {
+            NSLog(@"Terminating due to uncaught exception (below):");
+            NSLog(@"%@: %@", [exception name], [exception reason]);
+        }
+        
     }
-	@catch (NuException* nuException)
-    {
-        printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
-	}
-    @catch (id exception)
-    {
-        NSLog(@"Terminating due to uncaught exception (below):");
-        NSLog(@"%@: %@", [exception name], [exception reason]);
-    }
-    
-#if TARGET_OS_IPHONE
-    [pool release];
-#endif
     return 0;
 }
 
@@ -849,7 +835,7 @@ static id getObjectFromContext(id context, id symbol)
  * V oneway
  */
 
-NSMutableDictionary *nu_block_table = nil;
+static NSMutableDictionary *nu_block_table = nil;
 
 #ifdef __x86_64__
 
@@ -1058,7 +1044,7 @@ static ffi_type *ffi_type_for_objc_type(const char *typeString)
     }
 }
 
-size_t size_of_objc_type(const char *typeString)
+static size_t size_of_objc_type(const char *typeString)
 {
     char typeChar = get_typeChar_from_typeString(typeString);
     switch (typeChar) {
@@ -1127,7 +1113,7 @@ size_t size_of_objc_type(const char *typeString)
     }
 }
 
-void *value_buffer_for_objc_type(const char *typeString)
+static void *value_buffer_for_objc_type(const char *typeString)
 {
     char typeChar = get_typeChar_from_typeString(typeString);
     switch (typeChar) {
@@ -1196,7 +1182,7 @@ void *value_buffer_for_objc_type(const char *typeString)
     }
 }
 
-int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *typeString)
+static int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *typeString)
 {
     //NSLog(@"VALUE => %s", typeString);
     char typeChar = get_typeChar_from_typeString(typeString);
@@ -1469,7 +1455,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
     return NO;
 }
 
-id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
+static id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
 {
     //NSLog(@"%s => VALUE", typeString);
     char typeChar = get_typeChar_from_typeString(typeString);
@@ -1677,7 +1663,7 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
     
 }
 
-static void raise_argc_exception(SEL s, NSUInteger count, NSUInteger given)
+static static void raise_argc_exception(SEL s, NSUInteger count, NSUInteger given)
 {
     if (given != count) {
         [NSException raise:@"NuIncorrectNumberOfArguments"
@@ -1690,7 +1676,7 @@ static void raise_argc_exception(SEL s, NSUInteger count, NSUInteger given)
 
 #define BUFSIZE 500
 
-id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
+static id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
 {
     // this call seems to force the class's +initialize method to be called.
     [target class];
@@ -1992,7 +1978,7 @@ static IMP construct_method_handler(SEL sel, NuBlock *block, const char *signatu
     return (IMP) closure;
 }
 
-id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlock *block)
+static id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlock *block)
 {
     const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
     const char *signature_str = [signature cStringUsingEncoding:NSUTF8StringEncoding];
@@ -2192,7 +2178,7 @@ static void prepare_symbols(NuSymbolTable *symbolTable)
     Class_symbol = [symbolTable symbolWithString:@"Class"];
 }
 
-NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
+static NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
 {
     static NuSymbolTable *currentSymbolTable = nil;
     if (currentSymbolTable != symbolTable) {
@@ -2345,7 +2331,7 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
     }
 }
 
-id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *context, BOOL addClassMethod)
+static id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *context, BOOL addClassMethod)
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     
@@ -2494,8 +2480,8 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
 
 static id make_cblock (NuBlock *nuBlock, NSString *signature);
 static void objc_calling_nu_block_handler(ffi_cif* cif, void* returnvalue, void** args, void* userdata);
-char **generate_block_userdata(NuBlock *nuBlock, const char *signature);
-void *construct_block_handler(NuBlock *block, const char *signature);
+static char **generate_block_userdata(NuBlock *nuBlock, const char *signature);
+static void *construct_block_handler(NuBlock *block, const char *signature);
 
 @interface NuBridgedBlock ()
 {
@@ -2533,6 +2519,7 @@ void *construct_block_handler(NuBlock *block, const char *signature);
 }
 
 @end
+
 //the caller gets ownership of the block
 static id make_cblock (NuBlock *nuBlock, NSString *signature)
 {
@@ -2604,8 +2591,7 @@ static void objc_calling_nu_block_handler(ffi_cif* cif, void* returnvalue, void*
     }
 }
 
-
-char **generate_block_userdata(NuBlock *nuBlock, const char *signature)
+static char **generate_block_userdata(NuBlock *nuBlock, const char *signature)
 {
     NSMethodSignature *methodSignature = [NSMethodSignature signatureWithObjCTypes:signature];
     const char *return_type_string = [methodSignature methodReturnType];
@@ -2636,7 +2622,7 @@ char **generate_block_userdata(NuBlock *nuBlock, const char *signature)
 }
 
 
-void *construct_block_handler(NuBlock *block, const char *signature)
+static void *construct_block_handler(NuBlock *block, const char *signature)
 {
     char **userdata = generate_block_userdata(block, signature);
     
@@ -5088,7 +5074,7 @@ static id collect_arguments(struct handler_description *description, va_list ap)
 }
 
 // helper function called by method handlers
-void nu_handler(void *return_value, struct handler_description *description, id receiver, va_list ap)
+static void nu_handler(void *return_value, struct handler_description *description, id receiver, va_list ap)
 {
     id result;
     @autoreleasepool {
@@ -5264,7 +5250,7 @@ static NSMutableDictionary *handlerWarehouse = nil;
 // NuMacro_0.m
 @interface NuMacro_0 ()
 {
-    @protected
+@protected
     NSString *name;
     NuCell *body;
 	NSMutableSet *gensyms;
@@ -5972,7 +5958,7 @@ static NSMutableDictionary *handlerWarehouse = nil;
 
 // NuObjCRuntime.m
 
-IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
+static IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
 {
     if (class_addMethod(cls, name, imp, types)) {
         return imp;
@@ -5981,7 +5967,7 @@ IMP nu_class_replaceMethod(Class cls, SEL name, IMP imp, const char *types)
     }
 }
 
-void nu_class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature)
+static void nu_class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature)
 {
     extern size_t size_of_objc_type(const char *typeString);
     size_t size = size_of_objc_type(signature);
@@ -5994,7 +5980,7 @@ void nu_class_addInstanceVariable_withSignature(Class thisClass, const char *var
     //NSLog(@"adding ivar named %s to %s, result is %d", variableName, class_getName(thisClass), result);
 }
 
-BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector)
+static BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL selector)
 {
     Method m = class_getInstanceMethod(sourceClass, selector);
     if (!m) {
@@ -6012,7 +5998,7 @@ BOOL nu_copyInstanceMethod(Class destinationClass, Class sourceClass, SEL select
     return result;
 }
 
-BOOL nu_objectIsKindOfClass(id object, Class class)
+static BOOL nu_objectIsKindOfClass(id object, Class class)
 {
     if (object == NULL) {
         return NO;
@@ -6030,7 +6016,7 @@ BOOL nu_objectIsKindOfClass(id object, Class class)
 // This function attempts to recognize the return type from a method signature.
 // It scans across the signature until it finds a complete return type string,
 // then it inserts a null to mark the end of the string.
-void nu_markEndOfObjCTypeString(char *type, size_t len)
+static void nu_markEndOfObjCTypeString(char *type, size_t len)
 {
     size_t i;
     char final_char = 0;
@@ -8983,7 +8969,7 @@ static int filecount = 0;
 #define ParserDebug(arg...)
 #endif
 
-const char *nu_parsedFilename(int i)
+static const char *nu_parsedFilename(int i)
 {
     return (i < 0) ? NULL: filenames[i];
 }
@@ -10026,7 +10012,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
 @end
 
 // NuPointer.m
- 
+
 @interface NuPointer () 
 {
     void *pointer;
@@ -10656,7 +10642,7 @@ static NuProfiler *defaultProfiler = nil;
 
 @end
 
-void nu_swizzleContainerClasses()
+static void nu_swizzleContainerClasses()
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     Class NSCFDictionary = NSClassFromString(@"NSCFDictionary");
@@ -10717,7 +10703,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
 - (NuSymbol *) symbolWithString:(NSString *)string
 {
     if (!symbol_table) symbol_table = [[NSMutableDictionary alloc] init];
-        
+    
     // If the symbol is already in the table, return it.
     NuSymbol *symbol;
     symbol = [symbol_table objectForKey:string];
@@ -10927,7 +10913,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
 @end
 
 // NuTestHelper.m
- 
+
 static BOOL verbose_helper = false;
 
 @protocol NuTestProxy <NSObject>
