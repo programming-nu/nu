@@ -46,9 +46,6 @@ CC = gcc
 CFLAGS = -g -Wall -DMININUSH 
 MFLAGS = -fobjc-exceptions
 
-# required to compile bundled PCRE source
-CFLAGS += -DHAVE_CONFIG_H
-
 ifeq ($(SYSTEM), Darwin)
 	CC = $(DEVROOT)/usr/bin/clang
 	CFLAGS += -DMACOSX -DDARWIN $(LION_CFLAGS)  

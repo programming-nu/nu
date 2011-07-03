@@ -29,7 +29,7 @@
 #import <unistd.h>
 #import <Foundation/Foundation.h>
 
-#ifdef IPHONE
+#if TARGET_OS_IPHONE
 #import <CoreGraphics/CoreGraphics.h>
 #define NSRect CGRect
 #define NSPoint CGPoint
@@ -48,18 +48,18 @@
 #import <mach/mach.h>
 #import <mach/mach_time.h>
 
-
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 #import <readline/readline.h>
 #import <readline/history.h>
 #endif
 
-#ifdef IPHONE
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
 #endif
+
 #import <unistd.h>
 
-#ifdef IPHONE
+#if TARGET_OS_IPHONE
 #import "ffi.h"
 #else
 #import "ffi/ffi.h"
@@ -259,7 +259,7 @@ static NuApplication *_sharedApplication = 0;
 
 int NuMain(int argc, const char *argv[])
 {
-#ifdef IPHONE
+#if TARGET_OS_IPHONE
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #endif
     
@@ -326,7 +326,7 @@ int NuMain(int argc, const char *argv[])
                     }
                     i++;
                 }
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
                 if (!didSomething || goInteractive)
                     [parser interact];
 #endif
@@ -347,7 +347,7 @@ int NuMain(int argc, const char *argv[])
                 }
                 else {
                     // [pool release];
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
                     return [NuParser main];
 #endif
                 }
@@ -364,7 +364,7 @@ int NuMain(int argc, const char *argv[])
         NSLog(@"%@: %@", [exception name], [exception reason]);
     }
     
-#ifdef IPHONE
+#if TARGET_OS_IPHONE
     [pool release];
 #endif
     return 0;
@@ -407,7 +407,7 @@ void NuInit()
         void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();
         
-#if !defined(MININUSH) && !defined(IPHONE)
+#if !defined(MININUSH) && !TARGET_OS_IPHONE
         // Load some standard files
         // Warning: since these loads are performed without a context, the non-global symbols defined in them
         // will not be available to other Nu scripts or at the console.  These loads should only be used
@@ -2012,7 +2012,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     if (!nu_block_table) nu_block_table = [[NSMutableDictionary alloc] init];
     // watch for problems caused by these ugly casts...
     [nu_block_table setObject:block forKey:[NSNumber numberWithUnsignedLong:(unsigned long) imp]];
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
     [[NSGarbageCollector defaultCollector] disableCollectorForPointer: block];
 #endif
     // insert the method handler in the class method table
@@ -2691,7 +2691,7 @@ void *construct_block_handler(NuBlock *block, const char *signature)
 
 // NuBridgeSupport.m
 
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 
 static NSString *getTypeStringFromNode(id node)
 {
@@ -4532,7 +4532,7 @@ static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
     return [self stringWithCString:"\n" encoding:NSUTF8StringEncoding];
 }
 
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 
 // Read the text output of a shell command into a string and return the string.
 + (NSString *) stringWithShellCommand:(NSString *) command
@@ -4655,7 +4655,7 @@ static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
 	return buffer[0];
 }
 
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 // Read the output of a shell command into an NSData object and return the object.
 + (NSData *) dataWithShellCommand:(NSString *) command
 {
@@ -5055,7 +5055,7 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             //NSLog(@"argument is %lf", x);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
-#ifdef IPHONE
+#if TARGET_OS_IPHONE
         else if (!strcmp(type, "{CGRect={CGPoint=ff}{CGSize=ff}}")
                  || (!strcmp(type, "{CGRect=\"origin\"{CGPoint=\"x\"f\"y\"f}\"size\"{CGSize=\"width\"f\"height\"f}}"))) {
             CGRect x = va_arg(ap, CGRect);
@@ -5169,7 +5169,7 @@ MAKE_HANDLER_WITH_TYPE(double)
 MAKE_HANDLER_WITH_TYPE(CGRect)
 MAKE_HANDLER_WITH_TYPE(CGPoint)
 MAKE_HANDLER_WITH_TYPE(CGSize)
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 MAKE_HANDLER_WITH_TYPE(NSRect)
 MAKE_HANDLER_WITH_TYPE(NSPoint)
 MAKE_HANDLER_WITH_TYPE(NSSize)
@@ -5223,7 +5223,7 @@ static NSMutableDictionary *handlerWarehouse = nil;
     else if ([returnType isEqualToString:@"{_NSRange=II}"]) {
         return handler_returning_NSRange(userdata);
     } 
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
     else if ([returnType isEqualToString:@"{_NSRect={_NSPoint=dd}{_NSSize=dd}}"]) {
         return handler_returning_NSRect(userdata);
     }
@@ -5238,7 +5238,7 @@ static NSMutableDictionary *handlerWarehouse = nil;
     }
 #endif
     else {
-#ifdef IPHONE 
+#if TARGET_OS_IPHONE 
         // this is only a problem on iOS. 
         NSLog(@"UNKNOWN RETURN TYPE %@", returnType);
 #endif
@@ -8174,7 +8174,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 
 @end
 
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 @interface Nu_gets_operator : NuOperator {}
 @end
 
@@ -8393,7 +8393,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     id className = [cdr car];
     id body;
-#if defined(__x86_64__) || defined(IPHONE)
+#if defined(__x86_64__) || TARGET_OS_IPHONE
     Class newClass = nil;
 #endif
     
@@ -8409,7 +8409,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         if (!parentClass)
             [NSException raise:@"NuUndefinedSuperclass" format:@"undefined superclass %@", [parentName stringValue]];
         
-#if defined(__x86_64__) || defined(IPHONE)
+#if defined(__x86_64__) || TARGET_OS_IPHONE
         
         newClass = objc_allocateClassPair(parentClass, [[className stringValue] cStringUsingEncoding:NSUTF8StringEncoding], 0);
         childClass = [NuClass classWithClass:newClass];
@@ -8455,7 +8455,7 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
         result = [block evalWithArguments:Nu__null context:Nu__null];
         [block release];
     }
-#if defined(__x86_64__) || defined(IPHONE)
+#if defined(__x86_64__) || TARGET_OS_IPHONE
     if (newClass && ([childClass isRegistered] == NO)) {
         [childClass registerClass];
     }
@@ -8615,14 +8615,14 @@ void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     if (!cdr || (cdr == Nu__null)) {
-#ifdef IPHONE
+#if TARGET_OS_IPHONE
         return @"iOS";
 #else
         return @"Darwin";
 #endif
     }
     if ([[[cdr car] stringValue] isEqualToString:@"systemName"]) {
-#ifdef IPHONE
+#if TARGET_OS_IPHONE
         return [[UIDevice currentDevice] systemName];
 #else
         return @"Macintosh";
@@ -8928,7 +8928,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     
     install(@"do",       Nu_do_operator);
     
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
     install(@"gets",     Nu_gets_operator);
 #endif
     install(@"puts",     Nu_puts_operator);
@@ -9910,7 +9910,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
     return result;
 }
 
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 - (int) interact
 {
     printf("Nu Shell.\n");
@@ -10989,7 +10989,7 @@ static int deallocationCount = 0;
 
 + (void) resetDeallocationCount
 {
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 	[[NSGarbageCollector defaultCollector] collectExhaustively];
 #endif
     deallocationCount = 0;
@@ -10997,7 +10997,7 @@ static int deallocationCount = 0;
 
 + (int) deallocationCount
 {
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 	[[NSGarbageCollector defaultCollector] collectExhaustively];
 #endif
     return deallocationCount;

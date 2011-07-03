@@ -848,6 +848,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = nush;
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -869,6 +870,7 @@
 					AppKit,
 				);
 				PRODUCT_NAME = nush;
+				VALID_ARCHS = x86_64;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -892,7 +894,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
-					IPHONE,
 				);
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -936,7 +937,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					SNOWLEOPARD,
 					DARWIN,
-					IPHONE,
 				);
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;

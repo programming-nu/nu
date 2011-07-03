@@ -213,12 +213,13 @@
 /*! Reset the parse set after an error */
 - (void) reset;
 
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 /*! Run a parser interactively at the console (Terminal.app). */
 - (int) interact;
 /*! Run the main handler for a console(Terminal.app)-oriented Nu shell. */
 + (int) main;
 #endif
+
 @end
 
 #pragma mark -
@@ -672,7 +673,7 @@
 
 @end
 
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 /*!
  @class NuBridgeSupport
  @abstract A reader for Apple's BridgeSupport files.
@@ -993,7 +994,8 @@
  @discussion NSData extensions for Nu programming.
  */
 @interface NSData(Nu)
-#ifndef IPHONE
+
+#if !TARGET_OS_IPHONE
 /*! Run a shell command and return the results as data. */
 + (NSData *) dataWithShellCommand:(NSString *) command;
 
@@ -1023,7 +1025,7 @@
  */
 - (id) evalWithContext:(NSMutableDictionary *) context;
 
-#ifndef IPHONE
+#if !TARGET_OS_IPHONE
 /*! Run a shell command and return its results in a string. */
 + (NSString *) stringWithShellCommand:(NSString *) command;
 
