@@ -1248,7 +1248,7 @@ void NuInit(void);
  */
 @interface Nu : NSObject
 /*!
- Get a Nu parser with it's own context.
+ Get a Nu parser with its own context.
  */
 + (NuParser *) parser;
 /*!

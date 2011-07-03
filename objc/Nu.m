@@ -69,7 +69,7 @@
 
 #import "Nu.h"
 
-// NuObjCRuntime.h
+#define IS_NOT_NULL(xyz) ((xyz) && (((id) (xyz)) != Nu__null))
 
 // We'd like for this to be in the ObjC2 API, but it isn't.
 static void nu_class_addInstanceVariable_withSignature(Class thisClass, const char *variableName, const char *signature);
@@ -83,8 +83,6 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len);
 // This makes it safe to insert nil into container classes
 static void nu_swizzleContainerClasses(void);
 
-#define IS_NOT_NULL(xyz) ((xyz) && (((id) (xyz)) != Nu__null))
-
 static id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlock *block);
 static id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args);
 static id get_nu_value_from_objc_value(void *objc_value, const char *typeString);
@@ -92,7 +90,6 @@ static int set_objc_value_from_nu_value(void *objc_value, id nu_value, const cha
 static void *value_buffer_for_objc_type(const char *typeString);
 static NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable);
 static id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *context, BOOL addClassMethod);
-
 static size_t size_of_objc_type(const char *typeString);
 
 // NuHandler.h
@@ -134,14 +131,14 @@ static void nu_handler(void *return_value,
  @class NuBreakException
  @abstract Internal class used to implement the Nu break operator.
  */
-@interface NuBreakException : NSException {}
+@interface NuBreakException : NSException 
 @end
 
 /*!
  @class NuContinueException
  @abstract Internal class used to implement the Nu continue operator.
  */
-@interface NuContinueException : NSException {}
+@interface NuContinueException : NSException 
 @end
 
 /*!
@@ -390,7 +387,6 @@ void NuInit()
         transplant_nu_methods([NSProxy class], [NSObject class]);
         
         // swizzle container classes to allow us to add nil to collections (as NSNull).
-        void nu_swizzleContainerClasses();
         nu_swizzleContainerClasses();
         
 #if !defined(MININUSH) && !TARGET_OS_IPHONE
@@ -3598,10 +3594,6 @@ static NSString *getTypeStringFromNode(id node)
 {
     return [[self wrappedClass] handleUnknownMessage:cdr withContext:context];
 }
-
-@end
-
-@implementation NuClass (Experiments)
 
 - (NSArray *) instanceVariableNames {
     NSMutableArray *names = [NSMutableArray array];
