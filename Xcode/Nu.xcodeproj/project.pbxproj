@@ -98,94 +98,9 @@
 		22B3B41713B033EE00B3AB31 /* test.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F513B033EE00B3AB31 /* test.nu */; };
 		22B3B47313B0359300B3AB31 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B41D13B0359300B3AB31 /* Nu.m */; };
 		22B3B47413B0359300B3AB31 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B41D13B0359300B3AB31 /* Nu.m */; };
-		22B3B47713B0359300B3AB31 /* NuBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B41F13B0359300B3AB31 /* NuBlock.h */; };
-		22B3B47813B0359300B3AB31 /* NuBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42013B0359300B3AB31 /* NuBlock.m */; };
-		22B3B47913B0359300B3AB31 /* NuBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42013B0359300B3AB31 /* NuBlock.m */; };
-		22B3B47C13B0359300B3AB31 /* NuBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B42213B0359300B3AB31 /* NuBridge.h */; };
-		22B3B47D13B0359300B3AB31 /* NuBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42313B0359300B3AB31 /* NuBridge.m */; };
-		22B3B47E13B0359300B3AB31 /* NuBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42313B0359300B3AB31 /* NuBridge.m */; };
-		22B3B48113B0359300B3AB31 /* NuBridgeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B42513B0359300B3AB31 /* NuBridgeSupport.h */; };
-		22B3B48213B0359300B3AB31 /* NuBridgeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42613B0359300B3AB31 /* NuBridgeSupport.m */; };
-		22B3B48313B0359300B3AB31 /* NuBridgeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42613B0359300B3AB31 /* NuBridgeSupport.m */; };
-		22B3B48613B0359300B3AB31 /* NuCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B42813B0359300B3AB31 /* NuCell.h */; };
-		22B3B48713B0359300B3AB31 /* NuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42913B0359300B3AB31 /* NuCell.m */; };
-		22B3B48813B0359300B3AB31 /* NuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42913B0359300B3AB31 /* NuCell.m */; };
-		22B3B48B13B0359300B3AB31 /* NuClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B42B13B0359300B3AB31 /* NuClass.h */; };
-		22B3B48C13B0359300B3AB31 /* NuClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42C13B0359300B3AB31 /* NuClass.m */; };
-		22B3B48D13B0359300B3AB31 /* NuClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42C13B0359300B3AB31 /* NuClass.m */; };
-		22B3B49013B0359300B3AB31 /* NuDtrace.d in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42E13B0359300B3AB31 /* NuDtrace.d */; };
-		22B3B49113B0359300B3AB31 /* NuDtrace.d in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B42E13B0359300B3AB31 /* NuDtrace.d */; };
-		22B3B49213B0359300B3AB31 /* NuDtrace.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B42F13B0359300B3AB31 /* NuDtrace.h */; };
-		22B3B49313B0359300B3AB31 /* NuEnumerable.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B43013B0359300B3AB31 /* NuEnumerable.h */; };
-		22B3B49413B0359300B3AB31 /* NuEnumerable.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43113B0359300B3AB31 /* NuEnumerable.m */; };
-		22B3B49513B0359300B3AB31 /* NuEnumerable.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43113B0359300B3AB31 /* NuEnumerable.m */; };
-		22B3B49813B0359300B3AB31 /* NuException.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B43313B0359300B3AB31 /* NuException.h */; };
-		22B3B49913B0359300B3AB31 /* NuException.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43413B0359300B3AB31 /* NuException.m */; };
-		22B3B49A13B0359300B3AB31 /* NuException.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43413B0359300B3AB31 /* NuException.m */; };
-		22B3B49D13B0359300B3AB31 /* NuExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B43613B0359300B3AB31 /* NuExtensions.h */; };
-		22B3B49E13B0359300B3AB31 /* NuExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43713B0359300B3AB31 /* NuExtensions.m */; };
-		22B3B49F13B0359300B3AB31 /* NuExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43713B0359300B3AB31 /* NuExtensions.m */; };
-		22B3B4A213B0359300B3AB31 /* NuHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B43913B0359300B3AB31 /* NuHandler.h */; };
-		22B3B4A313B0359300B3AB31 /* NuHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43A13B0359300B3AB31 /* NuHandler.m */; };
-		22B3B4A413B0359300B3AB31 /* NuHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43A13B0359300B3AB31 /* NuHandler.m */; };
-		22B3B4A713B0359300B3AB31 /* NuInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B43C13B0359300B3AB31 /* NuInternals.h */; };
-		22B3B4A813B0359300B3AB31 /* NuMacro_0.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B43D13B0359300B3AB31 /* NuMacro_0.h */; };
-		22B3B4A913B0359300B3AB31 /* NuMacro_0.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43E13B0359300B3AB31 /* NuMacro_0.m */; };
-		22B3B4AA13B0359300B3AB31 /* NuMacro_0.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B43E13B0359300B3AB31 /* NuMacro_0.m */; };
-		22B3B4AD13B0359300B3AB31 /* NuMacro_1.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B44013B0359300B3AB31 /* NuMacro_1.h */; };
-		22B3B4AE13B0359300B3AB31 /* NuMacro_1.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44113B0359300B3AB31 /* NuMacro_1.m */; };
-		22B3B4AF13B0359300B3AB31 /* NuMacro_1.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44113B0359300B3AB31 /* NuMacro_1.m */; };
-		22B3B4B213B0359300B3AB31 /* NuMain.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B44313B0359300B3AB31 /* NuMain.h */; };
-		22B3B4B313B0359300B3AB31 /* NuMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B44413B0359300B3AB31 /* NuMethod.h */; };
-		22B3B4B413B0359300B3AB31 /* NuMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44513B0359300B3AB31 /* NuMethod.m */; };
-		22B3B4B513B0359300B3AB31 /* NuMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44513B0359300B3AB31 /* NuMethod.m */; };
-		22B3B4B813B0359300B3AB31 /* NuObjCRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B44713B0359300B3AB31 /* NuObjCRuntime.h */; };
-		22B3B4B913B0359300B3AB31 /* NuObjCRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44813B0359300B3AB31 /* NuObjCRuntime.m */; };
-		22B3B4BA13B0359300B3AB31 /* NuObjCRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44813B0359300B3AB31 /* NuObjCRuntime.m */; };
-		22B3B4BD13B0359300B3AB31 /* NuObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B44A13B0359300B3AB31 /* NuObject.h */; };
-		22B3B4BE13B0359300B3AB31 /* NuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44B13B0359300B3AB31 /* NuObject.m */; };
-		22B3B4BF13B0359300B3AB31 /* NuObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44B13B0359300B3AB31 /* NuObject.m */; };
-		22B3B4C213B0359300B3AB31 /* NuOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B44D13B0359300B3AB31 /* NuOperator.h */; };
-		22B3B4C313B0359300B3AB31 /* NuOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44E13B0359300B3AB31 /* NuOperator.m */; };
-		22B3B4C413B0359300B3AB31 /* NuOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B44E13B0359300B3AB31 /* NuOperator.m */; };
-		22B3B4C713B0359300B3AB31 /* NuParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B45013B0359300B3AB31 /* NuParser.h */; };
-		22B3B4C813B0359300B3AB31 /* NuParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45113B0359300B3AB31 /* NuParser.m */; };
-		22B3B4C913B0359300B3AB31 /* NuParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45113B0359300B3AB31 /* NuParser.m */; };
-		22B3B4CC13B0359300B3AB31 /* NuPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B45313B0359300B3AB31 /* NuPointer.h */; };
-		22B3B4CD13B0359300B3AB31 /* NuPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45413B0359300B3AB31 /* NuPointer.m */; };
-		22B3B4CE13B0359300B3AB31 /* NuPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45413B0359300B3AB31 /* NuPointer.m */; };
-		22B3B4D113B0359300B3AB31 /* NuProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B45613B0359300B3AB31 /* NuProfiler.h */; };
-		22B3B4D213B0359300B3AB31 /* NuProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45713B0359300B3AB31 /* NuProfiler.m */; };
-		22B3B4D313B0359300B3AB31 /* NuProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45713B0359300B3AB31 /* NuProfiler.m */; };
-		22B3B4D613B0359300B3AB31 /* NuProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B45913B0359300B3AB31 /* NuProperty.h */; };
-		22B3B4D713B0359300B3AB31 /* NuProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45A13B0359300B3AB31 /* NuProperty.m */; };
-		22B3B4D813B0359300B3AB31 /* NuProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45A13B0359300B3AB31 /* NuProperty.m */; };
-		22B3B4DB13B0359300B3AB31 /* NuReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B45C13B0359300B3AB31 /* NuReference.h */; };
-		22B3B4DC13B0359300B3AB31 /* NuReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45D13B0359300B3AB31 /* NuReference.m */; };
-		22B3B4DD13B0359300B3AB31 /* NuReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B45D13B0359300B3AB31 /* NuReference.m */; };
-		22B3B4E013B0359300B3AB31 /* NuRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B45F13B0359300B3AB31 /* NuRegex.h */; };
-		22B3B4E113B0359300B3AB31 /* NuRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46013B0359300B3AB31 /* NuRegex.m */; };
-		22B3B4E213B0359300B3AB31 /* NuRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46013B0359300B3AB31 /* NuRegex.m */; };
-		22B3B4E513B0359300B3AB31 /* NuStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B46213B0359300B3AB31 /* NuStack.h */; };
-		22B3B4E613B0359300B3AB31 /* NuStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46313B0359300B3AB31 /* NuStack.m */; };
-		22B3B4E713B0359300B3AB31 /* NuStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46313B0359300B3AB31 /* NuStack.m */; };
-		22B3B4EA13B0359300B3AB31 /* NuSuper.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B46513B0359300B3AB31 /* NuSuper.h */; };
-		22B3B4EB13B0359300B3AB31 /* NuSuper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46613B0359300B3AB31 /* NuSuper.m */; };
-		22B3B4EC13B0359300B3AB31 /* NuSuper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46613B0359300B3AB31 /* NuSuper.m */; };
-		22B3B4EF13B0359300B3AB31 /* NuSwizzles.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46813B0359300B3AB31 /* NuSwizzles.m */; };
-		22B3B4F013B0359300B3AB31 /* NuSwizzles.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46813B0359300B3AB31 /* NuSwizzles.m */; };
-		22B3B4F313B0359300B3AB31 /* NuSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B46A13B0359300B3AB31 /* NuSymbol.h */; };
-		22B3B4F413B0359300B3AB31 /* NuSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46B13B0359300B3AB31 /* NuSymbol.m */; };
-		22B3B4F513B0359300B3AB31 /* NuSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46B13B0359300B3AB31 /* NuSymbol.m */; };
-		22B3B4F813B0359300B3AB31 /* NuTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46D13B0359300B3AB31 /* NuTestHelper.m */; };
-		22B3B4F913B0359300B3AB31 /* NuTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B46D13B0359300B3AB31 /* NuTestHelper.m */; };
-		22B3B4FC13B0359300B3AB31 /* NuVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = 22B3B46F13B0359300B3AB31 /* NuVersion.h */; };
 		22B3B50313B0386600B3AB31 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50213B0386600B3AB31 /* UIKit.framework */; };
 		22B3B50513B0388C00B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50413B0388C00B3AB31 /* Foundation.framework */; };
 		22B3B50713B038D000B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50613B038D000B3AB31 /* Foundation.framework */; };
-		22E695F813B6A21700355FA0 /* NuPropertyListExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 22E695F613B6A21700355FA0 /* NuPropertyListExtensions.h */; };
-		22E695F913B6A21700355FA0 /* NuPropertyListExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E695F713B6A21700355FA0 /* NuPropertyListExtensions.m */; };
-		22E695FA13B6A21700355FA0 /* NuPropertyListExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 22E695F713B6A21700355FA0 /* NuPropertyListExtensions.m */; };
 		22EE2C0413A4731600895861 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 22EE2C0213A4731600895861 /* InfoPlist.strings */; };
 		22EE2C0613A4731600895861 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0513A4731600895861 /* main.m */; };
 		22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0913A4731600895861 /* NuAppDelegate.m */; };
@@ -221,6 +136,7 @@
 		225F62CA13B04256002DD16B /* types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = types.c; sourceTree = "<group>"; };
 		2283073111DDBE3100A5C690 /* nush */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nush; sourceTree = BUILT_PRODUCTS_DIR; };
 		2283073C11DDBE7300A5C690 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../main/main.m; sourceTree = SOURCE_ROOT; };
+		229FABE113C0129400CEFCF5 /* Nu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nu.h; sourceTree = "<group>"; };
 		22B3B38813B033D400B3AB31 /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
 		22B3B38913B033D400B3AB31 /* test_array.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_array.nu; sourceTree = "<group>"; };
 		22B3B38A13B033D400B3AB31 /* test_blockargs.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_blockargs.nu; sourceTree = "<group>"; };
@@ -285,66 +201,9 @@
 		22B3B3F413B033EE00B3AB31 /* template.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = template.nu; sourceTree = "<group>"; };
 		22B3B3F513B033EE00B3AB31 /* test.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.nu; sourceTree = "<group>"; };
 		22B3B41D13B0359300B3AB31 /* Nu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Nu.m; sourceTree = "<group>"; };
-		22B3B41F13B0359300B3AB31 /* NuBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBlock.h; sourceTree = "<group>"; };
-		22B3B42013B0359300B3AB31 /* NuBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBlock.m; sourceTree = "<group>"; };
-		22B3B42213B0359300B3AB31 /* NuBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBridge.h; sourceTree = "<group>"; };
-		22B3B42313B0359300B3AB31 /* NuBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBridge.m; sourceTree = "<group>"; };
-		22B3B42513B0359300B3AB31 /* NuBridgeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBridgeSupport.h; sourceTree = "<group>"; };
-		22B3B42613B0359300B3AB31 /* NuBridgeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBridgeSupport.m; sourceTree = "<group>"; };
-		22B3B42813B0359300B3AB31 /* NuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuCell.h; sourceTree = "<group>"; };
-		22B3B42913B0359300B3AB31 /* NuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuCell.m; sourceTree = "<group>"; };
-		22B3B42B13B0359300B3AB31 /* NuClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuClass.h; sourceTree = "<group>"; };
-		22B3B42C13B0359300B3AB31 /* NuClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuClass.m; sourceTree = "<group>"; };
-		22B3B42E13B0359300B3AB31 /* NuDtrace.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; path = NuDtrace.d; sourceTree = "<group>"; };
-		22B3B42F13B0359300B3AB31 /* NuDtrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuDtrace.h; sourceTree = "<group>"; };
-		22B3B43013B0359300B3AB31 /* NuEnumerable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuEnumerable.h; sourceTree = "<group>"; };
-		22B3B43113B0359300B3AB31 /* NuEnumerable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuEnumerable.m; sourceTree = "<group>"; };
-		22B3B43313B0359300B3AB31 /* NuException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuException.h; sourceTree = "<group>"; };
-		22B3B43413B0359300B3AB31 /* NuException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuException.m; sourceTree = "<group>"; };
-		22B3B43613B0359300B3AB31 /* NuExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuExtensions.h; sourceTree = "<group>"; };
-		22B3B43713B0359300B3AB31 /* NuExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuExtensions.m; sourceTree = "<group>"; };
-		22B3B43913B0359300B3AB31 /* NuHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuHandler.h; sourceTree = "<group>"; };
-		22B3B43A13B0359300B3AB31 /* NuHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuHandler.m; sourceTree = "<group>"; };
-		22B3B43C13B0359300B3AB31 /* NuInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuInternals.h; sourceTree = "<group>"; };
-		22B3B43D13B0359300B3AB31 /* NuMacro_0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuMacro_0.h; sourceTree = "<group>"; };
-		22B3B43E13B0359300B3AB31 /* NuMacro_0.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuMacro_0.m; sourceTree = "<group>"; };
-		22B3B44013B0359300B3AB31 /* NuMacro_1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuMacro_1.h; sourceTree = "<group>"; };
-		22B3B44113B0359300B3AB31 /* NuMacro_1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuMacro_1.m; sourceTree = "<group>"; };
-		22B3B44313B0359300B3AB31 /* NuMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuMain.h; sourceTree = "<group>"; };
-		22B3B44413B0359300B3AB31 /* NuMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuMethod.h; sourceTree = "<group>"; };
-		22B3B44513B0359300B3AB31 /* NuMethod.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuMethod.m; sourceTree = "<group>"; };
-		22B3B44713B0359300B3AB31 /* NuObjCRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuObjCRuntime.h; sourceTree = "<group>"; };
-		22B3B44813B0359300B3AB31 /* NuObjCRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuObjCRuntime.m; sourceTree = "<group>"; };
-		22B3B44A13B0359300B3AB31 /* NuObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuObject.h; sourceTree = "<group>"; };
-		22B3B44B13B0359300B3AB31 /* NuObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuObject.m; sourceTree = "<group>"; };
-		22B3B44D13B0359300B3AB31 /* NuOperator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuOperator.h; sourceTree = "<group>"; };
-		22B3B44E13B0359300B3AB31 /* NuOperator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuOperator.m; sourceTree = "<group>"; };
-		22B3B45013B0359300B3AB31 /* NuParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuParser.h; sourceTree = "<group>"; };
-		22B3B45113B0359300B3AB31 /* NuParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuParser.m; sourceTree = "<group>"; };
-		22B3B45313B0359300B3AB31 /* NuPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuPointer.h; sourceTree = "<group>"; };
-		22B3B45413B0359300B3AB31 /* NuPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuPointer.m; sourceTree = "<group>"; };
-		22B3B45613B0359300B3AB31 /* NuProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuProfiler.h; sourceTree = "<group>"; };
-		22B3B45713B0359300B3AB31 /* NuProfiler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuProfiler.m; sourceTree = "<group>"; };
-		22B3B45913B0359300B3AB31 /* NuProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuProperty.h; sourceTree = "<group>"; };
-		22B3B45A13B0359300B3AB31 /* NuProperty.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuProperty.m; sourceTree = "<group>"; };
-		22B3B45C13B0359300B3AB31 /* NuReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuReference.h; sourceTree = "<group>"; };
-		22B3B45D13B0359300B3AB31 /* NuReference.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuReference.m; sourceTree = "<group>"; };
-		22B3B45F13B0359300B3AB31 /* NuRegex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuRegex.h; sourceTree = "<group>"; };
-		22B3B46013B0359300B3AB31 /* NuRegex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuRegex.m; sourceTree = "<group>"; };
-		22B3B46213B0359300B3AB31 /* NuStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuStack.h; sourceTree = "<group>"; };
-		22B3B46313B0359300B3AB31 /* NuStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuStack.m; sourceTree = "<group>"; };
-		22B3B46513B0359300B3AB31 /* NuSuper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuSuper.h; sourceTree = "<group>"; };
-		22B3B46613B0359300B3AB31 /* NuSuper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuSuper.m; sourceTree = "<group>"; };
-		22B3B46813B0359300B3AB31 /* NuSwizzles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuSwizzles.m; sourceTree = "<group>"; };
-		22B3B46A13B0359300B3AB31 /* NuSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuSymbol.h; sourceTree = "<group>"; };
-		22B3B46B13B0359300B3AB31 /* NuSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuSymbol.m; sourceTree = "<group>"; };
-		22B3B46D13B0359300B3AB31 /* NuTestHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuTestHelper.m; sourceTree = "<group>"; };
-		22B3B46F13B0359300B3AB31 /* NuVersion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuVersion.h; sourceTree = "<group>"; };
 		22B3B50213B0386600B3AB31 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		22B3B50413B0388C00B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		22B3B50613B038D000B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		22E695F613B6A21700355FA0 /* NuPropertyListExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuPropertyListExtensions.h; sourceTree = "<group>"; };
-		22E695F713B6A21700355FA0 /* NuPropertyListExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuPropertyListExtensions.m; sourceTree = "<group>"; };
 		22EE2BF413A4731600895861 /* NuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22EE2C0113A4731600895861 /* NuApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NuApp-Info.plist"; sourceTree = "<group>"; };
 		22EE2C0313A4731600895861 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -551,64 +410,8 @@
 		22B3B41C13B0359300B3AB31 /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				229FABE113C0129400CEFCF5 /* Nu.h */,
 				22B3B41D13B0359300B3AB31 /* Nu.m */,
-				22B3B41F13B0359300B3AB31 /* NuBlock.h */,
-				22B3B42013B0359300B3AB31 /* NuBlock.m */,
-				22B3B42213B0359300B3AB31 /* NuBridge.h */,
-				22B3B42313B0359300B3AB31 /* NuBridge.m */,
-				22B3B42513B0359300B3AB31 /* NuBridgeSupport.h */,
-				22B3B42613B0359300B3AB31 /* NuBridgeSupport.m */,
-				22B3B42813B0359300B3AB31 /* NuCell.h */,
-				22B3B42913B0359300B3AB31 /* NuCell.m */,
-				22B3B42B13B0359300B3AB31 /* NuClass.h */,
-				22B3B42C13B0359300B3AB31 /* NuClass.m */,
-				22B3B42E13B0359300B3AB31 /* NuDtrace.d */,
-				22B3B42F13B0359300B3AB31 /* NuDtrace.h */,
-				22B3B43013B0359300B3AB31 /* NuEnumerable.h */,
-				22B3B43113B0359300B3AB31 /* NuEnumerable.m */,
-				22B3B43313B0359300B3AB31 /* NuException.h */,
-				22B3B43413B0359300B3AB31 /* NuException.m */,
-				22B3B43613B0359300B3AB31 /* NuExtensions.h */,
-				22B3B43713B0359300B3AB31 /* NuExtensions.m */,
-				22B3B43913B0359300B3AB31 /* NuHandler.h */,
-				22B3B43A13B0359300B3AB31 /* NuHandler.m */,
-				22B3B43C13B0359300B3AB31 /* NuInternals.h */,
-				22B3B43D13B0359300B3AB31 /* NuMacro_0.h */,
-				22B3B43E13B0359300B3AB31 /* NuMacro_0.m */,
-				22B3B44013B0359300B3AB31 /* NuMacro_1.h */,
-				22B3B44113B0359300B3AB31 /* NuMacro_1.m */,
-				22B3B44313B0359300B3AB31 /* NuMain.h */,
-				22B3B44413B0359300B3AB31 /* NuMethod.h */,
-				22B3B44513B0359300B3AB31 /* NuMethod.m */,
-				22B3B44713B0359300B3AB31 /* NuObjCRuntime.h */,
-				22B3B44813B0359300B3AB31 /* NuObjCRuntime.m */,
-				22B3B44A13B0359300B3AB31 /* NuObject.h */,
-				22B3B44B13B0359300B3AB31 /* NuObject.m */,
-				22B3B44D13B0359300B3AB31 /* NuOperator.h */,
-				22B3B44E13B0359300B3AB31 /* NuOperator.m */,
-				22B3B45013B0359300B3AB31 /* NuParser.h */,
-				22B3B45113B0359300B3AB31 /* NuParser.m */,
-				22B3B45313B0359300B3AB31 /* NuPointer.h */,
-				22B3B45413B0359300B3AB31 /* NuPointer.m */,
-				22B3B45613B0359300B3AB31 /* NuProfiler.h */,
-				22B3B45713B0359300B3AB31 /* NuProfiler.m */,
-				22B3B45913B0359300B3AB31 /* NuProperty.h */,
-				22B3B45A13B0359300B3AB31 /* NuProperty.m */,
-				22E695F613B6A21700355FA0 /* NuPropertyListExtensions.h */,
-				22E695F713B6A21700355FA0 /* NuPropertyListExtensions.m */,
-				22B3B45C13B0359300B3AB31 /* NuReference.h */,
-				22B3B45D13B0359300B3AB31 /* NuReference.m */,
-				22B3B45F13B0359300B3AB31 /* NuRegex.h */,
-				22B3B46013B0359300B3AB31 /* NuRegex.m */,
-				22B3B46213B0359300B3AB31 /* NuStack.h */,
-				22B3B46313B0359300B3AB31 /* NuStack.m */,
-				22B3B46513B0359300B3AB31 /* NuSuper.h */,
-				22B3B46613B0359300B3AB31 /* NuSuper.m */,
-				22B3B46813B0359300B3AB31 /* NuSwizzles.m */,
-				22B3B46A13B0359300B3AB31 /* NuSymbol.h */,
-				22B3B46B13B0359300B3AB31 /* NuSymbol.m */,
-				22B3B46D13B0359300B3AB31 /* NuTestHelper.m */,
-				22B3B46F13B0359300B3AB31 /* NuVersion.h */,
 			);
 			name = objc;
 			path = ../objc;
@@ -661,35 +464,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				22B3B47713B0359300B3AB31 /* NuBlock.h in Headers */,
-				22B3B47C13B0359300B3AB31 /* NuBridge.h in Headers */,
-				22B3B48113B0359300B3AB31 /* NuBridgeSupport.h in Headers */,
-				22B3B48613B0359300B3AB31 /* NuCell.h in Headers */,
-				22B3B48B13B0359300B3AB31 /* NuClass.h in Headers */,
-				22B3B49213B0359300B3AB31 /* NuDtrace.h in Headers */,
-				22B3B49313B0359300B3AB31 /* NuEnumerable.h in Headers */,
-				22B3B49813B0359300B3AB31 /* NuException.h in Headers */,
-				22B3B49D13B0359300B3AB31 /* NuExtensions.h in Headers */,
-				22B3B4A213B0359300B3AB31 /* NuHandler.h in Headers */,
-				22B3B4A713B0359300B3AB31 /* NuInternals.h in Headers */,
-				22B3B4A813B0359300B3AB31 /* NuMacro_0.h in Headers */,
-				22B3B4AD13B0359300B3AB31 /* NuMacro_1.h in Headers */,
-				22B3B4B213B0359300B3AB31 /* NuMain.h in Headers */,
-				22B3B4B313B0359300B3AB31 /* NuMethod.h in Headers */,
-				22B3B4B813B0359300B3AB31 /* NuObjCRuntime.h in Headers */,
-				22B3B4BD13B0359300B3AB31 /* NuObject.h in Headers */,
-				22B3B4C213B0359300B3AB31 /* NuOperator.h in Headers */,
-				22B3B4C713B0359300B3AB31 /* NuParser.h in Headers */,
-				22B3B4CC13B0359300B3AB31 /* NuPointer.h in Headers */,
-				22B3B4D113B0359300B3AB31 /* NuProfiler.h in Headers */,
-				22B3B4D613B0359300B3AB31 /* NuProperty.h in Headers */,
-				22B3B4DB13B0359300B3AB31 /* NuReference.h in Headers */,
-				22B3B4E013B0359300B3AB31 /* NuRegex.h in Headers */,
-				22B3B4E513B0359300B3AB31 /* NuStack.h in Headers */,
-				22B3B4EA13B0359300B3AB31 /* NuSuper.h in Headers */,
-				22B3B4F313B0359300B3AB31 /* NuSymbol.h in Headers */,
-				22B3B4FC13B0359300B3AB31 /* NuVersion.h in Headers */,
-				22E695F813B6A21700355FA0 /* NuPropertyListExtensions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -895,33 +669,6 @@
 				22EE2C0613A4731600895861 /* main.m in Sources */,
 				22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */,
 				22B3B47413B0359300B3AB31 /* Nu.m in Sources */,
-				22B3B47913B0359300B3AB31 /* NuBlock.m in Sources */,
-				22B3B47E13B0359300B3AB31 /* NuBridge.m in Sources */,
-				22B3B48313B0359300B3AB31 /* NuBridgeSupport.m in Sources */,
-				22B3B48813B0359300B3AB31 /* NuCell.m in Sources */,
-				22B3B48D13B0359300B3AB31 /* NuClass.m in Sources */,
-				22B3B49113B0359300B3AB31 /* NuDtrace.d in Sources */,
-				22B3B49513B0359300B3AB31 /* NuEnumerable.m in Sources */,
-				22B3B49A13B0359300B3AB31 /* NuException.m in Sources */,
-				22B3B49F13B0359300B3AB31 /* NuExtensions.m in Sources */,
-				22B3B4A413B0359300B3AB31 /* NuHandler.m in Sources */,
-				22B3B4AA13B0359300B3AB31 /* NuMacro_0.m in Sources */,
-				22B3B4AF13B0359300B3AB31 /* NuMacro_1.m in Sources */,
-				22B3B4B513B0359300B3AB31 /* NuMethod.m in Sources */,
-				22B3B4BA13B0359300B3AB31 /* NuObjCRuntime.m in Sources */,
-				22B3B4BF13B0359300B3AB31 /* NuObject.m in Sources */,
-				22B3B4C413B0359300B3AB31 /* NuOperator.m in Sources */,
-				22B3B4C913B0359300B3AB31 /* NuParser.m in Sources */,
-				22B3B4CE13B0359300B3AB31 /* NuPointer.m in Sources */,
-				22B3B4D313B0359300B3AB31 /* NuProfiler.m in Sources */,
-				22B3B4D813B0359300B3AB31 /* NuProperty.m in Sources */,
-				22B3B4DD13B0359300B3AB31 /* NuReference.m in Sources */,
-				22B3B4E213B0359300B3AB31 /* NuRegex.m in Sources */,
-				22B3B4E713B0359300B3AB31 /* NuStack.m in Sources */,
-				22B3B4EC13B0359300B3AB31 /* NuSuper.m in Sources */,
-				22B3B4F013B0359300B3AB31 /* NuSwizzles.m in Sources */,
-				22B3B4F513B0359300B3AB31 /* NuSymbol.m in Sources */,
-				22B3B4F913B0359300B3AB31 /* NuTestHelper.m in Sources */,
 				225F62CB13B04256002DD16B /* ffi-iphone.c in Sources */,
 				225F62CC13B04256002DD16B /* ffi-iphonesimulator.c in Sources */,
 				225F62CD13B04256002DD16B /* iphone-sysv.S in Sources */,
@@ -929,7 +676,6 @@
 				225F62D013B04256002DD16B /* prep_cif.c in Sources */,
 				225F62D113B04256002DD16B /* raw_api.c in Sources */,
 				225F62D313B04256002DD16B /* types.c in Sources */,
-				22E695FA13B6A21700355FA0 /* NuPropertyListExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -938,34 +684,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				22B3B47313B0359300B3AB31 /* Nu.m in Sources */,
-				22B3B47813B0359300B3AB31 /* NuBlock.m in Sources */,
-				22B3B47D13B0359300B3AB31 /* NuBridge.m in Sources */,
-				22B3B48213B0359300B3AB31 /* NuBridgeSupport.m in Sources */,
-				22B3B48713B0359300B3AB31 /* NuCell.m in Sources */,
-				22B3B48C13B0359300B3AB31 /* NuClass.m in Sources */,
-				22B3B49013B0359300B3AB31 /* NuDtrace.d in Sources */,
-				22B3B49413B0359300B3AB31 /* NuEnumerable.m in Sources */,
-				22B3B49913B0359300B3AB31 /* NuException.m in Sources */,
-				22B3B49E13B0359300B3AB31 /* NuExtensions.m in Sources */,
-				22B3B4A313B0359300B3AB31 /* NuHandler.m in Sources */,
-				22B3B4A913B0359300B3AB31 /* NuMacro_0.m in Sources */,
-				22B3B4AE13B0359300B3AB31 /* NuMacro_1.m in Sources */,
-				22B3B4B413B0359300B3AB31 /* NuMethod.m in Sources */,
-				22B3B4B913B0359300B3AB31 /* NuObjCRuntime.m in Sources */,
-				22B3B4BE13B0359300B3AB31 /* NuObject.m in Sources */,
-				22B3B4C313B0359300B3AB31 /* NuOperator.m in Sources */,
-				22B3B4C813B0359300B3AB31 /* NuParser.m in Sources */,
-				22B3B4CD13B0359300B3AB31 /* NuPointer.m in Sources */,
-				22B3B4D213B0359300B3AB31 /* NuProfiler.m in Sources */,
-				22B3B4D713B0359300B3AB31 /* NuProperty.m in Sources */,
-				22B3B4DC13B0359300B3AB31 /* NuReference.m in Sources */,
-				22B3B4E113B0359300B3AB31 /* NuRegex.m in Sources */,
-				22B3B4E613B0359300B3AB31 /* NuStack.m in Sources */,
-				22B3B4EB13B0359300B3AB31 /* NuSuper.m in Sources */,
-				22B3B4EF13B0359300B3AB31 /* NuSwizzles.m in Sources */,
-				22B3B4F413B0359300B3AB31 /* NuSymbol.m in Sources */,
-				22B3B4F813B0359300B3AB31 /* NuTestHelper.m in Sources */,
-				22E695F913B6A21700355FA0 /* NuPropertyListExtensions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
