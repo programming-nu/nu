@@ -218,50 +218,57 @@
         @result))
 
 ;; do not use this directly. It is common code extracted from the file and task macros.
-(macro-0 task-helper
-     (set __dependency nil)
-     (set __action nil)
-     (set __taskName (eval (car margs)))
-     (set __taskDescription nil)
-     
-     ;; if task contains description, get it. otherwise move on
-     (if (and (> ((cdr margs) length) 0) (eq : (car (cdr margs))))
-         (then
-              (set __taskDescription (car (cdr (cdr margs))))
-              (set __cursor (cdr (cdr (cdr margs)))))
-         (else
-              (set __cursor (cdr margs))))
-     
-     ;; get dependencies
-     (if (and __cursor (eq (car __cursor) (quote =>)))
-         (then
-              (set __cursor (cdr __cursor))
-              (while (and __cursor (!= (car __cursor) (quote is)))
-                     (set __dependency (eval (car __cursor)))
-                     (self addDependency:__taskName on:__dependency)
-                     (set __cursor (cdr __cursor)))))
-     
-     ;; get action
-     (if (and __cursor (eq (car __cursor) (quote is)))
-         (then
-              (set __action (cdr __cursor))
-              (set __block (eval (append '(do (target)) __action)))
-              (if __taskDescription
-                  (then
-                       (self addTask:__taskName description:__taskDescription action:__block))
-                  (else
-                       (self addTask:__taskName action:__block)))))
-     
-     ;; return the name of the task
-     __taskName)
+(macro task-helper (*body)
+     `(progn
+            (let ((__dependency nil)
+                  (__action nil)
+                  (__taskName ,(car *body))
+                  (__taskDescription nil)
+                  (__cursor nil))
+                 
+                 ;; if task contains a description, get it.
+                 ;; otherwise, move on
+                 (if (and (> ,((cdr *body) length) 0)
+                          (eq ': ',(car (cdr *body))))
+                     (then
+                          (set __taskDescription ,(car (cdr (cdr *body))))
+                          (set __cursor ',(cdr (cdr (cdr *body)))))
+                     (else
+                          (set __cursor ',(cdr *body))))
+                 
+                 ;; get dependencies
+                 (if (and __cursor (eq (car __cursor) '=>))
+                     (then
+                          (set __cursor (cdr __cursor))
+                          (while (and __cursor (!= (car __cursor) 'is))
+                                 (set __dependency (eval (car __cursor)))
+                                 (self addDependency:__taskName on:__dependency)
+                                 (set __cursor (cdr __cursor))
+                                 )))
+                 
+                 ;; get action
+                 (if (and __cursor (eq (car __cursor) 'is))
+                     (then
+                          (set __action (cdr __cursor))
+                          (set __block (eval (append '(do (target)) __action)))
+                          (if __taskDescription
+                              (then
+                                   (self addTask:__taskName description:__taskDescription action:__block))
+                              (else
+                                   (self addTask:__taskName action:__block)))))
+                 
+                 __taskName)))
+
 
 ;; use this to define tasks that create files.
-(macro-0 file
-     ((self taskNamed: (eval (cons (quote task-helper) margs))) setIsFile:1))
+(macro file (*body)
+     `(progn
+            ((self taskNamed:(task-helper ,@*body)) setIsFile:1)))
 
 ;; use this to define tasks that DON'T create files.
-(macro-0 task
-     ((self taskNamed: (eval (cons (quote task-helper) margs))) setIsFile:0))
+(macro task (*body)
+     `(progn
+            ((self taskNamed:(task-helper ,@*body)) setIsFile:0)))
 
 ;; helper that finds momc, the datamodel compiler
 (function momc-path ()
@@ -277,395 +284,399 @@
      momc)
 
 ;; use this to create all the compilation tasks for the files in the @c_files and @m_files collections
-(macro-0 compilation-tasks
-     (unless @cc (set @cc "gcc"))
-     (unless @cflags (set @cflags "-g"))
-     (unless @mflags (set @mflags "-fobjc-exceptions"))
-     (unless @includes (set @includes ""))
-     (ifDarwin
-              (then (unless (and @arch (@arch length))
-                            (set @arch (list (NSString stringWithShellCommand:"arch")))))
-              (else (set @arch (list "x86-linux"))))
-     (@arch each: (do (architecture) (system "mkdir -p build/#{architecture}")))
-     
-     (unless @ldflags ;; not for compilation, but common across all builds
-             (set @ldflags ((@frameworks map: (do (framework) " -framework #{framework}")) join)))
-     
-     ;; compile c files
-     (set @c_objects (NSMutableDictionary dictionary))
-     (@arch each: (do (architecture) (@c_objects setObject:(NSMutableArray array) forKey:architecture)))
-     (@c_files each:
-          (do (sourceName)
-              (@arch each:
-                     (do (architecture)
-                         (set objectName "build/#{architecture}/")
-                         (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
-                         ((@c_objects objectForKey:architecture) addObject: objectName)
-                         (ifDarwin
-                                  (then (set archflags "-arch #{architecture}"))
-                                  (else (set archflags "")))
-                         (file objectName => sourceName is
-                               (SH "#{@cc} #{@cflags} #{archflags} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
-     
-     ;; compile objc files
-     (set @m_objects (NSMutableDictionary dictionary))
-     (@arch each: (do (architecture) (@m_objects setObject:(NSMutableArray array) forKey:architecture)))
-     (@m_files each:
-          (do (sourceName)
-              (@arch each:
-                     (do (architecture)
-                         (set objectName "build/#{architecture}/")
-                         (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
-                         ((@m_objects objectForKey:architecture) addObject: objectName)
-                         (ifDarwin
-                                  (then (set archflags "-arch #{architecture}"))
-                                  (else (set archflags "")))
-                         (file objectName => sourceName is
-                               (SH "#{@cc} #{@cflags} #{@mflags} #{archflags} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
-     
-     ;(puts (@c_objects description))
-     ;(puts (@m_objects description))
-     
-     ;; compile datamodels
-     (@datamodels each:
-          (do (model)
-              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
-              (file "#{modelName}.mom" => "#{modelName}.xcdatamodel" is
-                    (SH "#{(momc-path)} #{modelName}.xcdatamodel #{modelName}.mom"))))
-     
-     ;; cleanup
-     (task "clean" is
-           (system "rm -rf build")))
+(macro compilation-tasks ()
+     `(progn
+            (unless @cc (set @cc "gcc"))
+            (unless @cflags (set @cflags "-g"))
+            (unless @mflags (set @mflags "-fobjc-exceptions"))
+            (unless @includes (set @includes ""))
+            (ifDarwin
+                     (then (unless (and @arch (@arch length))
+                                   (set @arch (list (NSString stringWithShellCommand:"arch")))))
+                     (else (set @arch (list "x86-linux"))))
+            (@arch each: (do (architecture) (system "mkdir -p build/#{architecture}")))
+            
+            (unless @ldflags ;; not for compilation, but common across all builds
+                    (set @ldflags ((@frameworks map: (do (framework) " -framework #{framework}")) join)))
+            
+            ;; compile c files
+            (set @c_objects (NSMutableDictionary dictionary))
+            (@arch each: (do (architecture) (@c_objects setObject:(NSMutableArray array) forKey:architecture)))
+            (@c_files each:
+                 (do (sourceName)
+                     (@arch each:
+                            (do (architecture)
+                                (set objectName "build/#{architecture}/")
+                                (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
+                                ((@c_objects objectForKey:architecture) addObject: objectName)
+                                (ifDarwin
+                                         (then (set archflags "-arch #{architecture}"))
+                                         (else (set archflags "")))
+                                (file objectName => sourceName is
+                                      (SH "#{@cc} #{@cflags} #{archflags} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
+            
+            ;; compile objc files
+            (set @m_objects (NSMutableDictionary dictionary))
+            (@arch each: (do (architecture) (@m_objects setObject:(NSMutableArray array) forKey:architecture)))
+            (@m_files each:
+                 (do (sourceName)
+                     (@arch each:
+                            (do (architecture)
+                                (set objectName "build/#{architecture}/")
+                                (objectName appendString:((sourceName fileName) stringByReplacingPathExtensionWith:"o"))
+                                ((@m_objects objectForKey:architecture) addObject: objectName)
+                                (ifDarwin
+                                         (then (set archflags "-arch #{architecture}"))
+                                         (else (set archflags "")))
+                                (file objectName => sourceName is
+                                      (SH "#{@cc} #{@cflags} #{@mflags} #{archflags} #{@includes} -c -o #{(target name)} #{sourceName}"))))))
+            
+            ;(puts (@c_objects description))
+            ;(puts (@m_objects description))
+            
+            ;; compile datamodels
+            (@datamodels each:
+                 (do (model)
+                     (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
+                     (file "#{modelName}.mom" => "#{modelName}.xcdatamodel" is
+                           (SH "#{(momc-path)} #{modelName}.xcdatamodel #{modelName}.mom"))))
+            
+            ;; cleanup
+            (task "clean" is
+                  (system "rm -rf build"))))
 
 ;; use this to create all the linking and assembly tasks to build a Cocoa application
-(macro-0 application-tasks
-     ;; DEFAULT: if no application name is specified, use something dumb and complain.
-     (unless @application
-             (set @application "Untitled")
-             (NSLog "Please name your application by setting @application in your Nukefile"))
-     
-     ;; DEFAULT: if no prefix is specified, use the path where nuke is installed.
-     (unless @prefix
-             (set @prefix "#{((((NSProcessInfo processInfo) arguments) 0) dirName)}.."))
-     
-     ;; DEFAULT: if no application identifier is specifed, use something dumb and complain.
-     (unless @application_identifier
-             (set @application_identifier "nu.programming.untitled")
-             (NSLog "Please set an @application_identifier in your Nukefile"))
-     
-     ;; DEFAULT: if no icon is specified, use the nu icon for the application.
-     (unless @application_icon_file (set @application_icon_file "nu.icns"))
-     (unless @icon_files (set @icon_files (array "#{@prefix}/share/nu/resources/nu.icns")))
-     
-     ;; DEFAULT: if no nib files are specified, use the standard (empty) Nu MainMenu.nib.
-     ;; -- note -- we no longer do this, instead we just omit the NSMainNibFile entry from Info.plist
-     ;;(unless @nib_files (set @nib_files (array "#{@prefix}/share/nu/resources/English.lproj/MainMenu.nib")))
-     
-     ;; DEFAULT: if no creator code is specified, use "????"
-     (unless @application_creator_code (set @application_creator_code "????"))
-     
-     ;; app directory tasks
-     (set @application_dir                    "#{@application}.app")
-     (set @application_contents_dir           "#{@application_dir}/Contents")
-     (set @application_executable_dir         "#{@application_contents_dir}/MacOS")
-     (set @application_resource_dir           "#{@application_contents_dir}/Resources")
-     (set @application_resource_localized_dir "#{@application_resource_dir}/English.lproj")
-     
-     ;; make the application directory structure
-     ((list @application_dir
-            @application_contents_dir
-            @application_executable_dir
-            @application_resource_dir
-            @application_resource_localized_dir)
-      each: (do (dir) (file dir is (make-directory (target name)))))
-     
-     ;; application executable
-     (set @application_executable_name "#{@application_executable_dir}/#{@application}")
-     (if (or (and @c_objects (@c_objects count) (((@c_objects allValues) objectAtIndex:0) count))
-             (and @m_objects (@m_objects count) (((@m_objects allValues) objectAtIndex:0) count)))
-         (then
-              ;; application architecture-specific executable
-              (set @application_executables (NSMutableArray array))
-              (@arch each:
-                     (do (architecture)
-                         (set application_executable "build/#{architecture}/application-#{@application}")
-                         (@application_executables addObject:application_executable)
-                         (ifDarwin
-                                  (then (set archflags "-arch #{architecture}"))
-                                  (else (set archflags "")))
-                         (file application_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                               (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} -o '#{(target name)}'")
-                               (SH command))))
-              ;; application fat executable
-              (file @application_executable_name => @application_executable_dir @application_executables is
-                    (ifDarwin
-                             (then (set command "lipo -create #{(@application_executables join)} -output '#{@application_executable_name}'"))
-                             (else (set command "cp '#{(@application_executables objectAtIndex:0)}' '#{@application_executable_name}'")))
-                    (SH command)))
-         (else
-              (file @application_executable_name => @application_executable_dir is
-                    (SH "cp '#{@prefix}/bin/nush' '#{(target name)}'"))))
-     
-     ;; copy application_resources into the application
-     (task "application_resources" => @application_resource_dir)
-     ((list @nu_files @icon_files) each:
-      (do (l)
-          (l each:
-             (do (f)
-                 (set baseName ((f componentsSeparatedByString:"/") lastObject))
-                 (set targetFile "#{@application_resource_dir}/#{baseName}")
-                 (file targetFile => f @application_resource_dir is
-                       (SH "cp '#{f}' '#{targetFile}'"))
-                 (task "application_resources" => targetFile)))))
-     ((list @nib_files @resources) each:
-      (do (l)
-          (l each:
-             (do (f)
-                 (set g ((f componentsSeparatedByString:"/") lastObject))
-                 (file "#{@application_resource_localized_dir}/#{g}" => f @application_resource_localized_dir is
-                       (SH "cp -R '#{f}' '#{((target name) dirName)}'")
-                       0)
-                 (task "application_resources" => "#{@application_resource_localized_dir}/#{g}")))))
-     
-     ; compile xib files into the application
-     (@xib_files each:
-         (do (xib)
-             (set baseName ((xib componentsSeparatedByString:"/") lastObject))
-             (set targetFile (baseName stringByReplacingPathExtensionWith:"nib"))
-             (set nib "#{@application_resource_localized_dir}/#{targetFile}")
-             (file nib => xib @application_resource_localized_dir is
-                   (SH "ibtool --errors --warnings --notices --output-format human-readable-text --compile #{nib} #{xib}"))
-                   (task "application_resources" => nib)))
-     
-     ;; copy datamodels into the application
-     (@datamodels each:
-          (do (model)
-              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
-              (task "application_#{modelName}" => "#{modelName}.mom" @application_resource_dir is
-                    (SH "cp '#{modelName}.mom' '#{@application_resource_dir}/#{(modelName lastPathComponent)}.mom'"))
-              (task "application" => "application_#{modelName}")))
-     
-     ;; create the application_infoplist
-     (set application_infoplist "#{@application_contents_dir}/Info.plist")
-     (file application_infoplist => @application_contents_dir is
-           (set info (NSDictionary dictionaryWithList:
-                          (list "CFBundleDevelopmentRegion" "English"
-                                "CFBundleExecutable" @application
-                                "CFBundleIconFile" @application_icon_file
-                                "CFBundleIdentifier" @application_identifier
-                                "CFBundleInfoDictionaryVersion" "6.0"
-                                "CFBundleName" @application
-                                "CFBundlePackageType" "APPL"
-                                "CFBundleSignature" @application_creator_code
-                                "CFBundleVersion" "1.0"
-                                "NSHumanReadableCopyright" ""
-                                "NSPrincipalClass" "NSApplication")))
-           (if (or @nib_files @xib_files)
-               (info set:(NSMainNibFile:"MainMenu")))
-           (if @application_help_folder
-               (info setObject:@application_help_folder forKey:"CFBundleHelpBookFolder")
-               (info setObject:@application_help_folder forKey:"CFBundleHelpBookName"))
-           (if @info (info addEntriesFromDictionary: @info))
-           (info writeToFile:(target name) atomically:NO)
-           0)
-     
-     ;; write the application_pkginfo
-     (unless @creator_code (set @creator_code "????"))
-     (set application_pkginfo "#{@application_contents_dir}/PkgInfo")
-     (file application_pkginfo => @application_contents_dir is
-           (SH "/bin/echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
-     
-     (task "application" => @application_executable_name "application_resources" application_infoplist application_pkginfo)
-     
-     (task "run" => "application" is
-           (SH "open '#{@application_dir}'"))
-     
-     (task "debug" => "application" is
-           (SH  "'#{@application_dir}/Contents/MacOS/#{@application}'"))
-     
-     (task "gdb" => "application" is
-           (SH  "gdb '#{@application_dir}/Contents/MacOS/#{@application}'"))
-     
-     (task "clobber" => "clean" is
-           (system "rm -rf '#{@application_dir}'"))
-     
-     ; Build a disk image for distributing the application.
-     (task "application_image" => "application" is
-           (system "rm -rf '#{@application}.dmg' dmg")
-           (system "mkdir dmg; cp -Rp '#{@application}.app' dmg")
-           (system "hdiutil create -srcdir dmg '#{@application}.dmg' -volname '#{@application}'")
-           (system "rm -rf dmg")))
+(macro application-tasks ()
+     `(progn
+            ;; DEFAULT: if no application name is specified, use something dumb and complain.
+            (unless @application
+                    (set @application "Untitled")
+                    (NSLog "Please name your application by setting @application in your Nukefile"))
+            
+            ;; DEFAULT: if no prefix is specified, use the path where nuke is installed.
+            (unless @prefix
+                    (set @prefix "#{((((NSProcessInfo processInfo) arguments) 0) dirName)}.."))
+            
+            ;; DEFAULT: if no application identifier is specifed, use something dumb and complain.
+            (unless @application_identifier
+                    (set @application_identifier "nu.programming.untitled")
+                    (NSLog "Please set an @application_identifier in your Nukefile"))
+            
+            ;; DEFAULT: if no icon is specified, use the nu icon for the application.
+            (unless @application_icon_file (set @application_icon_file "nu.icns"))
+            (unless @icon_files (set @icon_files (array "#{@prefix}/share/nu/resources/nu.icns")))
+            
+            ;; DEFAULT: if no nib files are specified, use the standard (empty) Nu MainMenu.nib.
+            ;; -- note -- we no longer do this, instead we just omit the NSMainNibFile entry from Info.plist
+            ;;(unless @nib_files (set @nib_files (array "#{@prefix}/share/nu/resources/English.lproj/MainMenu.nib")))
+            
+            ;; DEFAULT: if no creator code is specified, use "????"
+            (unless @application_creator_code (set @application_creator_code "????"))
+            
+            ;; app directory tasks
+            (set @application_dir                    "#{@application}.app")
+            (set @application_contents_dir           "#{@application_dir}/Contents")
+            (set @application_executable_dir         "#{@application_contents_dir}/MacOS")
+            (set @application_resource_dir           "#{@application_contents_dir}/Resources")
+            (set @application_resource_localized_dir "#{@application_resource_dir}/English.lproj")
+            
+            ;; make the application directory structure
+            ((list @application_dir
+                   @application_contents_dir
+                   @application_executable_dir
+                   @application_resource_dir
+                   @application_resource_localized_dir)
+             each: (do (dir) (file dir is (make-directory (target name)))))
+            
+            ;; application executable
+            (set @application_executable_name "#{@application_executable_dir}/#{@application}")
+            (if (or (and @c_objects (@c_objects count) (((@c_objects allValues) objectAtIndex:0) count))
+                    (and @m_objects (@m_objects count) (((@m_objects allValues) objectAtIndex:0) count)))
+                (then
+                     ;; application architecture-specific executable
+                     (set @application_executables (NSMutableArray array))
+                     (@arch each:
+                            (do (architecture)
+                                (set application_executable "build/#{architecture}/application-#{@application}")
+                                (@application_executables addObject:application_executable)
+                                (ifDarwin
+                                         (then (set archflags "-arch #{architecture}"))
+                                         (else (set archflags "")))
+                                (file application_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} -o '#{(target name)}'")
+                                      (SH command))))
+                     ;; application fat executable
+                     (file @application_executable_name => @application_executable_dir @application_executables is
+                           (ifDarwin
+                                    (then (set command "lipo -create #{(@application_executables join)} -output '#{@application_executable_name}'"))
+                                    (else (set command "cp '#{(@application_executables objectAtIndex:0)}' '#{@application_executable_name}'")))
+                           (SH command)))
+                (else
+                     (file @application_executable_name => @application_executable_dir is
+                           (SH "cp '#{@prefix}/bin/nush' '#{(target name)}'"))))
+            
+            ;; copy application_resources into the application
+            (task "application_resources" => @application_resource_dir)
+            ((list @nu_files @icon_files) each:
+             (do (l)
+                 (l each:
+                    (do (f)
+                        (set baseName ((f componentsSeparatedByString:"/") lastObject))
+                        (set targetFile "#{@application_resource_dir}/#{baseName}")
+                        (file targetFile => f @application_resource_dir is
+                              (SH "cp '#{f}' '#{targetFile}'"))
+                        (task "application_resources" => targetFile)))))
+            ((list @nib_files @resources) each:
+             (do (l)
+                 (l each:
+                    (do (f)
+                        (set g ((f componentsSeparatedByString:"/") lastObject))
+                        (file "#{@application_resource_localized_dir}/#{g}" => f @application_resource_localized_dir is
+                              (SH "cp -R '#{f}' '#{((target name) dirName)}'")
+                              0)
+                        (task "application_resources" => "#{@application_resource_localized_dir}/#{g}")))))
+            
+            ; compile xib files into the application
+            (@xib_files each:
+                 (do (xib)
+                     (set baseName ((xib componentsSeparatedByString:"/") lastObject))
+                     (set targetFile (baseName stringByReplacingPathExtensionWith:"nib"))
+                     (set nib "#{@application_resource_localized_dir}/#{targetFile}")
+                     (file nib => xib @application_resource_localized_dir is
+                           (SH "ibtool --errors --warnings --notices --output-format human-readable-text --compile #{nib} #{xib}"))
+                     (task "application_resources" => nib)))
+            
+            ;; copy datamodels into the application
+            (@datamodels each:
+                 (do (model)
+                     (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
+                     (task "application_#{modelName}" => "#{modelName}.mom" @application_resource_dir is
+                           (SH "cp '#{modelName}.mom' '#{@application_resource_dir}/#{(modelName lastPathComponent)}.mom'"))
+                     (task "application" => "application_#{modelName}")))
+            
+            ;; create the application_infoplist
+            (set application_infoplist "#{@application_contents_dir}/Info.plist")
+            (file application_infoplist => @application_contents_dir is
+                  (set info (NSDictionary dictionaryWithList:
+                                 (list "CFBundleDevelopmentRegion" "English"
+                                       "CFBundleExecutable" @application
+                                       "CFBundleIconFile" @application_icon_file
+                                       "CFBundleIdentifier" @application_identifier
+                                       "CFBundleInfoDictionaryVersion" "6.0"
+                                       "CFBundleName" @application
+                                       "CFBundlePackageType" "APPL"
+                                       "CFBundleSignature" @application_creator_code
+                                       "CFBundleVersion" "1.0"
+                                       "NSHumanReadableCopyright" ""
+                                       "NSPrincipalClass" "NSApplication")))
+                  (if (or @nib_files @xib_files)
+                      (info set:(NSMainNibFile:"MainMenu")))
+                  (if @application_help_folder
+                      (info setObject:@application_help_folder forKey:"CFBundleHelpBookFolder")
+                      (info setObject:@application_help_folder forKey:"CFBundleHelpBookName"))
+                  (if @info (info addEntriesFromDictionary: @info))
+                  (info writeToFile:(target name) atomically:NO)
+                  0)
+            
+            ;; write the application_pkginfo
+            (unless @creator_code (set @creator_code "????"))
+            (set application_pkginfo "#{@application_contents_dir}/PkgInfo")
+            (file application_pkginfo => @application_contents_dir is
+                  (SH "/bin/echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
+            
+            (task "application" => @application_executable_name "application_resources" application_infoplist application_pkginfo)
+            
+            (task "run" => "application" is
+                  (SH "open '#{@application_dir}'"))
+            
+            (task "debug" => "application" is
+                  (SH  "'#{@application_dir}/Contents/MacOS/#{@application}'"))
+            
+            (task "gdb" => "application" is
+                  (SH  "gdb '#{@application_dir}/Contents/MacOS/#{@application}'"))
+            
+            (task "clobber" => "clean" is
+                  (system "rm -rf '#{@application_dir}'"))
+            
+            ; Build a disk image for distributing the application.
+            (task "application_image" => "application" is
+                  (system "rm -rf '#{@application}.dmg' dmg")
+                  (system "mkdir dmg; cp -Rp '#{@application}.app' dmg")
+                  (system "hdiutil create -srcdir dmg '#{@application}.dmg' -volname '#{@application}'")
+                  (system "rm -rf dmg"))))
 
 
 ;; use this to create all the linking and assembly tasks to build a standalone "tool" executable
-(macro-0 tool-tasks
-     (unless (and @arch (@arch length))
-             (set @arch (list (NSString stringWithShellCommand:"arch"))))
-     
-     (unless @ldflags (set @ldflags ""))
-     (unless @tool_extras (set @tool_extras ""))
-     
-     ;; executable architecture-specific executable
-     (set @tool_executables (NSMutableArray array))
-     (@arch each:
-            (do (architecture)
-                (set tool_executable "build/#{architecture}/#{@tool}")
-                (@tool_executables addObject:tool_executable)
-                (file tool_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "#{@cc} -arch #{architecture} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{@tool_extras} #{@ldflags} -o '#{(target name)}'")
-                      (SH command))))
-     
-     ;; tool fat archive
-     (set @tool_executable_name "#{@tool}")
-     (file @tool_executable_name => @tool_executables is
-           (if (> (@tool_executables count) 1)
-               (then (set command "lipo -create #{(@tool_executables join)} -output '#{@tool_executable_name}'"))
-               (else (set command "cp '#{(@tool_executables objectAtIndex:0)}' '#{@tool_executable_name}'")))
-           (SH command))
-     
-     (task "tool" => @tool_executable_name)
-     
-     (task "run" => "tool" is
-           (SH @tool))
-     
-     (task "gdb" => "tool" is
-           (SH  "gdb '#{@tool}'"))
-     
-     (task "clobber" => "clean" is
-           (system "rm -rf '#{@tool}'")))
+(macro tool-tasks ()
+     `(
+       (unless (and @arch (@arch length))
+               (set @arch (list (NSString stringWithShellCommand:"arch"))))
+       
+       (unless @ldflags (set @ldflags ""))
+       (unless @tool_extras (set @tool_extras ""))
+       
+       ;; executable architecture-specific executable
+       (set @tool_executables (NSMutableArray array))
+       (@arch each:
+              (do (architecture)
+                  (set tool_executable "build/#{architecture}/#{@tool}")
+                  (@tool_executables addObject:tool_executable)
+                  (file tool_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                        (set command "#{@cc} -arch #{architecture} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{@tool_extras} #{@ldflags} -o '#{(target name)}'")
+                        (SH command))))
+       
+       ;; tool fat archive
+       (set @tool_executable_name "#{@tool}")
+       (file @tool_executable_name => @tool_executables is
+             (if (> (@tool_executables count) 1)
+                 (then (set command "lipo -create #{(@tool_executables join)} -output '#{@tool_executable_name}'"))
+                 (else (set command "cp '#{(@tool_executables objectAtIndex:0)}' '#{@tool_executable_name}'")))
+             (SH command))
+       
+       (task "tool" => @tool_executable_name)
+       
+       (task "run" => "tool" is
+             (SH @tool))
+       
+       (task "gdb" => "tool" is
+             (SH  "gdb '#{@tool}'"))
+       
+       (task "clobber" => "clean" is
+             (system "rm -rf '#{@tool}'"))))
 
 
 ;; use this to create all the linking and assembly tasks to build a Cocoa framework
-(macro-0 framework-tasks
-     (unless (and @arch (@arch length))
-             (set @arch (list (NSString stringWithShellCommand:"arch"))))
-     
-     (ifDarwin
-              (then (set FRAMEWORK_ROOT "/Library/Frameworks"))
-              (else (set FRAMEWORK_ROOT "/usr/local/frameworks")))
-     
-     ;; framework directory tasks
-     (set @framework_dir                    "#{@framework}.framework")
-     (set @framework_versions_dir           "#{@framework_dir}/Versions")
-     (set @framework_contents_dir           "#{@framework_versions_dir}/A")
-     (set @framework_headers_dir            "#{@framework_contents_dir}/Headers")
-     (set @framework_resource_dir           "#{@framework_contents_dir}/Resources")
-     (set @framework_resource_localized_dir "#{@framework_resource_dir}/English.lproj")
-     
-     ((list @framework_dir
-            @framework_versions_dir
-            @framework_contents_dir
-            @framework_headers_dir
-            @framework_resource_dir
-            @framework_resource_localized_dir)
-      each: (do (dir) (file dir is (make-directory (target name)))))
-     
-     (set @initflags (if @framework_initializer
-                         (then "-Wl,-init -Wl,_#{@framework_initializer}")
-                         (else "")))
-     
-     (set @framework_executable_name "#{@framework_contents_dir}/#{@framework}")
-     
-     ;; framework architecture-specific executable
-     (set @framework_executables (NSMutableArray array))
-     (@arch each:
-            (do (architecture)
-                (set framework_executable "build/#{architecture}/framework-#{@framework}")
-                (@framework_executables addObject:framework_executable)
-                (ifDarwin
-                         (then (set archflags "-arch #{architecture}"))
-                         (else (set archflags "")))
-                (ifDarwin
-                         (then
-                              (if @framework_install_path
-                                  (then (set framework_install_name "#{@framework_install_path}/#{@framework_executable_name}"))
-                                  (else (set framework_install_name @framework_executable_name)))
-                              (set installnameflag "-install_name #{framework_install_name}"))
-                         (else (set installnameflag "")))
-                (ifDarwin
-                         (then (set dylibflag "-dynamiclib"))
-                         (else (set dylibflag "-shared")))
-                (file framework_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{@initflags} #{installnameflag} #{dylibflag} -o '#{(target name)}'")
-                      (SH command))))
-     
-     ;; framework fat executable
-     (file @framework_executable_name => @framework_contents_dir @framework_executables is
-           (ifDarwin
-                    (then (set command "lipo -create #{(@framework_executables join)} -output '#{@framework_executable_name}'"))
-                    (else (set command "cp '#{(@framework_executables objectAtIndex:0)}' '#{@framework_executable_name}'")))
-           (SH command))
-     
-     ;; framework_resources
-     (task "framework_resources" => @framework_resource_dir @framework_resource_localized_dir)
-     ((list @nu_files @resource_files) each:
-      (do (l)
-          (l each:
-             (do (f)
-                 (set baseName ((f componentsSeparatedByString:"/") lastObject))
-                 (set targetFile "#{@framework_resource_dir}/#{baseName}")
-                 (file targetFile => f @framework_resource_dir is
-                       (SH "cp '#{f}' '#{targetFile}'"))
-                 (task "framework_resources" => targetFile)))))
-     (@nib_files each:
-          (do (f)
-              (set g ((f componentsSeparatedByString:"/") lastObject))
-              (file "#{@framework_resource_localized_dir}/#{g}" => f @framework_resource_localized_dir is
-                    (SH "cp -R '#{f}' '#{((target name) dirName)}'")
-                    0)
-              (task "framework_resources" => "#{@framework_resource_localized_dir}/#{g}")))
-     (@xib_files each:
-          (do (xib)
-              (set baseName ((xib componentsSeparatedByString:"/") lastObject))
-              (set targetFile (baseName stringByReplacingPathExtensionWith:"nib"))
-              (set nib "#{@framework_resource_localized_dir}/#{targetFile}")
-              (file nib => xib @framework_resource_localized_dir is
-                    (SH "ibtool --errors --warnings --notices --output-format human-readable-text --compile #{nib} #{xib}"))
-                    (task "framework_resources" => nib)))
-     
-     ;; copy filelist defined in @public_headers into the framework
-     (task "copy_framework_headers" => @framework_headers_dir)
-     (@public_headers each:
-          (do (h)
-              (set baseName (h lastPathComponent))
-              (set targetFile (@framework_headers_dir stringByAppendingPathComponent:baseName))
-              (set sourceFile h)
-              (file targetFile => h is
-                    (SH "cp -p '#{sourceFile}' '#{targetFile}'"))
-              (task "copy_framework_headers" => targetFile @framework_headers_dir)))
-     (task "framework" => "copy_framework_headers")
-     
-     ;; copy datamodels into the framework
-     (@datamodels each:
-          (do (model)
-              (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
-              (task "framework_#{modelName}" => "#{modelName}.mom" @framework_resource_dir is
-                    (SH "cp '#{modelName}.mom' '#{@framework_resource_dir}/#{(modelName lastPathComponent)}.mom'"))
-              (task "framework" => "framework_#{modelName}")))
-     
-     ;; framework_infoplist
-     (ifDarwin
-              (then (set framework_infoplist "#{@framework_resource_dir}/Info.plist")
-                    (file framework_infoplist => @framework_resource_dir is
-                          (set info (NSDictionary dictionaryWithList:
-                                         (list "CFBundleDevelopmentRegion" "English"
-                                               "CFBundleExecutable" @framework
-                                               "CFBundleIdentifier" @framework_identifier
-                                               "CFBundleGetInfoString" ""
-                                               "CFBundleInfoDictionaryVersion" "6.0"
-                                               "CFBundleName" @framework
-                                               "CFBundlePackageType" "FMWK"
-                                               "CFBundleSignature" @framework_creator_code
-                                               "CFBundleVersion" "0.1"
-                                               "NSHumanReadableCopyright" ""
-                                               )))
-                          (if @info (info addEntriesFromDictionary: @info))
-                          (info writeToFile:(target name) atomically:NO)
-                          0)
-                    0)
-              (else (set framework_infoplist "#{@framework_resource_dir}/Info-gnustep.plist")
-                    (file framework_infoplist => @framework_resource_dir is
-                          (set info <<-END
+(macro framework-tasks ()
+     `(progn
+            (unless (and @arch (@arch length))
+                    (set @arch (list (NSString stringWithShellCommand:"arch"))))
+            
+            (ifDarwin
+                     (then (set FRAMEWORK_ROOT "/Library/Frameworks"))
+                     (else (set FRAMEWORK_ROOT "/usr/local/frameworks")))
+            
+            ;; framework directory tasks
+            (set @framework_dir                    "#{@framework}.framework")
+            (set @framework_versions_dir           "#{@framework_dir}/Versions")
+            (set @framework_contents_dir           "#{@framework_versions_dir}/A")
+            (set @framework_headers_dir            "#{@framework_contents_dir}/Headers")
+            (set @framework_resource_dir           "#{@framework_contents_dir}/Resources")
+            (set @framework_resource_localized_dir "#{@framework_resource_dir}/English.lproj")
+            
+            ((list @framework_dir
+                   @framework_versions_dir
+                   @framework_contents_dir
+                   @framework_headers_dir
+                   @framework_resource_dir
+                   @framework_resource_localized_dir)
+             each: (do (dir) (file dir is (make-directory (target name)))))
+            
+            (set @initflags (if @framework_initializer
+                                (then "-Wl,-init -Wl,_#{@framework_initializer}")
+                                (else "")))
+            
+            (set @framework_executable_name "#{@framework_contents_dir}/#{@framework}")
+            
+            ;; framework architecture-specific executable
+            (set @framework_executables (NSMutableArray array))
+            (@arch each:
+                   (do (architecture)
+                       (set framework_executable "build/#{architecture}/framework-#{@framework}")
+                       (@framework_executables addObject:framework_executable)
+                       (ifDarwin
+                                (then (set archflags "-arch #{architecture}"))
+                                (else (set archflags "")))
+                       (ifDarwin
+                                (then
+                                     (if @framework_install_path
+                                         (then (set framework_install_name "#{@framework_install_path}/#{@framework_executable_name}"))
+                                         (else (set framework_install_name @framework_executable_name)))
+                                     (set installnameflag "-install_name #{framework_install_name}"))
+                                (else (set installnameflag "")))
+                       (ifDarwin
+                                (then (set dylibflag "-dynamiclib"))
+                                (else (set dylibflag "-shared")))
+                       (file framework_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                             (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{@initflags} #{installnameflag} #{dylibflag} -o '#{(target name)}'")
+                             (SH command))))
+            
+            ;; framework fat executable
+            (file @framework_executable_name => @framework_contents_dir @framework_executables is
+                  (ifDarwin
+                           (then (set command "lipo -create #{(@framework_executables join)} -output '#{@framework_executable_name}'"))
+                           (else (set command "cp '#{(@framework_executables objectAtIndex:0)}' '#{@framework_executable_name}'")))
+                  (SH command))
+            
+            ;; framework_resources
+            (task "framework_resources" => @framework_resource_dir @framework_resource_localized_dir)
+            ((list @nu_files @resource_files) each:
+             (do (l)
+                 (l each:
+                    (do (f)
+                        (set baseName ((f componentsSeparatedByString:"/") lastObject))
+                        (set targetFile "#{@framework_resource_dir}/#{baseName}")
+                        (file targetFile => f @framework_resource_dir is
+                              (SH "cp '#{f}' '#{targetFile}'"))
+                        (task "framework_resources" => targetFile)))))
+            (@nib_files each:
+                 (do (f)
+                     (set g ((f componentsSeparatedByString:"/") lastObject))
+                     (file "#{@framework_resource_localized_dir}/#{g}" => f @framework_resource_localized_dir is
+                           (SH "cp -R '#{f}' '#{((target name) dirName)}'")
+                           0)
+                     (task "framework_resources" => "#{@framework_resource_localized_dir}/#{g}")))
+            (@xib_files each:
+                 (do (xib)
+                     (set baseName ((xib componentsSeparatedByString:"/") lastObject))
+                     (set targetFile (baseName stringByReplacingPathExtensionWith:"nib"))
+                     (set nib "#{@framework_resource_localized_dir}/#{targetFile}")
+                     (file nib => xib @framework_resource_localized_dir is
+                           (SH "ibtool --errors --warnings --notices --output-format human-readable-text --compile #{nib} #{xib}"))
+                     (task "framework_resources" => nib)))
+            
+            ;; copy filelist defined in @public_headers into the framework
+            (task "copy_framework_headers" => @framework_headers_dir)
+            (@public_headers each:
+                 (do (h)
+                     (set baseName (h lastPathComponent))
+                     (set targetFile (@framework_headers_dir stringByAppendingPathComponent:baseName))
+                     (set sourceFile h)
+                     (file targetFile => h is
+                           (SH "cp -p '#{sourceFile}' '#{targetFile}'"))
+                     (task "copy_framework_headers" => targetFile @framework_headers_dir)))
+            (task "framework" => "copy_framework_headers")
+            
+            ;; copy datamodels into the framework
+            (@datamodels each:
+                 (do (model)
+                     (set modelName ((model componentsSeparatedByString:".") objectAtIndex:0))
+                     (task "framework_#{modelName}" => "#{modelName}.mom" @framework_resource_dir is
+                           (SH "cp '#{modelName}.mom' '#{@framework_resource_dir}/#{(modelName lastPathComponent)}.mom'"))
+                     (task "framework" => "framework_#{modelName}")))
+            
+            ;; framework_infoplist
+            (ifDarwin
+                     (then (set framework_infoplist "#{@framework_resource_dir}/Info.plist")
+                           (file framework_infoplist => @framework_resource_dir is
+                                 (set info (NSDictionary dictionaryWithList:
+                                                (list "CFBundleDevelopmentRegion" "English"
+                                                      "CFBundleExecutable" @framework
+                                                      "CFBundleIdentifier" @framework_identifier
+                                                      "CFBundleGetInfoString" ""
+                                                      "CFBundleInfoDictionaryVersion" "6.0"
+                                                      "CFBundleName" @framework
+                                                      "CFBundlePackageType" "FMWK"
+                                                      "CFBundleSignature" @framework_creator_code
+                                                      "CFBundleVersion" "0.1"
+                                                      "NSHumanReadableCopyright" ""
+                                                      )))
+                                 (if @info (info addEntriesFromDictionary: @info))
+                                 (info writeToFile:(target name) atomically:NO)
+                                 0)
+                           0)
+                     (else (set framework_infoplist "#{@framework_resource_dir}/Info-gnustep.plist")
+                           (file framework_infoplist => @framework_resource_dir is
+                                 (set info <<-END
 {
   NOTE = "Automatically generated, do not edit!";
   NSExecutable = "#{@framework}";
@@ -674,178 +685,181 @@
   NSPrincipalClass = "#{@framework}";
 }
 END)
-                          (info writeToFile:framework_infoplist atomically:NO)
-                          0)))
-     
-     ;; framework_links
-     (task "framework_links" => @framework_versions_dir @framework_dir is
-           (unless (eq 1 (NSFileManager directoryExistsNamed: "#{@framework_versions_dir}/Current"))
-                   (SH "cd #{@framework_versions_dir}; ln -sf A Current"))
-           (unless (eq 1 (NSFileManager directoryExistsNamed: "#{@framework_dir}/Headers"))
-                   (SH "cd #{@framework_dir}; ln -sf Versions/Current/Headers Headers"))
-           (unless (eq 1 (NSFileManager directoryExistsNamed: "#{@framework_dir}/Resources"))
-                   (SH "cd #{@framework_dir}; ln -sf Versions/Current/Resources Resources"))
-           (unless (eq 1 (NSFileManager fileExistsNamed: "#{@framework_dir}/Versions/Current/#{@framework}"))
-                   (SH "cd #{@framework_dir}; ln -sf Versions/Current/#{@framework} #{@framework}"))
-           0)
-     
-     (task "framework" => @framework_executable_name @framework_headers_dir "framework_resources" "framework_links" framework_infoplist)
-     
-     (task "install" => "framework" is
-           (if @framework_extra_install
-               (@framework_extra_install))
-           (SH "sudo mkdir -p #{FRAMEWORK_ROOT}")
-           (SH "sudo rm -rf #{FRAMEWORK_ROOT}/#{@framework}.framework")
-           (SH "sudo cp -rp #{@framework}.framework #{FRAMEWORK_ROOT}/#{@framework}.framework"))
-     
-     (task "test" => "framework" is
-           (SH "nutest test/test_*.nu"))
-     
-     (task "clobber" => "clean" is
-           (system "rm -rf '#{@framework_dir}'")))
+                                 (info writeToFile:framework_infoplist atomically:NO)
+                                 0)))
+            
+            ;; framework_links
+            (task "framework_links" => @framework_versions_dir @framework_dir is
+                  (unless (eq 1 (NSFileManager directoryExistsNamed: "#{@framework_versions_dir}/Current"))
+                          (SH "cd #{@framework_versions_dir}; ln -sf A Current"))
+                  (unless (eq 1 (NSFileManager directoryExistsNamed: "#{@framework_dir}/Headers"))
+                          (SH "cd #{@framework_dir}; ln -sf Versions/Current/Headers Headers"))
+                  (unless (eq 1 (NSFileManager directoryExistsNamed: "#{@framework_dir}/Resources"))
+                          (SH "cd #{@framework_dir}; ln -sf Versions/Current/Resources Resources"))
+                  (unless (eq 1 (NSFileManager fileExistsNamed: "#{@framework_dir}/Versions/Current/#{@framework}"))
+                          (SH "cd #{@framework_dir}; ln -sf Versions/Current/#{@framework} #{@framework}"))
+                  0)
+            
+            (task "framework" => @framework_executable_name @framework_headers_dir "framework_resources" "framework_links" framework_infoplist)
+            
+            (task "install" => "framework" is
+                  (if @framework_extra_install
+                      (@framework_extra_install))
+                  (SH "sudo mkdir -p #{FRAMEWORK_ROOT}")
+                  (SH "sudo rm -rf #{FRAMEWORK_ROOT}/#{@framework}.framework")
+                  (SH "sudo cp -rp #{@framework}.framework #{FRAMEWORK_ROOT}/#{@framework}.framework"))
+            
+            (task "test" => "framework" is
+                  (SH "nutest test/test_*.nu"))
+            
+            (task "clobber" => "clean" is
+                  (system "rm -rf '#{@framework_dir}'"))))
 
 
 ;; use this to create all the linking and assembly tasks to build a Cocoa bundle
-(macro-0 bundle-tasks
-     (unless (and @arch (@arch length))
-             (set @arch (list (NSString stringWithShellCommand:"arch"))))
-     
-     ;; bundle directory tasks
-     (set @bundle_dir                    "#{@bundle}.bundle")
-     (set @bundle_contents_dir           "#{@bundle_dir}/Contents")
-     (set @bundle_executable_dir         "#{@bundle_contents_dir}/MacOS")
-     (set @bundle_resource_dir           "#{@bundle_contents_dir}/Resources")
-     ((list @bundle_dir
-            @bundle_contents_dir
-            @bundle_executable_dir
-            @bundle_resource_dir)
-      each: (do (dir) (file dir is (make-directory (target name)))))
-     
-     ;; bundle architecture-specific executable
-     (set @bundle_executables (NSMutableArray array))
-     (@arch each:
-            (do (architecture)
-                (set bundle_executable "build/#{architecture}/bundle-#{@bundle}")
-                (@bundle_executables addObject:bundle_executable)
-                (ifDarwin
-                         (then (set archflags "-arch #{architecture}"))
-                         (else (set archflags "")))
-                (file bundle_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} -bundle -o '#{(target name)}'")
-                      (SH command))))
-     
-     ;; bundle fat executable
-     (set @bundle_executable_name "#{@bundle_executable_dir}/#{@bundle}")
-     (file @bundle_executable_name => @bundle_executable_dir @bundle_executables is
-           (set command "lipo -create #{(@bundle_executables join)} -output '#{@bundle_executable_name}'")
-           (SH command))
-     
-     ;; bundle_resources
-     (task "bundle_resources" => @bundle_resource_dir @bundle_resource_localized_dir)
-     ((list @nu_files @resource_files) each:
-      (do (l)
-          (l each:
-             (do (f)
-                 (set baseName ((f componentsSeparatedByString:"/") lastObject))
-                 (set targetFile "#{@bundle_resource_dir}/#{baseName}")
-                 (file targetFile => f @bundle_resource_dir is
-                       (SH "cp '#{f}' '#{targetFile}'"))
-                 (task "bundle_resources" => targetFile)))))
-     
-     ;; bundle_infoplist
-     (set bundle_infoplist "#{@bundle_contents_dir}/Info.plist")
-     (file bundle_infoplist => @bundle_contents_dir is
-           (set bundle_info (NSDictionary dictionaryWithList:
-                                 (list "CFBundleDevelopmentRegion" "English"
-                                       "CFBundleExecutable" @bundle
-                                       "CFBundleIdentifier" @bundle_identifier
-                                       "CFBundleInfoDictionaryVersion" "6.0"
-                                       "CFBundleName" @bundle
-                                       "CFBundlePackageType" "BNDL"
-                                       "CFBundleSignature" @bundle_creator_code
-                                       "CFBundleVersion" "0.1")))
-           (if @bundle_info (bundle_info addEntriesFromDictionary: @info))
-           (bundle_info writeToFile:(target name) atomically:NO)
-           0)
-     
-     ;; bundle_pkginfo
-     (unless @bundle_creator_code (set @bundle_creator_code "????"))
-     (set bundle_pkginfo "#{@bundle_contents_dir}/PkgInfo")
-     (file bundle_pkginfo => @bundle_contents_dir is
-           (SH "/bin/echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
-     
-     (task "bundle" => @bundle_executable_name "bundle_resources" bundle_infoplist bundle_pkginfo)
-     
-     (task "clobber" => "clean" is
-           (system "rm -rf '#{@bundle_dir}'")))
+(macro bundle-tasks ()
+     `(progn
+            (unless (and @arch (@arch length))
+                    (set @arch (list (NSString stringWithShellCommand:"arch"))))
+            
+            ;; bundle directory tasks
+            (set @bundle_dir                    "#{@bundle}.bundle")
+            (set @bundle_contents_dir           "#{@bundle_dir}/Contents")
+            (set @bundle_executable_dir         "#{@bundle_contents_dir}/MacOS")
+            (set @bundle_resource_dir           "#{@bundle_contents_dir}/Resources")
+            ((list @bundle_dir
+                   @bundle_contents_dir
+                   @bundle_executable_dir
+                   @bundle_resource_dir)
+             each: (do (dir) (file dir is (make-directory (target name)))))
+            
+            ;; bundle architecture-specific executable
+            (set @bundle_executables (NSMutableArray array))
+            (@arch each:
+                   (do (architecture)
+                       (set bundle_executable "build/#{architecture}/bundle-#{@bundle}")
+                       (@bundle_executables addObject:bundle_executable)
+                       (ifDarwin
+                                (then (set archflags "-arch #{architecture}"))
+                                (else (set archflags "")))
+                       (file bundle_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                             (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} -bundle -o '#{(target name)}'")
+                             (SH command))))
+            
+            ;; bundle fat executable
+            (set @bundle_executable_name "#{@bundle_executable_dir}/#{@bundle}")
+            (file @bundle_executable_name => @bundle_executable_dir @bundle_executables is
+                  (set command "lipo -create #{(@bundle_executables join)} -output '#{@bundle_executable_name}'")
+                  (SH command))
+            
+            ;; bundle_resources
+            (task "bundle_resources" => @bundle_resource_dir @bundle_resource_localized_dir)
+            ((list @nu_files @resource_files) each:
+             (do (l)
+                 (l each:
+                    (do (f)
+                        (set baseName ((f componentsSeparatedByString:"/") lastObject))
+                        (set targetFile "#{@bundle_resource_dir}/#{baseName}")
+                        (file targetFile => f @bundle_resource_dir is
+                              (SH "cp '#{f}' '#{targetFile}'"))
+                        (task "bundle_resources" => targetFile)))))
+            
+            ;; bundle_infoplist
+            (set bundle_infoplist "#{@bundle_contents_dir}/Info.plist")
+            (file bundle_infoplist => @bundle_contents_dir is
+                  (set bundle_info (NSDictionary dictionaryWithList:
+                                        (list "CFBundleDevelopmentRegion" "English"
+                                              "CFBundleExecutable" @bundle
+                                              "CFBundleIdentifier" @bundle_identifier
+                                              "CFBundleInfoDictionaryVersion" "6.0"
+                                              "CFBundleName" @bundle
+                                              "CFBundlePackageType" "BNDL"
+                                              "CFBundleSignature" @bundle_creator_code
+                                              "CFBundleVersion" "0.1")))
+                  (if @bundle_info (bundle_info addEntriesFromDictionary: @info))
+                  (bundle_info writeToFile:(target name) atomically:NO)
+                  0)
+            
+            ;; bundle_pkginfo
+            (unless @bundle_creator_code (set @bundle_creator_code "????"))
+            (set bundle_pkginfo "#{@bundle_contents_dir}/PkgInfo")
+            (file bundle_pkginfo => @bundle_contents_dir is
+                  (SH "/bin/echo -n 'APPL#{@creator_code}' > '#{(target name)}'"))
+            
+            (task "bundle" => @bundle_executable_name "bundle_resources" bundle_infoplist bundle_pkginfo)
+            
+            (task "clobber" => "clean" is
+                  (system "rm -rf '#{@bundle_dir}'"))))
 
 
 ;; use this to create all the linking and assembly tasks to build a statically-linkable library
-(macro-0 library-tasks
-     (unless (and @arch (@arch length))
-             (set @arch (list (NSString stringWithShellCommand:"arch"))))
-     
-     (unless @library_extras
-             (set @library_extras ""))
-     
-     ;; library architecture-specific executable
-     (set @library_executables (NSMutableArray array))
-     (@arch each:
-            (do (architecture)
-                (set library_executable "build/#{architecture}/#{@library}.a")
-                (@library_executables addObject:library_executable)
-                (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "libtool -static #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{@library_extras} -o '#{(target name)}'")
-                      (SH command))))
-     
-     ;; library fat archive
-     (set @library_executable_name "#{@library}.a")
-     (file @library_executable_name => @library_executables is
-           (if (> (@library_executables count) 1)
-               (then (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'"))
-               (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
-           (SH command))
-     
-     (task "library" => @library_executable_name)
-     
-     (task "clobber" => "clean" is
-           (system "rm -rf '#{@library_executable_name}'")))
+(macro library-tasks ()
+     `(progn
+            (unless (and @arch (@arch length))
+                    (set @arch (list (NSString stringWithShellCommand:"arch"))))
+            
+            (unless @library_extras
+                    (set @library_extras ""))
+            
+            ;; library architecture-specific executable
+            (set @library_executables (NSMutableArray array))
+            (@arch each:
+                   (do (architecture)
+                       (set library_executable "build/#{architecture}/#{@library}.a")
+                       (@library_executables addObject:library_executable)
+                       (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                             (set command "libtool -static #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{@library_extras} -o '#{(target name)}'")
+                             (SH command))))
+            
+            ;; library fat archive
+            (set @library_executable_name "#{@library}.a")
+            (file @library_executable_name => @library_executables is
+                  (if (> (@library_executables count) 1)
+                      (then (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'"))
+                      (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
+                  (SH command))
+            
+            (task "library" => @library_executable_name)
+            
+            (task "clobber" => "clean" is
+                  (system "rm -rf '#{@library_executable_name}'"))))
 
 
 ;; use this to create all the linking and assembly tasks to build a dynamically-linkable library
-(macro-0 dylib-tasks
-     (unless (and @arch (@arch length))
-             (set @arch (list (NSString stringWithShellCommand:"arch"))))
-     (set libext (ifDarwin (then "dylib") (else "so")))
-     
-     ;; library architecture-specific executable
-     (set @library_executables (NSMutableArray array))
-     (@arch each:
-            (do (architecture)
-                (set library_executable "build/#{architecture}/#{@dylib}.#{libext}")
-                (@library_executables addObject:library_executable)
-                (ifDarwin
-                         (then (set dylibflag "-dynamiclib"))
-                         (else (set dylibflag "-shared")))
-                (ifDarwin
-                         (then (set archflags "-arch #{architecture}"))
-                         (else (set archflags "")))
-                (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                      (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{dylibflag} -o '#{(target name)}'")
-                      (SH command))))
-     
-     ;; fat dynamic library
-     (set @library_executable_name "#{@dylib}.#{libext}")
-     (file @library_executable_name => @library_executables is
-           (ifDarwin
-                    (then (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'"))
-                    (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
-           (SH command))
-     
-     (task "dylib" => @library_executable_name)
-     
-     (task "clobber" => "clean" is
-           (system "rm -rf '#{@library_executable_name}'")))
+(macro dylib-tasks ()
+     `(progn
+            (unless (and @arch (@arch length))
+                    (set @arch (list (NSString stringWithShellCommand:"arch"))))
+            (set libext (ifDarwin (then "dylib") (else "so")))
+            
+            ;; library architecture-specific executable
+            (set @library_executables (NSMutableArray array))
+            (@arch each:
+                   (do (architecture)
+                       (set library_executable "build/#{architecture}/#{@dylib}.#{libext}")
+                       (@library_executables addObject:library_executable)
+                       (ifDarwin
+                                (then (set dylibflag "-dynamiclib"))
+                                (else (set dylibflag "-shared")))
+                       (ifDarwin
+                                (then (set archflags "-arch #{architecture}"))
+                                (else (set archflags "")))
+                       (file library_executable => (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
+                             (set command "#{@cc} #{((@c_objects objectForKey:architecture) join)} #{((@m_objects objectForKey:architecture) join)} #{archflags} #{@cflags} #{@ldflags} #{dylibflag} -o '#{(target name)}'")
+                             (SH command))))
+            
+            ;; fat dynamic library
+            (set @library_executable_name "#{@dylib}.#{libext}")
+            (file @library_executable_name => @library_executables is
+                  (ifDarwin
+                           (then (set command "lipo -create #{(@library_executables join)} -output '#{@library_executable_name}'"))
+                           (else (set command "cp '#{(@library_executables objectAtIndex:0)}' '#{@library_executable_name}'")))
+                  (SH command))
+            
+            (task "dylib" => @library_executable_name)
+            
+            (task "clobber" => "clean" is
+                  (system "rm -rf '#{@library_executable_name}'"))))
 
 
 ;; @abstract A project consisting of an interrelated set of NukeTasks.

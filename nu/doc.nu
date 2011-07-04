@@ -23,34 +23,34 @@
 (class NSString
      ;; Create a copy of a string with leading whitespace removed.
      (- (id) strip is
-          (set i 0)
-          (while (and (< i (self length))
-                      (or (eq (self characterAtIndex:i) SPACE)
-                          (eq (self characterAtIndex:i) TAB)))
-                 (set i (+ i 1)))
-          (self substringFromIndex:i))
+        (set i 0)
+        (while (and (< i (self length))
+                    (or (eq (self characterAtIndex:i) SPACE)
+                        (eq (self characterAtIndex:i) TAB)))
+               (set i (+ i 1)))
+        (self substringFromIndex:i))
      ;; Test to see whether a string begins with a specified substring.
      (- (id) beginsWithString:(id) string is
-          (set range (self rangeOfString:string))
-          (and range (eq (range first) 0)))
+        (set range (self rangeOfString:string))
+        (and range (eq (range first) 0)))
      ;; Shorthand method to write files using UTF8 encodings.
      (- (id) writeToFile:(id) fileName is
-          (puts "writing #{fileName}")
-          (self writeToFile:fileName atomically:NO encoding:NSUTF8StringEncoding error:(set perror ((NuReference alloc) init)))))
+        (puts "writing #{fileName}")
+        (self writeToFile:fileName atomically:NO encoding:NSUTF8StringEncoding error:(set perror ((NuReference alloc) init)))))
 
 (class NSDate
      ;; Generate a string representation of the same form as this one:
      ;;
      ;; "Thursday, 30 Aug 2007"
      (- (id) descriptionForDocumentation is
-          (self descriptionWithCalendarFormat:"%A, %d %b %Y" timeZone:nil locale:nil)))
+        (self descriptionWithCalendarFormat:"%A, %d %b %Y" timeZone:nil locale:nil)))
 
-(class NuRegexMatch
+(class NSRegularExpressionCheckingResult
      ;; Compare matches by their location.  This allows arrays of matches to be sorted.
      (- (NSComparisonResult) compare: (id) other is
-          (set self-start  ((self  range) first))
-          (set other-start ((other range) first))
-          (self-start compare: other-start)))
+        (set self-start  ((self  range) first))
+        (set other-start ((other range) first))
+        (self-start compare: other-start)))
 
 ;; Matches one part of a selector.
 (set selector-pattern /(\w+:)\s*\(([\w<>]+\s*\*?)\)\s*(\w+)\s*/)
@@ -90,86 +90,84 @@
 ;; @abstract NuDoc class for building file descriptions.
 ;; @discussion NuDoc creates one instance of this class for each source file that it reads.
 (class NuDocFileInfo is NSObject
-     (ivars)
-     (ivar-accessors)
      
      ;; Get the file description for a named file.
      (+ (id) infoForFileNamed:(id)name is
-          (unless (set fileInfo ($files objectForKey:name))
-                  (set fileInfo ((NuDocFileInfo alloc) initWithName:name))
-                  ($files setObject:fileInfo forKey:name))
-          fileInfo)
+        (unless (set fileInfo ($files objectForKey:name))
+                (set fileInfo ((NuDocFileInfo alloc) initWithName:name))
+                ($files setObject:fileInfo forKey:name))
+        fileInfo)
      
      ;; Initialize a description for a named file.
      (- (id) initWithName:(id) name is
-          (super init)
-          (set @name name)
-          (set @niceName (NSMutableString stringWithString:name))
-          (@niceName replaceOccurrencesOfString:"." withString:"_" options:0 range:(list 0 (@niceName length)))
-          (@niceName replaceOccurrencesOfString:"/" withString:"_" options:0 range:(list 0 (@niceName length)))
-          (set @discussion (NSMutableString string))
-          (set @methods (NSMutableArray array))
-          (set @classes (NSMutableArray array))
-          self)
+        (super init)
+        (set @name name)
+        (set @niceName (NSMutableString stringWithString:name))
+        (@niceName replaceOccurrencesOfString:"." withString:"_" options:0 range:(list 0 (@niceName length)))
+        (@niceName replaceOccurrencesOfString:"/" withString:"_" options:0 range:(list 0 (@niceName length)))
+        (set @discussion (NSMutableString string))
+        (set @methods (NSMutableArray array))
+        (set @classes (NSMutableArray array))
+        self)
      
      ;; Generate a link to the html description of the file.
      (- (id) linkWithPrefix:(id) prefix is
-          (set link <<-END
+        (set link <<-END
 <a href="#{prefix}#{(self niceName)}.html">#{@name}</a>END)
-          link)
+        link)
      
      ;; Set the raw comments associated with a file.
      (- (void) setComments:(id) comments is
-          (set @comments comments)
-          (self parseFileComments))
+        (set @comments comments)
+        (self parseFileComments))
      
      ;; Extract information from one line of file comments.
      (- (void) parseFileCommentLine:(id) line is
-          (cond ((or (line beginsWithString:"@class")
-                     (line beginsWithString:"@category")
-                     (line beginsWithString:"@method")
-                     (line beginsWithString:"@function")) (set @finished YES))
-                ((line beginsWithString:"!/") nil)
-                ((line beginsWithString:"@header")
-                 (set @file (line substringFromIndex:(+ 1 ("@header" length)))))
-                ((line beginsWithString:"@file")
-                 (set @file (line substringFromIndex:(+ 1 ("@file" length)))))
-                ((line beginsWithString:"@copyright")
-                 (set @copyright (line substringFromIndex:(+ 1 ("@copyright" length)))))
-                ((line beginsWithString:"@abstract")
-                 (set @abstract (line substringFromIndex:(+ 1 ("@abstract" length)))))
-                ((line beginsWithString:"@info")
-                 (set @info (line substringFromIndex:(+ 1 ("@info" length)))))
-                ((and (not @finished) (line beginsWithString:"@discussion"))
-                 (set @discussion (NSMutableString string))
-                 (@discussion appendString:(line substringFromIndex:(+ 1 ("@discussion" length)))))
-                ((and (not @finished) (eq line "") (!= @discussion ""))
-                 (@discussion appendString:"<br/><br/>"))
-                ((not @finished)
-                 (@discussion appendString:(NSString carriageReturn))
-                 (@discussion appendString:line))
-                (else nil)))
+        (cond ((or (line beginsWithString:"@class")
+                   (line beginsWithString:"@category")
+                   (line beginsWithString:"@method")
+                   (line beginsWithString:"@function")) (set @finished YES))
+              ((line beginsWithString:"!/") nil)
+              ((line beginsWithString:"@header")
+               (set @file (line substringFromIndex:(+ 1 ("@header" length)))))
+              ((line beginsWithString:"@file")
+               (set @file (line substringFromIndex:(+ 1 ("@file" length)))))
+              ((line beginsWithString:"@copyright")
+               (set @copyright (line substringFromIndex:(+ 1 ("@copyright" length)))))
+              ((line beginsWithString:"@abstract")
+               (set @abstract (line substringFromIndex:(+ 1 ("@abstract" length)))))
+              ((line beginsWithString:"@info")
+               (set @info (line substringFromIndex:(+ 1 ("@info" length)))))
+              ((and (not @finished) (line beginsWithString:"@discussion"))
+               (set @discussion (NSMutableString string))
+               (@discussion appendString:(line substringFromIndex:(+ 1 ("@discussion" length)))))
+              ((and (not @finished) (eq line "") (!= @discussion ""))
+               (@discussion appendString:"<br/><br/>"))
+              ((not @finished)
+               (@discussion appendString:(NSString carriageReturn))
+               (@discussion appendString:line))
+              (else nil)))
      
      ;; Extract documentation from file comments.
      (- (void) parseFileComments is
-          (set @discussion (NSMutableString string))
-          (if @comments
-              (if (set match (objc-comment-pattern findInString:@comments))
-                  (then
-                       (set text (match groupAtIndex:1))
-                       (set lines (text lines))
-                       (lines each:
-                              (do (original-line)
-                                  (set line (original-line strip))
-                                  (self parseFileCommentLine:line))))
-                  (else
-                       (set lines (@comments lines))
-                       (lines each:
-                              (do (original-line)
-                                  (if (set match (nu-comment-pattern findInString:original-line))
-                                      (then
-                                           (set line (match groupAtIndex:3))
-                                           (self parseFileCommentLine:line)))))))))
+        (set @discussion (NSMutableString string))
+        (if @comments
+            (if (set match (objc-comment-pattern findInString:@comments))
+                (then
+                     (set text (match groupAtIndex:1))
+                     (set lines (text lines))
+                     (lines each:
+                            (do (original-line)
+                                (set line (original-line strip))
+                                (self parseFileCommentLine:line))))
+                (else
+                     (set lines (@comments lines))
+                     (lines each:
+                            (do (original-line)
+                                (if (set match (nu-comment-pattern findInString:original-line))
+                                    (then
+                                         (set line (match groupAtIndex:3))
+                                         (self parseFileCommentLine:line)))))))))
      
      ;; Add a method description to a file's array of methods.
      (- (void) addMethod: (id) method is (@methods addObject:method))
@@ -178,85 +176,85 @@
      (- (void) addClass: (id) class is (@classes addObject:class)))
 
 ;; Extract information from one line of class and method comments.
-(macro-0 parseClassAndMethodCommentLine
-     (cond ((line beginsWithString:"@class")
-            (set @class (line substringFromIndex:(+ 1 ("@class" length)))))
-           ((line beginsWithString:"@category") ;; category is an alias for class
-            (set @class (line substringFromIndex:(+ 1 ("@category" length)))))
-           ((line beginsWithString:"@abstract")
-            (set @abstract (line substringFromIndex:(+ 1 ("@abstract" length)))))
-           ((line beginsWithString:"@method")
-            (set @method (line substringFromIndex:(+ 1 ("@method" length)))))
-           ((line beginsWithString:"@discussion")
-            (set @discussion (NSMutableString string))
-            (@discussion appendString:(line substringFromIndex:(+ 1 ("@discussion" length)))))
-           ((and (eq line "") (!= @discussion ""))
-            (@discussion appendString:"<br/><br/>"))
-           (else
-                (@discussion appendString:(NSString carriageReturn))
-                (@discussion appendString:line))))
+(macro parseClassAndMethodCommentLine ()
+     `(progn
+            (cond ((line beginsWithString:"@class")
+                   (set @class (line substringFromIndex:(+ 1 ("@class" length)))))
+                  ((line beginsWithString:"@category") ;; category is an alias for class
+                   (set @class (line substringFromIndex:(+ 1 ("@category" length)))))
+                  ((line beginsWithString:"@abstract")
+                   (set @abstract (line substringFromIndex:(+ 1 ("@abstract" length)))))
+                  ((line beginsWithString:"@method")
+                   (set @method (line substringFromIndex:(+ 1 ("@method" length)))))
+                  ((line beginsWithString:"@discussion")
+                   (set @discussion (NSMutableString string))
+                   (@discussion appendString:(line substringFromIndex:(+ 1 ("@discussion" length)))))
+                  ((and (eq line "") (!= @discussion ""))
+                   (@discussion appendString:"<br/><br/>"))
+                  (else
+                       (@discussion appendString:(NSString carriageReturn))
+                       (@discussion appendString:line)))))
 
 ;; Extract documentation information from class and method comments.
-(macro-0 parseClassAndMethodComments
-     (set @discussion (NSMutableString string))
-     (if @comments
-         (if (set match (objc-comment-pattern findInString:@comments))
-             (then
-                  ;(puts "parsing objc comment text for #{(if @name (then @name)(else @methodName))}")
-                  (set text (match groupAtIndex:1))
-                  (set lines (text lines))
-                  (lines each:
-                         (do (original-line)
-                             (set line (original-line strip))
-                             (parseClassAndMethodCommentLine))))
-             (else
-                  ;(puts "parsing nu comment text for #{(if @name (then @name)(else @methodName))}")
-                  (set lines (@comments lines))
-                  (lines each:
-                         (do (original-line)
-                             (if (set match (nu-comment-pattern findInString:original-line))
-                                 (then
-                                      (set line (match groupAtIndex:3))
-                                      (parseClassAndMethodCommentLine)))))))))
+(macro parseClassAndMethodComments ()
+     `(progn
+            (set @discussion (NSMutableString string))
+            (if @comments
+                (if (set match (objc-comment-pattern findInString:@comments))
+                    (then
+                         ;(puts "parsing objc comment text for #{(if @name (then @name)(else @methodName))}")
+                         (set text (match groupAtIndex:1))
+                         (set lines (text lines))
+                         (lines each:
+                                (do (original-line)
+                                    (set line (original-line strip))
+                                    (parseClassAndMethodCommentLine))))
+                    (else
+                         ;(puts "parsing nu comment text for #{(if @name (then @name)(else @methodName))}")
+                         (set lines (@comments lines))
+                         (lines each:
+                                (do (original-line)
+                                    (if (set match (nu-comment-pattern findInString:original-line))
+                                        (then
+                                             (set line (match groupAtIndex:3))
+                                             (parseClassAndMethodCommentLine))))))))))
 
 ;; @abstract NuDoc class for building class descriptions.
 ;; @discussion NuDoc creates one instance of this class for each class that it encounters when reading source files.
 (class NuDocClassInfo is NSObject
-     (ivars)
-     (ivar-accessors)
      
      ;; Initialize a description for a named class.
      (- (id) initWithName:(id) name is
-          (super init)
-          (set @name name)
-          (set @methods (NSMutableArray array))
-          (set @files (NSMutableDictionary dictionary))
-          self)
+        (super init)
+        (set @name name)
+        (set @methods (NSMutableArray array))
+        (set @files (NSMutableDictionary dictionary))
+        self)
      
      ;; Generate a link to the html description of the class.
      (- (id) linkWithPrefix:(id) prefix is
-          (set link <<-END
+        (set link <<-END
 <a href="#{prefix}#{(self name)}.html">#{@name}</a>END)
-          link)
+        link)
      
      ;; Generate a link to the html description of the class' superclass.
      (- (id) linkToSuperClassWithPrefix:(id) prefix is
-          (if (set superClassInfo ($classes objectForKey:@superClassName))
-              (then (superClassInfo linkWithPrefix:prefix))
-              (else @superClassName)))
+        (if (set superClassInfo ($classes objectForKey:@superClassName))
+            (then (superClassInfo linkWithPrefix:prefix))
+            (else @superClassName)))
      
      ;; Get an array of descriptions of a class' class methods.
      (- (id) classMethods is
-          (@methods select:(do (method) (eq (method methodType) "+"))))
+        (@methods select:(do (method) (eq (method methodType) "+"))))
      
      ;; Get an array of descriptions of a class' instance methods.
      (- (id) instanceMethods is
-          (@methods select:(do (method) (eq (method methodType) "-"))))
+        (@methods select:(do (method) (eq (method methodType) "-"))))
      
      ;; Set the raw comments associated with a class.
      (- (void) setComments:(id) comments is
-          (set @comments comments)
-          (parseClassAndMethodComments))
+        (set @comments comments)
+        (parseClassAndMethodComments))
      
      ;; A sorted list of the names of files containing declarations of a class and its methods.
      (- (id) fileNames is ((@files allKeys) sort))
@@ -266,7 +264,7 @@
      
      ;; Add a file description to the class' list.
      (- (void) addFile:(id) file is
-          (@files setObject:file forKey:(file name))))
+        (@files setObject:file forKey:(file name))))
 
 (set method-table-template (NuTemplate codeForString: <<-END
 <table>
@@ -294,91 +292,89 @@ END))
 ;; @abstract NuDoc class for building method descriptions.
 ;; @discussion NuDoc creates one instance of this class for each method implementation that it encounters when reading source files.
 (class NuDocMethodInfo is NSObject
-     (ivars)
-     (ivar-accessors)
      
      ;; Initialize a method description from a Nu declaration.
      (- (id) initWithDeclaration:(id) declaration file:(id) file class:(id) classInfo is
-          (super init)
-          (set @file file)
-          (set @classInfo classInfo)
-          (set @methodType
-               (case (declaration first)
-                     ('cmethod "+")
-                     ('imethod "-")
-                     ('+ "+")
-                     ('- "-")
-                     (else "?")))
-          (set @comments (declaration comments))
-          (parseClassAndMethodComments)
-          (set @returnType (declaration second))
-          (set @selectors nil)
-          (cond ((eq 'is (declaration fourth))
-                 (set @methodName "#{((declaration second) stringValue)} #{((declaration third) stringValue)}")
-                 (set @shortMethodName "#{((declaration third) stringValue)}")) ; that's all
-                (else
-                     (set cursor ((declaration cdr) cdr))
-                     (set @methodName ((declaration second) stringValue))
-                     (set @selectors ((NSMutableArray alloc) init))
-                     (set @types ((NSMutableArray alloc) init))
-                     (set @names ((NSMutableArray alloc) init))
-                     (while (!= (cursor car) 'is)
-                            (@selectors addObject: ((cursor first) stringValue))
-                            (@types addObject: ((cursor second) stringValue))
-                            (@names addObject: ((cursor third) stringValue))
-                            (set @methodName "#{@methodName} #{((cursor first) stringValue)} #{((cursor second) stringValue)} #{((cursor third) stringValue)}")
-                            (set cursor (((cursor cdr) cdr) cdr)))
-                     (set @shortMethodName (@selectors componentsJoinedByString:""))
-                     ))
-          self)
+        (super init)
+        (set @file file)
+        (set @classInfo classInfo)
+        (set @methodType
+             (case (declaration first)
+                   ('cmethod "+")
+                   ('imethod "-")
+                   ('+ "+")
+                   ('- "-")
+                   (else "?")))
+        (set @comments (declaration comments))
+        (parseClassAndMethodComments)
+        (set @returnType (declaration second))
+        (set @selectors nil)
+        (cond ((eq 'is (declaration fourth))
+               (set @methodName "#{((declaration second) stringValue)} #{((declaration third) stringValue)}")
+               (set @shortMethodName "#{((declaration third) stringValue)}")) ; that's all
+              (else
+                   (set cursor ((declaration cdr) cdr))
+                   (set @methodName ((declaration second) stringValue))
+                   (set @selectors ((NSMutableArray alloc) init))
+                   (set @types ((NSMutableArray alloc) init))
+                   (set @names ((NSMutableArray alloc) init))
+                   (while (!= (cursor car) 'is)
+                          (@selectors addObject: ((cursor first) stringValue))
+                          (@types addObject: ((cursor second) stringValue))
+                          (@names addObject: ((cursor third) stringValue))
+                          (set @methodName "#{@methodName} #{((cursor first) stringValue)} #{((cursor second) stringValue)} #{((cursor third) stringValue)}")
+                          (set cursor (((cursor cdr) cdr) cdr)))
+                   (set @shortMethodName (@selectors componentsJoinedByString:""))
+                   ))
+        self)
      
      ;; Initialize a method description from an Objective-C declaration.
      (- (id) initWithName:(id) name file:(id) file class:(id) classInfo is
-          (super init)
-          (set @file file)
-          (set @classInfo classInfo)
-          (set @methodType (name substringToIndex:1))
-          (set @methodName (name substringFromIndex:2))
-          (set @selectors nil)
-          (cond ((set match (signature-pattern1 findInString:name))
-                 ;; ARITY 1+
-                 (set @returnType "(#{(match groupAtIndex:2)})")
-                 (set @selectors ((NSMutableArray alloc) init))
-                 (set @types ((NSMutableArray alloc) init))
-                 (set @names ((NSMutableArray alloc) init))
-                 (set nameToParse (match groupAtIndex:3))
-                 ((selector-pattern findAllInString:nameToParse) each:
-                  (do (match2)
-                      (@selectors addObject:(match2 groupAtIndex:1))
-                      (@types addObject:"(#{(match2 groupAtIndex:2)})")
-                      (@names addObject:(match2 groupAtIndex:3))))
-                 (set @shortMethodName (@selectors componentsJoinedByString:"")))
-                
-                ((set match (signature-pattern0 findInString:name))
-                 ;; ARITY 0
-                 (set @returnType "(#{(match groupAtIndex:2)})")
-                 (set @shortMethodName (match groupAtIndex:3)))
-                (else (puts "error! can't parse selector #{name}")))
-          self)
+        (super init)
+        (set @file file)
+        (set @classInfo classInfo)
+        (set @methodType (name substringToIndex:1))
+        (set @methodName (name substringFromIndex:2))
+        (set @selectors nil)
+        (cond ((set match (signature-pattern1 findInString:name))
+               ;; ARITY 1+
+               (set @returnType "(#{(match groupAtIndex:2)})")
+               (set @selectors ((NSMutableArray alloc) init))
+               (set @types ((NSMutableArray alloc) init))
+               (set @names ((NSMutableArray alloc) init))
+               (set nameToParse (match groupAtIndex:3))
+               ((selector-pattern findAllInString:nameToParse) each:
+                (do (match2)
+                    (@selectors addObject:(match2 groupAtIndex:1))
+                    (@types addObject:"(#{(match2 groupAtIndex:2)})")
+                    (@names addObject:(match2 groupAtIndex:3))))
+               (set @shortMethodName (@selectors componentsJoinedByString:"")))
+              
+              ((set match (signature-pattern0 findInString:name))
+               ;; ARITY 0
+               (set @returnType "(#{(match groupAtIndex:2)})")
+               (set @shortMethodName (match groupAtIndex:3)))
+              (else (puts "error! can't parse selector #{name}")))
+        self)
      
      ;; Generate a link to the html description of the method.
      (- (id) linkWithPrefix:(id) prefix is
-          (set link <<-END
+        (set link <<-END
 <a href="#{prefix}#{((self classInfo) name)}.html##{(self shortMethodName)}">#{@methodType} #{@shortMethodName}</a>END)
-          link)
+        link)
      
      ;; Compare methods by name, allowing method descriptions to be sorted.
      (- (int) compare:(id) other is
-          (@shortMethodName compare:(other shortMethodName)))
+        (@shortMethodName compare:(other shortMethodName)))
      
      ;; Generate an html table that prettily-prints the method selector.
      (- (id) tableDescription is
-          (eval method-table-template))
+        (eval method-table-template))
      
      ;; Set the raw comments associatied with a method.
      (- (void) setComments:(id) comments is
-          (set @comments comments)
-          (parseClassAndMethodComments)))
+        (set @comments comments)
+        (parseClassAndMethodComments)))
 
 ;; extract documentation from nu source files
 (function extract-nu (file)
@@ -475,16 +471,17 @@ END))
                                              (set $comments "#{(match groupAtIndex:0)}"))
                         (else nil)))))
 
-(macro-0 site-header
-     (if (eq $sitename "programming.nu")
-         (then <<-END
+(macro site-header ()
+     `(progn
+            (if (eq $sitename "programming.nu")
+                (then <<-END
 <div style="float:left; margin-right:10px">
 <img src="/files/recycle-s.png" height="50" />
 </div>
 <div style="float:left">
 <h1><a href="/">Programming Nu</a></h1>
 <h3>Website for the Nu programming language.</h3>
-</div>END) (else "")))
+</div>END) (else ""))))
 
 ;;;;;;;;;;;;; Footer Template ;;;;;;;;;;;;;;;;;
 (set footer-template (NuTemplate codeForString:	<<-END
@@ -796,39 +793,40 @@ END))
 ;;
 ;; Main program starts here
 ;;
-(macro-0 nudoc
-     (set $classes (NSMutableDictionary dictionary))
-     (set $files (NSMutableDictionary dictionary))
-     
-     (puts "Reading Source Files")
-     
-     (set nu-files (filelist "^nu/.*\.nu$"))
-     (nu-files each: (do (file) (extract-nu file)))
-     
-     (set tool-files (filelist "^tools/[^/\.]+$"))
-     (tool-files each: (do (file) (extract-nu file)))
-     
-     (set objc-files (filelist "^objc/.*\.[h]$"))
-     (objc-files each: (do (file) (extract-objc file)))
-     
-     (puts "Generating Documentation")
-     
-     (set $project (((((NSString stringWithShellCommand:"pwd") lines) 0) componentsSeparatedByString:"/") lastObject))
-     
-     (set $introduction "<p>Here are descriptions of the classes and methods used to implement #{$project}. These descriptions were automatically extracted from the #{$project} source code using nudoc.</p>")
-     
-     (set $footer (eval footer-template))
-     
-     (system "mkdir -p doc")
-     (system "mkdir -p doc/classes")
-     (system "mkdir -p doc/files")
-     
-     ((eval css-template) writeToFile:"doc/doc.css")
-     ((eval index-template) writeToFile:"doc/index.html")
-     
-     (($classes allValues) each:
-      (do (classInfo)
-           ((eval classinfo-template) writeToFile:"doc/classes/#{(classInfo name)}.html")))
-     
-     (($files allValues) each:
-      (do (fileInfo) ((eval fileinfo-template) writeToFile:"doc/files/#{(fileInfo niceName)}.html"))))
+(macro nudoc ()
+     `(progn
+            (set $classes (NSMutableDictionary dictionary))
+            (set $files (NSMutableDictionary dictionary))
+            
+            (puts "Reading Source Files")
+            
+            (set nu-files (filelist "^nu/.*\.nu$"))
+            (nu-files each: (do (file) (extract-nu file)))
+            
+            (set tool-files (filelist "^tools/[^/\.]+$"))
+            (tool-files each: (do (file) (extract-nu file)))
+            
+            (set objc-files (filelist "^objc/.*\.[h]$"))
+            (objc-files each: (do (file) (extract-objc file)))
+            
+            (puts "Generating Documentation")
+            
+            (set $project (((((NSString stringWithShellCommand:"pwd") lines) 0) componentsSeparatedByString:"/") lastObject))
+            
+            (set $introduction "<p>Here are descriptions of the classes and methods used to implement #{$project}. These descriptions were automatically extracted from the #{$project} source code using nudoc.</p>")
+            
+            (set $footer (eval footer-template))
+            
+            (system "mkdir -p doc")
+            (system "mkdir -p doc/classes")
+            (system "mkdir -p doc/files")
+            
+            ((eval css-template) writeToFile:"doc/doc.css")
+            ((eval index-template) writeToFile:"doc/index.html")
+            
+            (($classes allValues) each:
+             (do (classInfo)
+                  ((eval classinfo-template) writeToFile:"doc/classes/#{(classInfo name)}.html")))
+            
+            (($files allValues) each:
+             (do (fileInfo) ((eval fileinfo-template) writeToFile:"doc/files/#{(fileInfo niceName)}.html")))))

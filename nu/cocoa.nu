@@ -17,14 +17,14 @@
 ;;   See the License for the specific language governing permissions and
 ;;   limitations under the License.
 
-(macro-0 bridge
-     (set __kind (margs first))
-     (set __name (margs second))
-     (set __signature (margs third))
-     (case __kind
-           ('constant (eval (list 'global __name (NuBridgedConstant constantWithName:(__name stringValue) signature:__signature))))
-           ('function (eval (list 'global __name (NuBridgedFunction functionWithName:(__name stringValue) signature:__signature))))
-           (else (NSLog "invalid argument to bridge: '#{__kind}'"))))
+(macro bridge (kind name signature)
+     (case kind
+           ('constant
+                     `(global ,name (NuBridgedConstant constantWithName:(',name stringValue) signature:,signature)))
+           ('function
+                     `(global ,name (NuBridgedFunction functionWithName:(',name stringValue) signature:,signature)))
+           (else
+                `(NSLog "invalid argument to bridge: '#{,kind}'"))))
 
 (bridge function NSLog "v@")
 (bridge function NSApplicationMain "ii^*")
@@ -86,3 +86,4 @@
 (global NSOrderedAscending 				-1)
 (global NSOrderedSame       			0)
 (global NSOrderedDescending 			1)
+
