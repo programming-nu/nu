@@ -923,6 +923,7 @@ extern id Nu__null;
             id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
             id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
             [body evalWithContext:context];
+            [parser setFilename:NULL];           
             return [symbolTable symbolWithCString:"t"];
         }
         return nil;

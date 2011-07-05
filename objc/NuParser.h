@@ -68,6 +68,8 @@ limitations under the License.
 - (id) parse:(NSString *)string;
 /*! Call -parse: while specifying the name of the source file for the string to be parsed. */
 - (id) parse:(NSString *)string asIfFromFilename:(const char *) filename;
+/* Operators can set the Filename to NULL after they evaluated their parsed code */
+- (void) setFilename:(const char *) name;
 /*! Evaluate a parsed Nu expression in the parser's evaluation context. */
 - (id) eval: (id) code;
 /*! Parse Nu source text and evaluate it in the parser's evalation context. */

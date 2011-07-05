@@ -137,6 +137,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 NuParser *parser = [[NuParser alloc] init];
                 id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
                 [parser eval:script];
+                [parser setFilename:NULL];
                 [parser release];
                 [pool release];
                 return 0;
@@ -161,6 +162,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                     i++;
                     script = [parser parse:[NSString stringWithFormat:@"(load \"%s\")", argv[i]] asIfFromFilename:argv[i]];
                     result = [parser eval:script];
+                    [parser setFilename:NULL];
                 }
                 else if (!strcmp(argv[i], "-v")) {
                     printf("Nu %s (%s)\n", NU_VERSION, NU_RELEASE_DATE);
@@ -180,6 +182,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                     if (string) {
                         id script = [parser parse:string asIfFromFilename:argv[i]];
                         [parser eval:script];
+                        [parser setFilename:NULL];
                         fileEvaluated = true;
                     }
                     else {
@@ -216,6 +219,7 @@ int NuMain(int argc, const char *argv[], const char *envp[])
                 id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
                 id script = [parser parse:string asIfFromFilename:"stdin"];
                 [parser eval:script];
+                [parser setFilename:NULL];
                 [parser release];
                 [pool release];
             }
@@ -447,6 +451,7 @@ id _nulist(id firstObject, ...)
             id script = [parser parse:fileNu asIfFromFilename:[filePath cStringUsingEncoding:NSUTF8StringEncoding]];
             if (!context) context = [parser context];
             [script evalWithContext:context];
+            [parser setFilename:NULL];
             success = YES;
         }
     }
