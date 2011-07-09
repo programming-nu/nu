@@ -164,7 +164,7 @@
                               (set @failures (+ @failures 1))))
                      nil)))
     (else ;; unfortunately, we can only throw exceptions with the Darwin runtime
-          (macro assert_throws () nil)))
+          (macro assert_throws (desired *block) nil)))
 
 (macro assert_in_delta (reference actual delta)
      (set __code actual)
