@@ -15,9 +15,6 @@
 ;;   See the License for the specific language governing permissions and
 ;;   limitations under the License.
 
-(global NSUTF8StringEncoding 4)
-(global NSLog (NuBridgedFunction functionWithName:"NSLog" signature:"v@"))
-
 (global rand
         (do (maximum)
             (let ((r (NuMath random)))
@@ -187,24 +184,6 @@
                         (if (r findInString:(filename stringValue))
                             (results addObject:filename)))
                  ((results allObjects) sortedArrayUsingSelector:"compare:"))))
-
-(class NSMutableArray
-     
-     ;; Concisely add objects to arrays using this method, which is equivalent to a call to addObject:.
-     (- (void) << (id) object is (self addObject:object)))
-
-(class NSMutableSet
-     
-     ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
-     (- (void) << (id) object is (self addObject:object)))
-
-(class NSMutableString
-     
-     ;; Concisely append to a string using this method, which is equivalent to a call to appendString:.
-     (- (void) << (id) object is
-        (if (not (string? object))
-            (then (self appendString:(object stringValue)))
-            (else (self appendString:object)))))
 
 (if (eq (uname) "Darwin")
     (class NuCell

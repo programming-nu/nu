@@ -3,7 +3,7 @@
 //  NuApp
 //
 //  Created by Tim Burks on 6/11/11.
-//  Copyright 2011 Neon Design Technology, Inc. All rights reserved.
+//  Copyright 2011 Radtastical Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>

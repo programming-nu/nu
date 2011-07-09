@@ -373,15 +373,29 @@ void NuInit()
     if (!initialized) {
         initialized = 1;
         
+        // as a convenience, we set a file static variable to nil.
         Nu__null = [NSNull null];
         
         // add enumeration to collection classes
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
         [NSArray include: [NuClass classWithClass:[NuEnumerable class]]];
         [NSSet include: [NuClass classWithClass:[NuEnumerable class]]];
         [NSString include: [NuClass classWithClass:[NuEnumerable class]]];
-        [pool drain];
         
+        // create "<<" messages that append their arguments to arrays, sets, and strings
+        id parser = [Nu sharedParser];
+        [[NuClass classWithClass:[NSMutableArray class]] 
+         addInstanceMethod:@"<<" 
+         signature:@"v*" 
+         body:[parser eval:[parser parse:@"(do (value) (self addObject:value))"]]];        
+        [[NuClass classWithClass:[NSMutableSet class]] 
+         addInstanceMethod:@"<<" 
+         signature:@"v*" 
+         body:[parser eval:[parser parse:@"(do (value) (self addObject:value))"]]];        
+        [[NuClass classWithClass:[NSMutableString class]] 
+         addInstanceMethod:@"<<" 
+         signature:@"v*" 
+         body:[parser eval:[parser parse:@"(do (object) (self appendString:(object stringValue)))"]]];
+
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
@@ -391,14 +405,12 @@ void NuInit()
         
 #if !defined(MININUSH) && !TARGET_OS_IPHONE
         // Load some standard files
-        // Warning: since these loads are performed without a context, the non-global symbols defined in them
-        // will not be available to other Nu scripts or at the console.  These loads should only be used
-        // to set globals and to make changes to information stored in the ObjC runtime.
         [Nu loadNuFile:@"nu"            fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"bridgesupport" fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
 #endif
+        
     }
 }
 
@@ -509,7 +521,7 @@ id _nulist(id firstObject, ...)
     if (filePath) {
         NSString *fileNu = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
         if (fileNu) {
-            NuParser *parser = [Nu parser];
+            NuParser *parser = [Nu sharedParser];
             id script = [parser parse:fileNu asIfFromFilename:[filePath cStringUsingEncoding:NSUTF8StringEncoding]];
             if (!context) context = [parser context];
             [script evalWithContext:context];
@@ -8936,6 +8948,13 @@ void load_builtins(NuSymbolTable *symbolTable)
     install(@"help",     Nu_help_operator);
     install(@"?",        Nu_help_operator);
     install(@"version",  Nu_version_operator);
+    
+    // set some commonly-used globals
+    [(NuSymbol *) [symbolTable symbolWithString:@"NSUTF8StringEncoding"] 
+     setValue:[NSNumber numberWithInt:NSUTF8StringEncoding]];
+    
+    [(NuSymbol *) [symbolTable symbolWithString:@"NSLog"] // let's make this an operator someday 
+     setValue:[NuBridgedFunction functionWithName:@"NSLog" signature:@"v@"]];
 }
 
 // NuParser.m
