@@ -688,8 +688,7 @@ static void ffi_prep_incoming_args_SYSV (char *stack, void **ret,
 void ffi_closure_SYSV (ffi_closure *);
 
 /* This function is jumped to by the trampoline */
-unsigned int FFI_HIDDEN ffi_closure_SYSV_inner (ffi_closure *, void **, void *)
-__attribute__ ((regparm(1)));
+unsigned int FFI_HIDDEN ffi_closure_SYSV_inner (ffi_closure *, void **, void *);
 
 unsigned int
 ffi_closure_SYSV_inner (closure, respp, args)
