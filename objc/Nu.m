@@ -369,10 +369,12 @@ static void transplant_nu_methods(Class destination, Class source)
 
 void NuInit()
 {
-    static int initialized = 0;
-    if (!initialized) {
-        initialized = 1;
-        
+    static BOOL initialized = NO;
+    if (initialized) {
+        return;
+    }
+    initialized = YES;        
+    @autoreleasepool {            
         // as a convenience, we set a file static variable to nil.
         Nu__null = [NSNull null];
         
@@ -395,7 +397,7 @@ void NuInit()
          addInstanceMethod:@"<<" 
          signature:@"v*" 
          body:[parser eval:[parser parse:@"(do (object) (self appendString:(object stringValue)))"]]];
-
+        
         // Copy some useful methods from NSObject to NSProxy.
         // Their implementations are identical; this avoids code duplication.
         transplant_nu_methods([NSProxy class], [NSObject class]);
@@ -410,8 +412,7 @@ void NuInit()
         [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
 #endif
-        
-    }
+    }   
 }
 
 // Helpers for programmatic construction of Nu code.
