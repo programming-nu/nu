@@ -133,11 +133,18 @@
      
      (- (id) testLoopMacro is
         ;; here is a simple macro defining an unending loop
-        (macro-0 loop (eval (append '(while t) margs)))
+        (macro loop (*body)
+         `(while t
+             ,@*body))
+
         ;; here's a macro that decrements a named value
-        (macro-0 decrement (set (unquote (margs car)) (- (unquote (margs car)) 1)))
+        (macro decrement (n)
+         `(set ,n (- ,n 1)))
+
         ;; here's a macro that increments a named value
-        (macro-0 increment (set (unquote (margs car)) (+ (unquote (margs car)) 1)))
+        (macro increment (n)
+         `(set ,n (+ ,n 1)))
+        
         ;; run the loop, breaking out after 5 iterations
         (set count 0)
         (set x 10)

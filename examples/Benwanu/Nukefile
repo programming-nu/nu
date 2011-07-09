@@ -8,6 +8,8 @@
 (set @icon_files (filelist "^resources/.*icns$"))
 (set @resources   (filelist "^resources/Benwanu Help$"))
 
+(set @arch        '("x86_64"))
+
 (@resources addObjectsFromArray:((filelist "^resources/Credits.rtf$") allObjects))
 
 ;; application description

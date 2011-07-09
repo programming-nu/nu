@@ -106,22 +106,21 @@
 ;; Applies a function to a list of arguments.
 ;; For example (apply + '(1 2)) returns 3.
 (global apply
-        (macro-0 _
-             (set __f (eval (car margs)))
-             (set __args (eval (cdr margs)))
-             (eval (cons __f __args))))
+        (macro _ (fn *fnargs)
+             `(eval (cons ,fn ,*fnargs))))
 
 ;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
 ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
 ;; an exception.
 (global assert
-        (macro-0 _
-             (set expression (car margs))
-             (if (not (eval expression))
-                 (then (throw ((NSException alloc)
-                               initWithName:"NuAssertionFailure"
-                               reason:(expression stringValue)
-                               userInfo:nil))))))
+        (macro _ (*body)
+             `(progn
+                    (set expression ,(car *body))
+                    (if (not (eval expression))
+                        (then (throw ((NSException alloc)
+                                      initWithName:"NuAssertionFailure"
+                                      reason:(expression stringValue)
+                                      userInfo:nil)))))))
 
 ;; Allows mapping a function over multiple lists.
 ;; For example (map + '(1 2) '(3 4)) returns '(4 6).
@@ -154,13 +153,14 @@
          ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
          ;; an exception.
          (global assert
-                 (macro-0 _
-                      (set expression (car margs))
-                      (if (not (eval expression))
-                          (then (throw ((NSException alloc)
-                                        initWithName:"NuAssertionFailure"
-                                        reason:(expression stringValue)
-                                        userInfo:nil))))))
+                 (macro _ (*body)
+                      `(progn
+                             (set expression ,(car *body))
+                             (if (not (eval expression))
+                                 (then (throw ((NSException alloc)
+                                               initWithName:"NuAssertionFailure"
+                                               reason:(expression stringValue)
+                                               userInfo:nil)))))))
          
          ;; Throws an exception.
          ;; This function is more concise and easier to remember than throw.
@@ -170,9 +170,9 @@
                              reason:reason
                              userInfo:nil)))))
     (else
-         (global assert (macro-0 _ (NSLog "warning: assert is unavailable")))
-         (global throw* (macro-0 _ (NSLog "warning: throw* is unavailable")))
-         (global throw  (macro-0 _ (NSLog "warning: throw is unavailable")))))
+         (global assert (macro _ () (NSLog "warning: assert is unavailable")))
+         (global throw* (macro _ () (NSLog "warning: throw* is unavailable")))
+         (global throw  (macro _ () (NSLog "warning: throw is unavailable")))))
 
 
 ;; Returns an array of filenames matching a given pattern.
@@ -217,46 +217,9 @@
          ;; Convert a list into an NSRange.  The list must have at least two elements.
          (- (NSRange) rangeValue is (list (self first) (self second)))))
 
-;; Use this macro to create and extend protocols.
-;; The odd-looking use of the global operator is to define the macro globally.
-;; We just use an "_" for the macro name argument because its local name is unimportant.
-;; It does not work with the latest (more restrictive) ObjC runtimes from Apple.
-(global protocol
-        (macro-0 _
-             (set __signatureForIdentifier (NuBridgedFunction functionWithName:"signature_for_identifier" signature:"@@@"))
-             (function __parse_signature (typeSpecifier)
-                  (__signatureForIdentifier typeSpecifier (NuSymbolTable sharedSymbolTable)))
-             
-             (set __name ((margs car) stringValue))
-             (unless (set __protocol (Protocol protocolNamed: __name))
-                     (set __protocol ((Protocol alloc) initWithName: __name)))
-             (eval (list 'set (margs car) __protocol))
-             (set __rest (margs cdr))
-             (while __rest
-                    (set __method (__rest car))
-                    (set __returnType (__parse_signature ((__method cdr) car)))
-                    (set __signature __returnType)
-                    (__signature appendString:"@:")
-                    (set __name "#{(((__method cdr) cdr) car)}")
-                    (set __argumentCursor (((__method cdr) cdr) cdr))
-                    (while __argumentCursor ;; argument type
-                           (__signature appendString:(__parse_signature (__argumentCursor car)))
-                           (set __argumentCursor (__argumentCursor cdr))
-                           (if __argumentCursor ;; variable name
-                               (set __argumentCursor (__argumentCursor cdr)))
-                           (if __argumentCursor ;; selector
-                               (__name appendString:((__argumentCursor car) stringValue))
-                               (set __argumentCursor (__argumentCursor cdr))))
-                    (cond ((or (eq (__method car) '-) (eq (__method car) 'imethod))
-                           (__protocol addInstanceMethod:__name withSignature:__signature))
-                          ((or (eq (__method car) '+) (eq (__method car) 'cmethod))
-                           (__protocol addClassMethod:__name withSignature:__signature))
-                          (else nil))
-                    (set __rest (__rest cdr)))))
-
 ;; profiling macro - experimental
 (global profile
-        (macro-1 _ (name *body)
+        (macro _ (name *body)
              `(progn ((NuProfiler defaultProfiler) start:,name)
                      (set __result (progn ,@*body))
                      ((NuProfiler defaultProfiler) stop)

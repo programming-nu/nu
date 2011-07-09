@@ -25,14 +25,10 @@
 ;; returns
 ;;
 ;;   (1 2 (3 4))
-(macro-0 match-let1
-     (set __pat (margs 0))
-     (set __seq (eval (margs 1)))
-     (set __body ((margs cdr) cdr))
-     (set __bindings (destructure __pat __seq))
+(macro match-let1 (pattern sequence *body)
+     (set __bindings (destructure pattern (eval sequence)))
      (check-bindings __bindings)
-     (set __result (cons 'let (cons __bindings __body)))
-     (eval __result))
+     `(let ,__bindings ,@*body))
 
 ;; Assigns variables in a template to values in a structure matching the template.
 ;; For example
@@ -46,16 +42,13 @@
 ;;   (1 2 (3 4))
 ;;
 ;; The name is short for "destructuring set."  The semantics are similar to "set."
-(macro-0 match-set
-     (set __pat (margs 0))
-     (set __seq (eval (margs 1)))
-     (set __bindings (destructure __pat __seq))
+(macro match-set (pattern sequence *body)
+     (set __bindings (destructure pattern (eval sequence)))
      (check-bindings __bindings)
      (set __set-statements
           (__bindings map:(do (b)
-                              (list 'set (b 0) (b 1)))))
-     (eval (cons 'progn __set-statements)))
-
+                              `(set ,(b 0) ,(b 1)))))
+     `(progn ,@__set-statements))
 
 ;; Given a pattern like '(a (b c)) and a sequence like '(1 (2 3)),
 ;; returns a list of bindings like '((a 1) (b 2) (c 3)).
@@ -241,13 +234,27 @@
 
 ;; Matches an object against some patterns with associated expressions.
 ;; TODO(ijt): boolean conditions for patterns (like "when" in ocaml)
-(macro-0 match
-     (set __obj (eval (margs 0)))
-     (set __patterns (margs cdr))
-     (set __expr (_find-first-match __obj __patterns))
-     (if (not __expr)
-         (then (throw* "NuMatchException" "No match found")))
-     (eval __expr))
+;;(macro-0 match
+;;     (set __obj (eval (margs 0)))
+;;     (set __patterns (margs cdr))
+;;     (set __expr (_find-first-match __obj __patterns))
+;;     (if (not __expr)
+;;         (then (throw* "NuMatchException" "No match found")))
+;;     (eval __expr))
+
+(macro match (object *patterns)
+     ;;(puts "---->")
+     (set __obj (eval object))
+     ;;(print "object: ") (puts object)
+     ;;(print "obj: ") (puts __obj)
+     ;;(print "*patterns: ") (puts *patterns)
+     (set __expr (_find-first-match __obj *patterns))
+     ;;(print "expr: ") (puts __expr)
+     `(progn
+            (if (not __expr)
+                (then (throw* "NuMatchException" "No match found")))
+            (,@__expr))
+     )
 
 ;; Variant of (do (args) body) that gives different results depending
 ;; on the structure of the argument list. For example, here is a
@@ -268,10 +275,9 @@
 ;; % (f 'x 'y 'z)
 ;; NuMatchException: No match found
 ;;
-(macro-0 match-do
-     (eval (list 'do '(*args)
-                 (append (list 'match '*args)
-                         margs))))
+(macro match-do (*body)
+     `(do (*args)
+          (match *args ,@*body)))
 
 ;; Variant of (function name (args) body) that gives different results depending
 ;; on the structure of the argument list. For example, here is a way to implement
@@ -288,9 +294,8 @@
 ;; % (slow-map cos '(3.14 0))
 ;; (-0.9999987317275395 1)
 ;;
-(macro-0 match-function
-     (eval (list 'set (margs 0)
-                 (cons 'match-do (margs cdr)))))
+(macro match-function (fn *body)
+     `(set ,fn (match-do ,@*body)))
 
 ;; Looks for an occurrence of item in the list l.
 (function find-atom (item l)
@@ -329,3 +334,4 @@
      
      (+ (id) findAtom:(id) a inSequence:(id) sequence is
         (find-atom a sequence)))
+
