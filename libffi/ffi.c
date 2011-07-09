@@ -29,7 +29,8 @@
 #define LIBFFI_HIDE_BASIC_TYPES
 
 #include "ffi.h"
-
+#include <stdlib.h>
+#include <TargetConditionals.h>
 
 /* -----------------------------------------------------------------------
  ffi_common.h - Copyright (c) 1996  Red Hat, Inc.
@@ -39,14 +40,10 @@
  libffi.
  ----------------------------------------------------------------------- */
 
-#ifndef FFI_COMMON_H
-#define FFI_COMMON_H
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-    
+        
     /* Do not move this. Some versions of AIX are very picky about where
      this is positioned. */
 #ifdef __GNUC__
@@ -54,28 +51,16 @@ extern "C" {
 # define MAYBE_UNUSED __attribute__((__unused__))
 #else
 # define MAYBE_UNUSED
-# if HAVE_ALLOCA_H
-#  include <alloca.h>
-# else
-#  ifdef _AIX
-#pragma alloca
-#  else
+
 #   ifndef alloca /* predefined by HP cc +Olibcalls */
     char *alloca ();
 #   endif
-#  endif
-# endif
+
 #endif
     
-    /* Check for the existence of memcpy. */
-#if STDC_HEADERS
-# include <string.h>
-#else
-# ifndef HAVE_MEMCPY
-    void bcopy(const void *s1, void *s2, size_t n);
-#  define memcpy(d, s, n) bcopy ((s), (d), (n))
-# endif
-#endif
+void bcopy(const void *s1, void *s2, size_t n);
+#define memcpy(d, s, n) bcopy ((s), (d), (n))
+
     
 #if defined(FFI_DEBUG)
 #include <stdio.h>
@@ -126,9 +111,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#endif
-
 
 /* Type definitions */
 
@@ -203,10 +185,7 @@ FFI_TYPEDEF(longdouble, long double, FFI_TYPE_LONGDOUBLE);
 
 /* This file defines generic functions for use with the raw api. */
 
-#include "ffi.h"
 #include <alloca.h>
-
-#if !FFI_NO_RAW_API
 
 size_t
 ffi_raw_size (ffi_cif *cif)
@@ -218,11 +197,9 @@ ffi_raw_size (ffi_cif *cif)
 
   for (i = cif->nargs-1; i >= 0; i--, at++)
     {
-#if !FFI_NO_STRUCTS
       if ((*at)->type == FFI_TYPE_STRUCT)
 	result += ALIGN (sizeof (void*), FFI_SIZEOF_ARG);
       else
-#endif
 	result += ALIGN ((*at)->size, FFI_SIZEOF_ARG);
     }
 
@@ -236,70 +213,19 @@ ffi_raw_to_ptrarray (ffi_cif *cif, ffi_raw *raw, void **args)
   unsigned i;
   ffi_type **tp = cif->arg_types;
 
-#if WORDS_BIGENDIAN
-
+  /* assume little endian */
   for (i = 0; i < cif->nargs; i++, tp++, args++)
     {	  
-      switch ((*tp)->type)
-	{
-	case FFI_TYPE_UINT8:
-	case FFI_TYPE_SINT8:
-	  *args = (void*) ((char*)(raw++) + FFI_SIZEOF_ARG - 1);
-	  break;
-	  
-	case FFI_TYPE_UINT16:
-	case FFI_TYPE_SINT16:
-	  *args = (void*) ((char*)(raw++) + FFI_SIZEOF_ARG - 2);
-	  break;
-
-#if FFI_SIZEOF_ARG >= 4	  
-	case FFI_TYPE_UINT32:
-	case FFI_TYPE_SINT32:
-	  *args = (void*) ((char*)(raw++) + FFI_SIZEOF_ARG - 4);
-	  break;
-#endif
-	
-#if !FFI_NO_STRUCTS  
-	case FFI_TYPE_STRUCT:
-	  *args = (raw++)->ptr;
-	  break;
-#endif
-
-	case FFI_TYPE_POINTER:
-	  *args = (void*) &(raw++)->ptr;
-	  break;
-	  
-	default:
-	  *args = raw;
-	  raw += ALIGN ((*tp)->size, FFI_SIZEOF_ARG) / FFI_SIZEOF_ARG;
-	}
-    }
-
-#else /* WORDS_BIGENDIAN */
-
-#if !PDP
-
-  /* then assume little endian */
-  for (i = 0; i < cif->nargs; i++, tp++, args++)
-    {	  
-#if !FFI_NO_STRUCTS
       if ((*tp)->type == FFI_TYPE_STRUCT)
 	{
 	  *args = (raw++)->ptr;
 	}
       else
-#endif
 	{
 	  *args = (void*) raw;
 	  raw += ALIGN ((*tp)->size, sizeof (void*)) / sizeof (void*);
 	}
     }
-
-#else
-#error "pdp endian not supported"
-#endif /* ! PDP */
-
-#endif /* WORDS_BIGENDIAN */
 }
 
 void
@@ -338,11 +264,9 @@ ffi_ptrarray_to_raw (ffi_cif *cif, void **args, ffi_raw *raw)
 	  break;
 #endif
 
-#if !FFI_NO_STRUCTS
 	case FFI_TYPE_STRUCT:
 	  (raw++)->ptr = *args;
 	  break;
-#endif
 
 	case FFI_TYPE_POINTER:
 	  (raw++)->ptr = **(void***) args;
@@ -428,7 +352,6 @@ ffi_prep_raw_closure (ffi_raw_closure* cl,
 
 #endif /* FFI_CLOSURES */
 
-#endif /* !FFI_NO_RAW_API */
 /* -----------------------------------------------------------------------
    prep_cif.c - Copyright (c) 1996, 1998, 2007  Red Hat, Inc.
 
@@ -452,9 +375,6 @@ ffi_prep_raw_closure (ffi_raw_closure* cl,
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
    DEALINGS IN THE SOFTWARE.
    ----------------------------------------------------------------------- */
-
-#include "ffi.h"
-#include <stdlib.h>
 
 /* Round up to FFI_SIZEOF_ARG. */
 
@@ -602,7 +522,7 @@ ffi_prep_closure (ffi_closure* closure,
 }
 
 #endif
-#include "TargetConditionals.h"
+
 #if !TARGET_IPHONE_SIMULATOR
 
 #ifdef __arm__
@@ -638,10 +558,6 @@ extern void __clear_cache (void *beg, void *end);
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
    DEALINGS IN THE SOFTWARE.
    ----------------------------------------------------------------------- */
-
-#include "ffi.h"
-
-#include <stdlib.h>
 
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments */
@@ -979,10 +895,6 @@ ffi_prep_closure_loc (ffi_closure* closure,
 
 #ifndef __x86_64__
 
-#include "ffi.h"
-
-#include <stdlib.h>
-
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments */
 
@@ -1130,11 +1042,6 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 extern void ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *,
 			  unsigned, unsigned, unsigned *, void (*fn)(void));
 
-#ifdef X86_WIN32
-extern void ffi_call_STDCALL(void (*)(char *, extended_cif *), extended_cif *,
-			  unsigned, unsigned, unsigned *, void (*fn)(void));
-
-#endif /* X86_WIN32 */
 
 void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 {
@@ -1160,12 +1067,6 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
       ffi_call_SYSV(ffi_prep_args, &ecif, cif->bytes, cif->flags, ecif.rvalue,
 		    fn);
       break;
-#ifdef X86_WIN32
-    case FFI_STDCALL:
-      ffi_call_STDCALL(ffi_prep_args, &ecif, cif->bytes, cif->flags,
-		       ecif.rvalue, fn);
-      break;
-#endif /* X86_WIN32 */
     default:
       FFI_ASSERT(0);
       break;
@@ -1183,10 +1084,6 @@ unsigned int FFI_HIDDEN ffi_closure_SYSV_inner (ffi_closure *, void **, void *)
      __attribute__ ((regparm(1)));
 void FFI_HIDDEN ffi_closure_raw_SYSV (ffi_raw_closure *)
      __attribute__ ((regparm(1)));
-#ifdef X86_WIN32
-void FFI_HIDDEN ffi_closure_STDCALL (ffi_closure *)
-     __attribute__ ((regparm(1)));
-#endif
 
 /* This function is jumped to by the trampoline */
 
@@ -1298,14 +1195,6 @@ ffi_prep_closure_loc (ffi_closure* closure,
                            &ffi_closure_SYSV,
                            (void*)codeloc);
     }
-#ifdef X86_WIN32
-  else if (cif->abi == FFI_STDCALL)
-    {
-      FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],
-                                   &ffi_closure_STDCALL,
-                                   (void*)codeloc, cif->bytes);
-    }
-#endif
   else
     {
       return FFI_BAD_ABI;
@@ -1319,8 +1208,6 @@ ffi_prep_closure_loc (ffi_closure* closure,
 }
 
 /* ------- Native raw API support -------------------------------- */
-
-#if !FFI_NO_RAW_API
 
 ffi_status
 ffi_prep_raw_closure_loc (ffi_raw_closure* closure,
@@ -1372,12 +1259,6 @@ extern void
 ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *, unsigned, 
 	      unsigned, unsigned *, void (*fn)(void));
 
-#ifdef X86_WIN32
-extern void
-ffi_call_STDCALL(void (*)(char *, extended_cif *), extended_cif *, unsigned,
-		 unsigned, unsigned *, void (*fn)(void));
-#endif /* X86_WIN32 */
-
 void
 ffi_raw_call(ffi_cif *cif, void (*fn)(void), void *rvalue, ffi_raw *fake_avalue)
 {
@@ -1405,19 +1286,11 @@ ffi_raw_call(ffi_cif *cif, void (*fn)(void), void *rvalue, ffi_raw *fake_avalue)
       ffi_call_SYSV(ffi_prep_args_raw, &ecif, cif->bytes, cif->flags,
 		    ecif.rvalue, fn);
       break;
-#ifdef X86_WIN32
-    case FFI_STDCALL:
-      ffi_call_STDCALL(ffi_prep_args_raw, &ecif, cif->bytes, cif->flags,
-		       ecif.rvalue, fn);
-      break;
-#endif /* X86_WIN32 */
     default:
       FFI_ASSERT(0);
       break;
     }
 }
-
-#endif
 
 #endif /* __x86_64__  */
 

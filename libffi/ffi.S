@@ -1,7 +1,6 @@
-/* This file is mangled from the original to compile using Apple's AS, not GAS */
-
 #import "TargetConditionals.h"
 
+/* This file is mangled from the original to compile using Apple's AS, not GAS */
 #if !TARGET_IPHONE_SIMULATOR
 
 #define __SOFTFP__
@@ -317,8 +316,7 @@ _ffi_closure_SYSV:
 
 #endif
 
-// Import TARGET_IPHONE_SIMULATOR definition
-#import "TargetConditionals.h"
+
 #if TARGET_IPHONE_SIMULATOR
 
 /* -----------------------------------------------------------------------
@@ -578,7 +576,6 @@ _ffi_closure_SYSV:
 	ret $4
 .LFE2:
 
-#if !FFI_NO_RAW_API
 
 #define RAW_CLOSURE_CIF_OFFSET ((FFI_TRAMPOLINE_SIZE + 3) & ~3)
 #define RAW_CLOSURE_FUN_OFFSET (RAW_CLOSURE_CIF_OFFSET + 4)
@@ -648,7 +645,6 @@ _ffi_closure_raw_SYSV:
 	movl	-20(%ebp), %edx
 	jmp	.Lrcls_epilogue
 .LFE3:
-#endif
 
 .section __IMPORT,__jump_table,symbol_stubs,self_modifying_code+pure_instructions,5
 L_ffi_closure_SYSV_inner$stub:
@@ -727,8 +723,6 @@ LASFDE2:
 	.align 2
 LEFDE2:
 
-#if !FFI_NO_RAW_API
-
 .globl _ffi_closure_raw_SYSV.eh
 _ffi_closure_raw_SYSV.eh:
 LSFDE3:
@@ -759,8 +753,6 @@ LASFDE3:
 	.byte	0x3
 	.align 2
 LEFDE3:
-
-#endif
 
 #endif /* ifndef __x86_64__ */
 
