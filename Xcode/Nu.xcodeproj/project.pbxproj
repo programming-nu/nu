@@ -7,13 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		225F62CB13B04256002DD16B /* ffi-iphone.c in Sources */ = {isa = PBXBuildFile; fileRef = 225F62BA13B04256002DD16B /* ffi-iphone.c */; };
-		225F62CC13B04256002DD16B /* ffi-iphonesimulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 225F62BC13B04256002DD16B /* ffi-iphonesimulator.c */; };
-		225F62CD13B04256002DD16B /* iphone-sysv.S in Sources */ = {isa = PBXBuildFile; fileRef = 225F62C413B04256002DD16B /* iphone-sysv.S */; };
-		225F62CE13B04256002DD16B /* iphonesimulator-darwin.S in Sources */ = {isa = PBXBuildFile; fileRef = 225F62C513B04256002DD16B /* iphonesimulator-darwin.S */; };
-		225F62D013B04256002DD16B /* prep_cif.c in Sources */ = {isa = PBXBuildFile; fileRef = 225F62C713B04256002DD16B /* prep_cif.c */; };
-		225F62D113B04256002DD16B /* raw_api.c in Sources */ = {isa = PBXBuildFile; fileRef = 225F62C813B04256002DD16B /* raw_api.c */; };
-		225F62D313B04256002DD16B /* types.c in Sources */ = {isa = PBXBuildFile; fileRef = 225F62CA13B04256002DD16B /* types.c */; };
+		225F62CD13B04256002DD16B /* ffi.S in Sources */ = {isa = PBXBuildFile; fileRef = 225F62C413B04256002DD16B /* ffi.S */; };
+		225F62D313B04256002DD16B /* ffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 225F62CA13B04256002DD16B /* ffi.c */; };
 		2283073D11DDBE7300A5C690 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2283073C11DDBE7300A5C690 /* main.m */; };
 		2283074411DDBEA700A5C690 /* Nu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* Nu.framework */; };
 		22B3B3B613B033D400B3AB31 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38813B033D400B3AB31 /* test.html */; };
@@ -119,21 +114,9 @@
 
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		225F62BA13B04256002DD16B /* ffi-iphone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "ffi-iphone.c"; sourceTree = "<group>"; };
-		225F62BB13B04256002DD16B /* ffi-iphone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ffi-iphone.h"; sourceTree = "<group>"; };
-		225F62BC13B04256002DD16B /* ffi-iphonesimulator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "ffi-iphonesimulator.c"; sourceTree = "<group>"; };
-		225F62BD13B04256002DD16B /* ffi-iphonesimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ffi-iphonesimulator.h"; sourceTree = "<group>"; };
 		225F62BE13B04256002DD16B /* ffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
-		225F62BF13B04256002DD16B /* ffi_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi_common.h; sourceTree = "<group>"; };
-		225F62C013B04256002DD16B /* fficonfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fficonfig.h; sourceTree = "<group>"; };
-		225F62C113B04256002DD16B /* ffitarget-iphone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ffitarget-iphone.h"; sourceTree = "<group>"; };
-		225F62C213B04256002DD16B /* ffitarget-iphonesimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ffitarget-iphonesimulator.h"; sourceTree = "<group>"; };
-		225F62C313B04256002DD16B /* ffitarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffitarget.h; sourceTree = "<group>"; };
-		225F62C413B04256002DD16B /* iphone-sysv.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "iphone-sysv.S"; sourceTree = "<group>"; };
-		225F62C513B04256002DD16B /* iphonesimulator-darwin.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = "iphonesimulator-darwin.S"; sourceTree = "<group>"; };
-		225F62C713B04256002DD16B /* prep_cif.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = prep_cif.c; sourceTree = "<group>"; };
-		225F62C813B04256002DD16B /* raw_api.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = raw_api.c; sourceTree = "<group>"; };
-		225F62CA13B04256002DD16B /* types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = types.c; sourceTree = "<group>"; };
+		225F62C413B04256002DD16B /* ffi.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = ffi.S; sourceTree = "<group>"; };
+		225F62CA13B04256002DD16B /* ffi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffi.c; sourceTree = "<group>"; };
 		2283073111DDBE3100A5C690 /* nush */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nush; sourceTree = BUILT_PRODUCTS_DIR; };
 		2283073C11DDBE7300A5C690 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../../main/main.m; sourceTree = SOURCE_ROOT; };
 		229FABE113C0129400CEFCF5 /* Nu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nu.h; sourceTree = "<group>"; };
@@ -308,21 +291,9 @@
 		225F62B913B04256002DD16B /* libffi */ = {
 			isa = PBXGroup;
 			children = (
-				225F62BA13B04256002DD16B /* ffi-iphone.c */,
-				225F62BB13B04256002DD16B /* ffi-iphone.h */,
-				225F62BC13B04256002DD16B /* ffi-iphonesimulator.c */,
-				225F62BD13B04256002DD16B /* ffi-iphonesimulator.h */,
 				225F62BE13B04256002DD16B /* ffi.h */,
-				225F62BF13B04256002DD16B /* ffi_common.h */,
-				225F62C013B04256002DD16B /* fficonfig.h */,
-				225F62C113B04256002DD16B /* ffitarget-iphone.h */,
-				225F62C213B04256002DD16B /* ffitarget-iphonesimulator.h */,
-				225F62C313B04256002DD16B /* ffitarget.h */,
-				225F62C413B04256002DD16B /* iphone-sysv.S */,
-				225F62C513B04256002DD16B /* iphonesimulator-darwin.S */,
-				225F62C713B04256002DD16B /* prep_cif.c */,
-				225F62C813B04256002DD16B /* raw_api.c */,
-				225F62CA13B04256002DD16B /* types.c */,
+				225F62C413B04256002DD16B /* ffi.S */,
+				225F62CA13B04256002DD16B /* ffi.c */,
 			);
 			name = libffi;
 			path = ../libffi;
@@ -669,13 +640,8 @@
 				22EE2C0613A4731600895861 /* main.m in Sources */,
 				22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */,
 				22B3B47413B0359300B3AB31 /* Nu.m in Sources */,
-				225F62CB13B04256002DD16B /* ffi-iphone.c in Sources */,
-				225F62CC13B04256002DD16B /* ffi-iphonesimulator.c in Sources */,
-				225F62CD13B04256002DD16B /* iphone-sysv.S in Sources */,
-				225F62CE13B04256002DD16B /* iphonesimulator-darwin.S in Sources */,
-				225F62D013B04256002DD16B /* prep_cif.c in Sources */,
-				225F62D113B04256002DD16B /* raw_api.c in Sources */,
-				225F62D313B04256002DD16B /* types.c in Sources */,
+				225F62CD13B04256002DD16B /* ffi.S in Sources */,
+				225F62D313B04256002DD16B /* ffi.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
