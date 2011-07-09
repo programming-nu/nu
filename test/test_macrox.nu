@@ -6,7 +6,7 @@
 (class TestMacrox is NuTestCase
      
      (- (id) testIncMacro is
-        (macro-1 inc! (n)
+        (macro inc! (n)
              `(set ,n (+ ,n 1)))
         
         ;; Test the macro evaluation
@@ -19,10 +19,10 @@
         (assert_equal "(set a (+ a 1))" (newBody stringValue)))
      
      (- (id) testNestedMacro is
-        (macro-1 inc! (n)
+        (macro inc! (n)
              `(set ,n (+ ,n 1)))
         
-        (macro-1 inc2! (n)
+        (macro inc2! (n)
              `(progn
                     (inc! ,n)
                     (inc! ,n)))
@@ -36,7 +36,7 @@
      
      
      (- (id) testFactorialMacro is
-        (macro-1 mfact (n)
+        (macro mfact (n)
              `(if (== ,n 0)
                   (then 1)
                   (else (* (mfact (- ,n 1)) ,n))))
@@ -50,7 +50,7 @@
      
      (- (id) testCallingContextForMacro is
         ;; Make sure we didn't ruin our calling context
-        (macro-1 mfact (n)
+        (macro mfact (n)
              `(if (== ,n 0)
                   (then 1)
                   (else (* (mfact (- ,n 1)) ,n))))
@@ -60,7 +60,7 @@
      
      
      (- (id) testRestMacro is
-        (macro-1 myfor ((var start stop) *body)
+        (macro myfor ((var start stop) *body)
              `(let ((,var ,start))
                    (while (<= ,var ,stop)
                           ,@*body
@@ -77,50 +77,50 @@
      
      (- (id) testNullArgMacro is
         ;; Make sure *args is set correctly with a null arg macro
-        (macro-1 set-a-to-1 ()
+        (macro set-a-to-1 ()
              (set a 1))
         
         (set-a-to-1)
         (assert_equal 1 a))
      
      (- (id) testBadArgsNullMacro is
-        (macro-1 nullargs ()
+        (macro nullargs ()
              nil)
         
         (assert_throws "NuDestructureException" (nullargs 1 2)))
      
      (- (id) testNoBindingsMacro is
-        (macro-1 no-bindings (_)
+        (macro no-bindings (_)
              nil)
         
         (assert_equal nil (no-bindings 1)))
      
      (- (id) testMissingSequenceArgument is
-        (macro-1 missing-sequence (_ b)
+        (macro missing-sequence (_ b)
              b)
         
         (assert_throws "NuDestructureException" (missing-sequence 1)))
      
      (- (id) testSkipBindingsMacro is
-        (macro-1 skip-bindings (_ b)
+        (macro skip-bindings (_ b)
              b)
         
         (assert_equal 2 (skip-bindings 1 2)))
      
      (- (id) testSingleCatchAllArgMacro is
-        (macro-1 single-arg (*rest)
+        (macro single-arg (*rest)
              (cons '+ *rest))
         
         (assert_equal 6 (single-arg 1 2 3)))
      
      (- (id) testDoubleCatchAllArgMacro is
-        (macro-1 double-catch-all ((a *b) (c *d))
+        (macro double-catch-all ((a *b) (c *d))
              `(append (quote ,*b) (quote ,*d)))
         
         (assert_equal '(2 3 4 12 13 14) (double-catch-all (1 2 3 4) (11 12 13 14))))
      
      (- (id) testRestoreImplicitArgsExceptionMacro is
-        (macro-1 concat ()
+        (macro concat ()
              (cons '+ *args))
         
         (assert_throws "NuDestructureException" (concat 1 2 3))
@@ -135,7 +135,7 @@
      
      (- (id) testRestoreArgsExceptionMacro is
         ;; Intentionally refer to undefined symbol
-        (macro-1 x (a b)
+        (macro x (a b)
              c)
         
         (set a 0)
@@ -151,11 +151,11 @@
         ;; Make sure a runtime exception is properly caught
         (set code '(+ 2 x))
         
-        (macro-1 eval-it (sexp) `(eval ,sexp))
+        (macro eval-it (sexp) `(eval ,sexp))
         (assert_throws "NuUndefinedSymbol" (eval-it code)))
      
      (- (id) testMaskedVariablesMacro is
-        (macro-1 x (a b)
+        (macro x (a b)
              `(+ ,a ,b))
         
         (set a 1)
@@ -163,7 +163,7 @@
         (assert_equal 1 a))
      
      (- (id) testEmptyListArgsMacro is
-        (macro-1 donothing (a b)
+        (macro donothing (a b)
              b)
         
         (assert_equal 2 (donothing 1 2))
@@ -171,7 +171,7 @@
         (assert_equal 2 (donothing nil 2)))
      
      (- (id) testEmptyListArgsRecursiveMacro is
-        (macro-1 let* (bindings *body)
+        (macro let* (bindings *body)
              (if (null? *body)
                  (then
                       (throw* "LetException"
@@ -198,7 +198,7 @@
              (let* () )))
      
      (- (id) testDisruptCallingContextMacro is
-        (macro-1 leaky-macro (a b)
+        (macro leaky-macro (a b)
              `(set c (+ ,a ,b)))
         
         (assert_equal 5 (leaky-macro 2 3))

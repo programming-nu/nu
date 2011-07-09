@@ -8,7 +8,7 @@
 (class TestOnLisp is NuTestCase
      
      (- (id) testNil is
-        (macro-1 nil! (var)
+        (macro nil! (var)
              `(set ,var nil))
         
         (set newBody (macrox (nil! a)))
@@ -19,7 +19,7 @@
         (assert_equal nil a))
      
      (- (id) testOurWhen is
-        (macro-1 our-when (test *body)
+        (macro our-when (test *body)
              `(if ,test
                   (progn
                         ,@*body)))
@@ -37,7 +37,7 @@
         (assert_throws "NuUndefinedSymbol" b))
      
      (- (id) testOurAnd is
-        (macro-1 our-and (*args)
+        (macro our-and (*args)
              (case (*args length)
                    (0 t)
                    (1 (car *args))
@@ -53,12 +53,12 @@
         (assert_throws "NuUndefinedSymbol" n))
      
      (- (id) testOurSum is
-        (macro-1 our-sum (*args)
+        (macro our-sum (*args)
              `(+ ,@*args))
         (assert_equal 10 (our-sum 1 2 3 4)))
      
      (- (id) testOurFor is
-        (macro-1 myfor ((var start stop) *body)
+        (macro myfor ((var start stop) *body)
              `(let ((,var ,start)
                     (__gstop ,stop))	;; Only evaluate stop once
                    (while (<= ,var __gstop)
@@ -80,7 +80,7 @@
                (set var (+ var i)))
         (assert_equal 55 var)
         
-        (macro-1 inc! (n) `(set ,n (+ ,n 1)))
+        (macro inc! (n) `(set ,n (+ ,n 1)))
         
         (set var 0)
         (set n 9)
@@ -92,13 +92,13 @@
         (assert_equal 55 var))
      
      (- (id) testOurApply is
-        (macro-1 our-apply (f *data)
+        (macro our-apply (f *data)
              `(eval (cons ,f ,@*data)))
         
         (assert_equal 6 (our-apply + '(1 2 3))))
      
      (- (id) fixme_testOurLet is
-        (macro-1 mylet (bindings *body)
+        (macro mylet (bindings *body)
              `((do ,(bindings map:
                          (do (x) (car x)))
                    ,@*body)
@@ -110,7 +110,7 @@
                     (+ x y))))
      
      (- (id) testNumericIf is
-        (macro-1 numeric-if (expr pos zero neg)
+        (macro numeric-if (expr pos zero neg)
              `(let ((__expr ,expr))
                    (cond
                         ((> __expr 0) ,pos)
