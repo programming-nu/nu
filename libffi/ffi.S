@@ -147,7 +147,7 @@ _L__\name:
 	@ sp+4: fn
 
 	.text
-	.align 0
+	.align 4
 	.globl _ffi_call_SYSV
 _ffi_call_SYSV:	
 	UNWIND .fnstart

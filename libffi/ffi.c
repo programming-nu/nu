@@ -43,25 +43,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-        
-    /* Do not move this. Some versions of AIX are very picky about where
-     this is positioned. */
-#ifdef __GNUC__
-    //## # define alloca __builtin_alloca
-# define MAYBE_UNUSED __attribute__((__unused__))
-#else
-# define MAYBE_UNUSED
-
-#   ifndef alloca /* predefined by HP cc +Olibcalls */
-    char *alloca ();
-#   endif
-
-#endif
-    
+            
 void bcopy(const void *s1, void *s2, size_t n);
 #define memcpy(d, s, n) bcopy ((s), (d), (n))
 
-    
 #if defined(FFI_DEBUG)
 #include <stdio.h>
 #endif
@@ -138,24 +123,9 @@ FFI_TYPEDEF(uint32, UINT32, FFI_TYPE_UINT32);
 FFI_TYPEDEF(sint32, SINT32, FFI_TYPE_SINT32);
 FFI_TYPEDEF(uint64, UINT64, FFI_TYPE_UINT64);
 FFI_TYPEDEF(sint64, SINT64, FFI_TYPE_SINT64);
-
 FFI_TYPEDEF(pointer, void*, FFI_TYPE_POINTER);
-
 FFI_TYPEDEF(float, float, FFI_TYPE_FLOAT);
 FFI_TYPEDEF(double, double, FFI_TYPE_DOUBLE);
-
-#ifdef __alpha__
-/* Even if we're not configured to default to 128-bit long double, 
-   maintain binary compatibility, as -mlong-double-128 can be used
-   at any time.  */
-/* Validate the hard-coded number below.  */
-# if defined(__LONG_DOUBLE_128__) && FFI_TYPE_LONGDOUBLE != 4
-#  error FFI_TYPE_LONGDOUBLE out of date
-# endif
-const ffi_type ffi_type_longdouble = { 16, 16, 4, NULL };
-#elif FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
-FFI_TYPEDEF(longdouble, long double, FFI_TYPE_LONGDOUBLE);
-#endif
 
 /* -----------------------------------------------------------------------
    raw_api.c - Copyright (c) 1999, 2008  Red Hat, Inc.
@@ -459,13 +429,10 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
   /* Perform a sanity check on the return type */
   FFI_ASSERT_VALID_TYPE(cif->rtype);
 
-  /* x86-64 and s390 stack space allocation is handled in prep_machdep.  */
-#if !defined M68K && !defined __x86_64__ && !defined S390 && !defined PA
+  /* x86-64 stack space allocation is handled in prep_machdep.  */
+#if !defined __x86_64__ 
   /* Make space for the return structure pointer */
   if (cif->rtype->type == FFI_TYPE_STRUCT
-#ifdef SPARC
-      && (cif->abi != FFI_V9 || cif->rtype->size > 32)
-#endif
 #ifdef X86_DARWIN
       && (cif->rtype->size > 8)
 #endif
@@ -484,15 +451,7 @@ ffi_status ffi_prep_cif(ffi_cif *cif, ffi_abi abi, unsigned int nargs,
 	 check after the initialization.  */
       FFI_ASSERT_VALID_TYPE(*ptr);
 
-#if !defined __x86_64__ && !defined S390 && !defined PA
-#ifdef SPARC
-      if (((*ptr)->type == FFI_TYPE_STRUCT
-	   && ((*ptr)->size > 16 || cif->abi != FFI_V9))
-	  || ((*ptr)->type == FFI_TYPE_LONGDOUBLE
-	      && cif->abi != FFI_V9))
-	bytes += sizeof(void*);
-      else
-#endif
+#if !defined __x86_64__ 
 	{
 	  /* Add any padding if necessary */
 	  if (((*ptr)->alignment - 1) & bytes)
@@ -729,6 +688,8 @@ static void ffi_prep_incoming_args_SYSV (char *stack, void **ret,
 void ffi_closure_SYSV (ffi_closure *);
 
 /* This function is jumped to by the trampoline */
+unsigned int FFI_HIDDEN ffi_closure_SYSV_inner (ffi_closure *, void **, void *)
+__attribute__ ((regparm(1)));
 
 unsigned int
 ffi_closure_SYSV_inner (closure, respp, args)

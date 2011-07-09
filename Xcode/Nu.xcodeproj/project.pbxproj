@@ -34,7 +34,6 @@
 		22B3B3CA13B033D400B3AB31 /* test_math.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39C13B033D400B3AB31 /* test_math.nu */; };
 		22B3B3CB13B033D400B3AB31 /* test_memory.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39D13B033D400B3AB31 /* test_memory.nu */; };
 		22B3B3CC13B033D400B3AB31 /* test_nu.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39E13B033D400B3AB31 /* test_nu.nu */; };
-		22B3B3CD13B033D400B3AB31 /* test_nu.rb in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39F13B033D400B3AB31 /* test_nu.rb */; };
 		22B3B3CE13B033D400B3AB31 /* test_numbers.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A013B033D400B3AB31 /* test_numbers.nu */; };
 		22B3B3CF13B033D400B3AB31 /* test_onlisp.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A113B033D400B3AB31 /* test_onlisp.nu */; };
 		22B3B3D013B033D400B3AB31 /* test_operators.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A213B033D400B3AB31 /* test_operators.nu */; };
@@ -143,7 +142,6 @@
 		22B3B39C13B033D400B3AB31 /* test_math.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_math.nu; sourceTree = "<group>"; };
 		22B3B39D13B033D400B3AB31 /* test_memory.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_memory.nu; sourceTree = "<group>"; };
 		22B3B39E13B033D400B3AB31 /* test_nu.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_nu.nu; sourceTree = "<group>"; };
-		22B3B39F13B033D400B3AB31 /* test_nu.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = test_nu.rb; sourceTree = "<group>"; };
 		22B3B3A013B033D400B3AB31 /* test_numbers.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_numbers.nu; sourceTree = "<group>"; };
 		22B3B3A113B033D400B3AB31 /* test_onlisp.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_onlisp.nu; sourceTree = "<group>"; };
 		22B3B3A213B033D400B3AB31 /* test_operators.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_operators.nu; sourceTree = "<group>"; };
@@ -325,7 +323,6 @@
 				22B3B39C13B033D400B3AB31 /* test_math.nu */,
 				22B3B39D13B033D400B3AB31 /* test_memory.nu */,
 				22B3B39E13B033D400B3AB31 /* test_nu.nu */,
-				22B3B39F13B033D400B3AB31 /* test_nu.rb */,
 				22B3B3A013B033D400B3AB31 /* test_numbers.nu */,
 				22B3B3A113B033D400B3AB31 /* test_onlisp.nu */,
 				22B3B3A213B033D400B3AB31 /* test_operators.nu */,
@@ -554,7 +551,6 @@
 				22B3B3CA13B033D400B3AB31 /* test_math.nu in Resources */,
 				22B3B3CB13B033D400B3AB31 /* test_memory.nu in Resources */,
 				22B3B3CC13B033D400B3AB31 /* test_nu.nu in Resources */,
-				22B3B3CD13B033D400B3AB31 /* test_nu.rb in Resources */,
 				22B3B3CE13B033D400B3AB31 /* test_numbers.nu in Resources */,
 				22B3B3CF13B033D400B3AB31 /* test_onlisp.nu in Resources */,
 				22B3B3D013B033D400B3AB31 /* test_operators.nu in Resources */,
@@ -704,13 +700,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../build/i386\"",
-					"\"$(SRCROOT)/../build/x86_64\"",
-					"\"$(SRCROOT)/../examples/NuAnywhere/NuInject/build/x86_64\"",
-					"\"$(SRCROOT)/../iphone/platforms/iPhoneSimulator/lib\"",
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_NAME = Nu;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -735,13 +725,7 @@
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../build/i386\"",
-					"\"$(SRCROOT)/../build/x86_64\"",
-					"\"$(SRCROOT)/../examples/NuAnywhere/NuInject/build/x86_64\"",
-					"\"$(SRCROOT)/../iphone/platforms/iPhoneSimulator/lib\"",
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				PRODUCT_NAME = Nu;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -870,13 +854,7 @@
 				);
 				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../build/i386\"",
-					"\"$(SRCROOT)/../build/x86_64\"",
-					"\"$(SRCROOT)/../examples/NuAnywhere/NuInject/build/x86_64\"",
-					"\"$(SRCROOT)/../iphone/platforms/iPhoneSimulator/lib\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -912,13 +890,7 @@
 				);
 				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../build/i386\"",
-					"\"$(SRCROOT)/../build/x86_64\"",
-					"\"$(SRCROOT)/../examples/NuAnywhere/NuInject/build/x86_64\"",
-					"\"$(SRCROOT)/../iphone/platforms/iPhoneSimulator/lib\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
