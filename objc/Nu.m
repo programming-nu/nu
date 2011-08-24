@@ -6313,6 +6313,11 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
         // Messaging null is ok.
         else if (self == Nu__null) {
         }
+        // Test if target specifies another object that should receive the message
+        else if ( (target = [target forwardingTargetForSelector:sel]) ) {
+           //NSLog(@"found forwarding target: %@ for selector: %@", target, NSStringFromSelector(sel));
+           result = [target sendMessage:cdr withContext:context];
+        }
         // Otherwise, call the overridable handler for unknown messages.
         else {
             //NSLog(@"calling handle unknown message for %@", [cdr stringValue]);
