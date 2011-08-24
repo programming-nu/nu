@@ -244,6 +244,10 @@
         // Messaging null is ok.
         else if (self == Nu__null) {
         }
+        else if ( (target = [target forwardingTargetForSelector:sel]) ) {
+            //NSLog(@"found forwarding target: %@ for selector: %@", target, NSStringFromSelector(sel));
+            result = [target sendMessage:cdr withContext:context];
+        }
         // Otherwise, call the overridable handler for unknown messages.
         else {
             //NSLog(@"calling handle unknown message for %@", [cdr stringValue]);
@@ -258,7 +262,6 @@
     [result autorelease];
     return result;
 }
-
 - (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     return [self sendMessage:cdr withContext:context];
