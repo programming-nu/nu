@@ -5564,9 +5564,7 @@ static NSMutableDictionary *handlerWarehouse = nil;
     NSArray* keys = [context allKeys];
     NSUInteger count = [keys count];
     for (int i = 0; i < count; i++) {
-#ifdef MACRO1_DEBUG
         id key = [keys objectAtIndex:i];
-#endif
         Macro1Debug(@"contextdump: %@  =  %@  [%@]", key,
                     [[context objectForKey:key] stringValue],
                     [[context objectForKey:key] class]);
@@ -5744,8 +5742,9 @@ static NSMutableDictionary *handlerWarehouse = nil;
     
     Macro1Debug(@"Dumping context:");
     Macro1Debug(@"---------------:");
+#ifdef MACRO1_DEBUG
     [self dumpContext:calling_context];
-    
+#endif
     id old_args = [calling_context objectForKey:[symbolTable symbolWithString:@"*args"]];
     [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithString:@"*args"]];
     
@@ -5785,8 +5784,9 @@ static NSMutableDictionary *handlerWarehouse = nil;
     
     Macro1Debug(@"Dumping context (after destructure):");
     Macro1Debug(@"-----------------------------------:");
+#ifdef MACRO1_DEBUG
     [self dumpContext:calling_context];
-    
+#endif
     // evaluate the body of the block in the calling context (implicit progn)
     id value = Nu__null;
     
@@ -5832,8 +5832,9 @@ static NSMutableDictionary *handlerWarehouse = nil;
         
         Macro1Debug(@"Dumping context at end:");
         Macro1Debug(@"----------------------:");
+#ifdef MACRO1_DEBUG
         [self dumpContext:calling_context];
-        
+#endif
         // restore the old value of *args
         [self restoreArgs:old_args context:calling_context];
         
@@ -7436,8 +7437,8 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     
-    id quasiquote_eval = [symbolTable symbolWithString:@"quasiquote-eval"];
-    id quasiquote_splice = [symbolTable symbolWithString:@"quasiquote-splice"];
+    id quasiquote_eval = [[symbolTable symbolWithString:@"quasiquote-eval"] value];
+    id quasiquote_splice = [[symbolTable symbolWithString:@"quasiquote-splice"] value];
     
     QuasiLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
     
@@ -7458,12 +7459,12 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
             QuasiLog(@"  quasiquote: null-list");
             value = Nu__null;
         }
-        else if ([[cursor car] car] == quasiquote_eval) {
+        else if ([[symbolTable lookup:[[[cursor car] car] stringValue]] value] == quasiquote_eval) {                
             QuasiLog(@"quasiquote-eval: Evaling: [[cursor car] cdr]: %@", [[[cursor car] cdr] stringValue]);
             value = [[[cursor car] cdr] evalWithContext:context];
             QuasiLog(@"  quasiquote-eval: Value: %@", [value stringValue]);
         }
-        else if ([[cursor car] car] == quasiquote_splice) {
+        else if ([[symbolTable lookup:[[[cursor car] car] stringValue]] value] == quasiquote_splice) {        
             QuasiLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@",
                      [[[cursor car] cdr] stringValue]);
             value = [[[cursor car] cdr] evalWithContext:context];
