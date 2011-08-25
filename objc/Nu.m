@@ -16,14 +16,14 @@
  limitations under the License.
  */
 
-#define NU_VERSION "1.9.1"
-#define NU_VERSION_MAJOR 1
-#define NU_VERSION_MINOR 9
-#define NU_VERSION_TWEAK 1
-#define NU_RELEASE_DATE "2011-07-02"
+#define NU_VERSION "2.0.0"
+#define NU_VERSION_MAJOR 2
+#define NU_VERSION_MINOR 0
+#define NU_VERSION_TWEAK 0
+#define NU_RELEASE_DATE "2011-08-25"
 #define NU_RELEASE_YEAR  2011
-#define NU_RELEASE_MONTH 07
-#define NU_RELEASE_DAY   02
+#define NU_RELEASE_MONTH 08
+#define NU_RELEASE_DAY   25
 
 #import <AvailabilityMacros.h>
 #import <unistd.h>
@@ -5561,6 +5561,7 @@ static NSMutableDictionary *handlerWarehouse = nil;
 
 - (void) dumpContext:(NSMutableDictionary*)context
 {
+#ifdef MACRO1_DEBUG
     NSArray* keys = [context allKeys];
     NSUInteger count = [keys count];
     for (int i = 0; i < count; i++) {
@@ -5569,6 +5570,7 @@ static NSMutableDictionary *handlerWarehouse = nil;
                     [[context objectForKey:key] stringValue],
                     [[context objectForKey:key] class]);
     }
+#endif
 }
 
 - (void) restoreArgs:(id)old_args context:(NSMutableDictionary*)calling_context

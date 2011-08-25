@@ -4,7 +4,7 @@
      (ifDarwin (then (NSString stringWithShellCommand:"xcode-select -print-path"))
                (else nil)))
  
-(global VERSION '(1 9 0)) #(major minor tweak)
+(global VERSION '(2 0 0)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
