@@ -95,6 +95,7 @@
 		22B3B50313B0386600B3AB31 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50213B0386600B3AB31 /* UIKit.framework */; };
 		22B3B50513B0388C00B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50413B0388C00B3AB31 /* Foundation.framework */; };
 		22B3B50713B038D000B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50613B038D000B3AB31 /* Foundation.framework */; };
+		22EE1B931406F494007AFC23 /* test_forwarding.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22EE1B921406F494007AFC23 /* test_forwarding.nu */; };
 		22EE2C0413A4731600895861 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 22EE2C0213A4731600895861 /* InfoPlist.strings */; };
 		22EE2C0613A4731600895861 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0513A4731600895861 /* main.m */; };
 		22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0913A4731600895861 /* NuAppDelegate.m */; };
@@ -185,6 +186,7 @@
 		22B3B50213B0386600B3AB31 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		22B3B50413B0388C00B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		22B3B50613B038D000B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		22EE1B921406F494007AFC23 /* test_forwarding.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_forwarding.nu; sourceTree = "<group>"; };
 		22EE2BF413A4731600895861 /* NuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		22EE2C0113A4731600895861 /* NuApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NuApp-Info.plist"; sourceTree = "<group>"; };
 		22EE2C0313A4731600895861 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 				22B3B39313B033D400B3AB31 /* test_enumerable.nu */,
 				22B3B39413B033D400B3AB31 /* test_errors.nu */,
 				22B3B39513B033D400B3AB31 /* test_exceptions.nu */,
+				22EE1B921406F494007AFC23 /* test_forwarding.nu */,
 				22B3B39613B033D400B3AB31 /* test_interface.nu */,
 				22B3B39713B033D400B3AB31 /* test_list.nu */,
 				22B3B39813B033D400B3AB31 /* test_list_enumerable.nu */,
@@ -590,6 +593,7 @@
 				22B3B41313B033EE00B3AB31 /* nu.nu in Resources */,
 				22B3B41513B033EE00B3AB31 /* template.nu in Resources */,
 				22B3B41713B033EE00B3AB31 /* test.nu in Resources */,
+				22EE1B931406F494007AFC23 /* test_forwarding.nu in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
