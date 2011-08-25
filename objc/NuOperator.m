@@ -694,9 +694,9 @@ limitations under the License.
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
 
-    id quasiquote_eval = [symbolTable symbolWithString:@"quasiquote-eval"];
-    id quasiquote_splice = [symbolTable symbolWithString:@"quasiquote-splice"];
-
+    id quasiquote_eval = [[symbolTable symbolWithString:@"quasiquote-eval"] value];
+    id quasiquote_splice = [[symbolTable symbolWithString:@"quasiquote-splice"] value];
+ 
     QuasiLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
 
     id result = Nu__null;
@@ -716,12 +716,14 @@ limitations under the License.
             QuasiLog(@"  quasiquote: null-list");
             value = Nu__null;
         }
-        else if ([[cursor car] car] == quasiquote_eval) {
+        //else if ([[cursor car] car] == quasiquote_eval) {
+        else if ([[symbolTable lookup:[[[[cursor car] car] stringValue] cStringUsingEncoding:NSUTF8StringEncoding]] value] == quasiquote_eval) {
             QuasiLog(@"quasiquote-eval: Evaling: [[cursor car] cdr]: %@", [[[cursor car] cdr] stringValue]);
             value = [[[cursor car] cdr] evalWithContext:context];
             QuasiLog(@"  quasiquote-eval: Value: %@", [value stringValue]);
         }
-        else if ([[cursor car] car] == quasiquote_splice) {
+        //else if ([[cursor car] car] == quasiquote_splice) {
+        else if ([[symbolTable lookup:[[[[cursor car] car] stringValue] cStringUsingEncoding:NSUTF8StringEncoding]] value] == quasiquote_splice) {
             QuasiLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@",
                 [[[cursor car] cdr] stringValue]);
             value = [[[cursor car] cdr] evalWithContext:context];
