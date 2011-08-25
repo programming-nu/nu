@@ -5041,6 +5041,11 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             //NSLog(@"argument is %lf", x);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
+        else if (!strcmp(type, ":")) {
+            SEL x = va_arg(ap, SEL);
+            //NSLog(@"collect_arguments: [:] (SEL) = %@", NSStringFromSelector(x));
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
         else if (!strcmp(type, "^@")) {
             void *x = va_arg(ap, void *);
             //NSLog(@"argument is %lf", x);
@@ -6307,6 +6312,11 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
         }
         // Messaging null is ok.
         else if (self == Nu__null) {
+        }
+        // Test if target specifies another object that should receive the message
+        else if ( (target = [target forwardingTargetForSelector:sel]) ) {
+           //NSLog(@"found forwarding target: %@ for selector: %@", target, NSStringFromSelector(sel));
+           result = [target sendMessage:cdr withContext:context];
         }
         // Otherwise, call the overridable handler for unknown messages.
         else {
