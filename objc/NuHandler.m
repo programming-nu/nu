@@ -64,6 +64,11 @@ static id collect_arguments(struct handler_description *description, va_list ap)
             //NSLog(@"argument is %lf", x);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
+        else if (!strcmp(type, ":")) {
+            SEL x = va_arg(ap, SEL);
+            //NSLog(@"collect_arguments: [:] (SEL) = %@", NSStringFromSelector(x));
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
         else if (!strcmp(type, "{CGRect={CGPoint=ff}{CGSize=ff}}")
                  || (!strcmp(type, "{CGRect=\"origin\"{CGPoint=\"x\"f\"y\"f}\"size\"{CGSize=\"width\"f\"height\"f}}"))) {
             CGRect x = va_arg(ap, CGRect);
