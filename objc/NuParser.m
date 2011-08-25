@@ -931,7 +931,9 @@ static int nu_parse_escape_sequences(NSString *string, int i, int imax, NSMutabl
 {
     [self setFilename:filename];
     id result = [self parse:string];
-    [self setFilename:NULL];
+    //load operator will set the filename to null, so parsed code can access -filename
+    //and get back the right result
+    //[self setFilename:NULL];
     return result;
 }
 

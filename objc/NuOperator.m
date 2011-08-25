@@ -1543,6 +1543,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         if (string) {
             id body = [parser parse:string asIfFromFilename:[fullPath cStringUsingEncoding:NSUTF8StringEncoding]];
             value = [body evalWithContext:context];
+            [parser setFilename:NULL];
             return [symbolTable symbolWithCString:"t"];
         }
         else {
@@ -1606,6 +1607,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
             if (string) {
                 id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
                 [body evalWithContext:context];
+                [parser setFilename:NULL];
                 return [symbolTable symbolWithCString:"t"];
             }
             else {
