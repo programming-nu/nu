@@ -257,9 +257,10 @@ static bool nu_valueIsTrue(id value)
 int NuMain(int argc, const char *argv[])
 {
     @autoreleasepool {        
-        NuInit();        
+        NuInit();      
+        
         @try
-        {                
+        {                    
             // first we try to load main.nu from the application bundle.
             NSString *main_path = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"nu"];
             if (main_path) {
@@ -1692,6 +1693,7 @@ static id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *ar
     [target class];
     
     //NSLog(@"calling ObjC method %s with target of class %@", sel_getName(method_getName(m)), [target class]);
+    
     IMP imp = method_getImplementation(m);
     
     // if the imp has an associated block, this is a nu-to-nu call.
@@ -1752,9 +1754,7 @@ static id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *ar
 		
 		raise_argc_exception(s, argument_count-2, [args count]);
     }
-    else {
-        bool success = false;
-        
+    else {        
         char return_type_buffer[BUFSIZE], arg_type_buffer[BUFSIZE];
         method_getReturnType(m, return_type_buffer, BUFSIZE);
         ffi_type *result_type = ffi_type_for_objc_type(&return_type_buffer[0]);
@@ -1789,13 +1789,18 @@ static id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *ar
             NSLog (@"failed to prepare cif structure");
         }
         else {
+            const char *method_name = sel_getName(method_getName(m));
+            BOOL callingInitializer = !strncmp("init", method_name, 4);
+            if (callingInitializer) {
+                [target retain]; // in case an init method releases its target (to return something else), we preemptively retain it
+            }
+            // call the method handler
             ffi_call(&cif2, FFI_FN(imp), result_value, argument_values);
-            success = true;
-        }
-        if (success) {
+            // extract the return value
             result = get_nu_value_from_objc_value(result_value, &return_type_buffer[0]);
             // NSLog(@"result is %@", result);
             // NSLog(@"retain count %d", [result retainCount]);
+            
             // Return values should not require a release.
             // Either they are owned by an existing object or are autoreleased.
             // Exceptions to this rule are handled below.
@@ -1809,6 +1814,16 @@ static id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *ar
             if (already_retained) {
                 [result autorelease];                
             }
+            
+            if (callingInitializer) {
+                if (result == target) {
+                    // NSLog(@"undoing preemptive retain of init target %@", [target className]);
+                    [target release]; // undo our preemptive retain
+                } else {
+                    // NSLog(@"keeping preemptive retain of init target %@", [target className]);
+                }
+            }
+            
             for (i = 0; i < [args count]; i++) {
                 if (argument_needs_retained[i])
                     [[args objectAtIndex:i] retainReferencedObject];
@@ -6319,8 +6334,8 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
         }
         // Test if target specifies another object that should receive the message
         else if ( (target = [target forwardingTargetForSelector:sel]) ) {
-           //NSLog(@"found forwarding target: %@ for selector: %@", target, NSStringFromSelector(sel));
-           result = [target sendMessage:cdr withContext:context];
+            //NSLog(@"found forwarding target: %@ for selector: %@", target, NSStringFromSelector(sel));
+            result = [target sendMessage:cdr withContext:context];
         }
         // Otherwise, call the overridable handler for unknown messages.
         else {
