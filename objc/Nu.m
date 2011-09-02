@@ -266,7 +266,7 @@ int NuMain(int argc, const char *argv[])
             if (main_path) {
                 NSString *main_nu = [NSString stringWithContentsOfFile:main_path encoding:NSUTF8StringEncoding error:nil];
                 if (main_nu) {
-                    NuParser *parser = [[NuParser alloc] init];
+                    NuParser *parser = [Nu sharedParser];
                     id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
                     [parser eval:script];
                     [parser release];
@@ -275,7 +275,7 @@ int NuMain(int argc, const char *argv[])
             }
             // if that doesn't work, use the arguments to decide what to execute
             else if (argc > 1) {
-                NuParser *parser = [[NuParser alloc] init];
+                NuParser *parser = [Nu sharedParser];
                 id script, result;
                 bool didSomething = false;
                 bool goInteractive = false;
@@ -328,7 +328,7 @@ int NuMain(int argc, const char *argv[])
             else {
                 if (!isatty(stdin->_file))	   
                 {
-                    NuParser *parser = [[NuParser alloc] init];
+                    NuParser *parser = [Nu sharedParser];
                     id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
                     id script = [parser parse:string asIfFromFilename:"stdin"];
                     [parser eval:script];
@@ -10041,7 +10041,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
 + (int) main
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NuParser *parser = [[NuParser alloc] init];
+    NuParser *parser = [Nu sharedParser];
     int result = [parser interact];
     [parser release];
     [pool drain];
