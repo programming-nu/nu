@@ -20,10 +20,10 @@
 #define NU_VERSION_MAJOR 2
 #define NU_VERSION_MINOR 0
 #define NU_VERSION_TWEAK 1
-#define NU_RELEASE_DATE "2011-08-25"
+#define NU_RELEASE_DATE "2011-09-02"
 #define NU_RELEASE_YEAR  2011
-#define NU_RELEASE_MONTH 08
-#define NU_RELEASE_DAY   25
+#define NU_RELEASE_MONTH 09
+#define NU_RELEASE_DAY   02
 
 #import <AvailabilityMacros.h>
 #import <Foundation/Foundation.h>
