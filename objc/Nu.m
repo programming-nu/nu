@@ -7637,6 +7637,23 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 
 @end
 
+@interface Nu_local_operator : NuOperator {}
+@end
+
+@implementation Nu_local_operator
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    
+    NuSymbol *symbol = [cdr car];
+    id value = [[cdr cdr] car];
+    id result = [value evalWithContext:context];       
+    [context setPossiblyNullObject:result forKey:symbol];
+    return result;
+}
+
+@end
+
+
 @interface Nu_global_operator : NuOperator {}
 @end
 
@@ -8908,6 +8925,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install(@"context",  Nu_context_operator);
     install(@"set",      Nu_set_operator);
     install(@"global",   Nu_global_operator);
+    install(@"local",    Nu_local_operator);
     
     install(@"regex",    Nu_regex_operator);
     
