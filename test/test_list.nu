@@ -88,7 +88,22 @@
      
      (- testApply is
         (assert_equal 1 (apply + '(1)))
-        (assert_equal 3 (apply + '(1 2))))
+        (assert_equal 3 (apply + '(1 2)))
+        (assert_equal '(a b c) (apply list '(a b c)))
+        (function identity (x) x)
+        (assert_equal 'a (apply identity '(a)))
+        (set a "foo")
+        (assert_equal 'a (apply identity '(a)))
+        (assert_equal "foo" (apply identity (list a)))
+        (assert_throws "NuUndefinedSymbol" (apply identity (list b)))
+        (assert_equal '(a b c d) (apply list 'a 'b '(c d)))
+        (set a 1)
+        (set b 2)
+        (set c 3)
+        (set d 4)
+        (assert_equal '(a 2 c 4) (apply list 'a b `(c ,d)))
+        (assert_equal 10 (apply + a b (list c d)))
+        )
      
      (- testSort is
         (assert_equal '() (sort '()))

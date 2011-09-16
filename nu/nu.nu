@@ -102,9 +102,9 @@
 
 ;; Applies a function to a list of arguments.
 ;; For example (apply + '(1 2)) returns 3.
-(global apply
-        (macro _ (fn *fnargs)
-             `(eval (cons ,fn ,*fnargs))))
+;;(global apply
+;;        (macro _ (fn *fnargs)
+;;             `(eval (cons ,fn ,*fnargs))))
 
 ;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
 ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
