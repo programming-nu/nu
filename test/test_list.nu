@@ -102,8 +102,7 @@
         (set c 3)
         (set d 4)
         (assert_equal '(a 2 c 4) (apply list 'a b `(c ,d)))
-        (assert_equal 10 (apply + a b (list c d)))
-        )
+        (assert_equal 10 (apply + a b (list c d))))
      
      (- testSort is
         (assert_equal '() (sort '()))
