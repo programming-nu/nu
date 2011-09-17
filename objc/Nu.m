@@ -7033,11 +7033,11 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 @implementation Nu_apply_operator
 - (id) prependCell:(id)item withSymbol:(id)symbol
 {
-	id qitem = [[[NuCell alloc] init] autorelease];
-	[qitem setCar:symbol];
-	[qitem setCdr:[[[NuCell alloc] init] autorelease]];
-	[[qitem cdr] setCar:item];
-	return qitem;
+    id qitem = [[[NuCell alloc] init] autorelease];
+    [qitem setCar:symbol];
+    [qitem setCdr:[[[NuCell alloc] init] autorelease]];
+    [[qitem cdr] setCar:item];
+    return qitem;
 }
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
@@ -7064,13 +7064,13 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 
         id item = [[cursor car] evalWithContext:context];
         id qitem = [self prependCell:item withSymbol:quoteSymbol];
-		[qargs_cursor setCar:qitem];
-		cursor = [cursor cdr];
+        [qargs_cursor setCar:qitem];
+        cursor = [cursor cdr];
     }
 
     // The rest of the arguments are in a list
     id args = [cursor evalWithContext:context];
-	cursor = args;
+    cursor = args;
 
     while (cursor && (cursor != Nu__null)) {
         if (qargs == Nu__null) {
@@ -7083,7 +7083,7 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
         }
         id item = [cursor car];
 
-		id qitem = [self prependCell:item withSymbol:quoteSymbol];
+        id qitem = [self prependCell:item withSymbol:quoteSymbol];
         [qargs_cursor setCar:qitem];
         cursor = [cursor cdr];
     }
