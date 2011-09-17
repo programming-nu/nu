@@ -267,6 +267,78 @@ limitations under the License.
 
 @end
 
+@interface Nu_apply_operator : NuOperator {}
+@end
+
+@implementation Nu_apply_operator
+- (id) prependCell:(id)item withSymbol:(id)symbol
+{
+    id qitem = [[[NuCell alloc] init] autorelease];
+    [qitem setCar:symbol];
+    [qitem setCdr:[[[NuCell alloc] init] autorelease]];
+    [[qitem cdr] setCar:item];
+    return qitem;
+}
+
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+    id quoteSymbol = [symbolTable symbolWithString:@"quote"];
+
+    id fn = [cdr car]; 
+
+    // Arguments to fn can be anything, but last item must be a list
+    id qargs = Nu__null;
+    id qargs_cursor = Nu__null;
+    id cursor = [cdr cdr]; 
+
+    while (cursor && (cursor != Nu__null) && [cursor cdr] && ([cursor cdr] != Nu__null)) {
+        if (qargs == Nu__null) {
+            qargs = [[[NuCell alloc] init] autorelease];
+            qargs_cursor = qargs;
+        }     
+        else {
+            [qargs_cursor setCdr:[[[NuCell alloc] init] autorelease]];
+            qargs_cursor = [qargs_cursor cdr]; 
+        }     
+
+        id item = [[cursor car] evalWithContext:context];
+        id qitem = [self prependCell:item withSymbol:quoteSymbol];
+        [qargs_cursor setCar:qitem];
+        cursor = [cursor cdr]; 
+    }
+
+    // The rest of the arguments are in a list
+    id args = [cursor evalWithContext:context];
+    cursor = args; 
+
+    while (cursor && (cursor != Nu__null)) {
+        if (qargs == Nu__null) {
+            qargs = [[[NuCell alloc] init] autorelease];
+            qargs_cursor = qargs;
+        }     
+        else {
+            [qargs_cursor setCdr:[[[NuCell alloc] init] autorelease]];
+            qargs_cursor = [qargs_cursor cdr]; 
+        }     
+        id item = [cursor car]; 
+
+        id qitem = [self prependCell:item withSymbol:quoteSymbol];
+        [qargs_cursor setCar:qitem];
+        cursor = [cursor cdr]; 
+    }
+
+    // Call the real function with the evaluated and quoted args
+    id expr = [[[NuCell alloc] init] autorelease];
+    [expr setCar:fn];
+    [expr setCdr:qargs];
+
+    id result = [expr evalWithContext:context];
+
+    return result;
+}
+@end
+
 @interface Nu_cond_operator : NuOperator {}
 @end
 
@@ -2198,6 +2270,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     install("cons",     Nu_cons_operator);
     install("append",   Nu_append_operator);
 
+    install("apply",    Nu_apply_operator);
     install("cond",     Nu_cond_operator);
     install("case",     Nu_case_operator);
     install("if",       Nu_if_operator);

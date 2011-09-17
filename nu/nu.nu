@@ -90,14 +90,6 @@
         (do (ls)
             (not (any (ls map:(do (x) (not x)))))))
 
-;; Applies a function to a list of arguments.
-;; For example (apply + '(1 2)) returns 3.
-(global apply
-        (macro-0 _
-             (set __f (eval (car margs)))
-             (set __args (eval (cdr margs)))
-             (eval (cons __f __args))))
-
 ;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
 ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
 ;; an exception.
