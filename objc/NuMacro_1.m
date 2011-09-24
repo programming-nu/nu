@@ -97,10 +97,8 @@ extern id Nu__null;
     NSArray* keys = [context allKeys];
     int count = [keys count];
     for (int i = 0; i < count; i++) {
-        #ifdef MACRO1_DEBUG
         id key = [keys objectAtIndex:i];
-        #endif
-        Macro1Debug(@"contextdump: %@  =  %@  [%@]", key,
+        NSLog(@"contextdump: %@  =  %@  [%@]", key,
             [[context objectForKey:key] stringValue],
             [[context objectForKey:key] class]);
     }
@@ -277,7 +275,9 @@ fromContext:(NSMutableDictionary*)calling_context
 
     Macro1Debug(@"Dumping context:");
     Macro1Debug(@"---------------:");
+#ifdef MACRO1_DEBUG
     [self dumpContext:calling_context];
+#endif
 
     id old_args = [calling_context objectForKey:[symbolTable symbolWithCString:"*args"]];
     [calling_context setPossiblyNullObject:cdr forKey:[symbolTable symbolWithCString:"*args"]];
@@ -318,7 +318,9 @@ fromContext:(NSMutableDictionary*)calling_context
 
     Macro1Debug(@"Dumping context (after destructure):");
     Macro1Debug(@"-----------------------------------:");
+#ifdef MACRO1_DEBUG
     [self dumpContext:calling_context];
+#endif
 
     // evaluate the body of the block in the calling context (implicit progn)
     id value = Nu__null;
@@ -365,7 +367,9 @@ fromContext:(NSMutableDictionary*)calling_context
 
         Macro1Debug(@"Dumping context at end:");
         Macro1Debug(@"----------------------:");
+#ifdef MACRO1_DEBUG
         [self dumpContext:calling_context];
+#endif
 
         // restore the old value of *args
         [self restoreArgs:old_args context:calling_context];
