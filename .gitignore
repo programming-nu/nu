@@ -9,3 +9,4 @@ libNu.a
 .DS_Store
 doc
 examples/*/*.app
+xcuserdata
