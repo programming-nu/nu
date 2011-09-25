@@ -92,7 +92,7 @@ static size_t size_of_objc_type(const char *typeString);
 
 #pragma mark - NuHandler.h
 
-struct handler_description
+struct nu_handler_description
 {
     IMP handler;
     char **description;
@@ -103,12 +103,12 @@ struct handler_description
  @abstract Internal class used to store and vend method implementations on platforms that don't allow them to be constructed at runtime.
  */
 @interface NuHandlerWarehouse : NSObject
-+ (void) registerHandlers:(struct handler_description *) description withCount:(int) count forReturnType:(NSString *) returnType;
++ (void) registerHandlers:(struct nu_handler_description *) description withCount:(int) count forReturnType:(NSString *) returnType;
 + (IMP) handlerWithSelector:(SEL)sel block:(NuBlock *)block signature:(const char *) signature userdata:(char **) userdata;
 @end
 
 static void nu_handler(void *return_value, 
-                       struct handler_description *description, 
+                       struct nu_handler_description *description, 
                        id receiver, 
                        va_list ap);
 
@@ -2117,7 +2117,7 @@ static id add_method_to_class(Class c, NSString *methodName, NSString *signature
     
     id arg_cursor = cdr;
     void *result_value = value_buffer_for_objc_type(return_type_identifier);
-    void **argument_values = (void **) malloc (argument_count * sizeof(void *));
+    void **argument_values = (void **) (argument_count ? malloc (argument_count * sizeof(void *)) : NULL);
     
     for (i = 0; i < argument_count; i++) {
         argument_values[i] = value_buffer_for_objc_type( argument_type_identifiers[i]);
@@ -2361,7 +2361,7 @@ static id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDiction
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     
     id returnType = [NSNull null];
-    id selector = [[NuCell alloc] init];
+    id selector = [[[NuCell alloc] init] autorelease];
     id argumentTypes = [NSNull null];
     id argumentNames = [NSNull null];
     id isSymbol = [symbolTable symbolWithString:@"is"];
@@ -2469,7 +2469,7 @@ static id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDiction
         }
         else {
             // build the signature, first get the return type
-            signature = [[NSMutableString alloc] init];
+            signature = [NSMutableString string];
             [signature appendString:signature_for_identifier(returnType, symbolTable)];
             
             // then add the common stuff
@@ -2657,9 +2657,11 @@ static void *construct_block_handler(NuBlock *block, const char *signature)
 #if 0
 	NSLog(@"using libffi to construct handler for nu block with %d arguments and signature %s", argument_count, signature);
 #endif
-	
-	
-	
+	if (argument_count < 0) {
+        NSLog(@"error in argument construction");
+        return NULL;
+    }
+    
     ffi_type **argument_types = (ffi_type **) malloc ((argument_count+1) * sizeof(ffi_type *));
     ffi_type *result_type = ffi_type_for_objc_type(userdata[0]+1);
     
@@ -5022,7 +5024,7 @@ static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
 
 #pragma mark - NuHandler.m
 
-static id collect_arguments(struct handler_description *description, va_list ap)
+static id collect_arguments(struct nu_handler_description *description, va_list ap)
 {
     int i = 0;
     char *type;
@@ -5100,26 +5102,34 @@ static id collect_arguments(struct handler_description *description, va_list ap)
 }
 
 // helper function called by method handlers
-static void nu_handler(void *return_value, struct handler_description *description, id receiver, va_list ap)
+static void nu_handler(void *return_value, struct nu_handler_description *handler, id receiver, va_list ap)
 {
     id result;
+    BOOL retained_through_autorelease = NO;
     @autoreleasepool {
-        NuBlock *block = (NuBlock *) description->description[1];
+        NuBlock *block = (NuBlock *) handler->description[1];
         // NSLog(@"handling %@", [block stringValue]);
-        id arguments = collect_arguments(description, ap);
+        id arguments = collect_arguments(handler, ap);
         result = [block evalWithArguments:[arguments cdr] context:nil self:receiver];
-        if (description->description[0][1] == '@') {
-            [result retain];
-            if (description->description[0][0] == '!') {
-                [result retain];
-            }
-        }
         if (return_value) {
-            set_objc_value_from_nu_value(return_value, result, description->description[0]+1);
+            // if the call returns an object, retain the result so that it will survive the autorelease.
+            // we undo this retain once we're safely outside of the autorelease block.
+            if (handler->description[0][1] == '@') {
+                retained_through_autorelease = YES;
+                [result retain];
+                // if the call is supposed to return a retained object, add an additional retain.
+                if (handler->description[0][0] == '!') {
+                    // The static analyzer says this is a potential leak. 
+                    // It's intentional, we are returning from a method that should return a retained (+1) object.
+                    [result retain]; 
+                }
+            }
+            set_objc_value_from_nu_value(return_value, result, handler->description[0]+1);
         }
         [arguments release];
     }
-    if (description->description[0][1] == '@') {
+    if (retained_through_autorelease) {
+        // undo the object-preserving retain we made in the autorelease block above.
         [result autorelease];
     }
 }
@@ -5127,7 +5137,7 @@ static void nu_handler(void *return_value, struct handler_description *descripti
 @interface NuHandlers : NSObject
 {
 @public
-    struct handler_description *handlers;
+    struct nu_handler_description *handlers;
     int handler_count;
     int next_free_handler;
 }
@@ -5135,7 +5145,7 @@ static void nu_handler(void *return_value, struct handler_description *descripti
 @end
 
 @implementation NuHandlers
-- (id) initWithHandlers:(struct handler_description *) h count:(int) count
+- (id) initWithHandlers:(struct nu_handler_description *) h count:(int) count
 {
     if ((self = [super init])) {
         handlers = h;
@@ -5149,7 +5159,7 @@ static void nu_handler(void *return_value, struct handler_description *descripti
 
 static IMP handler_returning_void(void *userdata) {
     return imp_implementationWithBlock(^(id receiver, ...) {
-        struct handler_description description;
+        struct nu_handler_description description;
         description.handler = NULL;
         description.description = userdata;
         va_list ap; 
@@ -5162,7 +5172,7 @@ static IMP handler_returning_void(void *userdata) {
 static IMP handler_returning_ ## type (void* userdata) \
 { \
 return imp_implementationWithBlock(^(id receiver, ...) { \
-struct handler_description description; \
+struct nu_handler_description description; \
 description.handler = NULL; \
 description.description = userdata; \
 va_list ap; \
@@ -5192,7 +5202,7 @@ static NSMutableDictionary *handlerWarehouse = nil;
 
 @implementation NuHandlerWarehouse
 
-+ (void) registerHandlers:(struct handler_description *) description withCount:(int) count forReturnType:(NSString *) returnType
++ (void) registerHandlers:(struct nu_handler_description *) description withCount:(int) count forReturnType:(NSString *) returnType
 {
     if (!handlerWarehouse) {
         handlerWarehouse = [[NSMutableDictionary alloc] init];
@@ -7044,14 +7054,14 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     id quoteSymbol = [symbolTable symbolWithString:@"quote"];
-
+    
     id fn = [cdr car];
-
+    
     // Arguments to fn can be anything, but last item must be a list
     id qargs = Nu__null;
     id qargs_cursor = Nu__null;
     id cursor = [cdr cdr];
-
+    
     while (cursor && (cursor != Nu__null) && [cursor cdr] && ([cursor cdr] != Nu__null)) {
         if (qargs == Nu__null) {
             qargs = [[[NuCell alloc] init] autorelease];
@@ -7061,17 +7071,17 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
             [qargs_cursor setCdr:[[[NuCell alloc] init] autorelease]];
             qargs_cursor = [qargs_cursor cdr];
         }
-
+        
         id item = [[cursor car] evalWithContext:context];
         id qitem = [self prependCell:item withSymbol:quoteSymbol];
         [qargs_cursor setCar:qitem];
         cursor = [cursor cdr];
     }
-
+    
     // The rest of the arguments are in a list
     id args = [cursor evalWithContext:context];
     cursor = args;
-
+    
     while (cursor && (cursor != Nu__null)) {
         if (qargs == Nu__null) {
             qargs = [[[NuCell alloc] init] autorelease];
@@ -7082,19 +7092,19 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
             qargs_cursor = [qargs_cursor cdr];
         }
         id item = [cursor car];
-
+        
         id qitem = [self prependCell:item withSymbol:quoteSymbol];
         [qargs_cursor setCar:qitem];
         cursor = [cursor cdr];
     }
-
+    
     // Call the real function with the evaluated and quoted args
     id expr = [[[NuCell alloc] init] autorelease];
     [expr setCar:fn];
     [expr setCdr:qargs];
-
+    
     id result = [expr evalWithContext:context];
-
+    
     return result;
 }
 @end
@@ -10135,7 +10145,6 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NuParser *parser = [Nu sharedParser];
     int result = [parser interact];
-    [parser release];
     [pool drain];
     return result;
 }
@@ -10842,8 +10851,8 @@ static NuSymbolTable *sharedSymbolTable = 0;
         return symbol;
     }
     
-    // If not, create it. Don't autorelease it; it is owned by the table.
-    symbol = [[NuSymbol alloc] init];             // keep construction private
+    // If not, create it.
+    symbol = [[[NuSymbol alloc] init] autorelease];             // keep construction private
     symbol->stringValue = [string copy];
     
     const char *cstring = [string cStringUsingEncoding:NSUTF8StringEncoding];
