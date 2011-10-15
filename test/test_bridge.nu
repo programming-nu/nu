@@ -32,5 +32,15 @@
         (assert_equal (list 1 2 3 4) (NuTestHelper getCGRectFromProxy:structHelper))
         (assert_equal (list 1 2) (NuTestHelper getCGPointFromProxy:structHelper))
         (assert_equal (list 3 4) (NuTestHelper getCGSizeFromProxy:structHelper))
-        (assert_equal (list 5 6) (NuTestHelper getNSRangeFromProxy:structHelper))))
+        (assert_equal (list 5 6) (NuTestHelper getNSRangeFromProxy:structHelper)))
+     (- (id) testBlocks is
+	(load "cblocks")
+	(let ((num nil)
+	      (num-array (array 1 2)))
+	  (set equals-num? (cblock BOOL ((id) obj (unsigned long) idx (void*) stop)
+				   (if (== obj num) YES (else NO))))
+	  (set num 2)
+	  (assert_equal 1 (num-array indexOfObjectPassingTest:equals-num?))
+	  (set num 3)
+	  (assert_equal NSNotFound (num-array indexOfObjectPassingTest:equals-num?)))))
 
