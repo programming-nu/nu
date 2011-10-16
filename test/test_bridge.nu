@@ -39,8 +39,8 @@
 	      (num-array (array 1 2)))
 	  (set equals-num? (cblock BOOL ((id) obj (unsigned long) idx (void*) stop)
 				   (if (== obj num) YES (else NO))))
+	  (set num 1)
+	  (assert_equal 0 (num-array indexOfObjectPassingTest:equals-num?))
 	  (set num 2)
-	  (assert_equal 1 (num-array indexOfObjectPassingTest:equals-num?))
-	  (set num 3)
-	  (assert_equal NSNotFound (num-array indexOfObjectPassingTest:equals-num?)))))
+	  (assert_equal 1 (num-array indexOfObjectPassingTest:equals-num?)))))
 

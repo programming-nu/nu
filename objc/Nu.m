@@ -8925,6 +8925,19 @@ static id evaluatedArguments(id cdr, NSMutableDictionary *context)
 
 @end
 
+@interface Nu_signature_operator : NuOperator {}
+@end
+
+@implementation Nu_signature_operator
+
+// signature operator; basically gives access to the static signature_for_identifier function from within Nu code
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    return signature_for_identifier( [[cdr car] evalWithContext:context],[NuSymbolTable sharedSymbolTable]);
+}
+
+@end
+
 #define install(name, class) [(NuSymbol *) [symbolTable symbolWithString:name] setValue:[[[class alloc] init] autorelease]]
 
 void load_builtins(NuSymbolTable *symbolTable);
@@ -9056,6 +9069,8 @@ void load_builtins(NuSymbolTable *symbolTable)
     install(@"help",     Nu_help_operator);
     install(@"?",        Nu_help_operator);
     install(@"version",  Nu_version_operator);
+    
+    install(@"signature", Nu_signature_operator);
     
     // set some commonly-used globals
     [(NuSymbol *) [symbolTable symbolWithString:@"NSUTF8StringEncoding"] 
