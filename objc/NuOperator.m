@@ -766,8 +766,8 @@ limitations under the License.
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
 
-    id quasiquote_eval = [[symbolTable symbolWithString:@"quasiquote-eval"] value];
-    id quasiquote_splice = [[symbolTable symbolWithString:@"quasiquote-splice"] value];
+    id quasiquote_eval = [(NuSymbol*)[symbolTable symbolWithString:@"quasiquote-eval"] value];
+    id quasiquote_splice = [(NuSymbol*)[symbolTable symbolWithString:@"quasiquote-splice"] value];
  
     QuasiLog(@"bq:Entered. callWithArguments cdr = %@", [cdr stringValue]);
 
@@ -789,13 +789,13 @@ limitations under the License.
             value = Nu__null;
         }
         //else if ([[cursor car] car] == quasiquote_eval) {
-        else if ([[symbolTable lookup:[[[[cursor car] car] stringValue] cStringUsingEncoding:NSUTF8StringEncoding]] value] == quasiquote_eval) {
+        else if ([(NuSymbol*)[symbolTable lookup:[[[[cursor car] car] stringValue] cStringUsingEncoding:NSUTF8StringEncoding]] value] == quasiquote_eval) {
             QuasiLog(@"quasiquote-eval: Evaling: [[cursor car] cdr]: %@", [[[cursor car] cdr] stringValue]);
             value = [[[cursor car] cdr] evalWithContext:context];
             QuasiLog(@"  quasiquote-eval: Value: %@", [value stringValue]);
         }
         //else if ([[cursor car] car] == quasiquote_splice) {
-        else if ([[symbolTable lookup:[[[[cursor car] car] stringValue] cStringUsingEncoding:NSUTF8StringEncoding]] value] == quasiquote_splice) {
+        else if ([(NuSymbol*)[symbolTable lookup:[[[[cursor car] car] stringValue] cStringUsingEncoding:NSUTF8StringEncoding]] value] == quasiquote_splice) {
             QuasiLog(@"quasiquote-splice: Evaling: [[cursor car] cdr]: %@",
                 [[[cursor car] cdr] stringValue]);
             value = [[[cursor car] cdr] evalWithContext:context];
@@ -1484,7 +1484,7 @@ limitations under the License.
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuConsoleViewController *console = (NuConsoleViewController*)[[symbolTable symbolWithCString:"$$console"] value];
+    NuConsoleViewController *console = (NuConsoleViewController*)[(NuSymbol*)[symbolTable symbolWithCString:"$$console"] value];
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
@@ -1528,7 +1528,7 @@ limitations under the License.
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    NuConsoleViewController *console = (NuConsoleViewController*)[[symbolTable symbolWithCString:"$$console"] value];
+    NuConsoleViewController *console = (NuConsoleViewController*)[(NuSymbol*)[symbolTable symbolWithCString:"$$console"] value];
 
     NSString *string;
     id cursor = cdr;

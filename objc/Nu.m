@@ -426,7 +426,7 @@ id _nulist(id firstObject, ...)
 @implementation Nu
 + (id<NuParsing>) parser
 {
-    return [[[NuParser alloc] init] autorelease];
+    return (id)[[[NuParser alloc] init] autorelease];
 }
 
 + (int) sizeOfPointer
