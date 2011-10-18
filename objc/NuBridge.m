@@ -429,7 +429,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
     switch (typeChar) {
         case '@':
         {
-            if ((nu_value == Nu__null)) {
+            if (nu_value == Nu__null) {
                 *((id *) objc_value) = nil;
                 return NO;
             }

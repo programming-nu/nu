@@ -579,7 +579,7 @@ extern id Nu__null;
 
 - (const unsigned char) byteAtIndex:(int) i
 {
-	const unsigned char buffer[2];
+	unsigned char buffer[2];
 	[self getBytes:&buffer range:NSMakeRange(i,1)];
 	return buffer[0];
 }
