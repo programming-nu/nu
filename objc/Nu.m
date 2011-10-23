@@ -1730,26 +1730,9 @@ static id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *ar
     
     // dynamically construct the method call
     
-    //the method_***** functions seems to count c blocks twice, i.e. they separate
-    //the @ and ?. Using an NSMethodSignature seems to be an easy way around it.
-    //However, it appears to have some flaws as it causes 'nuke test' to fail
-#define USE_SIG 1
-    
-#if USE_SIG
-	NSMethodSignature *sig = [target methodSignatureForSelector:s];
-	NSUInteger argument_count = [sig numberOfArguments];
-    BOOL zeroArguments = NO;
-	if (argument_count == 0)
-	{
-        // - [NSMethodSignature numberOfArguments] returns 0 if there are no arguments, but we expect 2 (cmd and self).
-        // If we get zero, we use method_getNumberOfArguments() here, and method_getArgumentType() below.
-        // This works around Apple's bug in the method_*** functions, but allows 'nuke test' to pass
-        argument_count =  method_getNumberOfArguments(m);
-        zeroArguments = YES;
-	}
-#else
+
     int argument_count = method_getNumberOfArguments(m);
-#endif
+
 	if ( [args count] != argument_count-2) {
 		
 		raise_argc_exception(s, argument_count-2, [args count]);
@@ -1764,15 +1747,8 @@ static id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *ar
         int *argument_needs_retained = (int *) malloc (argument_count * sizeof(int));
         int i;
         for (i = 0; i < argument_count; i++) {
-#if USE_SIG
-			if (zeroArguments) {
-			    method_getArgumentType(m, i, &arg_type_buffer[0], BUFSIZE);
-			} else {
-			    strncpy(&arg_type_buffer[0], [sig getArgumentTypeAtIndex:i], BUFSIZE);
-		    }
-#else
+
             method_getArgumentType(m, i, &arg_type_buffer[0], BUFSIZE);
-#endif
 			
 			argument_types[i] = ffi_type_for_objc_type(&arg_type_buffer[0]);
             argument_values[i] = value_buffer_for_objc_type(&arg_type_buffer[0]);
@@ -8953,6 +8929,19 @@ static id evaluatedArguments(id cdr, NSMutableDictionary *context)
 
 @end
 
+@interface Nu_signature_operator : NuOperator {}
+@end
+
+@implementation Nu_signature_operator
+
+// signature operator; basically gives access to the static signature_for_identifier function from within Nu code
+- (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
+{
+    return signature_for_identifier( [[cdr car] evalWithContext:context],[NuSymbolTable sharedSymbolTable]);
+}
+
+@end
+
 #define install(name, class) [(NuSymbol *) [symbolTable symbolWithString:name] setValue:[[[class alloc] init] autorelease]]
 
 void load_builtins(NuSymbolTable *symbolTable);
@@ -9084,6 +9073,8 @@ void load_builtins(NuSymbolTable *symbolTable)
     install(@"help",     Nu_help_operator);
     install(@"?",        Nu_help_operator);
     install(@"version",  Nu_version_operator);
+    
+    install(@"signature", Nu_signature_operator);
     
     // set some commonly-used globals
     [(NuSymbol *) [symbolTable symbolWithString:@"NSUTF8StringEncoding"] 
