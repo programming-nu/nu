@@ -5080,6 +5080,10 @@ static id collect_arguments(struct nu_handler_description *description, va_list 
             NSRect x = va_arg(ap, NSRect);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
         }
+        else if (!strcmp(type, "{CGRect={CGPoint=dd}{CGSize=dd}}")) {
+            CGRect x = va_arg(ap, CGRect);
+            [cursor setCar:get_nu_value_from_objc_value(&x, type)];
+        }
         else if (!strcmp(type, "{_NSPoint=dd}")) {
             NSPoint x = va_arg(ap, NSPoint);
             [cursor setCar:get_nu_value_from_objc_value(&x, type)];
