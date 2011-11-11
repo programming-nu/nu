@@ -8264,9 +8264,11 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 
 @end
 
+#if !TARGET_OS_IPHONE
 @interface NuConsoleViewController : NSObject {}
 - (void) write:(id) string;
 @end
+#endif
 
 @interface Nu_puts_operator : NuOperator {}
 @end
@@ -8274,22 +8276,28 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 @implementation Nu_puts_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
+#if !TARGET_OS_IPHONE
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuConsoleViewController *console = (NuConsoleViewController*)
     [[symbolTable symbolWithString:@"$$console"] value];
+#endif
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
         id value = [[cursor car] evalWithContext:context];
         if (value) {
             string = [value stringValue];
+#if !TARGET_OS_IPHONE
             if (console && (console != Nu__null)) {
                 [console write:string];
                 [console write:[NSString carriageReturn]];
             }
             else {
+#endif
                 printf("%s\n", [string cStringUsingEncoding:NSUTF8StringEncoding]);
+#if !TARGET_OS_IPHONE
             }
+#endif
         }
         cursor = [cursor cdr];
     }
@@ -8319,19 +8327,24 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 @implementation Nu_print_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
+#if !TARGET_OS_IPHONE
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     NuConsoleViewController *console = (NuConsoleViewController*)[[symbolTable symbolWithString:@"$$console"] value];
-    
+#endif
     NSString *string;
     id cursor = cdr;
     while (cursor && (cursor != Nu__null)) {
         string = [[[cursor car] evalWithContext:context] stringValue];
+#if !TARGET_OS_IPHONE
         if (console && (console != Nu__null)) {
             [console write:string];
         }
         else {
+#endif
             printf("%s", [string cStringUsingEncoding:NSUTF8StringEncoding]);
+#if !TARGET_OS_IPHONE
         }
+#endif
         cursor = [cursor cdr];
     }
     return Nu__null;;
@@ -9057,7 +9070,7 @@ void load_builtins(NuSymbolTable *symbolTable)
 #endif
     install(@"puts",     Nu_puts_operator);
     install(@"print",    Nu_print_operator);
-    
+  
     install(@"let",      Nu_let_operator);
     
     install(@"load",     Nu_load_operator);
