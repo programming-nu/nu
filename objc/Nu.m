@@ -1483,7 +1483,7 @@ static id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         case '#':
         {
             Class c = *((Class *)objc_value);
-            return c ? [[NuClass alloc] initWithClass:c] : Nu__null;
+            return c ? [[[NuClass alloc] initWithClass:c] autorelease] : Nu__null;
         }
 #ifndef __ppc__
         case 'c':
