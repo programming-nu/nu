@@ -47,7 +47,11 @@ CFLAGS = -g -Wall -DMININUSH
 MFLAGS = -fobjc-exceptions
 
 ifeq ($(SYSTEM), Darwin)
-	CC = $(DEVROOT)/usr/bin/clang
+	# as of around 10.7.3, clang becomes part of OS X
+	CC = /usr/bin/clang
+	ifneq ($(shell test -e $(CC) && echo yes), yes)
+		CC = $(DEVROOT)/usr/bin/clang
+	endif
 	CFLAGS += -DMACOSX -DDARWIN $(LION_CFLAGS)  
 else
 #	CFLAGS += -DLINUX
