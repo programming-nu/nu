@@ -8,7 +8,7 @@ SYSTEM = $(shell uname)
 
 PREFIX ?= /usr/local
 
-DEVROOT = $(shell xcode-select -print-path)
+DEVROOT = 
 
 ifeq ($(shell test -e /usr/lib/libffi.dylib && echo yes), yes)
 	# Use the libffi that ships with OS X.

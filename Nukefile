@@ -1,8 +1,6 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(set DEVROOT 
-     (ifDarwin (then (NSString stringWithShellCommand:"xcode-select -print-path"))
-               (else nil)))
+(set DEVROOT "")
  
 (global VERSION '(2 0 1)) #(major minor tweak)
 
@@ -96,7 +94,7 @@ END)
             ("-isysroot #{DEVROOT}/SDKs/MacOSX10.4u.sdk"))
            (else "")))
 
-(set @cflags "-Wall -g -std=gnu99 -fPIC")
+(set @cflags "-Wall -g -fPIC")
 
 (ifDarwin
          (then (set @cflags (+ @cflags " -g -O2 -DMACOSX #{@sdk} #{@sdkflags}"))
