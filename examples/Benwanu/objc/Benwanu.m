@@ -2,7 +2,7 @@
 // Benwanu.m
 //
 // Multithreaded visualizer for the Mandelbrot set.
-// Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+// Copyright (c) 2007 Tim Burks, Radtastical Inc.
 //
 // Adapted from an example in "Advanced Mac OS X Programming" by
 // Aaron Hillegass and Mark Dalrymple.  Original version

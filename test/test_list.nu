@@ -1,7 +1,7 @@
 ;; test_list.nu
 ;;  tests for basic Nu list operations.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestList is NuTestCase
      (- testPair? is
@@ -103,7 +103,7 @@
         (set d 4)
         (assert_equal '(a 2 c 4) (apply list 'a b `(c ,d)))
         (assert_equal 10 (apply + a b (list c d))))
-
+     
      (- testSort is
         (assert_equal '() (sort '()))
         (assert_equal '(1) (sort '(1)))

@@ -1,7 +1,7 @@
 ;; test_symbols.nu
 ;;  tests for Nu symbols.
 ;;
-;;  Copyright (c) 2009 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2009 Tim Burks, Radtastical Inc.
 
 (class TestSymbols is NuTestCase
      

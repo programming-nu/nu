@@ -7,7 +7,7 @@
 
 (set @cflags "-isysroot /Developer/SDKs/MacOSX10.4u.sdk ")
 
-(set @arch '("i386" "ppc"))
+(set @arch '("i386" "x86_64"))
 
 ;; library description
 (set @library "libinject")

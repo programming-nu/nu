@@ -1,7 +1,7 @@
 ;; @file       help.nu
 ;; @discussion Help text for Nu.
 ;;
-;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
 ;;   Licensed under the Apache License, Version 2.0 (the "License");
 ;;   you may not use this file except in compliance with the License.
@@ -15,42 +15,10 @@
 ;;   See the License for the specific language governing permissions and
 ;;   limitations under the License.
 
-(if nil ;; This is just here for fun.  It shows some alternate ways of building macros.
-    (function subst (new old tree)
-         (cond ((eq tree old) new)
-               ((not tree) tree)
-               ((atom tree) tree)
-               (else (cons (subst new old (car tree))
-                           (subst new old (cdr tree))))))
-    
-    (function meval (pairs code)
-         (if pairs
-             (then (meval ((pairs cdr) cdr) (subst (pairs second) (pairs first) code)))
-             (else (eval code))))
-    
-    (macro-0 class-help-0
-         (meval (list 'className (margs first)
-                      'helpText (margs second))
-                '(class className
-                      (- (id) help is helpText))))
-    
-    (macro-0 class-help-1
-         (eval (list 'class (margs first)
-                     (list '- '(id) 'help 'is (margs second)))))
-    
-    (macro-0 class-help-2
-         (class (unquote (margs first))
-              (- (id) help is (unquote (margs second)))))
-    
-    ; we might prefer this when the parser can handle commas.
-    ;(macro-0 class-help-3
-    ;     (class ,(margs first))
-    ;          (- (id) help is ,(margs second)))
-    )
-
-(macro-0 class-help
-     (class (unquote (margs first))
-          (- (id) help is (unquote (margs second)))))
+(macro class-help (name text)
+     `(progn
+            (class ,name
+                 (- (id) help is ,text))))
 
 ;; help text
 
@@ -215,9 +183,6 @@ The string is not followed by a carriage return.END)
 
 (class-help Nu_load_operator <<-END
 This operator loads a file or bundle.END)
-
-(class-help Nu_beep_operator <<-END
-This operator causes the system to beep.END)
 
 (class-help Nu_class_operator <<-END
 This operator defines or extends a class.

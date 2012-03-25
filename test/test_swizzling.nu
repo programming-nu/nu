@@ -1,7 +1,7 @@
 ;; test_swizzling.nu
 ;;  tests for Nu method swizzling.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestSwizzling is NuTestCase
      

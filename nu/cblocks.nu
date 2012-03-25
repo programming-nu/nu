@@ -2,7 +2,7 @@
 ;; @discussion Macros for creating C/Objective-C blocks from Nu
 ;; 
 ;;
-;; @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
 ;;   Licensed under the Apache License, Version 2.0 (the "License");
 ;;   you may not use this file except in compliance with the License.
@@ -28,10 +28,7 @@
         (try ((NuBridgedBlock class)) 
             (catch (execption) (throw* "NuException" "This build of Nu does not support C blocks.")))
                 
-        (function __get_type_signature (identifier) 
-            (((NuBridgedFunction functionWithName:"signature_for_identifier" signature:"@@@") identifier 
-                (NuSymbolTable sharedSymbolTable))))
-        (set __sig (__get_type_signature (list ret)))
+        (set __sig (signature (list ret)))
         (set __blockparams ())
         (set __paramlist params)
         (until (eq __paramlist nil)
@@ -42,7 +39,7 @@
             (set __param (car (cdr __paramlist)))
             (set __paramlist (cdr (cdr __paramlist)))
             (set __sig (__sig stringByAppendingString:
-                (__get_type_signature __type)))
+                (signature __type)))
             (set __blockparams (append __blockparams (list __param))))
         ;(puts "Signature: #{__sig}")
         ;(puts "Block params: #{__blockparams}")

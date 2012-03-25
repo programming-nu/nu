@@ -1,7 +1,7 @@
 ;; test_memory.nu
 ;;  tests for Nu memory management.
 ;;
-;;  Copyright (c) 2008 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2008 Tim Burks, Radtastical Inc.
 
 (class TestMemory is NuTestCase
      
@@ -36,16 +36,14 @@
                        (2 times:
                           (do (i)
                               (set x (NuTestHelper helperInObjCUsingNew))
-                              (a << x))
+                              (a addObject: x))
                           ;; at the end of each loop iteration, the two NuTestHelpers are deleted with the iteration's autorelease pool
                           (assert_equal (* 2 j) (NuTestHelper deallocationCount)))))
                 (assert_equal 10 (NuTestHelper deallocationCount)))
              
              (- testIvarReleaseOnDealloc is
                 (class IvarReleaseHelper is NuTestHelper
-                     ;;(ivar (id) x) ;; currently declared ivars are not released, this is consistent with unretained outlets
-                     (ivars)
-                     (ivar-accessors)
+                     ;;(ivar (id) x) ;; currently declared ivars are not released, this is consistent with unretained outlets                     
                      (set myDeallocationCount 0) ;; closure gives this variable class scope.
                      (+ (int) myDeallocationCount is myDeallocationCount)
                      (- (void) dealloc is

@@ -1,7 +1,7 @@
 ;; test_numbers.nu
 ;;  tests for Nu extensions to NSNumber.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestNumbers is NuTestCase
      

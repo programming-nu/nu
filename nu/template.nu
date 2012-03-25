@@ -1,7 +1,7 @@
 ;; @file       template.nu
 ;; @discussion Nu templating engine.
 ;;
-;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
 ;;   Licensed under the Apache License, Version 2.0 (the "License");
 ;;   you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@
           
           ;; first, replace each embedded nu expression with code that
           ;; appends the value of the expression to the result
-          (set p-expression /<%= ((?U).*) %>/)
+          (set p-expression /<%= (.*?) %>/)
           (while (set match (p-expression findInString:text))
                  (text replaceCharactersInRange:(match range)
                        withString:<<-END-TEMPLATE

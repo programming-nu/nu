@@ -1,7 +1,7 @@
 ;; test_templates.nu
 ;;  tests for Nu code templates.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (load "template")
 
@@ -32,3 +32,5 @@ this is 1 of many (at least 1) tests.END)
 END)
         (set result (eval template))
         (assert_equal goal result)))
+
+

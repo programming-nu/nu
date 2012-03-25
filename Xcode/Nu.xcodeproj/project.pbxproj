@@ -1,0 +1,950 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		225F62CD13B04256002DD16B /* ffi.S in Sources */ = {isa = PBXBuildFile; fileRef = 225F62C413B04256002DD16B /* ffi.S */; };
+		225F62D313B04256002DD16B /* ffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 225F62CA13B04256002DD16B /* ffi.c */; };
+		2283074411DDBEA700A5C690 /* Nu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* Nu.framework */; };
+		22B3B3B613B033D400B3AB31 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38813B033D400B3AB31 /* test.html */; };
+		22B3B3B713B033D400B3AB31 /* test_array.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38913B033D400B3AB31 /* test_array.nu */; };
+		22B3B3B813B033D400B3AB31 /* test_blockargs.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38A13B033D400B3AB31 /* test_blockargs.nu */; };
+		22B3B3B913B033D400B3AB31 /* test_bridge.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38B13B033D400B3AB31 /* test_bridge.nu */; };
+		22B3B3BA13B033D400B3AB31 /* test_bridgesupport.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38C13B033D400B3AB31 /* test_bridgesupport.nu */; };
+		22B3B3BB13B033D400B3AB31 /* test_characters.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38D13B033D400B3AB31 /* test_characters.nu */; };
+		22B3B3BC13B033D400B3AB31 /* test_classes.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38E13B033D400B3AB31 /* test_classes.nu */; };
+		22B3B3BD13B033D400B3AB31 /* test_closures.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38F13B033D400B3AB31 /* test_closures.nu */; };
+		22B3B3BE13B033D400B3AB31 /* test_comparison.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39013B033D400B3AB31 /* test_comparison.nu */; };
+		22B3B3BF13B033D400B3AB31 /* test_control.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39113B033D400B3AB31 /* test_control.nu */; };
+		22B3B3C013B033D400B3AB31 /* test_dictionary.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39213B033D400B3AB31 /* test_dictionary.nu */; };
+		22B3B3C113B033D400B3AB31 /* test_enumerable.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39313B033D400B3AB31 /* test_enumerable.nu */; };
+		22B3B3C213B033D400B3AB31 /* test_errors.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39413B033D400B3AB31 /* test_errors.nu */; };
+		22B3B3C313B033D400B3AB31 /* test_exceptions.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39513B033D400B3AB31 /* test_exceptions.nu */; };
+		22B3B3C413B033D400B3AB31 /* test_interface.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39613B033D400B3AB31 /* test_interface.nu */; };
+		22B3B3C513B033D400B3AB31 /* test_list.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39713B033D400B3AB31 /* test_list.nu */; };
+		22B3B3C613B033D400B3AB31 /* test_list_enumerable.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39813B033D400B3AB31 /* test_list_enumerable.nu */; };
+		22B3B3C713B033D400B3AB31 /* test_macros.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39913B033D400B3AB31 /* test_macros.nu */; };
+		22B3B3C813B033D400B3AB31 /* test_macrox.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39A13B033D400B3AB31 /* test_macrox.nu */; };
+		22B3B3C913B033D400B3AB31 /* test_match.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39B13B033D400B3AB31 /* test_match.nu */; };
+		22B3B3CA13B033D400B3AB31 /* test_math.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39C13B033D400B3AB31 /* test_math.nu */; };
+		22B3B3CB13B033D400B3AB31 /* test_memory.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39D13B033D400B3AB31 /* test_memory.nu */; };
+		22B3B3CC13B033D400B3AB31 /* test_nu.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B39E13B033D400B3AB31 /* test_nu.nu */; };
+		22B3B3CE13B033D400B3AB31 /* test_numbers.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A013B033D400B3AB31 /* test_numbers.nu */; };
+		22B3B3CF13B033D400B3AB31 /* test_onlisp.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A113B033D400B3AB31 /* test_onlisp.nu */; };
+		22B3B3D013B033D400B3AB31 /* test_operators.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A213B033D400B3AB31 /* test_operators.nu */; };
+		22B3B3D113B033D400B3AB31 /* test_parser.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A313B033D400B3AB31 /* test_parser.nu */; };
+		22B3B3D213B033D400B3AB31 /* test_profiler.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A413B033D400B3AB31 /* test_profiler.nu */; };
+		22B3B3D313B033D400B3AB31 /* test_propertylists.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A513B033D400B3AB31 /* test_propertylists.nu */; };
+		22B3B3D413B033D400B3AB31 /* test_protocols.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A613B033D400B3AB31 /* test_protocols.nu */; };
+		22B3B3D513B033D400B3AB31 /* test_quasiquote.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A713B033D400B3AB31 /* test_quasiquote.nu */; };
+		22B3B3D613B033D400B3AB31 /* test_references.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A813B033D400B3AB31 /* test_references.nu */; };
+		22B3B3D713B033D400B3AB31 /* test_regex.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3A913B033D400B3AB31 /* test_regex.nu */; };
+		22B3B3D813B033D400B3AB31 /* test_return.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3AA13B033D400B3AB31 /* test_return.nu */; };
+		22B3B3D913B033D400B3AB31 /* test_set.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3AB13B033D400B3AB31 /* test_set.nu */; };
+		22B3B3DA13B033D400B3AB31 /* test_strings.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3AC13B033D400B3AB31 /* test_strings.nu */; };
+		22B3B3DB13B033D400B3AB31 /* test_structs.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3AD13B033D400B3AB31 /* test_structs.nu */; };
+		22B3B3DC13B033D400B3AB31 /* test_swizzling.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3AE13B033D400B3AB31 /* test_swizzling.nu */; };
+		22B3B3DD13B033D400B3AB31 /* test_symbols.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3AF13B033D400B3AB31 /* test_symbols.nu */; };
+		22B3B3DE13B033D400B3AB31 /* test_system.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3B013B033D400B3AB31 /* test_system.nu */; };
+		22B3B3DF13B033D400B3AB31 /* test_templates.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3B113B033D400B3AB31 /* test_templates.nu */; };
+		22B3B3E013B033D400B3AB31 /* test_truth.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3B213B033D400B3AB31 /* test_truth.nu */; };
+		22B3B3E113B033D400B3AB31 /* test_types.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3B313B033D400B3AB31 /* test_types.nu */; };
+		22B3B3E213B033D400B3AB31 /* test_undo.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3B413B033D400B3AB31 /* test_undo.nu */; };
+		22B3B3E313B033D400B3AB31 /* test_varargs.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3B513B033D400B3AB31 /* test_varargs.nu */; };
+		22B3B3F613B033EE00B3AB31 /* beautify.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E513B033EE00B3AB31 /* beautify.nu */; };
+		22B3B3F713B033EE00B3AB31 /* beautify.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E513B033EE00B3AB31 /* beautify.nu */; };
+		22B3B3F813B033EE00B3AB31 /* bridgesupport.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E613B033EE00B3AB31 /* bridgesupport.nu */; };
+		22B3B3F913B033EE00B3AB31 /* bridgesupport.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E613B033EE00B3AB31 /* bridgesupport.nu */; };
+		22B3B3FA13B033EE00B3AB31 /* cblocks.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E713B033EE00B3AB31 /* cblocks.nu */; };
+		22B3B3FB13B033EE00B3AB31 /* cblocks.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E713B033EE00B3AB31 /* cblocks.nu */; };
+		22B3B3FC13B033EE00B3AB31 /* cocoa.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E813B033EE00B3AB31 /* cocoa.nu */; };
+		22B3B3FD13B033EE00B3AB31 /* cocoa.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E813B033EE00B3AB31 /* cocoa.nu */; };
+		22B3B3FE13B033EE00B3AB31 /* console.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E913B033EE00B3AB31 /* console.nu */; };
+		22B3B3FF13B033EE00B3AB31 /* console.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3E913B033EE00B3AB31 /* console.nu */; };
+		22B3B40013B033EE00B3AB31 /* coredata.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EA13B033EE00B3AB31 /* coredata.nu */; };
+		22B3B40113B033EE00B3AB31 /* coredata.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EA13B033EE00B3AB31 /* coredata.nu */; };
+		22B3B40213B033EE00B3AB31 /* doc.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EB13B033EE00B3AB31 /* doc.nu */; };
+		22B3B40313B033EE00B3AB31 /* doc.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EB13B033EE00B3AB31 /* doc.nu */; };
+		22B3B40413B033EE00B3AB31 /* fscript.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EC13B033EE00B3AB31 /* fscript.nu */; };
+		22B3B40513B033EE00B3AB31 /* fscript.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EC13B033EE00B3AB31 /* fscript.nu */; };
+		22B3B40613B033EE00B3AB31 /* generate.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3ED13B033EE00B3AB31 /* generate.nu */; };
+		22B3B40713B033EE00B3AB31 /* generate.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3ED13B033EE00B3AB31 /* generate.nu */; };
+		22B3B40813B033EE00B3AB31 /* help.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EE13B033EE00B3AB31 /* help.nu */; };
+		22B3B40913B033EE00B3AB31 /* help.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EE13B033EE00B3AB31 /* help.nu */; };
+		22B3B40A13B033EE00B3AB31 /* match.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EF13B033EE00B3AB31 /* match.nu */; };
+		22B3B40B13B033EE00B3AB31 /* match.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3EF13B033EE00B3AB31 /* match.nu */; };
+		22B3B40C13B033EE00B3AB31 /* math.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F013B033EE00B3AB31 /* math.nu */; };
+		22B3B40D13B033EE00B3AB31 /* math.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F013B033EE00B3AB31 /* math.nu */; };
+		22B3B40E13B033EE00B3AB31 /* menu.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F113B033EE00B3AB31 /* menu.nu */; };
+		22B3B40F13B033EE00B3AB31 /* menu.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F113B033EE00B3AB31 /* menu.nu */; };
+		22B3B41013B033EE00B3AB31 /* nibtools.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F213B033EE00B3AB31 /* nibtools.nu */; };
+		22B3B41113B033EE00B3AB31 /* nibtools.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F213B033EE00B3AB31 /* nibtools.nu */; };
+		22B3B41213B033EE00B3AB31 /* nu.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F313B033EE00B3AB31 /* nu.nu */; };
+		22B3B41313B033EE00B3AB31 /* nu.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F313B033EE00B3AB31 /* nu.nu */; };
+		22B3B41413B033EE00B3AB31 /* template.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F413B033EE00B3AB31 /* template.nu */; };
+		22B3B41513B033EE00B3AB31 /* template.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F413B033EE00B3AB31 /* template.nu */; };
+		22B3B41613B033EE00B3AB31 /* test.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F513B033EE00B3AB31 /* test.nu */; };
+		22B3B41713B033EE00B3AB31 /* test.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F513B033EE00B3AB31 /* test.nu */; };
+		22B3B47313B0359300B3AB31 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B41D13B0359300B3AB31 /* Nu.m */; };
+		22B3B47413B0359300B3AB31 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B41D13B0359300B3AB31 /* Nu.m */; };
+		22B3B50313B0386600B3AB31 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50213B0386600B3AB31 /* UIKit.framework */; };
+		22B3B50513B0388C00B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50413B0388C00B3AB31 /* Foundation.framework */; };
+		22B3B50713B038D000B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50613B038D000B3AB31 /* Foundation.framework */; };
+		22EE1B931406F494007AFC23 /* test_forwarding.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22EE1B921406F494007AFC23 /* test_forwarding.nu */; };
+		22EE2C0413A4731600895861 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 22EE2C0213A4731600895861 /* InfoPlist.strings */; };
+		22EE2C0613A4731600895861 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0513A4731600895861 /* main.m */; };
+		22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0913A4731600895861 /* NuAppDelegate.m */; };
+		4F43427C1420476C00AC1BFD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F43427B1420476C00AC1BFD /* main.m */; };
+		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2283074211DDBEA300A5C690 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = Nu;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		225F62BE13B04256002DD16B /* ffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
+		225F62C413B04256002DD16B /* ffi.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = ffi.S; sourceTree = "<group>"; };
+		225F62CA13B04256002DD16B /* ffi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffi.c; sourceTree = "<group>"; };
+		2283073111DDBE3100A5C690 /* nush */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nush; sourceTree = BUILT_PRODUCTS_DIR; };
+		229FABE113C0129400CEFCF5 /* Nu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nu.h; sourceTree = "<group>"; };
+		22B3B38813B033D400B3AB31 /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
+		22B3B38913B033D400B3AB31 /* test_array.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_array.nu; sourceTree = "<group>"; };
+		22B3B38A13B033D400B3AB31 /* test_blockargs.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_blockargs.nu; sourceTree = "<group>"; };
+		22B3B38B13B033D400B3AB31 /* test_bridge.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_bridge.nu; sourceTree = "<group>"; };
+		22B3B38C13B033D400B3AB31 /* test_bridgesupport.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_bridgesupport.nu; sourceTree = "<group>"; };
+		22B3B38D13B033D400B3AB31 /* test_characters.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_characters.nu; sourceTree = "<group>"; };
+		22B3B38E13B033D400B3AB31 /* test_classes.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_classes.nu; sourceTree = "<group>"; };
+		22B3B38F13B033D400B3AB31 /* test_closures.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_closures.nu; sourceTree = "<group>"; };
+		22B3B39013B033D400B3AB31 /* test_comparison.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_comparison.nu; sourceTree = "<group>"; };
+		22B3B39113B033D400B3AB31 /* test_control.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_control.nu; sourceTree = "<group>"; };
+		22B3B39213B033D400B3AB31 /* test_dictionary.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_dictionary.nu; sourceTree = "<group>"; };
+		22B3B39313B033D400B3AB31 /* test_enumerable.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_enumerable.nu; sourceTree = "<group>"; };
+		22B3B39413B033D400B3AB31 /* test_errors.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_errors.nu; sourceTree = "<group>"; };
+		22B3B39513B033D400B3AB31 /* test_exceptions.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_exceptions.nu; sourceTree = "<group>"; };
+		22B3B39613B033D400B3AB31 /* test_interface.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_interface.nu; sourceTree = "<group>"; };
+		22B3B39713B033D400B3AB31 /* test_list.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_list.nu; sourceTree = "<group>"; };
+		22B3B39813B033D400B3AB31 /* test_list_enumerable.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_list_enumerable.nu; sourceTree = "<group>"; };
+		22B3B39913B033D400B3AB31 /* test_macros.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_macros.nu; sourceTree = "<group>"; };
+		22B3B39A13B033D400B3AB31 /* test_macrox.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_macrox.nu; sourceTree = "<group>"; };
+		22B3B39B13B033D400B3AB31 /* test_match.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_match.nu; sourceTree = "<group>"; };
+		22B3B39C13B033D400B3AB31 /* test_math.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_math.nu; sourceTree = "<group>"; };
+		22B3B39D13B033D400B3AB31 /* test_memory.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_memory.nu; sourceTree = "<group>"; };
+		22B3B39E13B033D400B3AB31 /* test_nu.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_nu.nu; sourceTree = "<group>"; };
+		22B3B3A013B033D400B3AB31 /* test_numbers.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_numbers.nu; sourceTree = "<group>"; };
+		22B3B3A113B033D400B3AB31 /* test_onlisp.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_onlisp.nu; sourceTree = "<group>"; };
+		22B3B3A213B033D400B3AB31 /* test_operators.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_operators.nu; sourceTree = "<group>"; };
+		22B3B3A313B033D400B3AB31 /* test_parser.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_parser.nu; sourceTree = "<group>"; };
+		22B3B3A413B033D400B3AB31 /* test_profiler.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_profiler.nu; sourceTree = "<group>"; };
+		22B3B3A513B033D400B3AB31 /* test_propertylists.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_propertylists.nu; sourceTree = "<group>"; };
+		22B3B3A613B033D400B3AB31 /* test_protocols.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_protocols.nu; sourceTree = "<group>"; };
+		22B3B3A713B033D400B3AB31 /* test_quasiquote.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_quasiquote.nu; sourceTree = "<group>"; };
+		22B3B3A813B033D400B3AB31 /* test_references.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_references.nu; sourceTree = "<group>"; };
+		22B3B3A913B033D400B3AB31 /* test_regex.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_regex.nu; sourceTree = "<group>"; };
+		22B3B3AA13B033D400B3AB31 /* test_return.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_return.nu; sourceTree = "<group>"; };
+		22B3B3AB13B033D400B3AB31 /* test_set.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_set.nu; sourceTree = "<group>"; };
+		22B3B3AC13B033D400B3AB31 /* test_strings.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_strings.nu; sourceTree = "<group>"; };
+		22B3B3AD13B033D400B3AB31 /* test_structs.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_structs.nu; sourceTree = "<group>"; };
+		22B3B3AE13B033D400B3AB31 /* test_swizzling.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_swizzling.nu; sourceTree = "<group>"; };
+		22B3B3AF13B033D400B3AB31 /* test_symbols.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_symbols.nu; sourceTree = "<group>"; };
+		22B3B3B013B033D400B3AB31 /* test_system.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_system.nu; sourceTree = "<group>"; };
+		22B3B3B113B033D400B3AB31 /* test_templates.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_templates.nu; sourceTree = "<group>"; };
+		22B3B3B213B033D400B3AB31 /* test_truth.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_truth.nu; sourceTree = "<group>"; };
+		22B3B3B313B033D400B3AB31 /* test_types.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_types.nu; sourceTree = "<group>"; };
+		22B3B3B413B033D400B3AB31 /* test_undo.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_undo.nu; sourceTree = "<group>"; };
+		22B3B3B513B033D400B3AB31 /* test_varargs.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_varargs.nu; sourceTree = "<group>"; };
+		22B3B3E513B033EE00B3AB31 /* beautify.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = beautify.nu; sourceTree = "<group>"; };
+		22B3B3E613B033EE00B3AB31 /* bridgesupport.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bridgesupport.nu; sourceTree = "<group>"; };
+		22B3B3E713B033EE00B3AB31 /* cblocks.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cblocks.nu; sourceTree = "<group>"; };
+		22B3B3E813B033EE00B3AB31 /* cocoa.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cocoa.nu; sourceTree = "<group>"; };
+		22B3B3E913B033EE00B3AB31 /* console.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = console.nu; sourceTree = "<group>"; };
+		22B3B3EA13B033EE00B3AB31 /* coredata.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = coredata.nu; sourceTree = "<group>"; };
+		22B3B3EB13B033EE00B3AB31 /* doc.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = doc.nu; sourceTree = "<group>"; };
+		22B3B3EC13B033EE00B3AB31 /* fscript.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fscript.nu; sourceTree = "<group>"; };
+		22B3B3ED13B033EE00B3AB31 /* generate.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = generate.nu; sourceTree = "<group>"; };
+		22B3B3EE13B033EE00B3AB31 /* help.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help.nu; sourceTree = "<group>"; };
+		22B3B3EF13B033EE00B3AB31 /* match.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = match.nu; sourceTree = "<group>"; };
+		22B3B3F013B033EE00B3AB31 /* math.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = math.nu; sourceTree = "<group>"; };
+		22B3B3F113B033EE00B3AB31 /* menu.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = menu.nu; sourceTree = "<group>"; };
+		22B3B3F213B033EE00B3AB31 /* nibtools.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nibtools.nu; sourceTree = "<group>"; };
+		22B3B3F313B033EE00B3AB31 /* nu.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nu.nu; sourceTree = "<group>"; };
+		22B3B3F413B033EE00B3AB31 /* template.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = template.nu; sourceTree = "<group>"; };
+		22B3B3F513B033EE00B3AB31 /* test.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test.nu; sourceTree = "<group>"; };
+		22B3B41D13B0359300B3AB31 /* Nu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Nu.m; sourceTree = "<group>"; };
+		22B3B50213B0386600B3AB31 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		22B3B50413B0388C00B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		22B3B50613B038D000B3AB31 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		22EE1B921406F494007AFC23 /* test_forwarding.nu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = test_forwarding.nu; sourceTree = "<group>"; };
+		22EE2BF413A4731600895861 /* NuApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NuApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		22EE2C0113A4731600895861 /* NuApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NuApp-Info.plist"; sourceTree = "<group>"; };
+		22EE2C0313A4731600895861 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		22EE2C0513A4731600895861 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		22EE2C0713A4731600895861 /* NuApp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NuApp-Prefix.pch"; sourceTree = "<group>"; };
+		22EE2C0813A4731600895861 /* NuAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NuAppDelegate.h; sourceTree = "<group>"; };
+		22EE2C0913A4731600895861 /* NuAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NuAppDelegate.m; sourceTree = "<group>"; };
+		32DBCF5E0370ADEE00C91783 /* Nu_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu_Prefix.pch; sourceTree = "<group>"; };
+		4F43427B1420476C00AC1BFD /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../main/main.m; sourceTree = "<group>"; };
+		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DC2EF5B0486A6940098B216 /* Nu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Nu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2283072F11DDBE3100A5C690 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2283074411DDBEA700A5C690 /* Nu.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22EE2BF113A4731600895861 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22B3B50513B0388C00B3AB31 /* Foundation.framework in Frameworks */,
+				22B3B50313B0386600B3AB31 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF560486A6940098B216 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22B3B50713B038D000B3AB31 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5B0486A6940098B216 /* Nu.framework */,
+				2283073111DDBE3100A5C690 /* nush */,
+				22EE2BF413A4731600895861 /* NuApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* Nu */ = {
+			isa = PBXGroup;
+			children = (
+				22B3B41C13B0359300B3AB31 /* objc */,
+				22B3B3E413B033EE00B3AB31 /* nu */,
+				22B3B38713B033D400B3AB31 /* test */,
+				225F62B913B04256002DD16B /* libffi */,
+				22B3B50B13B03CF400B3AB31 /* Targets */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = Nu;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* Nu.framework */ = {
+			isa = PBXGroup;
+			children = (
+				32DBCF5E0370ADEE00C91783 /* Nu_Prefix.pch */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				1058C7B0FEA5585E11CA2CBB /* Mac Frameworks */,
+			);
+			name = Nu.framework;
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5A0486A6940098B216 /* Info.plist */,
+				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		1058C7B0FEA5585E11CA2CBB /* Mac Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				22B3B50613B038D000B3AB31 /* Foundation.framework */,
+			);
+			name = "Mac Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7B2FEA5585E11CA2CBB /* iOS Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				22B3B50413B0388C00B3AB31 /* Foundation.framework */,
+				22B3B50213B0386600B3AB31 /* UIKit.framework */,
+			);
+			name = "iOS Frameworks";
+			path = ..;
+			sourceTree = "<group>";
+		};
+		225F62B913B04256002DD16B /* libffi */ = {
+			isa = PBXGroup;
+			children = (
+				225F62BE13B04256002DD16B /* ffi.h */,
+				225F62C413B04256002DD16B /* ffi.S */,
+				225F62CA13B04256002DD16B /* ffi.c */,
+			);
+			name = libffi;
+			path = ../libffi;
+			sourceTree = "<group>";
+		};
+		22B3B38713B033D400B3AB31 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				22B3B38813B033D400B3AB31 /* test.html */,
+				22B3B38913B033D400B3AB31 /* test_array.nu */,
+				22B3B38A13B033D400B3AB31 /* test_blockargs.nu */,
+				22B3B38B13B033D400B3AB31 /* test_bridge.nu */,
+				22B3B38C13B033D400B3AB31 /* test_bridgesupport.nu */,
+				22B3B38D13B033D400B3AB31 /* test_characters.nu */,
+				22B3B38E13B033D400B3AB31 /* test_classes.nu */,
+				22B3B38F13B033D400B3AB31 /* test_closures.nu */,
+				22B3B39013B033D400B3AB31 /* test_comparison.nu */,
+				22B3B39113B033D400B3AB31 /* test_control.nu */,
+				22B3B39213B033D400B3AB31 /* test_dictionary.nu */,
+				22B3B39313B033D400B3AB31 /* test_enumerable.nu */,
+				22B3B39413B033D400B3AB31 /* test_errors.nu */,
+				22B3B39513B033D400B3AB31 /* test_exceptions.nu */,
+				22EE1B921406F494007AFC23 /* test_forwarding.nu */,
+				22B3B39613B033D400B3AB31 /* test_interface.nu */,
+				22B3B39713B033D400B3AB31 /* test_list.nu */,
+				22B3B39813B033D400B3AB31 /* test_list_enumerable.nu */,
+				22B3B39913B033D400B3AB31 /* test_macros.nu */,
+				22B3B39A13B033D400B3AB31 /* test_macrox.nu */,
+				22B3B39B13B033D400B3AB31 /* test_match.nu */,
+				22B3B39C13B033D400B3AB31 /* test_math.nu */,
+				22B3B39D13B033D400B3AB31 /* test_memory.nu */,
+				22B3B39E13B033D400B3AB31 /* test_nu.nu */,
+				22B3B3A013B033D400B3AB31 /* test_numbers.nu */,
+				22B3B3A113B033D400B3AB31 /* test_onlisp.nu */,
+				22B3B3A213B033D400B3AB31 /* test_operators.nu */,
+				22B3B3A313B033D400B3AB31 /* test_parser.nu */,
+				22B3B3A413B033D400B3AB31 /* test_profiler.nu */,
+				22B3B3A513B033D400B3AB31 /* test_propertylists.nu */,
+				22B3B3A613B033D400B3AB31 /* test_protocols.nu */,
+				22B3B3A713B033D400B3AB31 /* test_quasiquote.nu */,
+				22B3B3A813B033D400B3AB31 /* test_references.nu */,
+				22B3B3A913B033D400B3AB31 /* test_regex.nu */,
+				22B3B3AA13B033D400B3AB31 /* test_return.nu */,
+				22B3B3AB13B033D400B3AB31 /* test_set.nu */,
+				22B3B3AC13B033D400B3AB31 /* test_strings.nu */,
+				22B3B3AD13B033D400B3AB31 /* test_structs.nu */,
+				22B3B3AE13B033D400B3AB31 /* test_swizzling.nu */,
+				22B3B3AF13B033D400B3AB31 /* test_symbols.nu */,
+				22B3B3B013B033D400B3AB31 /* test_system.nu */,
+				22B3B3B113B033D400B3AB31 /* test_templates.nu */,
+				22B3B3B213B033D400B3AB31 /* test_truth.nu */,
+				22B3B3B313B033D400B3AB31 /* test_types.nu */,
+				22B3B3B413B033D400B3AB31 /* test_undo.nu */,
+				22B3B3B513B033D400B3AB31 /* test_varargs.nu */,
+			);
+			name = test;
+			path = ../test;
+			sourceTree = "<group>";
+		};
+		22B3B3E413B033EE00B3AB31 /* nu */ = {
+			isa = PBXGroup;
+			children = (
+				22B3B3E513B033EE00B3AB31 /* beautify.nu */,
+				22B3B3E613B033EE00B3AB31 /* bridgesupport.nu */,
+				22B3B3E713B033EE00B3AB31 /* cblocks.nu */,
+				22B3B3E813B033EE00B3AB31 /* cocoa.nu */,
+				22B3B3E913B033EE00B3AB31 /* console.nu */,
+				22B3B3EA13B033EE00B3AB31 /* coredata.nu */,
+				22B3B3EB13B033EE00B3AB31 /* doc.nu */,
+				22B3B3EC13B033EE00B3AB31 /* fscript.nu */,
+				22B3B3ED13B033EE00B3AB31 /* generate.nu */,
+				22B3B3EE13B033EE00B3AB31 /* help.nu */,
+				22B3B3EF13B033EE00B3AB31 /* match.nu */,
+				22B3B3F013B033EE00B3AB31 /* math.nu */,
+				22B3B3F113B033EE00B3AB31 /* menu.nu */,
+				22B3B3F213B033EE00B3AB31 /* nibtools.nu */,
+				22B3B3F313B033EE00B3AB31 /* nu.nu */,
+				22B3B3F413B033EE00B3AB31 /* template.nu */,
+				22B3B3F513B033EE00B3AB31 /* test.nu */,
+			);
+			name = nu;
+			path = ../nu;
+			sourceTree = "<group>";
+		};
+		22B3B41C13B0359300B3AB31 /* objc */ = {
+			isa = PBXGroup;
+			children = (
+				229FABE113C0129400CEFCF5 /* Nu.h */,
+				22B3B41D13B0359300B3AB31 /* Nu.m */,
+			);
+			name = objc;
+			path = ../objc;
+			sourceTree = "<group>";
+		};
+		22B3B50913B03B6600B3AB31 /* nush */ = {
+			isa = PBXGroup;
+			children = (
+				4F43427B1420476C00AC1BFD /* main.m */,
+			);
+			name = nush;
+			sourceTree = "<group>";
+		};
+		22B3B50B13B03CF400B3AB31 /* Targets */ = {
+			isa = PBXGroup;
+			children = (
+				0867D69AFE84028FC02AAC07 /* Nu.framework */,
+				22B3B50913B03B6600B3AB31 /* nush */,
+				22EE2BFF13A4731600895861 /* NuApp */,
+			);
+			name = Targets;
+			sourceTree = "<group>";
+		};
+		22EE2BFF13A4731600895861 /* NuApp */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B2FEA5585E11CA2CBB /* iOS Frameworks */,
+				22EE2C0813A4731600895861 /* NuAppDelegate.h */,
+				22EE2C0913A4731600895861 /* NuAppDelegate.m */,
+				22EE2C0013A4731600895861 /* Supporting Files */,
+			);
+			path = NuApp;
+			sourceTree = "<group>";
+		};
+		22EE2C0013A4731600895861 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				22EE2C0113A4731600895861 /* NuApp-Info.plist */,
+				22EE2C0213A4731600895861 /* InfoPlist.strings */,
+				22EE2C0513A4731600895861 /* main.m */,
+				22EE2C0713A4731600895861 /* NuApp-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8DC2EF500486A6940098B216 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		2283073011DDBE3100A5C690 /* nush */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2283073B11DDBE3A00A5C690 /* Build configuration list for PBXNativeTarget "nush" */;
+			buildPhases = (
+				2283072E11DDBE3100A5C690 /* Sources */,
+				2283072F11DDBE3100A5C690 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2283074311DDBEA300A5C690 /* PBXTargetDependency */,
+			);
+			name = nush;
+			productName = nush;
+			productReference = 2283073111DDBE3100A5C690 /* nush */;
+			productType = "com.apple.product-type.tool";
+		};
+		22EE2BF313A4731600895861 /* NuApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22EE2C1013A4731600895861 /* Build configuration list for PBXNativeTarget "NuApp" */;
+			buildPhases = (
+				22EE2BF013A4731600895861 /* Sources */,
+				22EE2BF113A4731600895861 /* Frameworks */,
+				22EE2BF213A4731600895861 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NuApp;
+			productName = NuApp;
+			productReference = 22EE2BF413A4731600895861 /* NuApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8DC2EF4F0486A6940098B216 /* Nu */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Nu" */;
+			buildPhases = (
+				8DC2EF500486A6940098B216 /* Headers */,
+				8DC2EF520486A6940098B216 /* Resources */,
+				8DC2EF540486A6940098B216 /* Sources */,
+				8DC2EF560486A6940098B216 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Nu;
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = Nu;
+			productReference = 8DC2EF5B0486A6940098B216 /* Nu.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Nu" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				en,
+			);
+			mainGroup = 0867D691FE84028FC02AAC07 /* Nu */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DC2EF4F0486A6940098B216 /* Nu */,
+				2283073011DDBE3100A5C690 /* nush */,
+				22EE2BF313A4731600895861 /* NuApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		22EE2BF213A4731600895861 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22EE2C0413A4731600895861 /* InfoPlist.strings in Resources */,
+				22B3B3B613B033D400B3AB31 /* test.html in Resources */,
+				22B3B3B713B033D400B3AB31 /* test_array.nu in Resources */,
+				22B3B3B813B033D400B3AB31 /* test_blockargs.nu in Resources */,
+				22B3B3B913B033D400B3AB31 /* test_bridge.nu in Resources */,
+				22B3B3BA13B033D400B3AB31 /* test_bridgesupport.nu in Resources */,
+				22B3B3BB13B033D400B3AB31 /* test_characters.nu in Resources */,
+				22B3B3BC13B033D400B3AB31 /* test_classes.nu in Resources */,
+				22B3B3BD13B033D400B3AB31 /* test_closures.nu in Resources */,
+				22B3B3BE13B033D400B3AB31 /* test_comparison.nu in Resources */,
+				22B3B3BF13B033D400B3AB31 /* test_control.nu in Resources */,
+				22B3B3C013B033D400B3AB31 /* test_dictionary.nu in Resources */,
+				22B3B3C113B033D400B3AB31 /* test_enumerable.nu in Resources */,
+				22B3B3C213B033D400B3AB31 /* test_errors.nu in Resources */,
+				22B3B3C313B033D400B3AB31 /* test_exceptions.nu in Resources */,
+				22B3B3C413B033D400B3AB31 /* test_interface.nu in Resources */,
+				22B3B3C513B033D400B3AB31 /* test_list.nu in Resources */,
+				22B3B3C613B033D400B3AB31 /* test_list_enumerable.nu in Resources */,
+				22B3B3C713B033D400B3AB31 /* test_macros.nu in Resources */,
+				22B3B3C813B033D400B3AB31 /* test_macrox.nu in Resources */,
+				22B3B3C913B033D400B3AB31 /* test_match.nu in Resources */,
+				22B3B3CA13B033D400B3AB31 /* test_math.nu in Resources */,
+				22B3B3CB13B033D400B3AB31 /* test_memory.nu in Resources */,
+				22B3B3CC13B033D400B3AB31 /* test_nu.nu in Resources */,
+				22B3B3CE13B033D400B3AB31 /* test_numbers.nu in Resources */,
+				22B3B3CF13B033D400B3AB31 /* test_onlisp.nu in Resources */,
+				22B3B3D013B033D400B3AB31 /* test_operators.nu in Resources */,
+				22B3B3D113B033D400B3AB31 /* test_parser.nu in Resources */,
+				22B3B3D213B033D400B3AB31 /* test_profiler.nu in Resources */,
+				22B3B3D313B033D400B3AB31 /* test_propertylists.nu in Resources */,
+				22B3B3D413B033D400B3AB31 /* test_protocols.nu in Resources */,
+				22B3B3D513B033D400B3AB31 /* test_quasiquote.nu in Resources */,
+				22B3B3D613B033D400B3AB31 /* test_references.nu in Resources */,
+				22B3B3D713B033D400B3AB31 /* test_regex.nu in Resources */,
+				22B3B3D813B033D400B3AB31 /* test_return.nu in Resources */,
+				22B3B3D913B033D400B3AB31 /* test_set.nu in Resources */,
+				22B3B3DA13B033D400B3AB31 /* test_strings.nu in Resources */,
+				22B3B3DB13B033D400B3AB31 /* test_structs.nu in Resources */,
+				22B3B3DC13B033D400B3AB31 /* test_swizzling.nu in Resources */,
+				22B3B3DD13B033D400B3AB31 /* test_symbols.nu in Resources */,
+				22B3B3DE13B033D400B3AB31 /* test_system.nu in Resources */,
+				22B3B3DF13B033D400B3AB31 /* test_templates.nu in Resources */,
+				22B3B3E013B033D400B3AB31 /* test_truth.nu in Resources */,
+				22B3B3E113B033D400B3AB31 /* test_types.nu in Resources */,
+				22B3B3E213B033D400B3AB31 /* test_undo.nu in Resources */,
+				22B3B3E313B033D400B3AB31 /* test_varargs.nu in Resources */,
+				22B3B3F713B033EE00B3AB31 /* beautify.nu in Resources */,
+				22B3B3F913B033EE00B3AB31 /* bridgesupport.nu in Resources */,
+				22B3B3FB13B033EE00B3AB31 /* cblocks.nu in Resources */,
+				22B3B3FD13B033EE00B3AB31 /* cocoa.nu in Resources */,
+				22B3B3FF13B033EE00B3AB31 /* console.nu in Resources */,
+				22B3B40113B033EE00B3AB31 /* coredata.nu in Resources */,
+				22B3B40313B033EE00B3AB31 /* doc.nu in Resources */,
+				22B3B40513B033EE00B3AB31 /* fscript.nu in Resources */,
+				22B3B40713B033EE00B3AB31 /* generate.nu in Resources */,
+				22B3B40913B033EE00B3AB31 /* help.nu in Resources */,
+				22B3B40B13B033EE00B3AB31 /* match.nu in Resources */,
+				22B3B40D13B033EE00B3AB31 /* math.nu in Resources */,
+				22B3B40F13B033EE00B3AB31 /* menu.nu in Resources */,
+				22B3B41113B033EE00B3AB31 /* nibtools.nu in Resources */,
+				22B3B41313B033EE00B3AB31 /* nu.nu in Resources */,
+				22B3B41513B033EE00B3AB31 /* template.nu in Resources */,
+				22B3B41713B033EE00B3AB31 /* test.nu in Resources */,
+				22EE1B931406F494007AFC23 /* test_forwarding.nu in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF520486A6940098B216 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				22B3B3F613B033EE00B3AB31 /* beautify.nu in Resources */,
+				22B3B3F813B033EE00B3AB31 /* bridgesupport.nu in Resources */,
+				22B3B3FA13B033EE00B3AB31 /* cblocks.nu in Resources */,
+				22B3B3FC13B033EE00B3AB31 /* cocoa.nu in Resources */,
+				22B3B3FE13B033EE00B3AB31 /* console.nu in Resources */,
+				22B3B40013B033EE00B3AB31 /* coredata.nu in Resources */,
+				22B3B40213B033EE00B3AB31 /* doc.nu in Resources */,
+				22B3B40413B033EE00B3AB31 /* fscript.nu in Resources */,
+				22B3B40613B033EE00B3AB31 /* generate.nu in Resources */,
+				22B3B40813B033EE00B3AB31 /* help.nu in Resources */,
+				22B3B40A13B033EE00B3AB31 /* match.nu in Resources */,
+				22B3B40C13B033EE00B3AB31 /* math.nu in Resources */,
+				22B3B40E13B033EE00B3AB31 /* menu.nu in Resources */,
+				22B3B41013B033EE00B3AB31 /* nibtools.nu in Resources */,
+				22B3B41213B033EE00B3AB31 /* nu.nu in Resources */,
+				22B3B41413B033EE00B3AB31 /* template.nu in Resources */,
+				22B3B41613B033EE00B3AB31 /* test.nu in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2283072E11DDBE3100A5C690 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F43427C1420476C00AC1BFD /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22EE2BF013A4731600895861 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22EE2C0613A4731600895861 /* main.m in Sources */,
+				22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */,
+				22B3B47413B0359300B3AB31 /* Nu.m in Sources */,
+				225F62CD13B04256002DD16B /* ffi.S in Sources */,
+				225F62D313B04256002DD16B /* ffi.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF540486A6940098B216 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22B3B47313B0359300B3AB31 /* Nu.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2283074311DDBEA300A5C690 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* Nu */;
+			targetProxy = 2283074211DDBEA300A5C690 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		22EE2C0213A4731600895861 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				22EE2C0313A4731600895861 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91AE08733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../examples/NuAnywhere/NuInject\"",
+					"\"$(SRCROOT)/..\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Nu_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				PRODUCT_NAME = Nu;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		1DEB91AF08733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../examples/NuAnywhere/NuInject\"",
+					"\"$(SRCROOT)/..\"",
+				);
+				FRAMEWORK_VERSION = A;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Nu_Prefix.pch;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				PRODUCT_NAME = Nu;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		1DEB91B208733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SNOWLEOPARD,
+					DARWIN,
+				);
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-ledit",
+					"-lffi",
+				);
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		1DEB91B308733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SNOWLEOPARD,
+					DARWIN,
+				);
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				OTHER_LDFLAGS = (
+					"-ledit",
+					"-lffi",
+				);
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		2283073311DDBE3200A5C690 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PRODUCT_NAME = nush;
+				VALID_ARCHS = x86_64;
+			};
+			name = Debug;
+		};
+		2283073411DDBE3200A5C690 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PRODUCT_NAME = nush;
+				VALID_ARCHS = x86_64;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		22EE2C0E13A4731600895861 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+					"\"$(SRCROOT)/..\"",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NuApp/NuApp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					"$(SRCROOT)/../objc",
+				);
+				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		22EE2C0F13A4731600895861 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(DEVELOPER_FRAMEWORKS_DIR)\"",
+					"\"$(SRCROOT)/..\"",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "NuApp/NuApp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SNOWLEOPARD,
+					DARWIN,
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					"$(SRCROOT)/../objc",
+				);
+				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Nu" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91AE08733DA50010E9CD /* Debug */,
+				1DEB91AF08733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Nu" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91B208733DA50010E9CD /* Debug */,
+				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2283073B11DDBE3A00A5C690 /* Build configuration list for PBXNativeTarget "nush" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2283073311DDBE3200A5C690 /* Debug */,
+				2283073411DDBE3200A5C690 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22EE2C1013A4731600895861 /* Build configuration list for PBXNativeTarget "NuApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22EE2C0E13A4731600895861 /* Debug */,
+				22EE2C0F13A4731600895861 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

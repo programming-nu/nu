@@ -1,7 +1,7 @@
 ;; test_set.nu
 ;;  tests for Nu set extensions.
 ;;
-;;  Copyright (c) 2010 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2010 Tim Burks, Radtastical Inc.
 
 (class TestSet is NuTestCase
      

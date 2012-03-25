@@ -1,6 +1,10 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(global VERSION '(0 9 1)) #(major minor tweak)
+(set DEVROOT 
+     (ifDarwin (then (NSString stringWithShellCommand:"xcode-select -print-path"))
+               (else nil)))
+ 
+(global VERSION '(2 0 1)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
@@ -27,7 +31,6 @@ END)
 
 ;; source files
 (set @c_files     (filelist "^objc/.*\.c$"))
-(@c_files unionSet:(filelist "^pcre/.*\.c$"))
 (set @m_files     (filelist "^objc/.*\.m$"))
 (@m_files unionSet:(filelist "^baked/.*\.m$"))
 (set @nu_files    (filelist "^nu/.*\.nu$"))
@@ -43,7 +46,6 @@ END)
 (@inc_dirs addObjectsFromList:(list "./include" "./include/Nu"))
 (ifDarwin
          (then (@frameworks addObject:"Cocoa")
-               (@inc_dirs   addObject:"./pcre")
                (@libs       addObject:"edit"))
          (else (@libs       addObjectsFromList:(list "readline" "m" ))
                ;;(@inc_dirs   addObject:"/usr/include/GNUstep/Headers")
@@ -65,13 +67,6 @@ END)
                          (@inc_dirs addObject:"./libffi/include")
                          (@lib_dirs addObject:"./libffi")))))
 
-(set @pcre_prefix "")
-(let ((pcre_config ((NSString stringWithShellCommand:"which pcre-config 2>/dev/null") chomp)))
-     (if pcre_config
-         (then (set @pcre_prefix ((NSString stringWithShellCommand:"#{pcre_config} --prefix") chomp))
-               (@inc_dirs addObject:"#{@pcre_prefix}/include")
-               (@lib_dirs addObject:"#{@pcre_prefix}/lib"))))
-
 ;; framework description
 (set @framework "Nu")
 (set @framework_identifier   "nu.programming.framework")
@@ -84,25 +79,27 @@ END)
 
 ;; build configuration
 (set @cc "gcc")
-(set @leopard "")
+(set @cc "#{DEVROOT}/usr/bin/clang")
+
+(set @sdkflags "")
 (set @sdk
-     (cond ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.7.sdk")
-            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__ -DSNOWLEOPARD -DLION")
-            ("-isysroot /Developer/SDKs/MacOSX10.6.sdk")) ;; stay on the 10.6 SDK for now
-           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.6.sdk")
-            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__ -DSNOWLEOPARD")
-            ("-isysroot /Developer/SDKs/MacOSX10.6.sdk"))
-           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.5.sdk")
-            (set @leopard "-DLEOPARD_OBJC2 -D__OBJC2__")
-            ("-isysroot /Developer/SDKs/MacOSX10.5.sdk"))
-           ((NSFileManager directoryExistsNamed:"/Developer/SDKs/MacOSX10.4u.sdk")
-            ("-isysroot /Developer/SDKs/MacOSX10.4u.sdk"))
+     (cond ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.7.sdk")
+            (set @sdkflags "-D__OBJC2__ -DSNOWLEOPARD")
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.7.sdk"))
+           ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.6.sdk")
+            (set @sdkflags "-D__OBJC2__ -DSNOWLEOPARD")
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.6.sdk"))
+           ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.5.sdk")
+            (set @sdkflags "-D__OBJC2__")
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.5.sdk"))
+           ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.4u.sdk")
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.4u.sdk"))
            (else "")))
 
 (set @cflags "-Wall -g -std=gnu99 -fPIC")
 
 (ifDarwin
-         (then (set @cflags (+ @cflags " -g -O2 -DDARWIN -DMACOSX #{@sdk} #{@leopard}"))
+         (then (set @cflags (+ @cflags " -g -O2 -DMACOSX #{@sdk} #{@sdkflags}"))
                (set @mflags_nogc "-fobjc-exceptions")
                (set @mflags (+ @mflags_nogc " -fobjc-gc"))) ;; To use garbage collection, add this flag: "-fobjc-gc"
          (else (set @cflags "-Wall -g -std=gnu99 -fPIC")
@@ -116,9 +113,9 @@ END)
 (set @cflags (+ @cflags " -DHAVE_CONFIG_H"))
 
 (ifDarwin
-         (then (set @arch '("i386")))) ;; optionally add "ppc" or "ppc64" to the list
+         (then (set @arch '()))) ;; optionally add "ppc" or "ppc64" to the list
 
-(if (isSnowLeopard)
+(if (or isSnowLeopard isLion)
 	(then (set @arch (append @arch '("x86_64")))))
 
 (set @includes
@@ -186,7 +183,7 @@ END)
       (SH "ruby -rtest/unit -e0 -- -v --pattern '/test_.*\.rb^/'"))
 
 (task "test" => "framework" "nush" is
-      (SH "./nush tools/nutest test/test_*.nu"))
+      (SH "./nush tools/nutest tests.nu"))
 
 (task "doc" is
       (SH "nudoc"))
@@ -232,9 +229,9 @@ END)
       (SH "hdiutil create -srcdir dmg '#{@framework}.dmg' -volname '#{@framework}'")
       (SH "rm -rf dmg"))
 
-(if (NSFileManager fileExistsNamed:"/Developer/usr/bin/packagemaker")
-    (then (set PACKAGEMAKER "/Developer/usr/bin/packagemaker"))
-    (else (set PACKAGEMAKER "/Developer/Tools/packagemaker")))
+(if (NSFileManager fileExistsNamed:"#{DEVROOT}/usr/bin/packagemaker")
+    (then (set PACKAGEMAKER "#{DEVROOT}/usr/bin/packagemaker"))
+    (else (set PACKAGEMAKER "#{DEVROOT}/Tools/packagemaker")))
 
 ;; Build an installer and wrap it in a disk image.
 (task "installer" => "framework" "nush" is

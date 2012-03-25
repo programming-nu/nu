@@ -1,7 +1,7 @@
 ;; test_math.nu
 ;;  tests for Nu math functions.
 ;;
-;;  Copyright (c) 2007 Michael Burks/Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Michael Burks/Tim Burks, Radtastical Inc.
 
 (load "math")
 (set PI 3.14159)
@@ -163,3 +163,4 @@
         (assert_equal nil (not t))
         (assert_equal t   (not 0))
         (assert_equal t   (not nil))))
+

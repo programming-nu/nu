@@ -1,7 +1,7 @@
 ;; @file       nu.nu
 ;; @discussion Nu library definitions. Useful extensions to common classes.
 ;;
-;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
 ;;   Licensed under the Apache License, Version 2.0 (the "License");
 ;;   you may not use this file except in compliance with the License.
@@ -14,20 +14,6 @@
 ;;   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ;;   See the License for the specific language governing permissions and
 ;;   limitations under the License.
-
-(global NSUTF8StringEncoding 4)
-(global NSLog (NuBridgedFunction functionWithName:"NSLog" signature:"v@"))
-
-;; Warning! I want to deprecate these.
-(global second  (do (my-list) (car (cdr my-list))))
-(global third   (do (my-list) (car (cdr (cdr my-list)))))
-(global fourth  (do (my-list) (car (cdr (cdr (cdr my-list))))))
-(global fifth   (do (my-list) (car (cdr (cdr (cdr (cdr my-list)))))))
-(global sixth   (do (my-list) (car (cdr (cdr (cdr (cdr (cdr my-list))))))))
-(global seventh (do (my-list) (car (cdr (cdr (cdr (cdr (cdr (cdr my-list)))))))))
-(global eighth  (do (my-list) (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr my-list))))))))))
-(global ninth   (do (my-list) (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr my-list)))))))))))
-(global tenth   (do (my-list) (car (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr (cdr my-list))))))))))))
 
 (global rand
         (do (maximum)
@@ -114,17 +100,24 @@
         (do (ls)
             (not (any (ls map:(do (x) (not x)))))))
 
+;; Applies a function to a list of arguments.
+;; For example (apply + '(1 2)) returns 3.
+;;(global apply
+;;        (macro _ (fn *fnargs)
+;;             `(eval (cons ,fn ,*fnargs))))
+
 ;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
 ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
 ;; an exception.
 (global assert
-        (macro-0 _
-             (set expression (car margs))
-             (if (not (eval expression))
-                 (then (throw ((NSException alloc)
-                               initWithName:"NuAssertionFailure"
-                               reason:(expression stringValue)
-                               userInfo:nil))))))
+        (macro _ (*body)
+             `(progn
+                    (set expression ,(car *body))
+                    (if (not (eval expression))
+                        (then (throw ((NSException alloc)
+                                      initWithName:"NuAssertionFailure"
+                                      reason:(expression stringValue)
+                                      userInfo:nil)))))))
 
 ;; Allows mapping a function over multiple lists.
 ;; For example (map + '(1 2) '(3 4)) returns '(4 6).
@@ -151,19 +144,20 @@
                            (else (do (a b) (a compare:b)))))
             (((apply array ls) sortedArrayUsingBlock:block) list)))
 
-(if (eq (uname) "Darwin") ;; throw is currently only available with the Darwin runtime
+(if (or (eq (uname) "Darwin") (eq (uname "iOS"))) ;; throw is currently only available with the Darwin runtime
     (then
          ;; Evaluates an expression and raises a NuAssertionFailure if the result is false.
          ;; For example (assert (eq 1 1)) does nothing but (assert (eq (+ 1 1) 1)) throws
          ;; an exception.
          (global assert
-                 (macro-0 _
-                      (set expression (car margs))
-                      (if (not (eval expression))
-                          (then (throw ((NSException alloc)
-                                        initWithName:"NuAssertionFailure"
-                                        reason:(expression stringValue)
-                                        userInfo:nil))))))
+                 (macro _ (*body)
+                      `(progn
+                             (set expression ,(car *body))
+                             (if (not (eval expression))
+                                 (then (throw ((NSException alloc)
+                                               initWithName:"NuAssertionFailure"
+                                               reason:(expression stringValue)
+                                               userInfo:nil)))))))
          
          ;; Throws an exception.
          ;; This function is more concise and easier to remember than throw.
@@ -173,11 +167,9 @@
                              reason:reason
                              userInfo:nil)))))
     (else
-         (global assert (macro-0 _ (NSLog "warning: assert is unavailable")))
-         (global throw* (macro-0 _ (NSLog "warning: throw* is unavailable")))
-         (global throw  (macro-0 _ (NSLog "warning: throw is unavailable")))))
-
-
+         (global assert (macro _ () (NSLog "warning: assert is unavailable")))
+         (global throw* (macro _ () (NSLog "warning: throw* is unavailable")))
+         (global throw  (macro _ () (NSLog "warning: throw is unavailable")))))
 
 
 ;; Returns an array of filenames matching a given pattern.
@@ -193,59 +185,6 @@
                             (results addObject:filename)))
                  ((results allObjects) sortedArrayUsingSelector:"compare:"))))
 
-(class NSMutableArray
-     
-     ;; Concisely add objects to arrays using this method, which is equivalent to a call to addObject:.
-     (- (void) << (id) object is (self addObject:object)))
-
-(class NSMutableSet
-     
-     ;; Concisely add objects to sets using this method, which is equivalent to a call to addObject:.
-     (- (void) << (id) object is (self addObject:object)))
-
-(class NSMutableString
-     
-     ;; Concisely append to a string using this method, which is equivalent to a call to appendString:.
-     (- (void) << (id) object is
-         (if (not (string? object))
-            (throw* "NSInvalidArgumentExpection"
-                    "Attempt to append a non-string to a string"))
-            (else (self appendString:object))))
-
-(class NSObject
-     
-     ;; Write objects as XML property lists (only for NSData, NSString, NSNumber, NSDate, NSArray, and NSDictionary objects)
-     (- writeToPropertyList:name is
-        (set xmlData (NSPropertyListSerialization dataFromPropertyList:self
-                          format:100 ;; NSPropertyListXMLFormat_v1_0
-                          errorDescription:nil))
-        (if xmlData (xmlData writeToFile:name atomically:YES)
-            (else (puts ((error value) description)))))
-     
-     ;; Read objects from property lists
-     (+ readFromPropertyList:name is
-        (NSPropertyListSerialization propertyListFromData:(NSData dataWithContentsOfFile:name)
-             mutabilityOption:0 ;; NSPropertyListImmutable
-             format:nil
-             errorDescription:nil))
-     
-     (- XMLPropertyListRepresentation is
-        (NSPropertyListSerialization dataFromPropertyList:self
-             format:100 ;; NSPropertyListXMLFormat_v1_0
-             errorDescription:nil))
-     
-     (- binaryPropertyListRepresentation is
-        (NSPropertyListSerialization dataFromPropertyList:self
-             format:200 ;; NSPropertyListBinaryFormat_v1_0
-             errorDescription:nil)))
-
-(class NSData
-     (- propertyListValue is
-        (NSPropertyListSerialization propertyListFromData:self
-             mutabilityOption:0 ;; NSPropertyListImmutable
-             format:nil
-             errorDescription:nil)))
-
 (if (eq (uname) "Darwin")
     (class NuCell
          ;; Convert a list into an NSRect. The list must have at least four elements.
@@ -257,46 +196,9 @@
          ;; Convert a list into an NSRange.  The list must have at least two elements.
          (- (NSRange) rangeValue is (list (self first) (self second)))))
 
-;; Use this macro to create and extend protocols.
-;; The odd-looking use of the global operator is to define the macro globally.
-;; We just use an "_" for the macro name argument because its local name is unimportant.
-;; It does not work with the latest (more restrictive) ObjC runtimes from Apple.
-(global protocol
-        (macro-0 _
-             (set __signatureForIdentifier (NuBridgedFunction functionWithName:"signature_for_identifier" signature:"@@@"))
-             (function __parse_signature (typeSpecifier)
-                  (__signatureForIdentifier typeSpecifier (NuSymbolTable sharedSymbolTable)))
-             
-             (set __name ((margs car) stringValue))
-             (unless (set __protocol (Protocol protocolNamed: __name))
-                     (set __protocol ((Protocol alloc) initWithName: __name)))
-             (eval (list 'set (margs car) __protocol))
-             (set __rest (margs cdr))
-             (while __rest
-                    (set __method (__rest car))
-                    (set __returnType (__parse_signature ((__method cdr) car)))
-                    (set __signature __returnType)
-                    (__signature appendString:"@:")
-                    (set __name "#{(((__method cdr) cdr) car)}")
-                    (set __argumentCursor (((__method cdr) cdr) cdr))
-                    (while __argumentCursor ;; argument type
-                           (__signature appendString:(__parse_signature (__argumentCursor car)))
-                           (set __argumentCursor (__argumentCursor cdr))
-                           (if __argumentCursor ;; variable name
-                               (set __argumentCursor (__argumentCursor cdr)))
-                           (if __argumentCursor ;; selector
-                               (__name appendString:((__argumentCursor car) stringValue))
-                               (set __argumentCursor (__argumentCursor cdr))))
-                    (cond ((or (eq (__method car) '-) (eq (__method car) 'imethod))
-                           (__protocol addInstanceMethod:__name withSignature:__signature))
-                          ((or (eq (__method car) '+) (eq (__method car) 'cmethod))
-                           (__protocol addClassMethod:__name withSignature:__signature))
-                          (else nil))
-                    (set __rest (__rest cdr)))))
-
 ;; profiling macro - experimental
 (global profile
-        (macro-1 _ (name *body)
+        (macro _ (name *body)
              `(progn ((NuProfiler defaultProfiler) start:,name)
                      (set __result (progn ,@*body))
                      ((NuProfiler defaultProfiler) stop)

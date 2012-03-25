@@ -3,7 +3,7 @@
 # @file nudoc
 # The Nu documentation tool.
 #
-# @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+# @copyright Copyright (c) 2007 Tim Burks, Radtastical Inc.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@
 
 (load "doc")
 
-(macro-0 increment (eval '(set (unquote (margs car)) (+ (unquote (margs car)) 1))))
+(macro increment (n)
+ `(set ,n (+ ,n 1)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; main program

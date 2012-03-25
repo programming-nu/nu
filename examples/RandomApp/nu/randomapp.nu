@@ -1,7 +1,7 @@
 ;; randomapp.nu
 ;;  Aaron Hillegass' RandomApp example, completely Nu-ed.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 ;; create a standard button
 (function standard-cocoa-button (frame)

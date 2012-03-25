@@ -1,7 +1,7 @@
 ;; test_truth.nu
 ;;  tests for Nu representations of truth and falseness.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestTruth is NuTestCase
      

@@ -1,7 +1,7 @@
 ;; test_closures.nu
 ;;  tests for Nu closures.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 ;; These tests will fail with old-style (0.1.x) Nu closures,
 ;; which can be enabled by defining CLOSE_ON_VALUES at compilation time.

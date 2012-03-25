@@ -1,6 +1,6 @@
 /*!
 @file main.m
-@copyright Copyright (c) 2007 Neon Design Technology, Inc.
+@copyright Copyright (c) 2007,2011 Radtastical Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-#if defined(DARWIN) 
 
 int NuMain(int argc, const char *argv[]);
 
@@ -23,18 +22,4 @@ int main(int argc, const char *argv[])
     return NuMain(argc, argv);
 }
 
-#else
 
-int NuMain(int argc, const char *argv[], const char *envp[]);
-
-#if defined(FREEBSD)
-#include "GNUstepBase/GSConfig.h"
-int gnustep_base_user_main(int argc, const char* argv[], const char *envp[])
-#else
-int main(int argc, const char *argv[], const char *envp[])
-#endif
-{
-    return NuMain(argc, argv, envp);
-}
-
-#endif

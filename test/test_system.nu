@@ -1,7 +1,9 @@
 ;; test_system.nu
 ;;  tests for Nu system-level operators.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
+
+(unless (eq (uname) "iOS")
 
 (class TestSystem is NuTestCase
      
@@ -26,5 +28,5 @@ nush -e '(set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))' 
         (assert_equal "Hello" s)
         (set d (NSData dataWithShellCommand:"echo 'Goodbye'"))
         (set s (NSString stringWithData:d encoding:NSUTF8StringEncoding))
-        (assert_equal "Goodbye\n" s)))
+        (assert_equal "Goodbye\n" s))))
 

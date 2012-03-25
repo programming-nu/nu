@@ -1,7 +1,7 @@
 ;; test_classes.nu
 ;;  tests for Nu class manipulations.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestClasses is NuTestCase
      

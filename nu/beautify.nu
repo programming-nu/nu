@@ -1,7 +1,7 @@
 ;; @file       beautify.nu
 ;; @discussion Code beautification for Nu.
 ;;
-;; @copyright  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
 ;;   Licensed under the Apache License, Version 2.0 (the "License");
 ;;   you may not use this file except in compliance with the License.
@@ -42,7 +42,6 @@
 ;; @abstract A Nu code beautifier.
 ;; @discussion This class is used by nubile, the standalone Nu code beautifier, to automatically indent Nu code.
 (class NuBeautifier is NSObject
-     (ivars)
      
      (+ (id) beautify:(id) text is
         (set b ((NuBeautifier alloc) init))

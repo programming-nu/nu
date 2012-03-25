@@ -1,7 +1,7 @@
 ;; test_array.nu
 ;;  tests for Nu array extensions.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestArray is NuTestCase
      

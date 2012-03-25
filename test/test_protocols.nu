@@ -1,7 +1,7 @@
 ;; test_protocols.nu
 ;;  tests for Nu protocol support.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (if (eq (uname) "Darwin")
     (set version (NSString stringWithShellCommand:"uname -r"))

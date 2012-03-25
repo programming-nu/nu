@@ -1,7 +1,7 @@
 ;; test_profiler.nu
 ;;  tests for Nu profiling helpers.
 ;;
-;;  Copyright (c) 2009 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2009 Tim Burks, Radtastical Inc.
 
 
 (function dosomething ()
@@ -40,6 +40,5 @@
         (set onetime ((results "1") time))
         (set twotime ((results "2") time))
         (set threetime ((results "3") time))
-        (if (eq (uname) "Darwin")
-            (assert_true (>= toptime (+ onetime twotime threetime))))))
+        (assert_true (>= toptime (+ onetime twotime threetime)))))
 

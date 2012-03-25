@@ -1,7 +1,7 @@
 ;; rocks.nu
 ;;  Nu Rocks.  A Nu take on asteroids.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (load "nu")
 
@@ -38,7 +38,6 @@
         (list (origin first) (origin second) (- (opposite first) (origin first)) (- (opposite second) (origin second)))))
 
 (class NuRocksView is NSView
-     (ivars)
      
      (- init is
         (self initWithFrame:'(0 0 100 100))
@@ -118,7 +117,6 @@
              writeToFile:(sheet filename) atomically:NO))))
 
 (class NuRocksGame is NSObject
-     (ivars)
      
      (- initWithRect:bounds is
         (self init)
@@ -184,8 +182,8 @@
                                             (list NSForegroundColorAttributeName ((NSColor whiteColor) colorWithAlphaComponent:1.0)
                                                   NSFontAttributeName (NSFont boldSystemFontOfSize:(* 24.0 $scale))))))
         (set size (text sizeWithAttributes:@bottomattributes))
-        (text drawAtPoint:(list (- (first bottomCenter) (* (first size) 0.5))
-                                (- (second bottomCenter) (* (second size) 0.5)))
+        (text drawAtPoint:(list (- (bottomCenter first) (* (size first) 0.5))
+                                (- (bottomCenter second) (* (size second) 0.5)))
               withAttributes:@bottomattributes))
      
      (- drawScore is
@@ -197,8 +195,8 @@
                                            (list NSForegroundColorAttributeName ((NSColor redColor) colorWithAlphaComponent:1.0)
                                                  NSFontAttributeName (NSFont boldSystemFontOfSize:(* 16.0 $scale))))))
         (set size (text sizeWithAttributes:@scoreattributes))
-        (text drawAtPoint:(list (- (first position) (* (first size) 0.5))
-                                (- (second position) (* (second size) 0.5)))
+        (text drawAtPoint:(list (- (position first) (* (size first) 0.5))
+                                (- (position second) (* (size second) 0.5)))
               withAttributes:@scoreattributes))
      
      
@@ -269,7 +267,6 @@
               (else              nil))))
 
 (class Sprite is NSObject
-     (ivars)
      
      (- position is @position)
      (- velocity is @velocity)
@@ -287,32 +284,32 @@
      
      (- moveWithBounds:bounds is
         (if (> @ttl 0) (set @ttl (- @ttl 1)))
-        (set px (+ (first @position) (first @velocity)))
-        (set py (+ (second @position) (second @velocity)))
+        (set px (+ (@position first) (@velocity first)))
+        (set py (+ (@position second) (@velocity second)))
         
         (if $wrap
-            (then (cond ((< px 0) (set px (third bounds)))
-                        ((> px (third bounds)) (set px 0))
+            (then (cond ((< px 0) (set px (bounds third)))
+                        ((> px (bounds third)) (set px 0))
                         (else nil))
-                  (cond ((< py 0) (set py (fourth bounds)))
-                        ((> py (fourth bounds)) (set py 0))
+                  (cond ((< py 0) (set py (bounds fourth)))
+                        ((> py (bounds fourth)) (set py 0))
                         (else nil)))
             (else ;; bouncing
                   (set vx (@velocity first))
                   (set vy (@velocity second))
                   (cond ((< px @radius) (set vx (* vx -1)))
-                        ((> px (- (third bounds) @radius)) (set vx (* vx -1)))
+                        ((> px (- (bounds third) @radius)) (set vx (* vx -1)))
                         (else nil))
                   (cond ((< py @radius) (set vy (* vy -1)))
-                        ((> py (- (fourth bounds) @radius)) (set vy (* vy -1)))
+                        ((> py (- (bounds fourth) @radius)) (set vy (* vy -1)))
                         (else nil))
                   (set @velocity (list vx vy))))
         (set @position (list px py)))
      
      (- collidesWith:sprite is
         (set spriteposition (sprite position))
-        (set dx (- (first @position) (first spriteposition)))
-        (set dy (- (second @position) (second spriteposition)))
+        (set dx (- (@position first) (spriteposition first)))
+        (set dy (- (@position second) (spriteposition second)))
         (set r (+ @radius (sprite radius)))
         (cond ((> dx r) nil)
               ((> (- 0 dx) r) nil)
@@ -334,15 +331,15 @@
         self)
      (- draw is
         (@color set)
-        (set path (NSBezierPath bezierPathWithOvalInRect:(list (- (first @position) @radius)
-                                                               (- (second @position) @radius)
+        (set path (NSBezierPath bezierPathWithOvalInRect:(list (- (@position first) @radius)
+                                                               (- (@position second) @radius)
                                                                (* 2 @radius)
                                                                (* 2 @radius))))
-        (path moveToPoint:(list (first @position) (+ (second @position) @radius)))
-        (path lineToPoint:(list (first @position) (- (second @position) @radius)))
-        (path moveToPoint:(list (- (first @position) (* @radius 0.707)) (- (second @position) (* @radius 0.707))))
+        (path moveToPoint:(list (@position first) (+ (@position second) @radius)))
+        (path lineToPoint:(list (@position first) (- (@position second) @radius)))
+        (path moveToPoint:(list (- (@position first) (* @radius 0.707)) (- (@position second) (* @radius 0.707))))
         (path lineToPoint:@position)
-        (path lineToPoint:(list (+ (first @position) (* @radius 0.707)) (- (second @position) (* @radius 0.707))))
+        (path lineToPoint:(list (+ (@position first) (* @radius 0.707)) (- (@position second) (* @radius 0.707))))
         (path setLineWidth:(* @radius 0.2))
         ((path transform:$transform) stroke)))
 
@@ -365,22 +362,22 @@
         (if (!= @angle 0)
             (then (set cosA (NuMath cos:@angle))
                   (set sinA (NuMath sin:@angle))
-                  (set x (- (* cosA (first @direction)) (* sinA (second @direction))))
-                  (set y (+ (* cosA (second @direction)) (* sinA (first @direction))))
+                  (set x (- (* cosA (@direction first)) (* sinA (@direction second))))
+                  (set y (+ (* cosA (@direction second)) (* sinA (@direction first))))
                   (set @direction (list x y))))
         (if (!= @acceleration 0)
-            (then (set speed (NuMath sqrt:(+ (NuMath square:(+ (first @velocity) (* @acceleration (first @direction))))
-                                             (NuMath square:(+ (second @velocity) (* @acceleration (second @direction)))))))
+            (then (set speed (NuMath sqrt:(+ (NuMath square:(+ (@velocity first) (* @acceleration (@direction first))))
+                                             (NuMath square:(+ (@velocity second) (* @acceleration (@direction second)))))))
                   (if (< speed SPEED_LIMIT)
-                      (then (set @velocity (list (+ (first @velocity) (* @acceleration (first @direction)))
-                                                 (+ (second @velocity) (* @acceleration (second @direction))))))))))
+                      (then (set @velocity (list (+ (@velocity first) (* @acceleration (@direction first)))
+                                                 (+ (@velocity second) (* @acceleration (@direction second))))))))))
      
      (- draw is
         (@color set)
-        (set x0 (first @position))
-        (set y0 (second @position))
-        (set x (first @direction))
-        (set y (second @direction))
+        (set x0 (@position first))
+        (set y0 (@position second))
+        (set x (@direction first))
+        (set y (@direction second))
         (set r @radius)
         (set path (NSBezierPath bezierPath))
         (path moveToPoint:(list (+ x0 (* r x))
@@ -393,10 +390,10 @@
         ((path transform:$transform) fill))
      
      (- shoot is
-        (set missilePosition (list (+ (first @position) (first @direction))
-                                   (+ (second @position) (second @direction))))
-        (set missileVelocity (list (+ (* MISSILE_SPEED (first @direction)) (first @velocity))
-                                   (+ (* MISSILE_SPEED (second @direction)) (second @velocity))))
+        (set missilePosition (list (+ (@position first) (@direction first))
+                                   (+ (@position second) (@direction second))))
+        (set missileVelocity (list (+ (* MISSILE_SPEED (@direction first)) (@velocity first))
+                                   (+ (* MISSILE_SPEED (@direction second)) (@velocity second))))
         ((Missile alloc) initWithPosition:missilePosition velocity:missileVelocity color:@color)))
 
 (class Missile is Sprite
@@ -412,14 +409,13 @@
         (@color set)
         (((NSBezierPath bezierPathWithOvalInRect:
                (list
-                    (- (first @position) @radius)
-                    (- (second @position) @radius)
+                    (- (@position first) @radius)
+                    (- (@position second) @radius)
                     (* 2 @radius)
                     (* 2 @radius)))
           transform:$transform) fill)))
 
 (class NuRocksWindowController is NSObject
-     (ivars)
      
      (- initWithView:view is
         (self init)

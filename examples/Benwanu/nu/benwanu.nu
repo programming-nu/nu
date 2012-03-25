@@ -1,7 +1,7 @@
 ;; @file benwanu.nu
 ;; @discussion Multithreaded visualizer for the Mandelbrot set.
 ;;
-;; @copyright Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; @copyright Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 ;; These are a few simple helper functions.
 (function min (x y) (if (< x y) (then x) (else y)))

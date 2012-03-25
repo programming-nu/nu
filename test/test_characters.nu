@@ -1,7 +1,7 @@
 ;; test_characters.nu
 ;;  tests for Nu character literals.
 ;;
-;;  Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
 
 (class TestCharacters is NuTestCase
      
@@ -30,23 +30,20 @@
         (assert_equal 32 '\s'))
      
      (- (id) testOctalEscapedCharacters is
-        (if (eq (uname) "Darwin") ;; requires UTF-8
-            (assert_equal 0 '\000'))
+        (assert_equal 0 '\000')
         (assert_equal 1 '\001')
         (assert_equal 255 '\377'))
      
      (- (id) testHexEscapedCharacters is
-        (if (eq (uname) "Darwin") ;; requires UTF-8
-            (assert_equal 0 '\x00'))
+        (assert_equal 0 '\x00')
         (assert_equal 1 '\x01')
         (assert_equal 255 '\xfF'))
      
-     (if (eq (uname) "Darwin") ;; requires UTF-8
-         (- (id) testUnicodeEscapedCharacters is
-            (assert_equal 0 '\u0000')
-            (assert_equal 1 '\u0001')
-            (assert_equal 65535 '\uFfFf')
-            (assert_equal 255 '\u00ff')))
+     (- (id) testUnicodeEscapedCharacters is
+        (assert_equal 0 '\u0000')
+        (assert_equal 1 '\u0001')
+        (assert_equal 65535 '\uFfFf')
+        (assert_equal 255 '\u00ff'))
      
      (- (id) testFourCharacterIntegers is
         (assert_equal 1886604404 'psLt')

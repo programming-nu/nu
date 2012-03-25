@@ -1,0 +1,71 @@
+INSTALLING NU
+=============
+
+These are the instructions for installing Nu on a Macintosh.  See the other files
+in this directory for other operating systems.
+
+If you're installed Nu previously using a package manager (e.g. Fink, MacPorts), 
+start by using the package manager to uninstall the old version.
+
+BUILD THE PREREQUISITES
+-----------------------
+
+1. Nu requires PCRE, the Perl-Compatible Regular Expression Library.
+   Before building Nu, download and install pcre, enabling UTF-8.
+   Look for it at http://www.pcre.org.  
+   To build and install a universal binary with UTF-8 support, use the
+   following commands:
+
+   % env CXXFLAGS="-arch i386 -arch ppc -arch x86_64" \
+   	CFLAGS="-arch i386 -arch ppc -arch x86_64" \
+   	LDFLAGS="-arch i386 -arch ppc -arch x86_64" \
+   	./configure --disable-dependency-tracking --enable-utf8
+
+   % make
+
+   % sudo make install
+
+   When you install PCRE, it's best to put it in /usr/local (the default).
+   If you put it anywhere else, you'll have to modify the Rakefile and Nukefile
+   used to build Nu.
+
+2. Nu requires libffi.  Because this library is not included in 
+   OS X 10.4, a version has been provided in the libffi directory. 
+   To build it, use the Ruby "rake" build tool and the included Rakefile.
+   On OS X 10.5, you don't need to do this.
+
+% cd libffi; rake; cd ..
+
+BUILD NU
+--------
+
+3. Use make to build mininush, a minimal version of the Nu shell.
+
+% make
+
+4. Now use mininush to run nuke to complete the Nu build process.
+   This builds Nu.framework and nush, the Nu shell.
+ 
+% ./mininush tools/nuke
+
+INSTALL AND TEST NU
+-------------------
+
+5. Use mininush again to install Nu, nush, and the Nu tools.
+
+% ./mininush tools/nuke install
+
+Since the copying step uses "sudo", you will be prompted for your password.
+
+6. Test your installation.
+
+% nuke test
+
+From now on, you can use the installed nush to run nuke. To see for
+yourself, rebuild everything from scratch:
+
+% nuke clobber
+% nuke
+% nuke install
+
+See the Nukefile for other useful tasks.

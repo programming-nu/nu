@@ -1,7 +1,7 @@
 ;;
 ;; NuScreenSaver/bundle.nu
 ;;
-;; Copyright (c) 2007 Tim Burks, Neon Design Technology, Inc.
+;; Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
 
 (set MAX 20)
