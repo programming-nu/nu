@@ -1,6 +1,8 @@
 ;; Nukefile for Nu framework and nush, the Nu shell
 
-(set DEVROOT "")
+(set DEVROOT
+     (ifDarwin (then (NSString stringWithShellCommand:"xcode-select -print-path"))
+               (else nil)))
  
 (global VERSION '(2 0 1)) #(major minor tweak)
 
@@ -76,8 +78,6 @@ END)
 (set @dylib "libNu")
 
 ;; build configuration
-(set @cc "gcc")
-(set @cc "#{DEVROOT}/usr/bin/clang")
 
 (set @sdkflags "")
 (set @sdk
@@ -94,10 +94,8 @@ END)
             ("-isysroot #{DEVROOT}/SDKs/MacOSX10.4u.sdk"))
            (else "")))
 
-(set @cflags "-Wall -g -fPIC")
-
 (ifDarwin
-         (then (set @cflags (+ @cflags " -g -O2 -DMACOSX #{@sdk} #{@sdkflags}"))
+         (then (set @cflags ( "-Wall -g -fPIC -O2 -DMACOSX #{@sdk} #{@sdkflags}"))
                (set @mflags_nogc "-fobjc-exceptions")
                (set @mflags (+ @mflags_nogc " -fobjc-gc"))) ;; To use garbage collection, add this flag: "-fobjc-gc"
          (else (set @cflags "-Wall -g -std=gnu99 -fPIC")

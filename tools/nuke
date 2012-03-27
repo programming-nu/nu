@@ -283,10 +283,23 @@
      (unless momc (NSException raise:@"NukeError" format:@"Can't find momc (data model compiler)."))
      momc)
 
+(function select-compiler ()
+    (ifDarwin
+        ;; clang built-in to 10.7.3
+        (set clang "/usr/bin/clang")
+        (if (not (NSFileManager fileExistsNamed:clang))
+            ;; use xcode-select to get from e.g. /Developer or Xcode.app
+            (set DEVROOT (NSString stringWithShellCommand:"xcode-select -print-path"))
+            (set clang "#{DEVROOT}/usr/bin/clang")
+            (if (not (NSFileManager fileExistsNamed:clang))
+                (set clang nil))))
+    ;; default to gcc
+    (if (clang) clang (else "gcc")))
+
 ;; use this to create all the compilation tasks for the files in the @c_files and @m_files collections
 (macro compilation-tasks ()
      `(progn
-            (unless @cc (set @cc "gcc"))
+            (unless @cc (set @cc (select-compiler)))
             (unless @cflags (set @cflags "-g"))
             (unless @mflags (set @mflags "-fobjc-exceptions"))
             (unless @includes (set @includes ""))
