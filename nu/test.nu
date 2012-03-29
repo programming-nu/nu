@@ -42,8 +42,11 @@
      
      ;; By overriding this method, we detect each time a class is defined in Nu that inherits from this class.
      (+ (id) inheritedByClass:(id) testClass is
-        (unless $testClasses (set $testClasses (NSMutableSet set)))
-        ($testClasses addObject:testClass))
+	 (unless $testClasses (set $testClasses (NSMutableSet set)))
+	 ;; we need to check for the existence of testClass because reloading
+	 ;; a file with a class definition will call this again but with nil
+	 (if (testClass)
+	      $testClasses addObject:testClass))
      
      ;; The setup method is called before each test case is executed.
      ;; The default implementation does nothing.

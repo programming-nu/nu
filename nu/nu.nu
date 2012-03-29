@@ -116,7 +116,7 @@
                     (if (not (eval expression))
                         (then (throw ((NSException alloc)
                                       initWithName:"NuAssertionFailure"
-                                      reason:(expression stringValue)
+                                      reason:,(*body stringValue)
                                       userInfo:nil)))))))
 
 ;; Allows mapping a function over multiple lists.
