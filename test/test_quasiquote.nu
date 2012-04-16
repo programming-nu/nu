@@ -36,7 +36,15 @@
         (assert_throws "NuQuasiquoteEvalOutsideQuasiquote"
              (do ()
                  (,(+ 1 1)))))
-     
+
+
+     (- (id) testShielding is
+		(macro shielded (name)
+			`(macro ,name (inner)
+				`(+ 2 ~,inner)))
+		(shielded shield)
+		(assert_equal (shield 5) 7))
+							 
      (- (id) testSplicing is
         ; Single element
         (assert_equal '(1) `(,@(list 1)))

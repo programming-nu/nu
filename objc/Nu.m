@@ -9830,6 +9830,12 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                         }
                         break;
                     }
+					case '~':
+                    {
+                        [self quasiquoteEvalNextElement];
+						[self quoteNextElement];
+                        break;
+                    }	
                     case '`':
                     {
                         [self quasiquoteNextElement];
