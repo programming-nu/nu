@@ -8,7 +8,8 @@ SYSTEM = $(shell uname)
 
 PREFIX ?= /usr/local
 
-DEVROOT = 
+TOOLCHAIN = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+SDKROOT   = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer
 
 ifeq ($(shell test -e /usr/lib/libffi.dylib && echo yes), yes)
 	# Use the libffi that ships with OS X.
@@ -20,8 +21,8 @@ else
 	FFI_INCLUDE = -I./libffi/include
 endif
 
-ifeq ($(shell test -e $(DEVROOT)/SDKs/MacOSX10.7.sdk && echo yes), yes)
-        LION_CFLAGS = -isysroot $(DEVROOT)/SDKs/MacOSX10.7.sdk
+ifeq ($(shell test -e $(SDKROOT)/SDKs/MacOSX10.7.sdk && echo yes), yes)
+        LION_CFLAGS = -isysroot $(SDKROOT)/SDKs/MacOSX10.7.sdk
 else
         LION_CFLAGS =
 endif
@@ -50,7 +51,7 @@ ifeq ($(SYSTEM), Darwin)
 	# as of around 10.7.3, clang becomes part of OS X
 	CC = /usr/bin/clang
 	ifneq ($(shell test -e $(CC) && echo yes), yes)
-		CC = $(DEVROOT)/usr/bin/clang
+		CC = $(TOOLCHAIN)/usr/bin/clang
 	endif
 	CFLAGS += -DMACOSX -DDARWIN $(LION_CFLAGS)  
 else
