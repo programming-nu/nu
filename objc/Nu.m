@@ -8676,7 +8676,12 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 @implementation Nu_system_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    id command = [[cdr car] evalWithContext:context];
+    id cursor = cdr;
+    NSMutableString *command = [NSMutableString string];
+    while (cursor && (cursor != [NSNull null])) {
+        [command appendString:[[[cursor car] evalWithContext:context] stringValue]];        
+        cursor = [cursor cdr];
+    }
     const char *commandString = [[command stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
     int result = system(commandString) >> 8;      // this needs an explanation
     return [NSNumber numberWithInt:result];
