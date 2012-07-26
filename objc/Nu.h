@@ -34,7 +34,7 @@
  the list is considered to be a special type of list called a property list (no relation to ObjC plists).
  Each member of a property list is evaluated and the resulting list is returned with no further evaluation.
  */
-@interface NuSymbol : NSObject <NSCoding>
+@interface NuSymbol : NSObject <NSCoding, NSCopying>
 
 /*! Get the global value of a symbol. */
 - (id) value;

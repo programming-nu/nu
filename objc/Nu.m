@@ -633,17 +633,17 @@ id _nulist(id firstObject, ...)
         if (lastParameter && ([[lastParameter stringValue] characterAtIndex:0] == '*')) {
             if (numberOfArguments < (numberOfParameters - 1)) {
                 [NSException raise:@"NuIncorrectNumberOfArguments"
-                            format:@"Incorrect number of arguments to block. Received %d but expected %d or more: %@",
-                 numberOfArguments,
-                 numberOfParameters - 1,
+                            format:@"Incorrect number of arguments to block. Received %ld but expected %ld or more: %@",
+                 (unsigned long) numberOfArguments,
+                 (unsigned long) (numberOfParameters - 1),
                  [parameters stringValue]];
             }
         }
         else {
             [NSException raise:@"NuIncorrectNumberOfArguments"
-                        format:@"Incorrect number of arguments to block. Received %d but expected %d: %@",
-             numberOfArguments,
-             numberOfParameters,
+                        format:@"Incorrect number of arguments to block. Received %ld but expected %ld: %@",
+             (unsigned long) numberOfArguments,
+             (unsigned long) numberOfParameters,
              [parameters stringValue]];
         }
     }
@@ -737,9 +737,9 @@ static id getObjectFromContext(id context, id symbol)
     NSUInteger numberOfParameters = [parameters length];
     if (numberOfArguments != numberOfParameters) {
         [NSException raise:@"NuIncorrectNumberOfArguments"
-                    format:@"Incorrect number of arguments to method. Received %d but expected %d, %@",
-         numberOfArguments,
-         numberOfParameters,
+                    format:@"Incorrect number of arguments to method. Received %ld but expected %ld, %@",
+         (unsigned long) numberOfArguments,
+         (unsigned long) numberOfParameters,
          [parameters stringValue]];
     }
     //    NSLog(@"block eval %@", [cdr stringValue]);
@@ -1655,6 +1655,10 @@ static id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
                 id result = *((id *)objc_value);
                 return result ? result : (id)[NSNull null];
             }
+            else if (!strcmp(typeString, "^{CGColor=}")) {
+                id result = *((id *)objc_value);
+                return result ? result : (id)[NSNull null];
+            }
             else {
                 if (*((unsigned long *)objc_value) == 0)
                     return [NSNull null];
@@ -1678,10 +1682,10 @@ static static void raise_argc_exception(SEL s, NSUInteger count, NSUInteger give
 {
     if (given != count) {
         [NSException raise:@"NuIncorrectNumberOfArguments"
-                    format:@"Incorrect number of arguments to selector %s. Received %d but expected %d",
+                    format:@"Incorrect number of arguments to selector %s. Received %ld but expected %ld",
          sel_getName(s),
-         given,
-         count];
+         (unsigned long) given,
+         (unsigned long) count];
     }
 }
 
@@ -6207,7 +6211,7 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 
 - (NSString *) stringValue
 {
-    return [NSString stringWithFormat:@"<%s:%x>", class_getName(object_getClass(self)), (long) self];
+    return [NSString stringWithFormat:@"<%s:%lx>", class_getName(object_getClass(self)), (long) self];
 }
 
 - (id) car
@@ -8682,7 +8686,7 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
         [command appendString:[[[cursor car] evalWithContext:context] stringValue]];        
         cursor = [cursor cdr];
     }
-    const char *commandString = [[command stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *commandString = [command cStringUsingEncoding:NSUTF8StringEncoding];
     int result = system(commandString) >> 8;      // this needs an explanation
     return [NSNumber numberWithInt:result];
 }
@@ -10272,7 +10276,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat:@"name:%@ start:%f", name, start];
+    return [NSString stringWithFormat:@"name:%@ start:%llx", name, start];
 }
 
 @end
@@ -10946,6 +10950,14 @@ static NuSymbolTable *sharedSymbolTable = 0;
 }
 
 - (NSString *) labelName
+{
+    if (isLabel)
+        return [[self stringValue] substringToIndex:[[self stringValue] length] - 1];
+    else
+        return [self stringValue];
+}
+
+- (NSString *) labelValue
 {
     if (isLabel)
         return [[self stringValue] substringToIndex:[[self stringValue] length] - 1];
