@@ -3,7 +3,7 @@
 (set DEVROOT
      (ifDarwin (then (NSString stringWithShellCommand:"xcode-select -print-path"))
                (else nil)))
- 
+
 (global VERSION '(2 0 1)) #(major minor tweak)
 
 (task "version" is
@@ -81,7 +81,10 @@ END)
 
 (set @sdkflags "")
 (set @sdk
-     (cond ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.7.sdk")
+     (cond ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.8.sdk")
+            (set @sdkflags "-D__OBJC2__ -DSNOWLEOPARD")
+            ("-isysroot #{DEVROOT}/SDKs/MacOSX10.8.sdk"))
+           ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.7.sdk")
             (set @sdkflags "-D__OBJC2__ -DSNOWLEOPARD")
             ("-isysroot #{DEVROOT}/SDKs/MacOSX10.7.sdk"))
            ((NSFileManager directoryExistsNamed:"#{DEVROOT}/SDKs/MacOSX10.6.sdk")

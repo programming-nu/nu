@@ -8,8 +8,8 @@ SYSTEM = $(shell uname)
 
 PREFIX ?= /usr/local
 
-TOOLCHAIN = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
-SDKROOT   = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer
+# TOOLCHAIN = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+# SDKROOT   = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer
 
 ifeq ($(shell test -e /usr/lib/libffi.dylib && echo yes), yes)
 	# Use the libffi that ships with OS X.

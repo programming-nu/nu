@@ -283,9 +283,6 @@
      (unless momc (NSException raise:@"NukeError" format:@"Can't find momc (data model compiler)."))
      momc)
 
-(set SDKROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer")
-(set TOOLCHAIN "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain")
-
 (function select-compiler ()
      (ifDarwin
               ;; clang built-in to 10.7.3
@@ -295,9 +292,7 @@
                   (set DEVROOT (NSString stringWithShellCommand:"xcode-select -print-path"))
                   (set clang "#{DEVROOT}/usr/bin/clang")
                   (if (not (NSFileManager fileExistsNamed:clang))
-                      (set clang "#{TOOLCHAIN}/usr/bin/clang")
-                      (if (not (NSFileManager fileExistsNamed:clang))
-                          (set clang nil)))))
+                      (set clang nil))))
      ;; default to gcc
      (if clang clang (else "gcc")))
 
@@ -306,7 +301,6 @@
      `(progn
             (unless @cc (set @cc (select-compiler)))
             (unless @cflags (set @cflags "-g"))
-            (set @cflags (+ @cflags " -isysroot #{SDKROOT}/SDKs/MacOSX10.7.sdk"))
             (unless @mflags (set @mflags "-fobjc-exceptions"))
             (unless @includes (set @includes ""))
             (ifDarwin
