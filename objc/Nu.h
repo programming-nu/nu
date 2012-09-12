@@ -1275,3 +1275,26 @@ id _nuregex(const unsigned char *pattern, int options);
 id _nuregex_with_length(const unsigned char *pattern, int length, int options);
 id _nulist(id firstObject,...);
 id _nudata(const void *bytes, int length);
+
+@interface NuMarkupOperator : NuOperator
+{
+    NSString *tag;
+    NSString *prefix;
+    id contents;
+    BOOL empty;
+}
+
++ (id) operatorWithTag:(NSString *) _tag;
++ (id) operatorWithTag:(NSString *) _tag prefix:(NSString *) _prefix;
++ (id) operatorWithTag:(NSString *) _tag prefix:(NSString *) _prefix contents:(id) _contents;
+
+- (id) initWithTag:(NSString *) tag;
+- (id) initWithTag:(NSString *) tag prefix:(NSString *) prefix contents:(id) contents;
+- (void) setEmpty:(BOOL) e;
+
+- (NSString *) tag;
+- (NSString *) prefix;
+- (id) contents;
+- (BOOL) empty;
+
+@end
