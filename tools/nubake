@@ -85,6 +85,38 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 END))
+        result)
+     
+     ;; This bakes Nu code into a class method that expands and evaluates it in the main parser context.
+     ;; The purpose is to have methods like (MyClass macros) that can be called from Nu to install
+     ;; macros and other helpers that are written in Nu and baked into Objective-C.
+     (+ (id) bakeNuCode:(id)program intoMethod:(id) methodName ofCategory:(id) categoryName ofClass:(id) className is
+        (set result <<-END
+//
+// THIS FILE WAS AUTOMATICALLY GENERATED
+//
+// Regenerate it with nubake:
+//   nubake <sourcefile> --method #{methodName} --category #{categoryName} --class #{className}
+//
+#import <Foundation/Foundation.h>
+#ifdef TARGET_OS_IPHONE
+#import "Nu.h"
+#else
+#import <Nu/Nu.h>
+#endif
+#import "#{className}.h"
+
+@implementation #{className} (#{categoryName})
+
++ (id) #{methodName} {
+	NuCell *code = END)
+        (result appendString:(self expandNuExpression:program))
+        (result appendString:<<-END
+		;		
+	return [[Nu sharedParser] eval:code];	
+}
+@end
+		END)    
         result))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -105,6 +137,9 @@ END))
 (set sourceFileName nil)
 (set functionName nil)
 (set outputFileName nil)
+(set methodName nil)
+(set categoryName nil)
+(set className nil)
 (set standalone nil)
 
 ;; process the remaining arguments
@@ -113,6 +148,10 @@ END))
              ("-n" (set argi (+ argi 1)) (set functionName (argv argi)))
              ("-o" (set argi (+ argi 1)) (set outputFileName (argv argi)))
              ("-s" (set standalone t))
+             ("--output" (set argi (+ argi 1)) (set outputFileName (argv argi)))
+             ("--method" (set argi (+ argi 1)) (set methodName (argv argi)))
+             ("--category" (set argi (+ argi 1)) (set categoryName (argv argi)))
+             ("--class" (set argi (+ argi 1)) (set className (argv argi)))
              (else (set sourceFileName (argv argi))))
        (set argi (+ argi 1)))
 
@@ -123,15 +162,26 @@ END))
          (unless outputFileName
                  (set outputFileName (+ (sourceFileName stringByDeletingPathExtension) ".m")))
          (try
-             ((NuBake bakeNuCode:(parse (NSString stringWithContentsOfFile:sourceFileName
-                                             encoding:NSUTF8StringEncoding error:nil))
-                      intoFunction:functionName
-                      standalone:standalone)
-              writeToFile:outputFileName atomically:NO)
+             (set code (parse (NSString stringWithContentsOfFile:sourceFileName
+                                   encoding:NSUTF8StringEncoding error:nil)))
+             (puts methodName)
+             (puts categoryName)
+             (puts className)
+             (puts outputFileName)
+             (if (and methodName categoryName className)
+                 (then ((NuBake bakeNuCode:code
+                                intoMethod:methodName
+                                ofCategory:categoryName
+                                ofClass:className)
+                        writeToFile:outputFileName atomically:NO))
+                 (else ((NuBake bakeNuCode:code
+                                intoFunction:functionName
+                                standalone:standalone)
+                        writeToFile:outputFileName atomically:NO)))
              (catch (exception)
                     (puts "error: #{(exception reason)}")
                     (set exit (NuBridgedFunction functionWithName:"exit" signature:"vi"))
                     (exit -1))))
     (else
-         (puts "usage: nubake <sourcefile> [-n <functionname>] [-o <outputfilename>] [-s]")))
+         (puts "usage: nubake <sourcefile> [-n <functionname>] [-o <outputfilename>] [-s] or [--method <methodname> --class <classname> --category <categoryname>]")))
 
