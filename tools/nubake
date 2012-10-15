@@ -164,10 +164,6 @@ END))
          (try
              (set code (parse (NSString stringWithContentsOfFile:sourceFileName
                                    encoding:NSUTF8StringEncoding error:nil)))
-             (puts methodName)
-             (puts categoryName)
-             (puts className)
-             (puts outputFileName)
              (if (and methodName categoryName className)
                  (then ((NuBake bakeNuCode:code
                                 intoMethod:methodName
