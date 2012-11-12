@@ -1281,7 +1281,7 @@ id _nudata(const void *bytes, int length);
     NSString *tag;
     NSString *prefix;
     id contents;
-    BOOL empty;
+    BOOL empty; // aka a "void element"
 }
 
 + (id) operatorWithTag:(NSString *) _tag;

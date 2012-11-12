@@ -11044,7 +11044,6 @@ static NuSymbolTable *sharedSymbolTable = 0;
     // Automatically create markup operators
     if ([[self stringValue] characterAtIndex:0] == '&') {
         NuMarkupOperator *newOperator = [NuMarkupOperator operatorWithTag:[[self stringValue] substringFromIndex:1]];
-        [newOperator setEmpty:YES];
         [self setValue:newOperator];
         return newOperator;
     }
@@ -11199,6 +11198,33 @@ static int deallocationCount = 0;
 
 @implementation NuMarkupOperator
 
+static NSArray *voidHTMLElements = nil;
+static NSDictionary *elementPrefixes = nil;
+
++ (void) initialize {
+    voidHTMLElements = [[NSSet setWithObjects:
+                         @"area",
+                         @"base",
+                         @"br",
+                         @"col",
+                         @"command",
+                         @"embed",
+                         @"hr",
+                         @"img",
+                         @"input",
+                         @"keygen",
+                         @"link",
+                         @"meta",
+                         @"param",
+                         @"source",
+                         @"track",
+                         @"wbr",
+                         nil] retain];
+    elementPrefixes = [[NSDictionary dictionaryWithObjectsAndKeys:
+                        @"<!DOCTYPE html>", @"html",
+                        nil] retain];
+}
+
 + (id) operatorWithTag:(NSString *) _tag
 {
     return [[[self alloc] initWithTag:_tag] autorelease];
@@ -11224,10 +11250,14 @@ static int deallocationCount = 0;
     self = [super init];
     tag = _tag ? [_tag stringByReplacingOccurrencesOfString:@"=" withString:@":"] : nil;
 	[tag retain];
-    prefix = _prefix ? _prefix : @"";
+    prefix = _prefix ? _prefix : [elementPrefixes objectForKey:tag];
+    if (!prefix) {
+        prefix = @"";
+    }
 	[prefix retain];
     contents = _contents ? _contents : [NSNull null];
 	[contents retain];
+    empty = [voidHTMLElements containsObject:tag];
     return self;
 }
 
