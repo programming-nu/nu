@@ -4378,6 +4378,24 @@ static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
     return self;
 }
 
+- (NSDictionary *) map: (id) callable
+{
+    NSMutableDictionary *results = [NSMutableDictionary dictionary];
+    id args = [[NuCell alloc] init];
+    if ([callable respondsToSelector:@selector(evalWithArguments:context:)]) {
+        NSEnumerator *enumerator = [self keyEnumerator];
+        id object;
+        while ((object = [enumerator nextObject])) {
+            [args setCar:object];
+            [args setCdr:[[[NuCell alloc] init] autorelease]];
+            [[args cdr] setCar:[self objectForKey:object]];
+            [results setObject:[callable evalWithArguments:args context:nil] forKey:object];
+        }
+    }
+    [args release];
+    return results;
+}
+
 @end
 
 @implementation NSMutableDictionary(Nu)

@@ -50,6 +50,14 @@
                (if (eq v 3) (continue))
                (set count (+ count 1))))
         (assert_equal (- (d count) 1) count))
+      
+      (- (id) testMap is
+        (set d (dict one:1 two:2 three:3 four:4))
+        (set o (d map:(do (k v) (+ 1 v))))
+        (assert_equal (d count) (o count))
+        (d each:
+           (do (k v)
+               (assert_equal (+ 1 v) (o k)))))
      
      (- (id) testLookupWithDefault is
         (set d (dict "one" 1 two:2))
