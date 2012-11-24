@@ -128,7 +128,7 @@ END)
                        (result appendString:<<-END
 @end
 
-END) 
+END)
                        )))
           result)
      
@@ -141,7 +141,7 @@ END)
                    (if (eq (car declaration) 'class)
                        ;; open the class implementation
                        (result appendString:<<-END
-@implementation #{(declaration second)} 
+@implementation #{(declaration second)}
 
 END)
                        

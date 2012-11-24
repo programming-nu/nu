@@ -29,7 +29,7 @@ This operator gets the head of a list.END)
 This operator gets the rest of a list, excluding its head.END)
 
 (class-help Nu_atom_operator <<-END
-This operator tests whether an object is an atom.  
+This operator tests whether an object is an atom.
 In Nu, lists and nil are not atoms.
 Everything else is an atom.END)
 
@@ -47,8 +47,8 @@ The second element should be another list or nil.END)
 This operator appends two lists together.END)
 
 (class-help Nu_cond_operator <<-END
-This operator scans through a list of lists, evaluating the 
-first member of each list.  When one evaluates true, the 
+This operator scans through a list of lists, evaluating the
+first member of each list.  When one evaluates true, the
 remainder of that list is evaluated and the result of the
 last evaluation is returned.  If none evaluate true, the
 last list in the list of lists is evaluated.END)
@@ -153,7 +153,7 @@ context. It expects three arguments: the function name,
 a list of function parameters, and the body of the function.END)
 
 (class-help Nu_macro_1_operator <<-END
-This operator creates a named macro  in the current evaluation 
+This operator creates a named macro in the current evaluation
 context. It expects two arguments: the macro name, followed by
 the body of the macro.END)
 
@@ -167,7 +167,7 @@ This operator constructs a list from its arguments.END)
 
 (class-help Nu_do_operator <<-END
 This operator is used to create blocks.
-For example, the following expression creates a 
+For example, the following expression creates a
 block that returns the sum of its two arguments:
 (do (x y)
 	(+ x y))
@@ -187,8 +187,8 @@ This operator loads a file or bundle.END)
 (class-help Nu_class_operator <<-END
 This operator defines or extends a class.
 If a subclass is specified, presumably a new
-class is to be created.  Subsequent lists 
-within the operator may be used to add 
+class is to be created.  Subsequent lists
+within the operator may be used to add
 instance methods, class methods, and instance
 variables to the class.END)
 
@@ -216,13 +216,13 @@ created.END)
 This operator sends a message to an object.  Normally
 it is not needed, but for a few kinds of objects,
 such as blocks, functions, and macros, the normal
-list syntax for message sending is treated as a 
-call.  This operator was added to allow messages 
+list syntax for message sending is treated as a
+call.  This operator was added to allow messages
 to be sent to these objects.END)
 
 (class-help Nu_let_operator <<-END
 This operator performs bindings specified in a list
-of name-value pairs, then evaluates a sequence of 
+of name-value pairs, then evaluates a sequence of
 expressions in the specified binding.END)
 
 (class-help Nu_help_operator <<-END
