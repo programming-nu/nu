@@ -4,7 +4,7 @@
      (ifDarwin (then (NSString stringWithShellCommand:"xcode-select -print-path"))
                (else nil)))
 
-(global VERSION '(2 0 1)) #(major minor tweak)
+(global VERSION '(2 0 2)) #(major minor tweak)
 
 (task "version" is
       (set now (NSCalendarDate date))
@@ -228,9 +228,9 @@ END)
       (SH "hdiutil create -srcdir dmg '#{@framework}.dmg' -volname '#{@framework}'")
       (SH "rm -rf dmg"))
 
-(if (NSFileManager fileExistsNamed:"#{DEVROOT}/usr/bin/packagemaker")
-    (then (set PACKAGEMAKER "#{DEVROOT}/usr/bin/packagemaker"))
-    (else (set PACKAGEMAKER "#{DEVROOT}/Tools/packagemaker")))
+(cond ((NSFileManager fileExistsNamed:"#{DEVROOT}/usr/bin/packagemaker") (set PACKAGEMAKER "#{DEVROOT}/usr/bin/packagemaker"))
+	  ((NSFileManager fileExistsNamed:"#{DEVROOT}/Tools/packagemaker") (set PACKAGEMAKER "#{DEVROOT}/Tools/packagemaker"))
+	  (else (set PACKAGEMAKER "/Applications/PackageMaker.app/Contents/MacOS/PackageMaker")))
 
 ;; Build an installer and wrap it in a disk image.
 (task "installer" => "framework" "nush" is

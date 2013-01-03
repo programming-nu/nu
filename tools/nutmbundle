@@ -6,5 +6,5 @@
 rm -rf ~/"Library/Application Support/TextMate/Bundles/Nu.tmbundle"
 mkdir -pv ~/"Library/Application Support/TextMate/Bundles/"
 cd ~/"Library/Application Support/TextMate/Bundles/"
-git clone git://github.com/jsallis/nu-tmbundle.git "Nu.tmbundle"
+git clone git://github.com/jsallis/nu.tmbundle.git "Nu.tmbundle"
 osascript -e 'tell app "TextMate" to reload bundles'
