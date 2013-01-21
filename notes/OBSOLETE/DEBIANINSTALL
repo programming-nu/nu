@@ -47,7 +47,7 @@ sudo make install
 cd ..
 
 # download pcre 7.9 from www.pcre.org
-wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-7.9.tar.gz
+wget http://switch.dl.sourceforge.net/project/pcre/pcre/7.9/pcre-7.9.tar.gz
 uncompress pcre-7.9.tar.gz
 tar -xvf pcre-7.9.tar
 
@@ -81,4 +81,3 @@ nuke install
 # can't copy over running image in Linux
 sudo cp libNu.so /usr/local/lib
 sudo cp nush /usr/local/bin
-
