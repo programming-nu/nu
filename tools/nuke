@@ -74,20 +74,7 @@
         (set components (self componentsSeparatedByString:"/"))
         (components objectAtIndex:(- (components count) 1))))
 
-(class NSDictionary
-     ;; Create a dictionary from a list.
-     (+ (id) dictionaryWithList: (id) l is
-        (set dict ((NSMutableDictionary alloc) init))
-        (l eachPair: (do (key object) (dict setObject:object forKey:key)))
-        dict))
-
 (class NSArray
-     ;; Create an array from a list.
-     (+ (id) arrayWithList:(id) list is
-        (set l ((NSMutableArray alloc) init))
-        (list each: (do (item) (if item (l addObject:item))))
-        l)
-     
      ;; Join the non-null members of an array into a string with array elements separated by spaces.
      (- (id) join is
         ((self select:(do (x) x)) componentsJoinedByString:" "))
