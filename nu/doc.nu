@@ -562,21 +562,21 @@ END))
 ;;;;;;;;;;;;; Stylesheet Template ;;;;;;;;;;;;;;;;;
 (set css-template (NuTemplate codeForString: <<-END
 body {
-	margin: 0; 
-	padding: 0; 
+	margin: 0;
+	padding: 0;
 	font: normal 14px "lucida grande", verdana, arial, helvetica, sans-serif;
 	line-height: 150%;
 }
 
 #container {
 	width: 800px;
-	margin: 10px auto; 
+	margin: 10px auto;
 	padding: 0;
 }
 
 #header {
     width: 750px;
-	margin: 0; 
+	margin: 0;
 	padding: 0px 25px 0px 25px;
 }
 
@@ -596,19 +596,19 @@ body {
 	padding-right:20px;
 	padding-left:20px;
 	line-height: 130%;
-	font-size: 90%; 
+	font-size: 90%;
 }
 
 code {
-	font-size: 12px;	
+	font-size: 12px;
 }
 
-a:link, a:visited { 
+a:link, a:visited {
 	color: #101010;
 	text-decoration: none;
 }
 
-a:hover, a:active { 
+a:hover, a:active {
 	color: #505050;
 	text-decoration: underline;
 }
@@ -690,7 +690,7 @@ END))
 <a name="<%= (methodInfo shortMethodName) %>">
 <%= (methodInfo tableDescription) %>
 </a>
-<%= (methodInfo discussion) %> 
+<%= (methodInfo discussion) %>
 <p align="right" style="margin-bottom:0">in <%= ((methodInfo file) linkWithPrefix:"../files/") %></p>
 </div>
 <% )) %>

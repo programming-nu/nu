@@ -97,7 +97,7 @@ END-TEMPLATE))
           ;; This script can be evaluated to produce the desired output text.
           (set script "")
           (script appendString:<<-END-TEMPLATE
-(let (#{resultName} "") 
+(let (#{resultName} "")
 (#{resultName} appendString:<<-#{tagName}
 END-TEMPLATE)
           (script appendString: text)
