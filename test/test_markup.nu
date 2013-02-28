@@ -53,4 +53,15 @@
              (do (element)
                  (set markup (eval (parse "(&#{element})")))
                  (set golden "<#{element}></#{element}>")
-                 (assert_equal golden markup)))))
+                 (assert_equal golden markup))))
+     
+     (- testEmbeddedClassAndIdProperties is
+        (set markup (&div.class1.class2.class3))
+        (set golden "<div class=\"class1\" class=\"class2\" class=\"class3\"></div>")
+        (assert_equal golden markup)
+        (set markup (&div#id1#id2#id3))
+        (set golden "<div id=\"id1\" id=\"id2\" id=\"id3\"></div>")
+        (assert_equal golden markup)
+        (set markup (&div#myid.myclass))
+        (set golden "<div id=\"myid\" class=\"myclass\"></div>")
+        (assert_equal golden markup)))

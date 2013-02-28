@@ -9826,12 +9826,17 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                         break;
                     case ';':
                     case '#':
-                        if ([partial length] > 0) {
-                            NuSymbol *symbol = [symbolTable symbolWithString:partial];
-                            [self addAtom:symbol];
-                            [partial setString:@""];
+                        if ((stri == '#') && ([partial length] > 0)) {
+                            // this allows us to include '#' in symbols (but not as the first character)
+                            [partial appendCharacter:'#'];
+                        } else {
+                            if ([partial length]) {
+                                NuSymbol *symbol = [symbolTable symbolWithString:partial];
+                                [self addAtom:symbol];
+                                [partial setString:@""];                        
+                            }
+                            state = PARSE_COMMENT;
                         }
-                        state = PARSE_COMMENT;
                         break;
                     case '<':
                         if ((i+3 < imax) && ([string characterAtIndex:i+1] == '<')
@@ -11266,15 +11271,45 @@ static NSDictionary *elementPrefixes = nil;
 - (id) initWithTag:(NSString *) _tag prefix:(NSString *) _prefix contents:(id) _contents
 {
     self = [super init];
+
+    // Scan through the tag looking for "." or "#" characters.
+    // When we find them, we split the and use the following strings as class or id attributes.
+    NSScanner *scanner = [NSScanner scannerWithString:_tag];
+    NSCharacterSet *scanSet = [NSCharacterSet characterSetWithCharactersInString:@".#"];
+    NSString *token;
+    char typeFlag = 0;
+    while ([scanner scanUpToCharactersFromSet:scanSet intoString:&token]) {
+    	if (typeFlag == 0) {
+    		_tag = token;
+    	} else if (typeFlag == '.') {
+    		if (!tagClasses) {
+    			tagClasses = [[NSMutableArray alloc] init];
+    		}
+    		[tagClasses addObject:token];			
+    	} else if (typeFlag == '#') {
+    		if (!tagIds) {
+    			tagIds = [[NSMutableArray alloc] init];
+    		}
+    		[tagIds addObject:token];
+       	}	 
+    	if ([scanner scanCharactersFromSet:scanSet intoString:&token]) {
+    		if ([token length]) {
+    			typeFlag = [token characterAtIndex:[token length] - 1];
+    		} else {
+    			typeFlag = 0;
+    		}
+    	}
+    }
+	 		
     tag = _tag ? [_tag stringByReplacingOccurrencesOfString:@"=" withString:@":"] : nil;
-	[tag retain];
+    [tag retain];
     prefix = _prefix ? _prefix : [elementPrefixes objectForKey:tag];
     if (!prefix) {
         prefix = @"";
     }
-	[prefix retain];
+    [prefix retain];
     contents = _contents ? _contents : [NSNull null];
-	[contents retain];
+    [contents retain];
     empty = [voidHTMLElements containsObject:tag];
     return self;
 }
@@ -11284,6 +11319,8 @@ static NSDictionary *elementPrefixes = nil;
     [tag release];
     [prefix release];
     [contents release];
+    [tagIds release];
+    [tagClasses release];
     [super dealloc];
 }
 
@@ -11301,7 +11338,16 @@ static NSDictionary *elementPrefixes = nil;
     if (!NuSymbol) {
         NuSymbol = NSClassFromString(@"NuSymbol");
     }
-    
+    if (tagIds) {
+    	for (int i = 0; i < [tagIds count]; i++) {
+    		[attributes appendFormat:@" id=\"%@\"", [tagIds objectAtIndex:i]];
+    	}
+    }
+    if (tagClasses) {
+    	for (int i = 0; i < [tagClasses count]; i++) {
+    		[attributes appendFormat:@" class=\"%@\"", [tagClasses objectAtIndex:i]];
+    	}			
+    }
     for (int i = 0; i < 2; i++) {
         id cursor = (i == 0) ? contents : cdr;
         while (cursor && (cursor != [NSNull null])) {

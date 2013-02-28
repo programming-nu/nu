@@ -1280,6 +1280,8 @@ id _nudata(const void *bytes, int length);
 {
     NSString *tag;
     NSString *prefix;
+    NSMutableArray *tagIds;
+    NSMutableArray *tagClasses;
     id contents;
     BOOL empty; // aka a "void element"
 }
