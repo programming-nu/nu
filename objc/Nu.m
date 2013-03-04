@@ -11274,33 +11274,34 @@ static NSDictionary *elementPrefixes = nil;
 
     // Scan through the tag looking for "." or "#" characters.
     // When we find them, we split the and use the following strings as class or id attributes.
-    NSScanner *scanner = [NSScanner scannerWithString:_tag];
-    NSCharacterSet *scanSet = [NSCharacterSet characterSetWithCharactersInString:@".#"];
-    NSString *token;
-    char typeFlag = 0;
-    while ([scanner scanUpToCharactersFromSet:scanSet intoString:&token]) {
-    	if (typeFlag == 0) {
-    		_tag = token;
-    	} else if (typeFlag == '.') {
-    		if (!tagClasses) {
-    			tagClasses = [[NSMutableArray alloc] init];
-    		}
-    		[tagClasses addObject:token];			
-    	} else if (typeFlag == '#') {
-    		if (!tagIds) {
-    			tagIds = [[NSMutableArray alloc] init];
-    		}
-    		[tagIds addObject:token];
-       	}	 
-    	if ([scanner scanCharactersFromSet:scanSet intoString:&token]) {
-    		if ([token length]) {
-    			typeFlag = [token characterAtIndex:[token length] - 1];
-    		} else {
-    			typeFlag = 0;
-    		}
-    	}
-    }
-	 		
+    if (_tag) {
+        NSScanner *scanner = [NSScanner scannerWithString:_tag];
+        NSCharacterSet *scanSet = [NSCharacterSet characterSetWithCharactersInString:@".#"];
+        NSString *token;
+        char typeFlag = 0;
+        while ([scanner scanUpToCharactersFromSet:scanSet intoString:&token]) {
+    	    if (typeFlag == 0) {
+    		    _tag = token;
+        	} else if (typeFlag == '.') {
+        		if (!tagClasses) {
+    	    		tagClasses = [[NSMutableArray alloc] init];
+    		    }
+    		    [tagClasses addObject:token];			
+        	} else if (typeFlag == '#') {
+        		if (!tagIds) {
+    	    		tagIds = [[NSMutableArray alloc] init];
+    		    }
+    		    [tagIds addObject:token];
+           	}	 
+        	if ([scanner scanCharactersFromSet:scanSet intoString:&token]) {
+    	    	if ([token length]) {
+    		    	typeFlag = [token characterAtIndex:[token length] - 1];
+    	    	} else {
+    		    	typeFlag = 0;
+    	    	}
+        	}
+        }
+    }	 		
     tag = _tag ? [_tag stringByReplacingOccurrencesOfString:@"=" withString:@":"] : nil;
     [tag retain];
     prefix = _prefix ? _prefix : [elementPrefixes objectForKey:tag];
