@@ -20,6 +20,7 @@
 (global SPACE  ' ')
 (global COLON  ':')
 (global TAB    '\x09')
+(global DOUBLEQUOTE '"')
 
 (class NSString
  ;; Make a string consisting of the specified number of spaces.
@@ -135,6 +136,7 @@
                                                                     ;; but if we have a label, we will try to align the colon
                                                                     (set k j)
                                                                     (while (and (< k (line length))
+                                                                                (ne (line characterAtIndex:k) DOUBLEQUOTE) ;; ignore colons inside strings
                                                                                 (ne (line characterAtIndex:k) SPACE)
                                                                                 (ne (line characterAtIndex:k) COLON))
                                                                            (set k (+ k 1)))
