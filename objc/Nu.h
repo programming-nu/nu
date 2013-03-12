@@ -708,7 +708,6 @@
 
 /*! Get the stack trace. */
 - (NSArray*)stackTrace;
-- (NSString*)dump;
 
 /*! Add to the stack trace. */
 - (NuException *)addFunction:(NSString *)function lineNumber:(int)line;
