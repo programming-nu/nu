@@ -11332,6 +11332,9 @@ static NSDictionary *elementPrefixes = nil;
 
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
+    NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
+    id t_symbol = [symbolTable symbolWithString:@"t"];
+			
     NSMutableString *body = [NSMutableString string];
     NSMutableString *attributes = [NSMutableString string];
     
@@ -11358,8 +11361,15 @@ static NSDictionary *elementPrefixes = nil;
                 if (cursor && (cursor != [NSNull null])) {
                     id value = [[cursor car] evalWithContext:context];
                     id attributeName = [[item labelName] stringByReplacingOccurrencesOfString:@"=" withString:@":"];
-                    id stringValue = [value isEqual:[NSNull null]] ? @"" : [value stringValue];
-                    [attributes appendFormat:@" %@=\"%@\"", attributeName, stringValue];
+		    if ([value isEqual:[NSNull null]]) {
+                        // omit attributes that are "false"	                
+		    } else if ([value isEqual:t_symbol]) {
+			// boolean attributes with "true" are written without values															
+                        [attributes appendFormat:@" %@", attributeName];	                
+		    } else {
+                        id stringValue = [value isEqual:[NSNull null]] ? @"" : [value stringValue];
+                        [attributes appendFormat:@" %@=\"%@\"", attributeName, stringValue];
+                    }
                 }
             }
             else {
