@@ -8990,8 +8990,8 @@ void load_builtins(NuSymbolTable *symbolTable)
 {
     [(NuSymbol *) [symbolTable symbolWithString:@"t"] setValue:[symbolTable symbolWithString:@"t"]];
     [(NuSymbol *) [symbolTable symbolWithString:@"nil"] setValue:Nu__null];
-    [(NuSymbol *) [symbolTable symbolWithString:@"YES"] setValue:[NSNumber numberWithInt:1]];
-    [(NuSymbol *) [symbolTable symbolWithString:@"NO"] setValue:[NSNumber numberWithInt:0]];
+    [(NuSymbol *) [symbolTable symbolWithString:@"YES"] setValue:[NSNumber numberWithBool:YES]];
+    [(NuSymbol *) [symbolTable symbolWithString:@"NO"] setValue:[NSNumber numberWithBool:NO]];
     
     install(@"car",      Nu_car_operator);
     install(@"cdr",      Nu_cdr_operator);
