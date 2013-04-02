@@ -99,6 +99,7 @@
 		22EE2C0613A4731600895861 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0513A4731600895861 /* main.m */; };
 		22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0913A4731600895861 /* NuAppDelegate.m */; };
 		4F43427C1420476C00AC1BFD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F43427B1420476C00AC1BFD /* main.m */; };
+		56E07744170B028400FF0A4B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 56E07743170B028400FF0A4B /* Default-568h@2x.png */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -195,6 +196,7 @@
 		22EE2C0913A4731600895861 /* NuAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NuAppDelegate.m; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* Nu_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu_Prefix.pch; sourceTree = "<group>"; };
 		4F43427B1420476C00AC1BFD /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../main/main.m; sourceTree = "<group>"; };
+		56E07743170B028400FF0A4B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* Nu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Nu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -241,6 +243,7 @@
 		0867D691FE84028FC02AAC07 /* Nu */ = {
 			isa = PBXGroup;
 			children = (
+				56E07743170B028400FF0A4B /* Default-568h@2x.png */,
 				22B3B41C13B0359300B3AB31 /* objc */,
 				22B3B3E413B033EE00B3AB31 /* nu */,
 				22B3B38713B033D400B3AB31 /* test */,
@@ -594,6 +597,7 @@
 				22B3B41513B033EE00B3AB31 /* template.nu in Resources */,
 				22B3B41713B033EE00B3AB31 /* test.nu in Resources */,
 				22EE1B931406F494007AFC23 /* test_forwarding.nu in Resources */,
+				56E07744170B028400FF0A4B /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
