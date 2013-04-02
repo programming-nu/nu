@@ -244,7 +244,7 @@
  The Nu <b>macro</b> operator uses blocks to create macros.
  Since macros evaluate in their callers' contexts, no context information is kept for blocks used to create macros.
  
- When used in a class context, the <b>-</b> and <b>+</b> operators 
+ When used in a class context, the <b>-</b> and <b>+</b> operators
  use blocks to create new method implementations.
  When a block is called as a method implementation, its context includes the symbols
  <b>self</b> and <b>super</b>. This allows method implementations to send messages to
@@ -679,7 +679,7 @@
  @abstract A reader for Apple's BridgeSupport files.
  @discussion Methods of this class are used to read Apple's BridgeSupport files.
  */
-@interface NuBridgeSupport : NSObject 
+@interface NuBridgeSupport : NSObject
 /*! Import a dynamic library at the specified path. */
 + (void)importLibrary:(NSString *) libraryPath;
 /*! Import a BridgeSupport description of a framework from a specified path.  Store the results in the specified dictionary. */
@@ -1107,7 +1107,7 @@
 
 // Let's make NSRegularExpression and NSTextCheckingResult look like our previous classes, NuRegex and NuRegexMatch
 
-@interface NSTextCheckingResult (NuRegexMatch) 
+@interface NSTextCheckingResult (NuRegexMatch)
 /*!
  @method regex
  The regular expression used to make this match. */
@@ -1135,7 +1135,7 @@
 
 @end
 
-@interface NSRegularExpression (NuRegex) 
+@interface NSRegularExpression (NuRegex)
 
 /*!
  @method regexWithPattern:

@@ -1,6 +1,6 @@
 ;; @file       cblocks.nu
 ;; @discussion Macros for creating C/Objective-C blocks from Nu
-;; 
+;;
 ;;
 ;; @copyright Copyright (c) 2007 Tim Burks, Radtastical Inc.
 ;;
@@ -25,7 +25,7 @@
 (macro bridgedblock (ret params *body)
     (progn
         ; Bail if blocks aren't enabled in the framework
-        (try ((NuBridgedBlock class)) 
+        (try ((NuBridgedBlock class))
             (catch (execption) (throw* "NuException" "This build of Nu does not support C blocks.")))
                 
         (set __sig (signature (list ret)))
@@ -33,8 +33,8 @@
         (set __paramlist params)
         (until (eq __paramlist nil)
             (set __type (car __paramlist))
-            (if (eq (cdr __paramlist) nil) 
-                (throw* "NuMatchException" 
+            (if (eq (cdr __paramlist) nil)
+                (throw* "NuMatchException"
                     "cblock parameter list must contain an even number of elements in the form \"(type) name\""))
             (set __param (car (cdr __paramlist)))
             (set __paramlist (cdr (cdr __paramlist)))
