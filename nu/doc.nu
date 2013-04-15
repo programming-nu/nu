@@ -15,8 +15,6 @@
 ;;   See the License for the specific language governing permissions and
 ;;   limitations under the License.
 
-(load "Nu:template")
-
 (global SPACE 32)
 (global TAB 9)
 
@@ -112,9 +110,7 @@
  
  ;; Generate a link to the html description of the file.
  (- (id) linkWithPrefix:(id) prefix is
-    (set link <<-END
-<a href="#{prefix}#{(self niceName)}.html">#{@name}</a>END)
-    link)
+    (&a href:(+ prefix (self niceName) ".html") @name))
  
  ;; Set the raw comments associated with a file.
  (- (void) setComments:(id) comments is
@@ -234,9 +230,7 @@
  
  ;; Generate a link to the html description of the class.
  (- (id) linkWithPrefix:(id) prefix is
-    (set link <<-END
-<a href="#{prefix}#{(self name)}.html">#{@name}</a>END)
-    link)
+    (&a href:(+ prefix (self name) ".html") @name))
  
  ;; Generate a link to the html description of the class' superclass.
  (- (id) linkToSuperClassWithPrefix:(id) prefix is
@@ -267,28 +261,22 @@
  (- (void) addFile:(id) file is
     (@files setObject:file forKey:(file name))))
 
-(set method-table-template (NuTemplate codeForString: <<-END
-<table>
-<tr>
-<td><%= @methodType %></td>
-<td><%= @returnType %></td>
-<% (if (and @selectors (> (@selectors count) 0)) (then %>
-<td align="right"><%= (@selectors objectAtIndex:0) %></td>
-<td><%= (@types objectAtIndex:0) %> <%= (@names objectAtIndex:0) %></td>	
-<% ) (else  %>
-<td><%= @shortMethodName %></td>
-<% )) %>
-</tr>
-<% (if (and @selectors (> (@selectors count) 0)) %>
-<%   ((@selectors count) times: (do (i) (unless (eq i 0) %>
-<tr>
-<td></td>
-<td colspan="2" align="right"><%= (@selectors objectAtIndex:i) %></td>
-<td><%= (@types objectAtIndex:i) %> <%= (@names objectAtIndex:i) %></td>
-</tr>
-<% )))) %>
-</table>
-END))
+(set method-table-template
+     '(&table (if (and @selectors (@selectors count))
+                  (then (@selectors mapWithIndex:
+                                    (do (selector i)
+                                        (if (eq i 0)
+                                            (then (&tr (&td @methodType)
+                                                       (&td @returnType)
+                                                       (&td align:"right" (@selectors objectAtIndex:0))
+                                                       (&td (@types objectAtIndex:0) " " (@names objectAtIndex:0))))
+                                            (else (&tr (&td)
+                                                       (&td colspan:"2" align:"right" selector)
+                                                       (&td (@types objectAtIndex:i) " " (@names objectAtIndex:i))))))))
+                  (else (&tr (&td @methodType)
+                             (&td @returnType)
+                             (&td @shortMethodName))))))
+
 
 ;; @abstract NuDoc class for building method descriptions.
 ;; @discussion NuDoc creates one instance of this class for each method implementation that it encounters when reading source files.
@@ -360,9 +348,7 @@ END))
  
  ;; Generate a link to the html description of the method.
  (- (id) linkWithPrefix:(id) prefix is
-    (set link <<-END
-<a href="#{prefix}#{((self classInfo) name)}.html##{(self shortMethodName)}">#{@methodType} #{@shortMethodName}</a>END)
-    link)
+    (&a href:(+ prefix ((self classInfo) name) ".html#" (self shortMethodName)) @methodType @shortMethodName))
  
  ;; Compare methods by name, allowing method descriptions to be sorted.
  (- (int) compare:(id) other is
@@ -451,119 +437,79 @@ END))
           (matches each:
                    (do (match)
                        (case (match regex)
-                             (interface-pattern
-                                               (set className (match groupAtIndex:1))
-                                               (unless (set $classInfo ($classes valueForKey:className))
-                                                       (set $classInfo ((NuDocClassInfo alloc) initWithName:className))
-                                                       ($classes setValue:$classInfo forKey:className))
-                                               ($classInfo addFile:fileInfo)
-                                               ($classInfo setComments:$comments)
-                                               ($classInfo setSuperClassName:(match groupAtIndex:3))
-                                               (fileInfo addClass:$classInfo)
-                                               (set $comments ""))
-                             (signature-pattern
-                                               (set methodName (match groupAtIndex:0))
-                                               (set methodInfo ((NuDocMethodInfo alloc) initWithName:methodName file:fileInfo class:$classInfo))
-                                               (($classInfo methods) addObject:methodInfo)
-                                               (methodInfo setComments:$comments)
-                                               (fileInfo addMethod:methodInfo)
-                                               (set $comments ""))
-                             (objc-comment-pattern
-                                                  (puts "FOUND COMMENTS")
-                                                  (puts (match groupAtIndex:0))
-                                                  (set $comments "#{(match groupAtIndex:0)}"))
+                             (interface-pattern (set className (match groupAtIndex:1))
+                                                (unless (set $classInfo ($classes valueForKey:className))
+                                                        (set $classInfo ((NuDocClassInfo alloc) initWithName:className))
+                                                        ($classes setValue:$classInfo forKey:className))
+                                                ($classInfo addFile:fileInfo)
+                                                ($classInfo setComments:$comments)
+                                                ($classInfo setSuperClassName:(match groupAtIndex:3))
+                                                (fileInfo addClass:$classInfo)
+                                                (set $comments ""))
+                             (signature-pattern (set methodName (match groupAtIndex:0))
+                                                (set methodInfo ((NuDocMethodInfo alloc) initWithName:methodName file:fileInfo class:$classInfo))
+                                                (($classInfo methods) addObject:methodInfo)
+                                                (methodInfo setComments:$comments)
+                                                (fileInfo addMethod:methodInfo)
+                                                (set $comments ""))
+                             (objc-comment-pattern (set $comments "#{(match groupAtIndex:0)}"))
                              (else nil)))))
 
+;;;;;;;;;;;;; Header ;;;;;;;;;;;;;;;;;
 (macro site-header ()
        `(progn
               (if (eq $sitename "programming.nu")
-                  (then <<-END
-<div style="float:left; margin-right:10px">
-<img src="/files/recycle-s.png" height="50" />
-</div>
-<div style="float:left">
-<h1><a href="/">Programming Nu</a></h1>
-<h3>Website for the Nu programming language.</h3>
-</div>END) (else ""))))
+                  (then (+
+                          (&div style:"float:left; margin-right:10px"
+                                (&img src:"/files/recycle-s.png" height:"50"))
+                          (&div (&h1 (&a href:"/" "Programming Nu"))
+                                (&h3 "Website for the Nu programming language."))))
+                  (else ""))))
 
 ;;;;;;;;;;;;; Footer Template ;;;;;;;;;;;;;;;;;
-(set footer-template (NuTemplate codeForString:	<<-END
-<div class="footer">
-<center>
-<font size="-2">
-<div style="float:left; margin-left:10px">Documentation by NuDoc</div>
-<div style="float:right; margin-right:10px">Updated <%= ((NSDate date) descriptionForDocumentation) %></div>
-<% (if (eq $sitename "programming.nu") %>
-<a href="http://radtastical.com">&copy; 2007-2008, Radtastical Inc.</a>
-<% ) %>
-</font>
-</center>
-</div>
-END))
+(set footer-template
+     '(&div class:"footer"
+            (&center (&font size:"-2"
+                            (&div style:"float:left; margin-left:10px" "Documentation by NuDoc")
+                            (&div style:"float:right; margin-right:10px" "Updated " ((NSDate date) descriptionForDocumentation))
+                            (if (eq $sitename "programming.nu")
+                                (&a href:"http://radtastical.com" "&copy; 2007-2013, Radtastical Inc."))))))
 
 ;;;;;;;;;;;;; Index Template ;;;;;;;;;;;;;;;;;
-(set index-template (NuTemplate codeForString: <<-END
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<link media="all" href="<%= (if (eq $sitename "programming.nu") (then "/stylesheets/nu.css") (else "doc.css")) %>" type ="text/css" rel="stylesheet" />
-</head>
-<body>	
-<div id="container">
-<div id="header">
-<%= (site-header) %>
-</div>
-<div id="content">
-<h1><a href="./index.html"><%= $project %> Class Reference</a></h1>
-<%= $introduction %>
-<div style="float:left">
-<h2>Classes</h2>
-<ul>
-<% 
-((($classes allKeys) sort) each:
- (do (className)
-   (set classInfo2 ($classes objectForKey:className))
-   (if (classInfo2 superClassName)
-%>
-<li><a href="classes/<%= className %>.html"><%= className %></a></li>
-<% ))) %>
-</ul>
-</div>
-<div style="float:left">
-<h2>Extensions</h2>
-<ul>
-<% 
-((($classes allKeys) sort) each:
- (do (className)
-   (set classInfo2 ($classes objectForKey:className))
-   (unless (classInfo2 superClassName)
-%>
-<li><a href="classes/<%= className %>.html"><%= className %></a></li>
-<% ))) %>
-</ul>	
-</div>
-</div>
-<div id="sidebar">
-<h2>Source Files</h2>
-<ul>
-<% 
-((($files allKeys) sort) each:
- (do (fileName)
-   (set fileInfo2 ($files objectForKey:fileName))
-%>
-<li><a href="files/<%= (fileInfo2 niceName) %>.html"><%= fileName %></a></li>
-<% )) %>
-</ul>	
-</div>
-<br style="clear:both" />
-<%= $footer %>
-</div>
-</body>
-</html>	
-END))
+(set index-template
+     '(&html (&head (&link media:"all" href:(if (eq $sitename "programming.nu") (then "/stylesheets/nu.css") (else "doc.css")) type:"text/css" rel:"stylesheet"))
+             (&body (&div id:"container"
+                          (&div id:"header"
+                                (site-header))
+                          (&div id:"content"
+                                (&h1 (&a href:"./index.html" $project " Class Reference"))
+                                $introduction
+                                (&div style:"float:left"
+                                      (&h2 "Classes")
+                                      (&ul ((($classes allKeys) sort) map:
+                                            (do (className)
+                                                (if (($classes objectForKey:className) superClassName)
+                                                    (then (&li (&a href:(+ "classes/" className ".html") className)))
+                                                    (else ""))))))
+                                (&div style:"float:left"
+                                      (&h2 "Extensions")
+                                      (&ul ((($classes allKeys) sort) map:
+                                            (do (className)
+                                                (set classInfo2 ($classes objectForKey:className))
+                                                (unless (classInfo2 superClassName)
+                                                        (then (&li (&a href:(+ "classes/" className ".html") className)))
+                                                        (else "")))))))
+                          (&div id:"sidebar"
+                                (&h2 "Source Files")
+                                (&ul ((($files allKeys) sort) map:
+                                      (do (fileName)
+                                          (set fileInfo2 ($files objectForKey:fileName))
+                                          (&li (&a href:(+ "files/" (fileInfo2 niceName) ".html") fileName))))))
+                          (&br style:"clear:both")
+                          $footer))))
 
-;;;;;;;;;;;;; Stylesheet Template ;;;;;;;;;;;;;;;;;
-(set css-template (NuTemplate codeForString: <<-END
+;;;;;;;;;;;;; Stylesheet ;;;;;;;;;;;;;;;;;
+(set stylesheet <<-END
 body {
 	margin: 0;
 	padding: 0;
@@ -635,182 +581,118 @@ table {
 	margin:20px 0;	
 	padding:5px;
 }
-END))
+END)
 
 ;;;;;;;;;;;;; Class Description Template ;;;;;;;;;;;;;;;;;
-(set classinfo-template (NuTemplate codeForString: <<-END
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<link media="all" href="<%= (if (eq $sitename "programming.nu") (then "/stylesheets/nu.css") (else "../doc.css")) %>" type ="text/css" rel="stylesheet" />
-</head>
-<body>
-<div id="container">
-<div id="header">
-<%= (site-header) %>
-</div>
-<div id="content">
-<h1><a href="../index.html"><%= $project %> Class Reference</a></h1>
-<h2><%= (classInfo name) %>
-<%= (if (classInfo superClassName) (then "") (else "Extensions")) %>
-</h2>
-<% (if (classInfo valueForIvar:"abstract") %>
-<p><%= (classInfo valueForIvar:"abstract") %></p>
-<% ) %>
-<p>
-<% (if (classInfo superClassName) %>
-<b>Superclass:</b> <%= (classInfo linkToSuperClassWithPrefix:"../classes/") %><br/>
-<% ) %>
-<b>Declared in:</b> <%= (((classInfo files) map:(do (file) (file linkWithPrefix:"../files/"))) componentsJoinedByString:", ") %>
-</p>
-<% (if (!= "" (classInfo discussion)) %>
-<%= (classInfo discussion) %>
-<% ) %>
-<h3>Methods</h3>
-<font size="-1">
-<ul>
-<% 
-(set classMethods ((classInfo classMethods) sort))
-(if (classMethods count)
- (classMethods each:(do (methodInfo)
-%>
-<li><a href="#<%= (methodInfo shortMethodName) %>"><tt>+ <%= (methodInfo shortMethodName) %></tt></a></li>
-<% ))) %>
-<% 
-(set instanceMethods ((classInfo instanceMethods) sort))
-(if (instanceMethods count)
-  (instanceMethods each: (do (methodInfo)
-%>
-<li><a href="#<%= (methodInfo shortMethodName) %>"><tt>- <%= (methodInfo shortMethodName) %></tt></a></li>
-<% ))) %>
-</ul>
-</font>
-<% 
-(set classMethods ((classInfo classMethods) sort))
-(classMethods each:(do (methodInfo)
-%>
-<div class="method">
-<a name="<%= (methodInfo shortMethodName) %>">
-<%= (methodInfo tableDescription) %>
-</a>
-<%= (methodInfo discussion) %>
-<p align="right" style="margin-bottom:0">in <%= ((methodInfo file) linkWithPrefix:"../files/") %></p>
-</div>
-<% )) %>
-<% 
-(set instanceMethods ((classInfo instanceMethods) sort))
-(instanceMethods each: (do (methodInfo)
-%>
-<div class="method">
-<a name="<%= (methodInfo shortMethodName) %>">
-<%= (methodInfo tableDescription) %>
-</a>
-<%= (methodInfo discussion) %>
-<p align="right" style="margin-bottom:0">in <%= ((methodInfo file) linkWithPrefix:"../files/") %></p>
-</div>
-<% )) %>
-</div>
-<div id="sidebar">
-<h2>Classes</h2>
-<ul>
-<% 
-((($classes allKeys) sort) each:
- (do (className)
-   (set classInfo2 ($classes objectForKey:className))
-   (if (classInfo2 superClassName)
-%>
-<li><a href="<%= className %>.html"><%= className %></a></li>
-<% ))) %>
-</ul>
-<h2>Extensions</h2>
-<ul>
-<% 
-((($classes allKeys) sort) each:
- (do (className)
-   (set classInfo2 ($classes objectForKey:className))
-   (unless (classInfo2 superClassName)
-%>
-<li><a href="<%= className %>.html"><%= className %></a></li>
-<% ))) %>
-</ul>	
-</div>
-<br style="clear:both" />
-<%= $footer %>
-</div>
-</div>
-</body>
-</html>
-END))
+(set classinfo-template
+     '(&html (&head (&link media:"all" href:(if (eq $sitename "programming.nu") (then "/stylesheets/nu.css") (else "../doc.css")) type:"text/css" rel:"stylesheet"))
+             (&body (&div id:"container"
+                          (&div id:"header" (site-header))
+                          (&div id:"content"
+                                (&h1 (&a href:"../index.html") $project " Class Reference")
+                                (&h2 (classInfo name)
+                                     (if (classInfo superClassName) (then "") (else " Extensions")))
+                                (if (classInfo valueForIvar:"abstract") (&p (classInfo valueForIvar:"abstract")))
+                                (&p (if (classInfo superClassName)
+                                        (&b "Superclass: " (classInfo linkToSuperClassWithPrefix:"../classes/") (&br)))
+                                    (&b "Declared in: " (((classInfo files) map:(do (file) (file linkWithPrefix:"../files/"))) componentsJoinedByString:", ")))
+                                (if (!= "" (classInfo discussion))
+                                    (classInfo discussion))
+                                (&h3 "Methods")
+                                (&font size:"-1"
+                                       (&ul
+                                           (set classMethods ((classInfo classMethods) sort))
+                                           (if (classMethods count)
+                                               (classMethods map:
+                                                             (do (methodInfo)
+                                                                 (&li (&a href:(+ "#" (methodInfo shortMethodName)) (&tt "+ " (methodInfo shortMethodName)))))))
+                                           (set instanceMethods ((classInfo instanceMethods) sort))
+                                           (if (instanceMethods count)
+                                               (instanceMethods map:
+                                                                (do (methodInfo)
+                                                                    (&li (&a href:(+ "#" (methodInfo shortMethodName)) (&tt "- " (methodInfo shortMethodName)))))))))
+                                (set classMethods ((classInfo classMethods) sort))
+                                (classMethods map:
+                                              (do (methodInfo)
+                                                  (&div class:"method"
+                                                        (&a name:(methodInfo shortMethodName)
+                                                            (methodInfo tableDescription))
+                                                        (methodInfo discussion)
+                                                        (&p align:"right" style:"margin-bottom:0" "in " ((methodInfo file) linkWithPrefix:"../files/")))))
+                                (set instanceMethods ((classInfo instanceMethods) sort))
+                                (instanceMethods map:
+                                                 (do (methodInfo)
+                                                     (&div class:"method"
+                                                           (&a name:(methodInfo shortMethodName)
+                                                               (methodInfo tableDescription))
+                                                           (methodInfo discussion)
+                                                           (&p align:"right" style:"margin-bottom:0" "in " ((methodInfo file) linkWithPrefix:"../files/"))))))
+                          
+                          (&div id:"sidebar"
+                                (&h2 "Classes")
+                                (&ul ((($classes allKeys) sort) map:
+                                      (do (className)
+                                          (set classInfo2 ($classes objectForKey:className))
+                                          (if (classInfo2 superClassName)
+                                              (then (&li (&a href:(+ className "html") className)))
+                                              (else "")))))
+                                (&h2 "Extensions")
+                                (&ul ((($classes allKeys) sort) map:
+                                      (do (className)
+                                          (set classInfo2 ($classes objectForKey:className))
+                                          (unless (classInfo2 superClassName)
+                                                  (then (&li (&a href:(+ className "html") className)))
+                                                  (else ""))))))
+                          (&br style:"clear:both"
+                               $footer)))))
 
 ;;;;;;;;;;;;; File Description Template ;;;;;;;;;;;;;;;;;
-(set fileinfo-template (NuTemplate codeForString: <<-END
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<link media="all" href="<%= (if (eq $sitename "programming.nu") (then "/stylesheets/nu.css") (else "../doc.css")) %>" type ="text/css" rel="stylesheet" />
-</head>
-<body>
-<div id="container">
-<div id="header">
-<%= (site-header) %>
-</div>
-<div id="content">
-<h1><a href="../index.html"><%= $project %> Class Reference</a></h1>
-<h2><%= (fileInfo name) %></h2>
-<% (if (!= "" (fileInfo discussion)) %>
-<%= (fileInfo discussion) %>
-<% ) %>
-<h2>Class Declarations</h2>
-<% (unless ((fileInfo classes) count) %>
-<p>none.</p>
-<% ) %>
-<% ((fileInfo classes) each: (do (classInfo) %>
-<h3><%= (classInfo linkWithPrefix:"../classes/") %></h3>
-<ul>
-<% ((fileInfo methods) each: (do (methodInfo) (if (eq classInfo (methodInfo classInfo)) %>
-<li><%= (methodInfo linkWithPrefix:"../classes/") %></li>
-<% ))) %>
-</ul>
-<% )) %>
-</div>
-<div id="sidebar">
-<h2>Source Files</h2>
-<ul>
-<% 
-((($files allKeys) sort) each:
- (do (fileName)
-   (set fileInfo2 ($files objectForKey:fileName))
-%>
-<li><a href="../files/<%= (fileInfo2 niceName) %>.html"><%= fileName %></a></li>
-<% )) %>
-</ul>	
-</div>
-<br style="clear:both" />
-<%= $footer %>
-</div>
-</div>
-</body>
-</html>
-END))
+(set fileinfo-template
+     '(&html (&head (&link media:"all" href:(if (eq $sitename "programming.nu") (then "/stylesheets/nu.css") (else "../doc.css")) type:"text/css" rel:"stylesheet"))
+             (&body (&div id:"container"
+                          (&div id:"header" (site-header))
+                          (&div id:"content"
+                                (&h1 (&a href:"../index.html" $project " Class Reference"))
+                                (&h2 (fileInfo name))
+                                (if (!= "" (fileInfo discussion)) (then (fileInfo discussion)) (else ""))
+                                (&h2 "Class Declarations")
+                                (if ((fileInfo classes) count)
+                                    (then ((fileInfo classes) map:
+                                           (do (classInfo)
+                                               (&div
+                                                    (&h3 (classInfo linkWithPrefix:"../classes/"))
+                                                    (&ul ((fileInfo methods) map:
+                                                          (do (methodInfo)
+                                                              (if (eq classInfo (methodInfo classInfo))
+                                                                  (then (&li (methodInfo linkWithPrefix:"../classes/")))
+                                                                  (else "")))))))))
+                                    (else (&p "none."))))
+                          (&div id:"sidebar"
+                                (&h2 "Source Files")
+                                (&ul ((($files allKeys) sort) map:
+                                      (do (fileName)
+                                          (set fileInfo2 ($files objectForKey:fileName))
+                                          (&li (&a href:(+ "../files/" (fileInfo2 niceName) ".html") fileName))))))
+                          (&br style:"clear:both")
+                          $footer))))
 
 ;;
 ;; Main program starts here
 ;;
 (macro nudoc ()
        `(progn
-              (set $classes (NSMutableDictionary dictionary))
-              (set $files (NSMutableDictionary dictionary))
-              
+              (set $classes (dict))
+              (set $files (dict))
               (puts "Reading Source Files")
               
               (set nu-files (filelist "^nu/.*\.nu$"))
-              (nu-files each: (do (file) (extract-nu file)))
+              (nu-files each:(do (file) (extract-nu file)))
               
               (set tool-files (filelist "^tools/[^/\.]+$"))
-              (tool-files each: (do (file) (extract-nu file)))
+              (tool-files each:(do (file) (extract-nu file)))
               
               (set objc-files (filelist "^objc/.*\.[h]$"))
-              (objc-files each: (do (file) (extract-objc file)))
+              (objc-files each:(do (file) (extract-objc file)))
               
               (puts "Generating Documentation")
               
@@ -827,12 +709,13 @@ END))
               (system "mkdir -p doc/classes")
               (system "mkdir -p doc/files")
               
-              ((eval css-template) writeToFile:"doc/doc.css")
+              (stylesheet writeToFile:"doc/doc.css")
               ((eval index-template) writeToFile:"doc/index.html")
               
               (($classes allValues) each:
                (do (classInfo)
-                ((eval classinfo-template) writeToFile:"doc/classes/#{(classInfo name)}.html")))
+                   ((eval classinfo-template) writeToFile:"doc/classes/#{(classInfo name)}.html")))
               
               (($files allValues) each:
-               (do (fileInfo) ((eval fileinfo-template) writeToFile:"doc/files/#{(fileInfo niceName)}.html")))))
+               (do (fileInfo)
+                   ((eval fileinfo-template) writeToFile:"doc/files/#{(fileInfo niceName)}.html")))))

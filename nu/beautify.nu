@@ -41,7 +41,7 @@
     (self stringByTrimmingCharactersInSet:(NSCharacterSet whitespaceCharacterSet)))
  
  ;; If a string begins with a label, return the position of the first colon in the string. If not, return 0.
- (- labelColonPosition is
+ (- (id) labelColonPosition is
     (set i 0)
     (while (and (< i (self length))
                 (ne (self characterAtIndex:i) LPAREN)
@@ -58,12 +58,12 @@
 (class NuBeautifier is NSObject
  
  ;; Beautify a string containing Nu source code. The method returns a string containing the beautified code.
- (+ beautify:text is
+ (+ (id) beautify:(id) text is
     (set b ((NuBeautifier alloc) init))
     (b beautify:text))
  
  ;; Beautify a string containing Nu source code. The method returns a string containing the beautified code.
- (- beautify:text is
+ (- (id) beautify:(id) text is
     (set result "")
     
     ;; the indentation stack contains one or two values for each level of indentation
@@ -73,7 +73,7 @@
     (indentation_stack push:(list 0))
     
     ;; expressions that match these patterns get special (fixed-width) indentation
-    (set fixed-indent-pattern /\(class/)
+    (set fixed-indent-pattern /\(class /)
     
     (set nube-parser ((NuParser alloc) init))
     (set @olddepth 0)
