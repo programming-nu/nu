@@ -10523,8 +10523,8 @@ static NuProfiler *defaultProfiler = nil;
 - (NSString *)groupAtIndex:(int)i {
     NSRange range = [self rangeAtIndex:i];
     NSString *string = [self associatedObjectForKey:@"string"];
-    if (string) {
-        return [string substringWithRange:range];
+    if (string && (range.location != NSNotFound)) {
+ 	return [string substringWithRange:range];
     } else {
         return nil;
     }
