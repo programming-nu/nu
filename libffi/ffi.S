@@ -208,7 +208,7 @@ _ffi_call_SYSV:
 #ifdef __SOFTFP__
 	cmpne	r3, #FFI_TYPE_DOUBLE
 #endif
-	stmeqia	r2, {r0, r1}
+	stmiaeq	r2, {r0, r1}
 
 #ifndef __SOFTFP__
 	beq	LSYM(Lepilogue)

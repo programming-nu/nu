@@ -1678,7 +1678,7 @@ static id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
     
 }
 
-static static void raise_argc_exception(SEL s, NSUInteger count, NSUInteger given)
+static void raise_argc_exception(SEL s, NSUInteger count, NSUInteger given)
 {
     if (given != count) {
         [NSException raise:@"NuIncorrectNumberOfArguments"
