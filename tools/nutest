@@ -47,3 +47,6 @@
          (puts "usage: nutest <sourcefile>")))
          
 (if (and (eq $willThrow t) (or (!= $failures 0) (!= $errors 0))) (then (throw 1)))
+
+(if (and (eq $failures 0) (eq $errors 0)) (then (exit 0)) (else (exit -1)))
+
