@@ -1,0 +1,5 @@
+language: objective-c
+before_script:
+ - make
+ - ./mininush tools/nuke install
+script: nuke test
