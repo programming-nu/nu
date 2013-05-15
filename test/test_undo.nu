@@ -13,7 +13,7 @@
         self)
      
      (- tieShoes is
-        (set @shoes "tied"))
+        (set @shoes "tied") 123)
      
      (- untieShoes is
         (set @shoes "untied"))
@@ -28,7 +28,7 @@
         (set u (NSUndoManager new))
         (u setGroupsByEvent:NO) ;; we will manage our own undo groups
         (u setLevelsOfUndo:0) ;; we will use an unlimited undo stack
-        
+       
         ;; create our test subject
         (set shannon (Toddler new))
         
@@ -45,8 +45,9 @@
         ;; Beginning with Mac OS 10.6, prepareWithInvocationTarget returns a proxy object
         (set p (u prepareWithInvocationTarget:shannon))
         (p tieShoes)
+(return)
         (u endUndoGrouping)
-        
+      
         ;; tickle her again.
         (u beginUndoGrouping)
         (set p (u prepareWithInvocationTarget:shannon))

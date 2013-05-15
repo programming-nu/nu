@@ -32,7 +32,7 @@ INCLUDES = $(FFI_INCLUDE) -I./include
 ifeq ($(shell test -d $(PREFIX)/include && echo yes), yes)
 	INCLUDES += -I$(PREFIX)/include
 endif
-FRAMEWORKS = -framework Cocoa
+# FRAMEWORKS = -framework Cocoa
 LIBS = -lobjc -lreadline
 ifeq ($(shell test -d $(PREFIX)/lib && echo yes), yes)
 	LIBDIRS += -L$(PREFIX)/lib
@@ -43,9 +43,13 @@ OBJC_FILES = $(wildcard objc/*.m) $(wildcard main/*.m)
 GCC_FILES = $(OBJC_FILES) $(C_FILES)
 GCC_OBJS = $(patsubst %.m, %.o, $(OBJC_FILES)) $(patsubst %.c, %.o, $(C_FILES))
 
-CC = gcc
-CFLAGS = -g -Wall -DMININUSH 
-MFLAGS = -fobjc-exceptions
+CC = clang
+CFLAGS = -g -O0 -Wall -DMININUSH
+MFLAGS = -fobjc-exceptions 
+#MFLAGS += `gnustep-config --debug-flags` 
+MFLAGS += -fconstant-string-class=NSConstantString -fobjc-nonfragile-abi -fblocks 
+
+CFLAGS += -I/usr/include/GNUstep 
 
 ifeq ($(SYSTEM), Darwin)
 	# as of around 10.7.3, clang becomes part of OS X
@@ -56,8 +60,7 @@ ifeq ($(SYSTEM), Darwin)
 	CFLAGS += -DMACOSX -DDARWIN $(LION_CFLAGS)  
 else
 #	CFLAGS += -DLINUX
-#	MFLAGS += -fconstant-string-class=NSConstantString
-	MFLAGS += $(shell gnustep-config --objc-flags)
+	MFLAGS += $(shell gnustep-config --debug-flags)
 endif
 
 ifeq ($(SYSTEM), Linux)
@@ -74,16 +77,24 @@ ifeq ($(SYSTEM), SunOS)
 	LIBS += -lcurses
 endif
 
-LDFLAGS += $(FRAMEWORKS)
+LDFLAGS = 
+#LDFLAGS += $(FRAMEWORKS)
 LDFLAGS += $(LIBS)
-LDFLAGS += $(LIBDIRS)
+#LDFLAGS += $(LIBDIRS)
 LDFLAGS += $(FFI_LIB)
 ifeq ($(SYSTEM), Darwin)
 else
-	LDFLAGS += $(shell gnustep-config --base-libs)
-	LDFLAGS += -lobjc 
+	#LDFLAGS += $(shell gnustep-config --base-libs)
 ifneq ($(SYSTEM), SunOS)
 	LDFLAGS += -Wl,--rpath -Wl,/usr/local/lib
+
+#LDFLAGS += `gnustep-config --debug-flags`
+LDFLAGS += -L/usr/local/lib 
+LDFLAGS += -ldispatch 
+LDFLAGS += -lgnustep-base 
+# LDFLAGS += -lgnustep-gui 
+LDFLAGS += -L/usr/lib/GNUstep 
+
 endif
 endif
 

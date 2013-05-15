@@ -280,6 +280,7 @@
                   (set clang "#{DEVROOT}/usr/bin/clang")
                   (if (not (NSFileManager fileExistsNamed:clang))
                       (set clang nil))))
+     (ifLinux (set clang "/usr/bin/clang"))
      ;; default to gcc
      (if clang clang (else "gcc")))
 

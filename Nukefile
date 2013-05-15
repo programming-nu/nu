@@ -43,7 +43,7 @@ END)
 (set @lib_dirs (array)) ;;  (NSMutableArray arrayWithList:(list "/usr/lib")))
 (set @libs       (NSMutableArray arrayWithList:(list "objc" "ffi")))
 
-(@inc_dirs addObjectsFromList:(list "./include" "./include/Nu"))
+;(@inc_dirs addObjectsFromList:(list "./include" "./include/Nu"))
 (ifDarwin
          (then (@frameworks addObject:"Cocoa")
                (@libs       addObject:"edit"))
@@ -54,7 +54,7 @@ END)
                ))
 
 (ifOpenSolaris
-	(then (@libs addObjectsFromList:(list "curses"))))
+              (then (@libs addObjectsFromList:(list "curses"))))
 
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/include") (@inc_dirs addObject:"#{@prefix}/include"))
 (if (NSFileManager directoryExistsNamed:"#{@prefix}/lib") (@lib_dirs addObject:"#{@prefix}/lib"))
@@ -101,12 +101,13 @@ END)
          (then (set @cflags ( "-Wall -g -fPIC -O2 -DMACOSX #{@sdk} #{@sdkflags}"))
                (set @mflags_nogc "-fobjc-exceptions")
                (set @mflags (+ @mflags_nogc " -fobjc-gc"))) ;; To use garbage collection, add this flag: "-fobjc-gc"
-         (else (set @cflags "-Wall -g -std=gnu99 -fPIC")
-               (set @mflags ((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
+         (else (set @cflags "-Wall -g -fPIC")
+               (set @mflags ""))) ;((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
 
 (ifLinux       (then (set @cflags (+ @cflags " -DLINUX"))))
 (ifFreeBSD     (then (set @cflags (+ @cflags " -DFREEBSD"))))
 (ifOpenSolaris (then (set @cflags (+ @cflags " -DOPENSOLARIS"))))
+
 
 ;; for our bundled PCRE
 (set @cflags (+ @cflags " -DHAVE_CONFIG_H"))
@@ -115,7 +116,7 @@ END)
          (then (set @arch '()))) ;; optionally add "ppc" or "ppc64" to the list
 
 (if (or isSnowLeopard isLion)
-	(then (set @arch (append @arch '("x86_64")))))
+    (then (set @arch (append @arch '("x86_64")))))
 
 (set @includes
      ((@inc_dirs map: (do (inc) " -I#{inc}")) join))
@@ -125,20 +126,66 @@ END)
            ((@libs map: (do (lib) " -l#{lib}")) join)
            (ifDarwin
                     (then ((@lib_dirs map:
-                        (do (libdir) " -L#{libdir}")) join))
+                                      (do (libdir) " -L#{libdir}")) join))
                     (else
-                        (if (isOpenSolaris)
-                          (then
-                            ((@lib_dirs map:
-                                 (do (libdir) " -L#{libdir} ")) join))
-                          (else 
-                            ((@lib_dirs map:
-                                 (do (libdir) " -L#{libdir} -Wl,--rpath #{libdir}")) join))))))
-     join))
+                         (if (isOpenSolaris)
+                             (then
+                                  ((@lib_dirs map:
+                                              (do (libdir) " -L#{libdir} ")) join))
+                             (else
+                                  ((@lib_dirs map:
+                                              (do (libdir) " -L#{libdir} -Wl,--rpath #{libdir}")) join))))))
+      join))
 
-(ifDarwin
-         (set @public_headers (filelist "^include/Nu/Nu.h"))
-         (@public_headers unionSet:(filelist "^objc/.*\.h$")))
+(if YES
+    (set @public_headers (filelist "^objc/.*\.h$")))
+
+;; REVIEW
+(ifLinux (then (set @cflags (+ @cflags
+                               " -DDEBUG"
+                               " -DGNU_GUI_LIBRARY=1"
+                               " -DGNU_RUNTIME=1"
+                               " -DGNUSTEP"
+                               " -DGNUSTEP_BASE_LIBRARY=1"
+                               " -DGSDIAGNOSE"
+                               " -DGSWARN"
+                               " -DHAVE_CONFIG_H"
+                               " -D_NATIVE_OBJC_EXCEPTIONS"
+                               " -fblocks"
+                               " -fconstant-string-class=NSConstantString"
+                               " -fexceptions"
+                               " -fgnu-runtime"
+                               " -fno-omit-frame-pointer"
+                               " -fno-strict-aliasing"
+                               " -fobjc-exceptions"
+                               " -fobjc-nonfragile-abi"
+                               " -fPIC"
+                               " -g"
+                               " -I."
+                               " -I./include"
+                               " -I./include/Nu "
+                               " -I./libffi/include"
+                               " -I/usr/include "
+                               " -I/usr/include/GNUstep "
+                               " -I/usr/local/include"
+                               " -MMD"
+                               " -MP"
+                               " -pthread"
+                               " -Wall"
+                               " -Wno-import"
+                               " -Wno-array-bounds"
+                               ))
+               (set @ldflags (+ @ldflags
+                                " -rdynamic"
+                                " -pthread"
+                                " -fexceptions"
+                                " -fgnu-runtime"
+                                " -L/usr/local/lib"
+                                " -lgnustep-base"
+                                " -lobjc"
+                                " -lm"
+                                ))
+               ))
 
 ;; Setup the tasks for compilation and framework-building.
 ;; These are defined in the nuke application source file.
@@ -155,8 +202,7 @@ END)
            (if ((NSFileManager defaultManager) fileExistsAtPath:(+ example-dir "/Nukefile"))
                (SH "cd #{example-dir}; nuke clobber")))))
 
-(ifGNUstep
-      (set @gnustep_flags ((NSString stringWithShellCommand:"gnustep-config --base-libs") chomp)))
+;(ifGNUstep (set @gnustep_flags ((NSString stringWithShellCommand:"gnustep-config --base-libs") chomp)))
 
 
 (set nush_thin_binaries (NSMutableArray array))
@@ -170,7 +216,7 @@ END)
                                (SH "#{@cc} #{@cflags} #{@mflags_nogc} main/main.m -arch #{architecture} -F. -framework Nu #{@ldflags} -o #{(target name)}")))
                     (else
                          (file nush_thin_binary => "dylib" (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
-                               (SH "#{@cc} #{@cflags} #{@mflags} main/main.m #{@library_executable_name} #{@ldflags} #{@gnustep_flags} -o #{(target name)}"))))))
+                               (SH "#{@cc} #{@cflags} #{@mflags} main/main.m #{@library_executable_name} #{@ldflags} -o #{(target name)}"))))))
 
 (file "nush" => "framework" nush_thin_binaries is
       (ifDarwin
@@ -208,13 +254,12 @@ END)
                (SH "sudo rm -rf #{@destdir}/Library/Frameworks/#{@framework}.framework")
                (SH "sudo ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
       (ifGNUstep
-          ;; install the dynamic library
-          (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib")
-          ;; copy the headers
-          (SH "sudo rm -rf #{@installprefix}/include/Nu")
-          (SH "sudo cp -rp include/Nu #{@installprefix}/include")
-          (SH "sudo cp -rp objc/*.h #{@installprefix}/include/Nu")
-	  (SH "sudo cp -rp nu/ #{@installprefix}/share/libNu"))
+                ;; install the dynamic library
+                (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib")
+                ;; copy the headers
+                (SH "sudo rm -rf #{@installprefix}/include/Nu")
+                (SH "sudo cp -rp objc/*.h #{@installprefix}/include/Nu")
+                (SH "sudo cp -rp nu #{@installprefix}/share/libNu"))
       (SH "sudo mkdir -p #{@installprefix}/share")
       (SH "sudo rm -rf #{@installprefix}/share/nu")
       (SH "sudo cp -rp share/nu #{@installprefix}/share/nu")
@@ -229,8 +274,8 @@ END)
       (SH "rm -rf dmg"))
 
 (cond ((NSFileManager fileExistsNamed:"#{DEVROOT}/usr/bin/packagemaker") (set PACKAGEMAKER "#{DEVROOT}/usr/bin/packagemaker"))
-	  ((NSFileManager fileExistsNamed:"#{DEVROOT}/Tools/packagemaker") (set PACKAGEMAKER "#{DEVROOT}/Tools/packagemaker"))
-	  (else (set PACKAGEMAKER "/Applications/PackageMaker.app/Contents/MacOS/PackageMaker")))
+      ((NSFileManager fileExistsNamed:"#{DEVROOT}/Tools/packagemaker") (set PACKAGEMAKER "#{DEVROOT}/Tools/packagemaker"))
+      (else (set PACKAGEMAKER "/Applications/PackageMaker.app/Contents/MacOS/PackageMaker")))
 
 ;; Build an installer and wrap it in a disk image.
 (task "installer" => "framework" "nush" is
@@ -266,8 +311,8 @@ END))
 (task "bake" is
       (set nu_files (((NSString stringWithShellCommand:"ls nu/*.nu") chomp) componentsSeparatedByString:"\n"))
       (nu_files each:
-           (do (nu_file)
-               (set basename (((nu_file pathComponents) lastObject) stringByDeletingPathExtension))
-               (set command "nubake #{nu_file} -n 'baked_#{basename}' -o baked/baked_#{basename}.m")
-               (puts command)
-               (system command))))
+                (do (nu_file)
+                    (set basename (((nu_file pathComponents) lastObject) stringByDeletingPathExtension))
+                    (set command "nubake #{nu_file} -n 'baked_#{basename}' -o baked/baked_#{basename}.m")
+                    (puts command)
+                    (system command))))

@@ -2,7 +2,7 @@
 ;;  tests for the Nu bridge to Objective-C.
 ;;
 ;;  Copyright (c) 2007 Tim Burks, Radtastical Inc.
-
+(if NO
 (class TestBridge is NuTestCase
      (- (id) testConstants is
         (if (eq (uname) "Darwin")
@@ -43,4 +43,4 @@
 	  (assert_equal 0 (num-array indexOfObjectPassingTest:equals-num?))
 	  (set num 2)
 	  (assert_equal 1 (num-array indexOfObjectPassingTest:equals-num?)))))
-
+)
