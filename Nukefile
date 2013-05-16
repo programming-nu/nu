@@ -256,11 +256,15 @@ END)
                (SH "sudo ditto #{@framework}.framework #{@destdir}/Library/Frameworks/#{@framework}.framework"))
       (ifGNUstep
                 ;; install the dynamic library
+                (SH "sudo mkdir -p #{@installprefix}/lib")
                 (SH "sudo cp #{@library_executable_name} #{@installprefix}/lib")
                 ;; copy the headers
                 (SH "sudo rm -rf #{@installprefix}/include/Nu")
+                (SH "sudo mkdir -p #{@installprefix}/include/Nu")
                 (SH "sudo cp -rp objc/*.h #{@installprefix}/include/Nu")
-                (SH "sudo cp -rp nu #{@installprefix}/share/libNu"))
+                (SH "sudo rm -rf #{@installprefix}/share/libNu")
+                (SH "sudo mkdir -p #{@installprefix}/share/libNu")
+                (SH "sudo cp -rp nu/* #{@installprefix}/share/libNu"))
       (SH "sudo mkdir -p #{@installprefix}/share")
       (SH "sudo rm -rf #{@installprefix}/share/nu")
       (SH "sudo cp -rp share/nu #{@installprefix}/share/nu")
