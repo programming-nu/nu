@@ -335,11 +335,7 @@ int NuMain(int argc, const char *argv[])
             }
             // if there's no file, run at the terminal
             else {
-#ifdef DARWIN
-                if (!isatty(stdin->_file))
-#else
                 if (!isatty(fileno(stdin)))
-#endif
                 {
                     NuParser *parser = [Nu sharedParser];
                     id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
