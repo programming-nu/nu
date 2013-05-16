@@ -5,8 +5,8 @@
 # will allow you to build and run Nu.
 #
 # libobjc2 is an updated runtime that seeks compatibility 
-# with Apple's modern Objective-C runtime. These updates
-# allow Nu to be ported to Linux+GNUstep without difficulty.
+# with Apple's modern Objective-C runtime. This new runtime
+# allows Nu to be ported to Linux+GNUstep without difficulty.
 #
 # Tested with ubuntu-12.04.2-server-amd64.iso. 
 # Other Ubuntu and Debian installations may also work well.
@@ -21,12 +21,27 @@ sudo apt-get install git -y
 sudo apt-get install libreadline-dev -y
 sudo apt-get install libicu-dev -y
 sudo apt-get install openssl -y
-sudo apt-get install build-essential clang libblocksruntime-dev libkqueue-dev libpthread-workqueue-dev gobjc libxml2-dev libjpeg-dev libtiff-dev libpng12-dev libcups2-dev libfreetype6-dev libcairo2-dev libxt-dev libgl1-mesa-dev -y
+sudo apt-get install build-essential -y
+sudo apt-get install clang -y
+sudo apt-get install libblocksruntime-dev -y
+sudo apt-get install libkqueue-dev -y
+sudo apt-get install libpthread-workqueue-dev -y
+sudo apt-get install gobjc -y
+sudo apt-get install libxml2-dev -y
+sudo apt-get install libjpeg-dev -y
+sudo apt-get install libtiff-dev -y
+sudo apt-get install libpng12-dev -y
+sudo apt-get install libcups2-dev -y
+sudo apt-get install libfreetype6-dev -y
+sudo apt-get install libcairo2-dev -y
+sudo apt-get install libxt-dev -y
+sudo apt-get install libgl1-mesa-dev -y
+
 sudo apt-get remove libdispatch-dev -y
 sudo apt-get install gdb -y
 
 #
-# A few modifications were needed to (fix problems with) 
+# A few modifications were needed to fix problems with 
 # libobjc2 and gnustep-base. To maintain stability, we
 # work with a fork on github.
 #
