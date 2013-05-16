@@ -868,15 +868,9 @@ static NSMutableDictionary *nu_block_table = nil;
 #define NSRECT_SIGNATURE1 "{_NSRect=\"origin\"{_NSPoint=\"x\"d\"y\"d}\"size\"{_NSSize=\"width\"d\"height\"d}}"
 #define NSRECT_SIGNATURE2 "{_NSRect}"
 
-#ifdef DARWIN
 #define CGRECT_SIGNATURE0 "{CGRect={CGPoint=dd}{CGSize=dd}}"
 #define CGRECT_SIGNATURE1 "{CGRect=\"origin\"{CGPoint=\"x\"d\"y\"d}\"size\"{CGSize=\"width\"d\"height\"d}}"
 #define CGRECT_SIGNATURE2 "{CGRect}"
-#else
-#define CGRECT_SIGNATURE0 "{CGRect={CGPoint=dd}{CGSize=dd}}"
-#define CGRECT_SIGNATURE1 "{CGRect=\"origin\"{CGPoint=\"x\"d\"y\"d}\"size\"{CGSize=\"width\"d\"height\"d}}"
-#define CGRECT_SIGNATURE2 "{CGRect}"
-#endif
 
 #define NSRANGE_SIGNATURE "{_NSRange=QQ}"
 #define NSRANGE_SIGNATURE1 "{_NSRange}"
@@ -885,12 +879,7 @@ static NSMutableDictionary *nu_block_table = nil;
 #define NSPOINT_SIGNATURE1 "{_NSPoint=\"x\"d\"y\"d}"
 #define NSPOINT_SIGNATURE2 "{_NSPoint}"
 
-#ifdef DARWIN
 #define CGPOINT_SIGNATURE "{CGPoint=dd}"
-#else
-#define CGPOINT_SIGNATURE "{CGPoint=dd}"
-#endif
-
 
 #define NSSIZE_SIGNATURE0 "{_NSSize=dd}"
 #define NSSIZE_SIGNATURE1 "{_NSSize=\"width\"d\"height\"d}"
@@ -5234,7 +5223,7 @@ MAKE_HANDLER_WITH_TYPE(int)
 MAKE_HANDLER_WITH_TYPE(bool)
 MAKE_HANDLER_WITH_TYPE(float)
 MAKE_HANDLER_WITH_TYPE(double)
-#ifndef LINUX
+#ifdef DARWIN
 MAKE_HANDLER_WITH_TYPE(CGRect)
 MAKE_HANDLER_WITH_TYPE(CGPoint)
 MAKE_HANDLER_WITH_TYPE(CGSize)
