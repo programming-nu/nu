@@ -32,8 +32,13 @@ INCLUDES = $(FFI_INCLUDE) -I./include
 ifeq ($(shell test -d $(PREFIX)/include && echo yes), yes)
 	INCLUDES += -I$(PREFIX)/include
 endif
-# FRAMEWORKS = -framework Cocoa
+
+ifeq ($(SYSTEM), Darwin)
+	FRAMEWORKS = -framework Cocoa
+endif
+
 LIBS = -lobjc -lreadline
+
 ifeq ($(shell test -d $(PREFIX)/lib && echo yes), yes)
 	LIBDIRS += -L$(PREFIX)/lib
 endif
@@ -78,9 +83,9 @@ ifeq ($(SYSTEM), SunOS)
 endif
 
 LDFLAGS = 
-#LDFLAGS += $(FRAMEWORKS)
+LDFLAGS += $(FRAMEWORKS)
 LDFLAGS += $(LIBS)
-#LDFLAGS += $(LIBDIRS)
+LDFLAGS += $(LIBDIRS)
 LDFLAGS += $(FFI_LIB)
 ifeq ($(SYSTEM), Darwin)
 else

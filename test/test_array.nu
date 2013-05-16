@@ -92,7 +92,7 @@
         (set sorted (array sortedArrayUsingBlock:(do (a b) ((a length) compare:(b length)))))
         (assert_equal '("ed" "tim" "mary" "brian" "jennifer" "christopher") (sorted list)))
      
-     (- xtestSortedArrayUsingSelector is
+     (- testSortedArrayUsingSelector is
         ;; I don't like this, but want to be sure we bridge the right
         ;; return type for the comparison method. On Snow Leopard (at
         ;; least), NSInteger is either int or long depending on the

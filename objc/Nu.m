@@ -63,7 +63,11 @@
 #if TARGET_OS_IPHONE
 #import "ffi.h"
 #else
+#ifdef DARWIN
+#import <ffi/ffi.h>
+#else
 #import <x86_64-linux-gnu/ffi.h>
+#endif
 #endif
 
 #import <dlfcn.h>
@@ -420,7 +424,9 @@ void NuInit()
         [Nu loadNuFile:@"bridgesupport" fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"cocoa"         fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
         [Nu loadNuFile:@"help"          fromBundleWithIdentifier:@"nu.programming.framework" withContext:nil];
+#ifdef LINUX
         loadNuLibraryFile(@"nu", parser, [parser context], [parser symbolTable]);
+#endif
 #endif
     }
 }
@@ -5228,9 +5234,11 @@ MAKE_HANDLER_WITH_TYPE(int)
 MAKE_HANDLER_WITH_TYPE(bool)
 MAKE_HANDLER_WITH_TYPE(float)
 MAKE_HANDLER_WITH_TYPE(double)
-// MAKE_HANDLER_WITH_TYPE(CGRect)
-// MAKE_HANDLER_WITH_TYPE(CGPoint)
-// MAKE_HANDLER_WITH_TYPE(CGSize)
+#ifndef LINUX
+MAKE_HANDLER_WITH_TYPE(CGRect)
+MAKE_HANDLER_WITH_TYPE(CGPoint)
+MAKE_HANDLER_WITH_TYPE(CGSize)
+#endif
 #if !TARGET_OS_IPHONE
 MAKE_HANDLER_WITH_TYPE(NSRect)
 MAKE_HANDLER_WITH_TYPE(NSPoint)

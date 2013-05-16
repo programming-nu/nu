@@ -141,6 +141,7 @@ END)
     (set @public_headers (filelist "^objc/.*\.h$")))
 
 ;; REVIEW
+(ifDarwin (then (set @cflags (+ @cflags " -DDARWIN"))))
 (ifLinux (then (set @cflags (+ @cflags
                                " -DDEBUG"
                                " -DGNU_GUI_LIBRARY=1"
