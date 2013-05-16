@@ -26,7 +26,6 @@
 #define NU_RELEASE_MONTH 09
 #define NU_RELEASE_DAY   02
 
-// #import <AvailabilityMacros.h>
 #import <Foundation/Foundation.h>
 #import <unistd.h>
 
@@ -46,7 +45,7 @@
 #import <sys/stat.h>
 #import <sys/mman.h>
 
-#ifndef LINUX
+#ifdef DARWIN
 #import <mach/mach.h>
 #import <mach/mach_time.h>
 #endif
@@ -336,8 +335,11 @@ int NuMain(int argc, const char *argv[])
             }
             // if there's no file, run at the terminal
             else {
-if (NO) 
-        //        if (!isatty(stdin->_file))
+#ifdef DARWIN
+                if (!isatty(stdin->_file))
+#else
+                if (!isatty(fileno(stdin)))
+#endif
                 {
                     NuParser *parser = [Nu sharedParser];
                     id string = [[NSString alloc] initWithData:[[NSFileHandle fileHandleWithStandardInput] readDataToEndOfFile] encoding:NSUTF8StringEncoding];
@@ -11365,20 +11367,6 @@ SEL cxx_destruct = sel_registerName(".cxx_destruct");
 }
 
 @end
-
-#import <Foundation/Foundation.h>
-#import "Nu.h"
-
-
-#ifdef NO_NU
-@interface NuOperator : NSObject
-{
-}
-
-- (id) evalWithArguments:(id) cdr context:(NSMutableDictionary *) context;
-- (id) callWithArguments:(id) cdr context:(NSMutableDictionary *) context;
-@end
-#endif
 
 @implementation NuMarkupOperator
 
