@@ -8463,7 +8463,7 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 #ifdef LINUX
 id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable)
 {
-    NSString *fullPath = [NSString stringWithFormat:@"/usr/local/share/libNu/nu/%@.nu", nuFileName];
+    NSString *fullPath = [NSString stringWithFormat:@"/usr/local/share/libNu/%@.nu", nuFileName];
     if ([NSFileManager fileExistsNamed:fullPath]) {
         NSString *string = [NSString stringWithContentsOfFile:fullPath];
         id value = Nu__null;
