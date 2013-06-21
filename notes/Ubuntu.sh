@@ -15,6 +15,7 @@
 # http://blog.tlensing.org/2013/02/24/objective-c-on-linux-setting-up-gnustep-clang-llvm-objective-c-2-0-blocks-runtime-gcd-on-ubuntu-12-04/
 #
 
+sudo apt-get update
 sudo apt-get install curl -y
 sudo apt-get install ssh -y
 sudo apt-get install git -y
