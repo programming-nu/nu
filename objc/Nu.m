@@ -9130,6 +9130,8 @@ void load_builtins(NuSymbolTable *symbolTable)
     install(@"regex",    Nu_regex_operator);
     
     install(@"function", Nu_function_operator);
+    install(@"def",      Nu_function_operator);
+
     install(@"progn",    Nu_progn_operator);
     install(@"then",     Nu_progn_operator);
     install(@"else",     Nu_progn_operator);
