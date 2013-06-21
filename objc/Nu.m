@@ -11242,12 +11242,12 @@ static int deallocationCount = 0;
 + (void) cycle 
 {
    NuTestHelper *object = [[NuTestHelper alloc] init];
-Class before = object->isa;
+//Class before = object->isa;
    objc_setAssociatedObject(object, @"number", @"123", OBJC_ASSOCIATION_RETAIN);
-Class after = object->isa;
-SEL cxx_destruct = sel_registerName(".cxx_destruct");
-   NSLog(@"class %@ %@", before, after);
-   NSLog(@"responds? %d", [object respondsToSelector:cxx_destruct]);
+//Class after = object->isa;
+//SEL cxx_destruct = sel_registerName(".cxx_destruct");
+//NSLog(@"class %@ %@", before, after);
+//NSLog(@"responds? %d", [object respondsToSelector:cxx_destruct]);
    [object release];
 }
 
