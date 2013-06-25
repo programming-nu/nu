@@ -4267,6 +4267,11 @@ static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
     [self replaceObjectAtIndex:index withObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
 }
 
+- (void) sortUsingBlock:(NuBlock *) block
+{
+    [self sortUsingFunction:sortedArrayUsingBlockHelper context:block];
+}
+
 @end
 
 @implementation NSSet(Nu)
