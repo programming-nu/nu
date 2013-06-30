@@ -1,12 +1,8 @@
 */*.o
 build
-mininush
 nush
+mininush
 Nu.framework
-doc
-.DS_Store
 libNu.a
-.DS_Store
-doc
 examples/*/*.app
 xcuserdata
