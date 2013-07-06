@@ -9420,6 +9420,17 @@ static id regexWithString(NSString *string)
 {
     ParserDebug(@"addAtomCell: depth = %d  atom = %@", depth, [atom stringValue]);
     
+    // when we have two consecutive labels, concatenate them.
+    // this allows us to have ':' characters inside labels.
+    if ([atom isKindOfClass:[NuSymbol class]] && [atom isLabel]) {	
+	id currentCar = [current car];
+	if ([currentCar isKindOfClass:[NuSymbol class]] && [currentCar isLabel]) {
+		NuSymbol *combinedLabel = [symbolTable symbolWithString:[[currentCar stringValue] stringByAppendingString:[atom stringValue]]];
+		[current setCar:combinedLabel];
+		return;
+	}		
+    }
+
     NuCell *newCell;
     if (comments) {
         NuCellWithComments *newCellWithComments = [[[NuCellWithComments alloc] init] autorelease];
