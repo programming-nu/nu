@@ -37,7 +37,7 @@ ifeq ($(SYSTEM), Darwin)
 	FRAMEWORKS = -framework Cocoa
 endif
 
-LIBS = -lobjc -lreadline
+LIBS = -lobjc -lreadline -ldl -lm
 
 ifeq ($(shell test -d $(PREFIX)/lib && echo yes), yes)
 	LIBDIRS += -L$(PREFIX)/lib
