@@ -30,6 +30,9 @@
          (exit result))
      result)
 
+(function command-exists (cmd) 
+     (not (system "command -v #{cmd} >/dev/null 2>&1")))
+
 (macro ifDarwin (*body) `(if (eq (uname) "Darwin") ,@*body))
 (macro ifLinux (*body) `(if (eq (uname) "Linux") ,@*body))
 (macro ifFreeBSD (*body) `(if (eq (uname) "FreeBSD") ,@*body))
@@ -283,6 +286,9 @@
      ;; default to gcc
      (if clang clang (else "gcc")))
 
+(function select-debugger ()
+     (if (command-exists "lldb") "lldb" (else "gdb")))
+
 ;; use this to create all the compilation tasks for the files in the @c_files and @m_files collections
 (macro compilation-tasks ()
      `(progn
@@ -493,7 +499,7 @@
                   (SH  "'#{@application_dir}/Contents/MacOS/#{@application}'"))
             
             (task "gdb" => "application" is
-                  (SH  "gdb '#{@application_dir}/Contents/MacOS/#{@application}'"))
+                  (SH  "#{(select-debugger)} '#{@application_dir}/Contents/MacOS/#{@application}'"))
             
             (task "clobber" => "clean" is
                   (system "rm -rf '#{@application_dir}'"))
@@ -539,7 +545,7 @@
              (SH @tool))
        
        (task "gdb" => "tool" is
-             (SH  "gdb '#{@tool}'"))
+             (SH  "#{(select-debugger)} '#{@tool}'"))
        
        (task "clobber" => "clean" is
              (system "rm -rf '#{@tool}'"))))
