@@ -3,8 +3,20 @@
 # Install the Nu TextMate bundle from Jason Sallis' GitHub repository.
 # Warning: This will remove any existing Nu.tmbundle.
 #
-rm -rf ~/"Library/Application Support/TextMate/Bundles/Nu.tmbundle"
-mkdir -pv ~/"Library/Application Support/TextMate/Bundles/"
-cd ~/"Library/Application Support/TextMate/Bundles/"
-git clone git://github.com/jsallis/nu.tmbundle.git "Nu.tmbundle"
-osascript -e 'tell app "TextMate" to reload bundles'
+
+BUNDLES_DIR="$HOME/Library/Application Support/TextMate/Bundles"
+BUNDLE_NAME="Nu.tmbundle"
+VERSION=`osascript -e 'tell application "TextMate" to version' | cut -d. -f1`
+
+function getbundle () {
+  git clone git://github.com/jsallis/nu.tmbundle.git $BUNDLE_NAME
+}
+
+if [ $VERSION -eq 2 ]; then
+  getbundle && open $BUNDLE_NAME
+else
+  rm -rf "$BUNDLES_DIR/$BUNDLE_NAME"
+  mkdir -pv $BUNDLES_DIR
+  cd $BUNDLES_DIR
+  getbundle && osascript -e 'tell app "TextMate" to reload bundles'
+fi
