@@ -191,6 +191,7 @@
                (backgroundColor: (NSColor colorWithDeviceRed:0.8 green:0.8 blue:1.0 alpha:0.9)
                 textColor: (NSColor blackColor)
                 insertionPointColor: (NSColor blackColor)
+                automaticQuoteSubstitutionEnabled: NO
                 delegate: self))
           (set @startOfInput 0)
           (set @insertionPoint 0)
