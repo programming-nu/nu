@@ -99,8 +99,7 @@ END)
 
 (ifDarwin
          (then (set @cflags ( "-Wall -g -fPIC -O2 -DMACOSX #{@sdk} #{@sdkflags}"))
-               (set @mflags_nogc "-fobjc-exceptions")
-               (set @mflags (+ @mflags_nogc " -fobjc-gc"))) ;; To use garbage collection, add this flag: "-fobjc-gc"
+               (set @mflags "-fobjc-exceptions"))
          (else (set @cflags "-Wall -g -std=gnu99 -fPIC")
                (set @mflags ((NSString stringWithShellCommand:"gnustep-config --objc-flags") chomp))))
 
@@ -131,7 +130,7 @@ END)
                           (then
                             ((@lib_dirs map:
                                  (do (libdir) " -L#{libdir} ")) join))
-                          (else 
+                          (else
                             ((@lib_dirs map:
                                  (do (libdir) " -L#{libdir} -Wl,--rpath #{libdir}")) join))))))
      join))
@@ -167,7 +166,7 @@ END)
            (ifDarwin
                     (then
                          (file nush_thin_binary => "framework" "build/#{architecture}/main.o" is
-                               (SH "#{@cc} #{@cflags} #{@mflags_nogc} main/main.m -arch #{architecture} -F. -framework Nu #{@ldflags} -o #{(target name)}")))
+                               (SH "#{@cc} #{@cflags} #{@mflags} main/main.m -arch #{architecture} -F. -framework Nu #{@ldflags} -o #{(target name)}")))
                     (else
                          (file nush_thin_binary => "dylib" (@c_objects objectForKey:architecture) (@m_objects objectForKey:architecture) is
                                (SH "#{@cc} #{@cflags} #{@mflags} main/main.m #{@library_executable_name} #{@ldflags} #{@gnustep_flags} -o #{(target name)}"))))))
