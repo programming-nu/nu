@@ -72,6 +72,6 @@
     (assert_equal golden markup))
  
  (- testEmbeddedColons is
-    (set markup (&div ns:foo:123 x:bar:456))
-    (set golden "<div ns:foo=\"123\" x:bar=\"456\"></div>")
+    (set markup (&d:div ns:foo:123 x:bar:456))
+    (set golden "<d:div ns:foo=\"123\" x:bar=\"456\"></d:div>")
     (assert_equal golden markup)))

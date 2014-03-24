@@ -9841,8 +9841,14 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                     }
                     case ':':
                         [partial appendCharacter:':'];
-                        [self addAtom:atomWithString(partial, symbolTable)];
-                        [partial setString:@""];
+                        // ordinarily we break symbols on trailing colons.
+                        // one exception: we don't do it when the symbol begins with an ampersand.
+                        // that's because these symbols are usually markup generators, and 
+                        // sometimes we want to generate markup tags that contain colons.
+			if ([partial characterAtIndex:0] != '&') {
+                      	    [self addAtom:atomWithString(partial, symbolTable)];
+                            [partial setString:@""];
+                        }
                         break;
                     case '\'':
                     {
