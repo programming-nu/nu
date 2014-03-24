@@ -50,7 +50,7 @@
         (assert_equal "((set g999__x 22) (set g999__y (+ g999__x 18)))" (newBody stringValue)))
      
      ;; test a macro that adds an ivar with a getter and setter
-     (- (id) testIvarAccessorMacro is
+     (- (id) _disabled_testIvarAccessorMacro is
         (function make-setter-name (oldName)
              (set newName "set")
              (newName appendString:((oldName substringToIndex:1) capitalizedString))
