@@ -7,6 +7,8 @@
 (function dosomething ()
      (1000 times:(do (i) (+ i i))))
 
+(if (eq (uname) "Darwin")
+
 (class TestProfiler is NuTestCase
      
      (- (id) testProfile is
@@ -40,5 +42,5 @@
         (set onetime ((results "1") time))
         (set twotime ((results "2") time))
         (set threetime ((results "3") time))
-        (assert_true (>= toptime (+ onetime twotime threetime)))))
+        (assert_true (>= toptime (+ onetime twotime threetime))))))
 

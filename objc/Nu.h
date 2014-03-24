@@ -17,6 +17,10 @@
  */
 
 #import <Foundation/Foundation.h>
+#ifdef GNUSTEP
+#import <Foundation/NSRegularExpression.h>
+#import <Foundation/NSTextCheckingResult.h>
+#endif
 #import <objc/objc.h>
 #import <objc/runtime.h>
 

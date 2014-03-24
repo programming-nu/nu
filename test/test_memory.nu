@@ -16,10 +16,10 @@
              
              (- testCreationInNuUsingObjC is
                 (NuTestHelper resetDeallocationCount)
-                (4 times:
+                (3 times:
                    (do (i)
                        (set x (NuTestHelper helperInNuUsingAllocInit))))
-                (assert_equal 4 (NuTestHelper deallocationCount)))
+                (assert_equal 3 (NuTestHelper deallocationCount)))
              
              (- testCreationInObjCUsingNu is
                 (NuTestHelper resetDeallocationCount)
@@ -43,7 +43,6 @@
              
              (- testIvarReleaseOnDealloc is
                 (class IvarReleaseHelper is NuTestHelper
-                     ;;(ivar (id) x) ;; currently declared ivars are not released, this is consistent with unretained outlets                     
                      (set myDeallocationCount 0) ;; closure gives this variable class scope.
                      (+ (int) myDeallocationCount is myDeallocationCount)
                      (- (void) dealloc is

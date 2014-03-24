@@ -40,7 +40,8 @@
         (assert_equal 0 ("\u0000" characterAtIndex:0))
         (assert_equal 1 ("\u0001" characterAtIndex:0))
         (assert_equal 255 ("\u00ff" characterAtIndex:0))
-        (assert_equal 65535 ("\uFfFf" characterAtIndex:0)))
+	;; \uffff and \ufffe are not valid unicode characters (http://www.unicode.org/charts/PDF/UFFF0.pdf)
+        (assert_equal 65533 ("\uFfFd" characterAtIndex:0)))
      
      (- (id) testEscapedHereStrings is
         (set x <<+END
@@ -72,11 +73,12 @@
      
      (- (id) testUnicodeEscapedHereStrings is
         (set x <<+END
-\u0000\u0001\u00ff\uFfFfEND)
+\u0000\u0001\u00ff\uFfFdEND)
         (assert_equal 0 (x characterAtIndex:0))
         (assert_equal 1 (x characterAtIndex:1))
         (assert_equal 255 (x characterAtIndex:2))
-        (assert_equal 65535 (x characterAtIndex:3)))
+	;; \uffff and \ufffe are not valid unicode characters (http://www.unicode.org/charts/PDF/UFFF0.pdf)
+        (assert_equal 65533 (x characterAtIndex:3)))
      
      (- (id) testExplicitlyUnescapedStrings is
         (assert_equal 92 (-"\n" characterAtIndex:0))
