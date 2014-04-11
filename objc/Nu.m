@@ -8534,17 +8534,24 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         }
         
         // if that failed, try to load the file the main application bundle
-        if ([[NSBundle mainBundle] loadNuFile:resourceName withContext:context])
+        if ([[NSBundle mainBundle] loadNuFile:resourceName withContext:context]) {
             return [symbolTable symbolWithString:@"t"];
-        
+        }
+
         // next, try the main Nu bundle
-        if ([Nu loadNuFile:resourceName fromBundleWithIdentifier:@"nu.programming.framework" withContext:context])
+        if ([Nu loadNuFile:resourceName fromBundleWithIdentifier:@"nu.programming.framework" withContext:context]) {
             return [symbolTable symbolWithString:@"t"];
-        
+        }
+
         // if no file was found, try to load a framework with the given name
-        if ([NSBundle frameworkWithName:resourceName])
+        if ([NSBundle frameworkWithName:resourceName]) {
+            #ifdef LINUX
+            // if we're on Linux, call this a second (redundant) time because GNUstep seems to sometimes fail to properly load on the first call.
+   	    [NSBundle frameworkWithName:resourceName];
+            #endif
             return [symbolTable symbolWithString:@"t"];
-        
+        }
+
         #ifdef LINUX
         if (loadNuLibraryFile(resourceName, parser, context, symbolTable)) {
             return [symbolTable symbolWithString:@"t"];
