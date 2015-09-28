@@ -96,7 +96,6 @@ then
 	then
 		"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk"
 	else
-	then
 		echo "Error: SDK not found or unknown. See 'SDKs to Install.md'"
 		exit 1
 	fi
