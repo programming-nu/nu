@@ -1,4 +1,4 @@
-INTRODUCTION
+#INTRODUCTION
 
 Hello and welcome to Nu.
 
@@ -23,24 +23,24 @@ Nu was designed to take full advantage of that.  It was also designed to
 provide many of the elements of successful scripting languages, notably 
 Ruby, while adding the syntactic simplicity and flexibility of Lisp.   
 
-LEGAL
+##Legal
 
 Nu is copyrighted open-source software that is released under the Apache
 License, version 2.0.  For details on the license, see the LICENSE file.
 In its use to name a programming language, "Nu" is a trademark of Radtastical 
 Inc.
 
-SYSTEM REQUIREMENTS
+##System Requirements
 
 On Macintosh systems, Nu requires Mac OS X version 10.5 or greater.
 It is also possible to build Nu to run on Linux systems and the 
 Apple iPhone.
 
-INSTALLATION
+##Installation
 
 Installation instructions are in the notes/INSTALL file.
 
-GOING FURTHER
+##Going Further
 
 notes/DEMO contains a simple tutorial exercise that can acquaint you with Nu.
 
@@ -56,7 +56,7 @@ The examples directory contains several fun and interesting examples.
 TextMate users can drag and drop share/Nu.tmbundle onto the TextMate 
 application icon to add Nu-specific features to TextMate.
 
-AUTHOR
+##Author
 
 Tim Burks (tim@radtastical.com)
 Radtastical Inc.
