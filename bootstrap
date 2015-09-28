@@ -76,7 +76,28 @@ then
 	then
 		SDK="/Developer/SDKs/MacOSX10.4u.sdk"
 	else
-		echo Error: SDK not found or unknown.
+	if test ${DARWIN} = "10"
+	then
+		SDK="/Developer/SDKs/MacOSX10.6.sdk"
+	else
+	if test ${DARWIN} = "11"
+	then
+		SDK="/Developer/SDKs/MacOSX10.7.sdk"
+	else
+	if test ${DARWIN} = "12"
+	then
+		SDK="Developer/SDKs/MacOSX10.8.sdk"
+	else
+	if test ${DARWIN} = "13"
+	then
+		SDK="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk"
+	else
+	if test ${DARWIN} = "14"
+	then
+		"/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk"
+	else
+	then
+		echo "Error: SDK not found or unknown. See 'SDKs to Install.md'"
 		exit 1
 	fi
 	fi
