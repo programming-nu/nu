@@ -6530,7 +6530,12 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (id) valueForIvar:(NSString *) name
 {
     Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (!v) {
+	if(!v){
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+	}
+	
+	if (!v) {
         // look for sparse ivar storage
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (sparseIvars) {
@@ -6552,7 +6557,12 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (BOOL) hasValueForIvar:(NSString *) name
 {
     Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (!v) {
+	if(!v){
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+	}
+	
+	if (!v) {
         // look for sparse ivar storage
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (sparseIvars) {
@@ -6575,7 +6585,12 @@ static void nu_markEndOfObjCTypeString(char *type, size_t len)
 - (void) setValue:(id) value forIvar:(NSString *)name
 {
     Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (!v) {
+    if(!v){
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+	}
+	
+	if (!v) {
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (!sparseIvars) {
             sparseIvars = [[[NSMutableDictionary alloc] init] autorelease];
@@ -9911,6 +9926,12 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                         }
                         break;
                     }
+					case '~':
+                    {
+                        [self quasiquoteEvalNextElement];
+						[self quoteNextElement];
+                        break;
+                    }	
                     case '`':
                     {
                         [self quasiquoteNextElement];
