@@ -17,6 +17,7 @@
 {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     self.window.backgroundColor = [UIColor greenColor];
+    self.window.rootViewController = [[UIViewController alloc] init];
     [self.window makeKeyAndVisible];
     
     NuInit();
