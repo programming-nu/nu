@@ -9,6 +9,7 @@
 #import "NuEnumerable.h"
 #import "NuInternals.h"
 #import "NuCell.h"
+#import "NuBlock.h"
 
 #pragma mark - NuEnumerable.m
 

@@ -11,6 +11,7 @@
 #import "NuSuper.h"
 #import "NSDictionary+Nu.h"
 #import "NuCell.h"
+#import "NuClass.h"
 
 @interface NuBlock ()
 {

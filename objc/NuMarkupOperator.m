@@ -9,6 +9,7 @@
 #import "Nu.h"
 #import "NuInternals.h"
 #import "NuMarkupOperator.h"
+#import "NuCell.h"
 
 @implementation NuMarkupOperator
 

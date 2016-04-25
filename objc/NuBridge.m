@@ -43,6 +43,9 @@
 #import "NuHandler.h"
 #import "NuReference.h"
 #import "NuPointer.h"
+#import "NuClass.h"
+#import "NSMethodSignature+Nu.h"
+#import "NSDictionary+Nu.h"
 
 /*
  * types:

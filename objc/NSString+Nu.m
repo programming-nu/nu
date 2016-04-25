@@ -10,6 +10,7 @@
 #import "NuInternals.h"
 #import "NSDictionary+Nu.h"
 #import "NSData+Nu.h"
+#import "NuCell.h"
 
 @interface NuStringEnumerator : NSEnumerator
 {

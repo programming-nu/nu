@@ -12,6 +12,7 @@
 #import "NuBridge.h"
 #import "NuBridgedFunction.h"
 #import "NuBridgedConstant.h"
+#import "NuClass.h"
 
 #pragma mark - NuSymbol.m
 

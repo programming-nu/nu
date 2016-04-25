@@ -9,6 +9,7 @@
 #import "NSNumber+Nu.h"
 #import "NuInternals.h"
 #import "NuBlock.h"
+#import "NuCell.h"
 
 @implementation NSNumber(Nu)
 

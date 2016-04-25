@@ -71,6 +71,7 @@
 #import "NuException.h"
 #import "NuBridge.h"
 #import "NuBridgedFunction.h"
+#import "NuClass.h"
 
 #ifdef LINUX
 id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable);

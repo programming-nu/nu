@@ -11,6 +11,8 @@
 #import "NSDictionary+Nu.h"
 #import "NuEnumerable.h"
 #import "NuMethod.h"
+#import "NuClass.h"
+#import "NuCell.h"
 
 @protocol NuCanSetAction
 - (void) setAction:(SEL) action;

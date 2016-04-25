@@ -24,12 +24,3 @@
 
 
 ffi_type *ffi_type_for_objc_type(const char *typeString);
-
-
-#import "NuMethod.h"
-
-#pragma mark -
-#pragma mark Interacting with the Objective-C Runtime
-
-#import "NuClass.h"
-
