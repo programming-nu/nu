@@ -10,6 +10,8 @@
 #import "NuInternals.h"
 #import "NSDictionary+Nu.h"
 #import "NuBridge.h"
+#import "NuBridgedFunction.h"
+#import "NuBridgedConstant.h"
 
 #pragma mark - NuSymbol.m
 

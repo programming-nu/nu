@@ -117,6 +117,18 @@
 		2217EC6A1CCDBF390082837B /* NuBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC671CCDBF390082837B /* NuBridge.m */; };
 		225F62CD13B04256002DD16B /* ffi.S in Sources */ = {isa = PBXBuildFile; fileRef = 225F62C413B04256002DD16B /* ffi.S */; };
 		225F62D313B04256002DD16B /* ffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 225F62CA13B04256002DD16B /* ffi.c */; };
+		22716B131CCDC9FD00E7ACDD /* NuBridgedFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 22716B111CCDC9FD00E7ACDD /* NuBridgedFunction.h */; };
+		22716B141CCDC9FD00E7ACDD /* NuBridgedFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B121CCDC9FD00E7ACDD /* NuBridgedFunction.m */; };
+		22716B151CCDC9FD00E7ACDD /* NuBridgedFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B121CCDC9FD00E7ACDD /* NuBridgedFunction.m */; };
+		22716B181CCDCB6F00E7ACDD /* NuBridgedConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = 22716B161CCDCB6F00E7ACDD /* NuBridgedConstant.h */; };
+		22716B191CCDCB6F00E7ACDD /* NuBridgedConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B171CCDCB6F00E7ACDD /* NuBridgedConstant.m */; };
+		22716B1A1CCDCB6F00E7ACDD /* NuBridgedConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B171CCDCB6F00E7ACDD /* NuBridgedConstant.m */; };
+		22716B1D1CCDCC0F00E7ACDD /* NuBridgedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 22716B1B1CCDCC0F00E7ACDD /* NuBridgedBlock.h */; };
+		22716B1E1CCDCC0F00E7ACDD /* NuBridgedBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B1C1CCDCC0F00E7ACDD /* NuBridgedBlock.m */; };
+		22716B1F1CCDCC0F00E7ACDD /* NuBridgedBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B1C1CCDCC0F00E7ACDD /* NuBridgedBlock.m */; };
+		22716B221CCDCCD900E7ACDD /* NuBridgeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 22716B201CCDCCD900E7ACDD /* NuBridgeSupport.h */; };
+		22716B231CCDCCD900E7ACDD /* NuBridgeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B211CCDCCD900E7ACDD /* NuBridgeSupport.m */; };
+		22716B241CCDCCD900E7ACDD /* NuBridgeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B211CCDCCD900E7ACDD /* NuBridgeSupport.m */; };
 		2283074411DDBEA700A5C690 /* Nu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* Nu.framework */; };
 		22B3B3B613B033D400B3AB31 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38813B033D400B3AB31 /* test.html */; };
 		22B3B3B713B033D400B3AB31 /* test_array.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38913B033D400B3AB31 /* test_array.nu */; };
@@ -299,6 +311,14 @@
 		225F62BE13B04256002DD16B /* ffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
 		225F62C413B04256002DD16B /* ffi.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = ffi.S; sourceTree = "<group>"; };
 		225F62CA13B04256002DD16B /* ffi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffi.c; sourceTree = "<group>"; };
+		22716B111CCDC9FD00E7ACDD /* NuBridgedFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBridgedFunction.h; sourceTree = "<group>"; };
+		22716B121CCDC9FD00E7ACDD /* NuBridgedFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBridgedFunction.m; sourceTree = "<group>"; };
+		22716B161CCDCB6F00E7ACDD /* NuBridgedConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBridgedConstant.h; sourceTree = "<group>"; };
+		22716B171CCDCB6F00E7ACDD /* NuBridgedConstant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBridgedConstant.m; sourceTree = "<group>"; };
+		22716B1B1CCDCC0F00E7ACDD /* NuBridgedBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBridgedBlock.h; sourceTree = "<group>"; };
+		22716B1C1CCDCC0F00E7ACDD /* NuBridgedBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBridgedBlock.m; sourceTree = "<group>"; };
+		22716B201CCDCCD900E7ACDD /* NuBridgeSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBridgeSupport.h; sourceTree = "<group>"; };
+		22716B211CCDCCD900E7ACDD /* NuBridgeSupport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBridgeSupport.m; sourceTree = "<group>"; };
 		2283073111DDBE3100A5C690 /* nush */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nush; sourceTree = BUILT_PRODUCTS_DIR; };
 		229FABE113C0129400CEFCF5 /* Nu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nu.h; sourceTree = "<group>"; };
 		22B3B38813B033D400B3AB31 /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
@@ -640,6 +660,14 @@
 				2217EBBD1CCD8BDF0082837B /* NuSymbol.m */,
 				2217EBC11CCD8CE30082837B /* NuTestHelper.h */,
 				2217EBC21CCD8CE30082837B /* NuTestHelper.m */,
+				22716B111CCDC9FD00E7ACDD /* NuBridgedFunction.h */,
+				22716B121CCDC9FD00E7ACDD /* NuBridgedFunction.m */,
+				22716B161CCDCB6F00E7ACDD /* NuBridgedConstant.h */,
+				22716B171CCDCB6F00E7ACDD /* NuBridgedConstant.m */,
+				22716B1B1CCDCC0F00E7ACDD /* NuBridgedBlock.h */,
+				22716B1C1CCDCC0F00E7ACDD /* NuBridgedBlock.m */,
+				22716B201CCDCCD900E7ACDD /* NuBridgeSupport.h */,
+				22716B211CCDCCD900E7ACDD /* NuBridgeSupport.m */,
 			);
 			name = objc;
 			path = ../objc;
@@ -694,6 +722,7 @@
 			files = (
 				2217EC681CCDBF390082837B /* NuBridge.h in Headers */,
 				2217EC401CCDAED00082837B /* NSArray+Nu.h in Headers */,
+				22716B1D1CCDCC0F00E7ACDD /* NuBridgedBlock.h in Headers */,
 				2217EBC81CCD8DF00082837B /* NuSwizzles.h in Headers */,
 				2217EBE11CCD921B0082837B /* NuReference.h in Headers */,
 				2217EC091CCDA4990082837B /* NuMacro.h in Headers */,
@@ -708,8 +737,10 @@
 				2217EC041CCDA3870082837B /* NuMethod.h in Headers */,
 				2217EC541CCDB0D40082837B /* NSData+Nu.h in Headers */,
 				2217EBB81CCD89E60082837B /* NuMarkupOperator.h in Headers */,
+				22716B131CCDC9FD00E7ACDD /* NuBridgedFunction.h in Headers */,
 				2217EC3B1CCDAE010082837B /* NuException.h in Headers */,
 				2217EC221CCDA9A00082837B /* NuMath.h in Headers */,
+				22716B221CCDCCD900E7ACDD /* NuBridgeSupport.h in Headers */,
 				2217EC311CCDAC600082837B /* NSBundle+Nu.h in Headers */,
 				2217EBFA1CCDA27A0082837B /* NSObject+Nu.h in Headers */,
 				2217EC131CCDA65F0082837B /* NuBlock.h in Headers */,
@@ -718,6 +749,7 @@
 				2217EC2C1CCDAB700082837B /* NSDictionary+Nu.h in Headers */,
 				2217EBE61CCD92AC0082837B /* NuProperty.h in Headers */,
 				2217EBF51CCDA0420082837B /* NuOperators.h in Headers */,
+				22716B181CCDCB6F00E7ACDD /* NuBridgedConstant.h in Headers */,
 				2217EC181CCDA7350082837B /* NuCell.h in Headers */,
 				2217EC0E1CCDA5390082837B /* NuHandler.h in Headers */,
 				2217EBDC1CCD915B0082837B /* NuRegex.h in Headers */,
@@ -936,6 +968,7 @@
 				2217EBDE1CCD915B0082837B /* NuRegex.m in Sources */,
 				2217EC331CCDAC600082837B /* NSBundle+Nu.m in Sources */,
 				2217EC561CCDB0D40082837B /* NSData+Nu.m in Sources */,
+				22716B1A1CCDCB6F00E7ACDD /* NuBridgedConstant.m in Sources */,
 				22EE2C0613A4731600895861 /* main.m in Sources */,
 				2217EC061CCDA3870082837B /* NuMethod.m in Sources */,
 				2217EBCA1CCD8DF00082837B /* NuSwizzles.m in Sources */,
@@ -952,6 +985,7 @@
 				2217EC5B1CCDB1240082837B /* NSDate+Nu.m in Sources */,
 				2217EC381CCDAD3B0082837B /* NuEnumerable.m in Sources */,
 				2217EBCF1CCD8E760082837B /* NuSuper.m in Sources */,
+				22716B1F1CCDCC0F00E7ACDD /* NuBridgedBlock.m in Sources */,
 				2217EBF21CCD9E7F0082837B /* NuPointer.m in Sources */,
 				2217EC241CCDA9A00082837B /* NuMath.m in Sources */,
 				2217EC011CCDA3300082837B /* NuObjCRuntime.m in Sources */,
@@ -959,6 +993,7 @@
 				225F62CD13B04256002DD16B /* ffi.S in Sources */,
 				2217EBE31CCD921B0082837B /* NuReference.m in Sources */,
 				2217EC4C1CCDAFE00082837B /* NSNull+Nu.m in Sources */,
+				22716B241CCDCCD900E7ACDD /* NuBridgeSupport.m in Sources */,
 				2217EBD91CCD90310082837B /* NuParser.m in Sources */,
 				2217EC511CCDB0770082837B /* NSNumber+Nu.m in Sources */,
 				2217EC0B1CCDA4990082837B /* NuMacro.m in Sources */,
@@ -967,6 +1002,7 @@
 				2217EC3D1CCDAE010082837B /* NuException.m in Sources */,
 				2217EBED1CCD9DFE0082837B /* NuProfiler.m in Sources */,
 				2217EBC01CCD8BDF0082837B /* NuSymbol.m in Sources */,
+				22716B151CCDC9FD00E7ACDD /* NuBridgedFunction.m in Sources */,
 				225F62D313B04256002DD16B /* ffi.c in Sources */,
 				2217EC471CCDAF2A0082837B /* NSSet+Nu.m in Sources */,
 				2217EC421CCDAED00082837B /* NSArray+Nu.m in Sources */,
@@ -983,18 +1019,22 @@
 				2217EC501CCDB0770082837B /* NSNumber+Nu.m in Sources */,
 				2217EC411CCDAED00082837B /* NSArray+Nu.m in Sources */,
 				2217EC051CCDA3870082837B /* NuMethod.m in Sources */,
+				22716B231CCDCCD900E7ACDD /* NuBridgeSupport.m in Sources */,
 				2217EBC41CCD8CE30082837B /* NuTestHelper.m in Sources */,
 				2217EBEC1CCD9DFE0082837B /* NuProfiler.m in Sources */,
 				2217EC5A1CCDB1240082837B /* NSDate+Nu.m in Sources */,
 				2217EBD31CCD8F960082837B /* NuStack.m in Sources */,
 				2217EBF11CCD9E7F0082837B /* NuPointer.m in Sources */,
 				2217EC321CCDAC600082837B /* NSBundle+Nu.m in Sources */,
+				22716B141CCDC9FD00E7ACDD /* NuBridgedFunction.m in Sources */,
 				2217EBE71CCD92AC0082837B /* NuProperty.m in Sources */,
 				2217EC141CCDA65F0082837B /* NuBlock.m in Sources */,
 				2217EC641CCDB2610082837B /* NSMethodSignature+Nu.m in Sources */,
 				2217EC551CCDB0D40082837B /* NSData+Nu.m in Sources */,
 				2217EBE21CCD921B0082837B /* NuReference.m in Sources */,
+				22716B191CCDCB6F00E7ACDD /* NuBridgedConstant.m in Sources */,
 				2217EC461CCDAF2A0082837B /* NSSet+Nu.m in Sources */,
+				22716B1E1CCDCC0F00E7ACDD /* NuBridgedBlock.m in Sources */,
 				2217EC231CCDA9A00082837B /* NuMath.m in Sources */,
 				2217EC3C1CCDAE010082837B /* NuException.m in Sources */,
 				2217EC4B1CCDAFE00082837B /* NSNull+Nu.m in Sources */,

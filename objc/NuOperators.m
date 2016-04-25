@@ -15,6 +15,7 @@
 #import "NSFileManager+Nu.h"
 #import "NSArray+Nu.h"
 #import "NuBridge.h"
+#import "NuBridgedFunction.h"
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
