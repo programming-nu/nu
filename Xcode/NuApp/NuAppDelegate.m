@@ -10,16 +10,26 @@
 
 #import "Nu.h"
 
+#import <UIKit/UIKit.h>
+
+@class ViewController;
+
 @implementation NuAppDelegate
 @synthesize window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
-    self.window.backgroundColor = [UIColor greenColor];
-    self.window.rootViewController = [[UIViewController alloc] init];
+	CGRect frame = [[UIScreen mainScreen] bounds];
+    self.window = [[[UIWindow alloc] initWithFrame:frame] autorelease];
     [self.window makeKeyAndVisible];
-    
+	UIViewController *viewController = [[UIViewController alloc] init];
+	self.window.rootViewController = viewController;
+	UIView *view = [[UIView alloc] initWithFrame:frame];
+	viewController.view = view;
+	UILabel *label = [[UILabel alloc] initWithFrame:frame];
+	label.textAlignment = NSTextAlignmentCenter;
+	[view addSubview:label];
+	
     NuInit();
     
     [[Nu sharedParser] parseEval:@"(load \"nu\")"];
@@ -45,7 +55,14 @@
     }
     [regex release];
     NSLog(@"running tests");
-    [[Nu sharedParser] parseEval:@"(NuTestCase runAllTests)"];
+	int failures = [[[Nu sharedParser] parseEval:@"(NuTestCase runAllTests)"] intValue];
+	if (failures == 0) {
+		view.backgroundColor = [UIColor greenColor];
+		label.text = @"Everything Nu!";
+	} else {
+		view.backgroundColor = [UIColor redColor];
+		label.text = [NSString stringWithFormat:@"%d failures!",failures];
+	}
     NSLog(@"ok");    
     return YES;
 }

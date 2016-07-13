@@ -9,126 +9,84 @@
 /* Begin PBXBuildFile section */
 		2217EBB81CCD89E60082837B /* NuMarkupOperator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBB61CCD89E60082837B /* NuMarkupOperator.h */; };
 		2217EBB91CCD89E60082837B /* NuMarkupOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBB71CCD89E60082837B /* NuMarkupOperator.m */; };
-		2217EBBA1CCD8AAC0082837B /* NuMarkupOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBB71CCD89E60082837B /* NuMarkupOperator.m */; };
 		2217EBBE1CCD8BDF0082837B /* NuSymbol.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBBC1CCD8BDF0082837B /* NuSymbol.h */; };
 		2217EBBF1CCD8BDF0082837B /* NuSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBBD1CCD8BDF0082837B /* NuSymbol.m */; };
-		2217EBC01CCD8BDF0082837B /* NuSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBBD1CCD8BDF0082837B /* NuSymbol.m */; };
 		2217EBC31CCD8CE30082837B /* NuTestHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBC11CCD8CE30082837B /* NuTestHelper.h */; };
 		2217EBC41CCD8CE30082837B /* NuTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBC21CCD8CE30082837B /* NuTestHelper.m */; };
-		2217EBC51CCD8CE30082837B /* NuTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBC21CCD8CE30082837B /* NuTestHelper.m */; };
 		2217EBC81CCD8DF00082837B /* NuSwizzles.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBC61CCD8DF00082837B /* NuSwizzles.h */; };
 		2217EBC91CCD8DF00082837B /* NuSwizzles.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBC71CCD8DF00082837B /* NuSwizzles.m */; };
-		2217EBCA1CCD8DF00082837B /* NuSwizzles.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBC71CCD8DF00082837B /* NuSwizzles.m */; };
 		2217EBCD1CCD8E760082837B /* NuSuper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBCB1CCD8E760082837B /* NuSuper.h */; };
 		2217EBCE1CCD8E760082837B /* NuSuper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBCC1CCD8E760082837B /* NuSuper.m */; };
-		2217EBCF1CCD8E760082837B /* NuSuper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBCC1CCD8E760082837B /* NuSuper.m */; };
 		2217EBD21CCD8F960082837B /* NuStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBD01CCD8F960082837B /* NuStack.h */; };
 		2217EBD31CCD8F960082837B /* NuStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBD11CCD8F960082837B /* NuStack.m */; };
-		2217EBD41CCD8F960082837B /* NuStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBD11CCD8F960082837B /* NuStack.m */; };
 		2217EBD71CCD90310082837B /* NuParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBD51CCD90310082837B /* NuParser.h */; };
 		2217EBD81CCD90310082837B /* NuParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBD61CCD90310082837B /* NuParser.m */; };
-		2217EBD91CCD90310082837B /* NuParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBD61CCD90310082837B /* NuParser.m */; };
 		2217EBDC1CCD915B0082837B /* NuRegex.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBDA1CCD915B0082837B /* NuRegex.h */; };
 		2217EBDD1CCD915B0082837B /* NuRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBDB1CCD915B0082837B /* NuRegex.m */; };
-		2217EBDE1CCD915B0082837B /* NuRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBDB1CCD915B0082837B /* NuRegex.m */; };
 		2217EBE11CCD921B0082837B /* NuReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBDF1CCD921B0082837B /* NuReference.h */; };
 		2217EBE21CCD921B0082837B /* NuReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBE01CCD921B0082837B /* NuReference.m */; };
-		2217EBE31CCD921B0082837B /* NuReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBE01CCD921B0082837B /* NuReference.m */; };
 		2217EBE61CCD92AC0082837B /* NuProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBE41CCD92AC0082837B /* NuProperty.h */; };
 		2217EBE71CCD92AC0082837B /* NuProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBE51CCD92AC0082837B /* NuProperty.m */; };
-		2217EBE81CCD92AC0082837B /* NuProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBE51CCD92AC0082837B /* NuProperty.m */; };
 		2217EBEB1CCD9DFE0082837B /* NuProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBE91CCD9DFE0082837B /* NuProfiler.h */; };
 		2217EBEC1CCD9DFE0082837B /* NuProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBEA1CCD9DFE0082837B /* NuProfiler.m */; };
-		2217EBED1CCD9DFE0082837B /* NuProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBEA1CCD9DFE0082837B /* NuProfiler.m */; };
 		2217EBF01CCD9E7F0082837B /* NuPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBEE1CCD9E7F0082837B /* NuPointer.h */; };
 		2217EBF11CCD9E7F0082837B /* NuPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBEF1CCD9E7F0082837B /* NuPointer.m */; };
-		2217EBF21CCD9E7F0082837B /* NuPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBEF1CCD9E7F0082837B /* NuPointer.m */; };
 		2217EBF51CCDA0420082837B /* NuOperators.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBF31CCDA0420082837B /* NuOperators.h */; };
 		2217EBF61CCDA0420082837B /* NuOperators.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBF41CCDA0420082837B /* NuOperators.m */; };
-		2217EBF71CCDA0420082837B /* NuOperators.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBF41CCDA0420082837B /* NuOperators.m */; };
 		2217EBFA1CCDA27A0082837B /* NSObject+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBF81CCDA27A0082837B /* NSObject+Nu.h */; };
 		2217EBFB1CCDA27A0082837B /* NSObject+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBF91CCDA27A0082837B /* NSObject+Nu.m */; };
-		2217EBFC1CCDA27A0082837B /* NSObject+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBF91CCDA27A0082837B /* NSObject+Nu.m */; };
 		2217EBFF1CCDA3300082837B /* NuObjCRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EBFD1CCDA3300082837B /* NuObjCRuntime.h */; };
 		2217EC001CCDA3300082837B /* NuObjCRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBFE1CCDA3300082837B /* NuObjCRuntime.m */; };
-		2217EC011CCDA3300082837B /* NuObjCRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBFE1CCDA3300082837B /* NuObjCRuntime.m */; };
 		2217EC041CCDA3870082837B /* NuMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC021CCDA3870082837B /* NuMethod.h */; };
 		2217EC051CCDA3870082837B /* NuMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC031CCDA3870082837B /* NuMethod.m */; };
-		2217EC061CCDA3870082837B /* NuMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC031CCDA3870082837B /* NuMethod.m */; };
 		2217EC091CCDA4990082837B /* NuMacro.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC071CCDA4990082837B /* NuMacro.h */; };
 		2217EC0A1CCDA4990082837B /* NuMacro.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC081CCDA4990082837B /* NuMacro.m */; };
-		2217EC0B1CCDA4990082837B /* NuMacro.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC081CCDA4990082837B /* NuMacro.m */; };
 		2217EC0E1CCDA5390082837B /* NuHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC0C1CCDA5390082837B /* NuHandler.h */; };
 		2217EC0F1CCDA5390082837B /* NuHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC0D1CCDA5390082837B /* NuHandler.m */; };
-		2217EC101CCDA5390082837B /* NuHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC0D1CCDA5390082837B /* NuHandler.m */; };
 		2217EC131CCDA65F0082837B /* NuBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC111CCDA65F0082837B /* NuBlock.h */; };
 		2217EC141CCDA65F0082837B /* NuBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC121CCDA65F0082837B /* NuBlock.m */; };
-		2217EC151CCDA65F0082837B /* NuBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC121CCDA65F0082837B /* NuBlock.m */; };
 		2217EC181CCDA7350082837B /* NuCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC161CCDA7350082837B /* NuCell.h */; };
 		2217EC191CCDA7350082837B /* NuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC171CCDA7350082837B /* NuCell.m */; };
-		2217EC1A1CCDA7350082837B /* NuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC171CCDA7350082837B /* NuCell.m */; };
 		2217EC1D1CCDA8340082837B /* NuClass.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC1B1CCDA8340082837B /* NuClass.h */; };
 		2217EC1E1CCDA8340082837B /* NuClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC1C1CCDA8340082837B /* NuClass.m */; };
-		2217EC1F1CCDA8340082837B /* NuClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC1C1CCDA8340082837B /* NuClass.m */; };
 		2217EC221CCDA9A00082837B /* NuMath.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC201CCDA9A00082837B /* NuMath.h */; };
 		2217EC231CCDA9A00082837B /* NuMath.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC211CCDA9A00082837B /* NuMath.m */; };
-		2217EC241CCDA9A00082837B /* NuMath.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC211CCDA9A00082837B /* NuMath.m */; };
 		2217EC271CCDAA850082837B /* NSString+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC251CCDAA850082837B /* NSString+Nu.h */; };
 		2217EC281CCDAA850082837B /* NSString+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC261CCDAA850082837B /* NSString+Nu.m */; };
-		2217EC291CCDAA850082837B /* NSString+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC261CCDAA850082837B /* NSString+Nu.m */; };
 		2217EC2C1CCDAB700082837B /* NSDictionary+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC2A1CCDAB700082837B /* NSDictionary+Nu.h */; };
 		2217EC2D1CCDAB700082837B /* NSDictionary+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC2B1CCDAB700082837B /* NSDictionary+Nu.m */; };
-		2217EC2E1CCDAB700082837B /* NSDictionary+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC2B1CCDAB700082837B /* NSDictionary+Nu.m */; };
 		2217EC311CCDAC600082837B /* NSBundle+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC2F1CCDAC600082837B /* NSBundle+Nu.h */; };
 		2217EC321CCDAC600082837B /* NSBundle+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC301CCDAC600082837B /* NSBundle+Nu.m */; };
-		2217EC331CCDAC600082837B /* NSBundle+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC301CCDAC600082837B /* NSBundle+Nu.m */; };
 		2217EC361CCDAD3B0082837B /* NuEnumerable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC341CCDAD3B0082837B /* NuEnumerable.h */; };
 		2217EC371CCDAD3B0082837B /* NuEnumerable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC351CCDAD3B0082837B /* NuEnumerable.m */; };
-		2217EC381CCDAD3B0082837B /* NuEnumerable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC351CCDAD3B0082837B /* NuEnumerable.m */; };
 		2217EC3B1CCDAE010082837B /* NuException.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC391CCDAE010082837B /* NuException.h */; };
 		2217EC3C1CCDAE010082837B /* NuException.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC3A1CCDAE010082837B /* NuException.m */; };
-		2217EC3D1CCDAE010082837B /* NuException.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC3A1CCDAE010082837B /* NuException.m */; };
 		2217EC401CCDAED00082837B /* NSArray+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC3E1CCDAED00082837B /* NSArray+Nu.h */; };
 		2217EC411CCDAED00082837B /* NSArray+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC3F1CCDAED00082837B /* NSArray+Nu.m */; };
-		2217EC421CCDAED00082837B /* NSArray+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC3F1CCDAED00082837B /* NSArray+Nu.m */; };
 		2217EC451CCDAF2A0082837B /* NSSet+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC431CCDAF2A0082837B /* NSSet+Nu.h */; };
 		2217EC461CCDAF2A0082837B /* NSSet+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC441CCDAF2A0082837B /* NSSet+Nu.m */; };
-		2217EC471CCDAF2A0082837B /* NSSet+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC441CCDAF2A0082837B /* NSSet+Nu.m */; };
 		2217EC4A1CCDAFE00082837B /* NSNull+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC481CCDAFE00082837B /* NSNull+Nu.h */; };
 		2217EC4B1CCDAFE00082837B /* NSNull+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC491CCDAFE00082837B /* NSNull+Nu.m */; };
-		2217EC4C1CCDAFE00082837B /* NSNull+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC491CCDAFE00082837B /* NSNull+Nu.m */; };
 		2217EC4F1CCDB0770082837B /* NSNumber+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC4D1CCDB0770082837B /* NSNumber+Nu.h */; };
 		2217EC501CCDB0770082837B /* NSNumber+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC4E1CCDB0770082837B /* NSNumber+Nu.m */; };
-		2217EC511CCDB0770082837B /* NSNumber+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC4E1CCDB0770082837B /* NSNumber+Nu.m */; };
 		2217EC541CCDB0D40082837B /* NSData+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC521CCDB0D40082837B /* NSData+Nu.h */; };
 		2217EC551CCDB0D40082837B /* NSData+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC531CCDB0D40082837B /* NSData+Nu.m */; };
-		2217EC561CCDB0D40082837B /* NSData+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC531CCDB0D40082837B /* NSData+Nu.m */; };
 		2217EC591CCDB1240082837B /* NSDate+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC571CCDB1240082837B /* NSDate+Nu.h */; };
 		2217EC5A1CCDB1240082837B /* NSDate+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC581CCDB1240082837B /* NSDate+Nu.m */; };
-		2217EC5B1CCDB1240082837B /* NSDate+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC581CCDB1240082837B /* NSDate+Nu.m */; };
 		2217EC5E1CCDB19C0082837B /* NSFileManager+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC5C1CCDB19C0082837B /* NSFileManager+Nu.h */; };
 		2217EC5F1CCDB19C0082837B /* NSFileManager+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC5D1CCDB19C0082837B /* NSFileManager+Nu.m */; };
-		2217EC601CCDB19C0082837B /* NSFileManager+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC5D1CCDB19C0082837B /* NSFileManager+Nu.m */; };
 		2217EC631CCDB2610082837B /* NSMethodSignature+Nu.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC611CCDB2610082837B /* NSMethodSignature+Nu.h */; };
 		2217EC641CCDB2610082837B /* NSMethodSignature+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC621CCDB2610082837B /* NSMethodSignature+Nu.m */; };
-		2217EC651CCDB2610082837B /* NSMethodSignature+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC621CCDB2610082837B /* NSMethodSignature+Nu.m */; };
 		2217EC681CCDBF390082837B /* NuBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 2217EC661CCDBF390082837B /* NuBridge.h */; };
 		2217EC691CCDBF390082837B /* NuBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC671CCDBF390082837B /* NuBridge.m */; };
-		2217EC6A1CCDBF390082837B /* NuBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC671CCDBF390082837B /* NuBridge.m */; };
-		225F62CD13B04256002DD16B /* ffi.S in Sources */ = {isa = PBXBuildFile; fileRef = 225F62C413B04256002DD16B /* ffi.S */; };
-		225F62D313B04256002DD16B /* ffi.c in Sources */ = {isa = PBXBuildFile; fileRef = 225F62CA13B04256002DD16B /* ffi.c */; };
 		22716B131CCDC9FD00E7ACDD /* NuBridgedFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 22716B111CCDC9FD00E7ACDD /* NuBridgedFunction.h */; };
 		22716B141CCDC9FD00E7ACDD /* NuBridgedFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B121CCDC9FD00E7ACDD /* NuBridgedFunction.m */; };
-		22716B151CCDC9FD00E7ACDD /* NuBridgedFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B121CCDC9FD00E7ACDD /* NuBridgedFunction.m */; };
 		22716B181CCDCB6F00E7ACDD /* NuBridgedConstant.h in Headers */ = {isa = PBXBuildFile; fileRef = 22716B161CCDCB6F00E7ACDD /* NuBridgedConstant.h */; };
 		22716B191CCDCB6F00E7ACDD /* NuBridgedConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B171CCDCB6F00E7ACDD /* NuBridgedConstant.m */; };
-		22716B1A1CCDCB6F00E7ACDD /* NuBridgedConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B171CCDCB6F00E7ACDD /* NuBridgedConstant.m */; };
 		22716B1D1CCDCC0F00E7ACDD /* NuBridgedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 22716B1B1CCDCC0F00E7ACDD /* NuBridgedBlock.h */; };
 		22716B1E1CCDCC0F00E7ACDD /* NuBridgedBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B1C1CCDCC0F00E7ACDD /* NuBridgedBlock.m */; };
-		22716B1F1CCDCC0F00E7ACDD /* NuBridgedBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B1C1CCDCC0F00E7ACDD /* NuBridgedBlock.m */; };
 		22716B221CCDCCD900E7ACDD /* NuBridgeSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 22716B201CCDCCD900E7ACDD /* NuBridgeSupport.h */; };
 		22716B231CCDCCD900E7ACDD /* NuBridgeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B211CCDCCD900E7ACDD /* NuBridgeSupport.m */; };
-		22716B241CCDCCD900E7ACDD /* NuBridgeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B211CCDCCD900E7ACDD /* NuBridgeSupport.m */; };
 		2283074411DDBEA700A5C690 /* Nu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* Nu.framework */; };
 		22B3B3B613B033D400B3AB31 /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38813B033D400B3AB31 /* test.html */; };
 		22B3B3B713B033D400B3AB31 /* test_array.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B38913B033D400B3AB31 /* test_array.nu */; };
@@ -210,7 +168,6 @@
 		22B3B41613B033EE00B3AB31 /* test.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F513B033EE00B3AB31 /* test.nu */; };
 		22B3B41713B033EE00B3AB31 /* test.nu in Resources */ = {isa = PBXBuildFile; fileRef = 22B3B3F513B033EE00B3AB31 /* test.nu */; };
 		22B3B47313B0359300B3AB31 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B41D13B0359300B3AB31 /* Nu.m */; };
-		22B3B47413B0359300B3AB31 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B41D13B0359300B3AB31 /* Nu.m */; };
 		22B3B50313B0386600B3AB31 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50213B0386600B3AB31 /* UIKit.framework */; };
 		22B3B50513B0388C00B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50413B0388C00B3AB31 /* Foundation.framework */; };
 		22B3B50713B038D000B3AB31 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22B3B50613B038D000B3AB31 /* Foundation.framework */; };
@@ -218,6 +175,49 @@
 		22EE2C0413A4731600895861 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 22EE2C0213A4731600895861 /* InfoPlist.strings */; };
 		22EE2C0613A4731600895861 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0513A4731600895861 /* main.m */; };
 		22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 22EE2C0913A4731600895861 /* NuAppDelegate.m */; };
+		43B5D4101D3668A600D1E1FD /* libNuTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43B5D4021D36686B00D1E1FD /* libNuTouch.a */; };
+		43DCFCB31D369D8200CB6E63 /* libffi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43DCFCB21D369D8200CB6E63 /* libffi.a */; };
+		43DCFCB91D37938100CB6E63 /* NSArray+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC3F1CCDAED00082837B /* NSArray+Nu.m */; };
+		43DCFCBB1D37938100CB6E63 /* NSBundle+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC301CCDAC600082837B /* NSBundle+Nu.m */; };
+		43DCFCBD1D37938100CB6E63 /* NSData+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC531CCDB0D40082837B /* NSData+Nu.m */; };
+		43DCFCBF1D37938100CB6E63 /* NSDate+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC581CCDB1240082837B /* NSDate+Nu.m */; };
+		43DCFCC11D37938100CB6E63 /* NSDictionary+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC2B1CCDAB700082837B /* NSDictionary+Nu.m */; };
+		43DCFCC31D37938100CB6E63 /* NSFileManager+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC5D1CCDB19C0082837B /* NSFileManager+Nu.m */; };
+		43DCFCC51D37938100CB6E63 /* NSMethodSignature+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC621CCDB2610082837B /* NSMethodSignature+Nu.m */; };
+		43DCFCC71D37938200CB6E63 /* NSNull+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC491CCDAFE00082837B /* NSNull+Nu.m */; };
+		43DCFCC91D37938200CB6E63 /* NSNumber+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC4E1CCDB0770082837B /* NSNumber+Nu.m */; };
+		43DCFCCB1D37938200CB6E63 /* NSObject+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBF91CCDA27A0082837B /* NSObject+Nu.m */; };
+		43DCFCCD1D37938200CB6E63 /* NSSet+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC441CCDAF2A0082837B /* NSSet+Nu.m */; };
+		43DCFCCF1D37938200CB6E63 /* NSString+Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC261CCDAA850082837B /* NSString+Nu.m */; };
+		43DCFCD11D37938200CB6E63 /* Nu.m in Sources */ = {isa = PBXBuildFile; fileRef = 22B3B41D13B0359300B3AB31 /* Nu.m */; };
+		43DCFCD31D37938200CB6E63 /* NuBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC121CCDA65F0082837B /* NuBlock.m */; };
+		43DCFCD51D37938200CB6E63 /* NuBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC671CCDBF390082837B /* NuBridge.m */; };
+		43DCFCD71D37938200CB6E63 /* NuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC171CCDA7350082837B /* NuCell.m */; };
+		43DCFCD91D37938200CB6E63 /* NuClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC1C1CCDA8340082837B /* NuClass.m */; };
+		43DCFCDB1D37938200CB6E63 /* NuEnumerable.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC351CCDAD3B0082837B /* NuEnumerable.m */; };
+		43DCFCDD1D37938200CB6E63 /* NuException.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC3A1CCDAE010082837B /* NuException.m */; };
+		43DCFCDF1D37938200CB6E63 /* NuHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC0D1CCDA5390082837B /* NuHandler.m */; };
+		43DCFCE21D37938200CB6E63 /* NuMacro.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC081CCDA4990082837B /* NuMacro.m */; };
+		43DCFCE41D37938200CB6E63 /* NuMarkupOperator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBB71CCD89E60082837B /* NuMarkupOperator.m */; };
+		43DCFCE61D37938200CB6E63 /* NuMath.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC211CCDA9A00082837B /* NuMath.m */; };
+		43DCFCE81D37938200CB6E63 /* NuMethod.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EC031CCDA3870082837B /* NuMethod.m */; };
+		43DCFCEA1D37938200CB6E63 /* NuObjCRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBFE1CCDA3300082837B /* NuObjCRuntime.m */; };
+		43DCFCEC1D37938200CB6E63 /* NuOperators.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBF41CCDA0420082837B /* NuOperators.m */; };
+		43DCFCEE1D37938200CB6E63 /* NuParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBD61CCD90310082837B /* NuParser.m */; };
+		43DCFCF01D37938200CB6E63 /* NuPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBEF1CCD9E7F0082837B /* NuPointer.m */; };
+		43DCFCF21D37938200CB6E63 /* NuProfiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBEA1CCD9DFE0082837B /* NuProfiler.m */; };
+		43DCFCF41D37938200CB6E63 /* NuProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBE51CCD92AC0082837B /* NuProperty.m */; };
+		43DCFCF61D37938200CB6E63 /* NuReference.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBE01CCD921B0082837B /* NuReference.m */; };
+		43DCFCF81D37938200CB6E63 /* NuRegex.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBDB1CCD915B0082837B /* NuRegex.m */; };
+		43DCFCFA1D37938200CB6E63 /* NuStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBD11CCD8F960082837B /* NuStack.m */; };
+		43DCFCFC1D37938200CB6E63 /* NuSuper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBCC1CCD8E760082837B /* NuSuper.m */; };
+		43DCFCFE1D37938200CB6E63 /* NuSwizzles.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBC71CCD8DF00082837B /* NuSwizzles.m */; };
+		43DCFD001D37938200CB6E63 /* NuSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBBD1CCD8BDF0082837B /* NuSymbol.m */; };
+		43DCFD021D37938200CB6E63 /* NuTestHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2217EBC21CCD8CE30082837B /* NuTestHelper.m */; };
+		43DCFD041D37938200CB6E63 /* NuBridgedFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B121CCDC9FD00E7ACDD /* NuBridgedFunction.m */; };
+		43DCFD061D37938200CB6E63 /* NuBridgedConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B171CCDCB6F00E7ACDD /* NuBridgedConstant.m */; };
+		43DCFD081D37938200CB6E63 /* NuBridgedBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B1C1CCDCC0F00E7ACDD /* NuBridgedBlock.m */; };
+		43DCFD0A1D37938200CB6E63 /* NuBridgeSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 22716B211CCDCCD900E7ACDD /* NuBridgeSupport.m */; };
 		4F43427C1420476C00AC1BFD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F43427B1420476C00AC1BFD /* main.m */; };
 		56E07744170B028400FF0A4B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 56E07743170B028400FF0A4B /* Default-568h@2x.png */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -232,6 +232,19 @@
 			remoteInfo = Nu;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		43B5D4001D36686B00D1E1FD /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -308,9 +321,6 @@
 		2217EC621CCDB2610082837B /* NSMethodSignature+Nu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMethodSignature+Nu.m"; sourceTree = "<group>"; };
 		2217EC661CCDBF390082837B /* NuBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBridge.h; sourceTree = "<group>"; };
 		2217EC671CCDBF390082837B /* NuBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBridge.m; sourceTree = "<group>"; };
-		225F62BE13B04256002DD16B /* ffi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ffi.h; sourceTree = "<group>"; };
-		225F62C413B04256002DD16B /* ffi.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = ffi.S; sourceTree = "<group>"; };
-		225F62CA13B04256002DD16B /* ffi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ffi.c; sourceTree = "<group>"; };
 		22716B111CCDC9FD00E7ACDD /* NuBridgedFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBridgedFunction.h; sourceTree = "<group>"; };
 		22716B121CCDC9FD00E7ACDD /* NuBridgedFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NuBridgedFunction.m; sourceTree = "<group>"; };
 		22716B161CCDCB6F00E7ACDD /* NuBridgedConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NuBridgedConstant.h; sourceTree = "<group>"; };
@@ -396,6 +406,8 @@
 		22EE2C0813A4731600895861 /* NuAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NuAppDelegate.h; sourceTree = "<group>"; };
 		22EE2C0913A4731600895861 /* NuAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NuAppDelegate.m; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* Nu_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu_Prefix.pch; sourceTree = "<group>"; };
+		43B5D4021D36686B00D1E1FD /* libNuTouch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNuTouch.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		43DCFCB21D369D8200CB6E63 /* libffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libffi.a; path = "../libffi/build/Debug-iphoneos/libffi.a"; sourceTree = "<group>"; };
 		4F43427B1420476C00AC1BFD /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../main/main.m; sourceTree = "<group>"; };
 		56E07743170B028400FF0A4B /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -415,8 +427,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43B5D4101D3668A600D1E1FD /* libNuTouch.a in Frameworks */,
 				22B3B50513B0388C00B3AB31 /* Foundation.framework in Frameworks */,
 				22B3B50313B0386600B3AB31 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43B5D3FF1D36686B00D1E1FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43DCFCB31D369D8200CB6E63 /* libffi.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +458,7 @@
 				8DC2EF5B0486A6940098B216 /* Nu.framework */,
 				2283073111DDBE3100A5C690 /* nush */,
 				22EE2BF413A4731600895861 /* NuApp.app */,
+				43B5D4021D36686B00D1E1FD /* libNuTouch.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -448,7 +470,6 @@
 				22B3B41C13B0359300B3AB31 /* objc */,
 				22B3B3E413B033EE00B3AB31 /* nu */,
 				22B3B38713B033D400B3AB31 /* test */,
-				225F62B913B04256002DD16B /* libffi */,
 				22B3B50B13B03CF400B3AB31 /* Targets */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
@@ -490,17 +511,6 @@
 			);
 			name = "iOS Frameworks";
 			path = ..;
-			sourceTree = "<group>";
-		};
-		225F62B913B04256002DD16B /* libffi */ = {
-			isa = PBXGroup;
-			children = (
-				225F62BE13B04256002DD16B /* ffi.h */,
-				225F62C413B04256002DD16B /* ffi.S */,
-				225F62CA13B04256002DD16B /* ffi.c */,
-			);
-			name = libffi;
-			path = ../libffi;
 			sourceTree = "<group>";
 		};
 		22B3B38713B033D400B3AB31 /* test */ = {
@@ -684,6 +694,7 @@
 		22B3B50B13B03CF400B3AB31 /* Targets */ = {
 			isa = PBXGroup;
 			children = (
+				43DCFCB41D369D9400CB6E63 /* NuTouch */,
 				0867D69AFE84028FC02AAC07 /* Nu.framework */,
 				22B3B50913B03B6600B3AB31 /* nush */,
 				22EE2BFF13A4731600895861 /* NuApp */,
@@ -711,6 +722,14 @@
 				22EE2C0713A4731600895861 /* NuApp-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		43DCFCB41D369D9400CB6E63 /* NuTouch */ = {
+			isa = PBXGroup;
+			children = (
+				43DCFCB21D369D8200CB6E63 /* libffi.a */,
+			);
+			name = NuTouch;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -800,6 +819,23 @@
 			productReference = 22EE2BF413A4731600895861 /* NuApp.app */;
 			productType = "com.apple.product-type.application";
 		};
+		43B5D4011D36686B00D1E1FD /* NuTouch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 43B5D4081D36686B00D1E1FD /* Build configuration list for PBXNativeTarget "NuTouch" */;
+			buildPhases = (
+				43DCFCB51D37934200CB6E63 /* Sources */,
+				43B5D3FF1D36686B00D1E1FD /* Frameworks */,
+				43B5D4001D36686B00D1E1FD /* Copy Files */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NuTouch;
+			productName = NuTouch;
+			productReference = 43B5D4021D36686B00D1E1FD /* libNuTouch.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		8DC2EF4F0486A6940098B216 /* Nu */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "Nu" */;
@@ -825,7 +861,12 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0720;
+				TargetAttributes = {
+					43B5D4011D36686B00D1E1FD = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
+				};
 			};
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "Nu" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -846,6 +887,7 @@
 				8DC2EF4F0486A6940098B216 /* Nu */,
 				2283073011DDBE3100A5C690 /* nush */,
 				22EE2BF313A4731600895861 /* NuApp */,
+				43B5D4011D36686B00D1E1FD /* NuTouch */,
 			);
 		};
 /* End PBXProject section */
@@ -963,51 +1005,56 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2217EBFC1CCDA27A0082837B /* NSObject+Nu.m in Sources */,
-				2217EBBA1CCD8AAC0082837B /* NuMarkupOperator.m in Sources */,
-				2217EBDE1CCD915B0082837B /* NuRegex.m in Sources */,
-				2217EC331CCDAC600082837B /* NSBundle+Nu.m in Sources */,
-				2217EC561CCDB0D40082837B /* NSData+Nu.m in Sources */,
-				22716B1A1CCDCB6F00E7ACDD /* NuBridgedConstant.m in Sources */,
 				22EE2C0613A4731600895861 /* main.m in Sources */,
-				2217EC061CCDA3870082837B /* NuMethod.m in Sources */,
-				2217EBCA1CCD8DF00082837B /* NuSwizzles.m in Sources */,
 				22EE2C0A13A4731600895861 /* NuAppDelegate.m in Sources */,
-				2217EC1F1CCDA8340082837B /* NuClass.m in Sources */,
-				22B3B47413B0359300B3AB31 /* Nu.m in Sources */,
-				2217EC651CCDB2610082837B /* NSMethodSignature+Nu.m in Sources */,
-				2217EBE81CCD92AC0082837B /* NuProperty.m in Sources */,
-				2217EBC51CCD8CE30082837B /* NuTestHelper.m in Sources */,
-				2217EC6A1CCDBF390082837B /* NuBridge.m in Sources */,
-				2217EC151CCDA65F0082837B /* NuBlock.m in Sources */,
-				2217EC601CCDB19C0082837B /* NSFileManager+Nu.m in Sources */,
-				2217EC2E1CCDAB700082837B /* NSDictionary+Nu.m in Sources */,
-				2217EC5B1CCDB1240082837B /* NSDate+Nu.m in Sources */,
-				2217EC381CCDAD3B0082837B /* NuEnumerable.m in Sources */,
-				2217EBCF1CCD8E760082837B /* NuSuper.m in Sources */,
-				22716B1F1CCDCC0F00E7ACDD /* NuBridgedBlock.m in Sources */,
-				2217EBF21CCD9E7F0082837B /* NuPointer.m in Sources */,
-				2217EC241CCDA9A00082837B /* NuMath.m in Sources */,
-				2217EC011CCDA3300082837B /* NuObjCRuntime.m in Sources */,
-				2217EBD41CCD8F960082837B /* NuStack.m in Sources */,
-				225F62CD13B04256002DD16B /* ffi.S in Sources */,
-				2217EBE31CCD921B0082837B /* NuReference.m in Sources */,
-				2217EC4C1CCDAFE00082837B /* NSNull+Nu.m in Sources */,
-				22716B241CCDCCD900E7ACDD /* NuBridgeSupport.m in Sources */,
-				2217EBD91CCD90310082837B /* NuParser.m in Sources */,
-				2217EC511CCDB0770082837B /* NSNumber+Nu.m in Sources */,
-				2217EC0B1CCDA4990082837B /* NuMacro.m in Sources */,
-				2217EBF71CCDA0420082837B /* NuOperators.m in Sources */,
-				2217EC291CCDAA850082837B /* NSString+Nu.m in Sources */,
-				2217EC3D1CCDAE010082837B /* NuException.m in Sources */,
-				2217EBED1CCD9DFE0082837B /* NuProfiler.m in Sources */,
-				2217EBC01CCD8BDF0082837B /* NuSymbol.m in Sources */,
-				22716B151CCDC9FD00E7ACDD /* NuBridgedFunction.m in Sources */,
-				225F62D313B04256002DD16B /* ffi.c in Sources */,
-				2217EC471CCDAF2A0082837B /* NSSet+Nu.m in Sources */,
-				2217EC421CCDAED00082837B /* NSArray+Nu.m in Sources */,
-				2217EC1A1CCDA7350082837B /* NuCell.m in Sources */,
-				2217EC101CCDA5390082837B /* NuHandler.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		43DCFCB51D37934200CB6E63 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43DCFCB91D37938100CB6E63 /* NSArray+Nu.m in Sources */,
+				43DCFCBB1D37938100CB6E63 /* NSBundle+Nu.m in Sources */,
+				43DCFCBD1D37938100CB6E63 /* NSData+Nu.m in Sources */,
+				43DCFCBF1D37938100CB6E63 /* NSDate+Nu.m in Sources */,
+				43DCFCC11D37938100CB6E63 /* NSDictionary+Nu.m in Sources */,
+				43DCFCC31D37938100CB6E63 /* NSFileManager+Nu.m in Sources */,
+				43DCFCC51D37938100CB6E63 /* NSMethodSignature+Nu.m in Sources */,
+				43DCFCC71D37938200CB6E63 /* NSNull+Nu.m in Sources */,
+				43DCFCC91D37938200CB6E63 /* NSNumber+Nu.m in Sources */,
+				43DCFCCB1D37938200CB6E63 /* NSObject+Nu.m in Sources */,
+				43DCFCCD1D37938200CB6E63 /* NSSet+Nu.m in Sources */,
+				43DCFCCF1D37938200CB6E63 /* NSString+Nu.m in Sources */,
+				43DCFCD11D37938200CB6E63 /* Nu.m in Sources */,
+				43DCFCD31D37938200CB6E63 /* NuBlock.m in Sources */,
+				43DCFCD51D37938200CB6E63 /* NuBridge.m in Sources */,
+				43DCFCD71D37938200CB6E63 /* NuCell.m in Sources */,
+				43DCFCD91D37938200CB6E63 /* NuClass.m in Sources */,
+				43DCFCDB1D37938200CB6E63 /* NuEnumerable.m in Sources */,
+				43DCFCDD1D37938200CB6E63 /* NuException.m in Sources */,
+				43DCFCDF1D37938200CB6E63 /* NuHandler.m in Sources */,
+				43DCFCE21D37938200CB6E63 /* NuMacro.m in Sources */,
+				43DCFCE41D37938200CB6E63 /* NuMarkupOperator.m in Sources */,
+				43DCFCE61D37938200CB6E63 /* NuMath.m in Sources */,
+				43DCFCE81D37938200CB6E63 /* NuMethod.m in Sources */,
+				43DCFCEA1D37938200CB6E63 /* NuObjCRuntime.m in Sources */,
+				43DCFCEC1D37938200CB6E63 /* NuOperators.m in Sources */,
+				43DCFCEE1D37938200CB6E63 /* NuParser.m in Sources */,
+				43DCFCF01D37938200CB6E63 /* NuPointer.m in Sources */,
+				43DCFCF21D37938200CB6E63 /* NuProfiler.m in Sources */,
+				43DCFCF41D37938200CB6E63 /* NuProperty.m in Sources */,
+				43DCFCF61D37938200CB6E63 /* NuReference.m in Sources */,
+				43DCFCF81D37938200CB6E63 /* NuRegex.m in Sources */,
+				43DCFCFA1D37938200CB6E63 /* NuStack.m in Sources */,
+				43DCFCFC1D37938200CB6E63 /* NuSuper.m in Sources */,
+				43DCFCFE1D37938200CB6E63 /* NuSwizzles.m in Sources */,
+				43DCFD001D37938200CB6E63 /* NuSymbol.m in Sources */,
+				43DCFD021D37938200CB6E63 /* NuTestHelper.m in Sources */,
+				43DCFD041D37938200CB6E63 /* NuBridgedFunction.m in Sources */,
+				43DCFD061D37938200CB6E63 /* NuBridgedConstant.m in Sources */,
+				43DCFD081D37938200CB6E63 /* NuBridgedBlock.m in Sources */,
+				43DCFD0A1D37938200CB6E63 /* NuBridgeSupport.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1112,6 +1159,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = nu.programming.framework;
 				PRODUCT_NAME = Nu;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -1138,6 +1186,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				PRODUCT_BUNDLE_IDENTIFIER = nu.programming.framework;
 				PRODUCT_NAME = Nu;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -1146,7 +1195,7 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1171,7 +1220,6 @@
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
@@ -1241,7 +1289,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
@@ -1265,9 +1312,10 @@
 					"$(SRCROOT)/../objc",
 				);
 				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.radtastical.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1279,7 +1327,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
@@ -1301,15 +1348,98 @@
 					"$(SRCROOT)/../objc",
 				);
 				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.radtastical.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		43B5D4091D36686B00D1E1FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					../libffi/darwin_common/include,
+					../libffi/darwin_ios/include,
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		43B5D40A1D36686B00D1E1FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					../libffi/darwin_common/include,
+					../libffi/darwin_ios/include,
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -1348,6 +1478,15 @@
 			buildConfigurations = (
 				22EE2C0E13A4731600895861 /* Debug */,
 				22EE2C0F13A4731600895861 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		43B5D4081D36686B00D1E1FD /* Build configuration list for PBXNativeTarget "NuTouch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				43B5D4091D36686B00D1E1FD /* Debug */,
+				43B5D40A1D36686B00D1E1FD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
