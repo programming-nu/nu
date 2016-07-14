@@ -86,7 +86,7 @@
 
 NSMutableDictionary *nu_block_table = nil;
 
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__arm64__)
 
 #define NSRECT_SIGNATURE0 "{_NSRect={_NSPoint=dd}{_NSSize=dd}}"
 #define NSRECT_SIGNATURE1 "{_NSRect=\"origin\"{_NSPoint=\"x\"d\"y\"d}\"size\"{_NSSize=\"width\"d\"height\"d}}"
@@ -154,8 +154,8 @@ static void initialize_ffi_types(void)
     ffi_type_nspoint.alignment = 0;
     ffi_type_nspoint.type = FFI_TYPE_STRUCT;
     ffi_type_nspoint.elements = malloc(3 * sizeof(ffi_type*));
-#ifdef __x86_64__
-    ffi_type_nspoint.elements[0] = &ffi_type_double;
+#if defined(__x86_64__) || defined(__arm64__)
+	ffi_type_nspoint.elements[0] = &ffi_type_double;
     ffi_type_nspoint.elements[1] = &ffi_type_double;
 #else
     ffi_type_nspoint.elements[0] = &ffi_type_float;
@@ -167,8 +167,8 @@ static void initialize_ffi_types(void)
     ffi_type_nssize.alignment = 0;
     ffi_type_nssize.type = FFI_TYPE_STRUCT;
     ffi_type_nssize.elements = malloc(3 * sizeof(ffi_type*));
-#ifdef __x86_64__
-    ffi_type_nssize.elements[0] = &ffi_type_double;
+#if defined(__x86_64__) || defined(__arm64__)
+	ffi_type_nssize.elements[0] = &ffi_type_double;
     ffi_type_nssize.elements[1] = &ffi_type_double;
 #else
     ffi_type_nssize.elements[0] = &ffi_type_float;
@@ -188,8 +188,8 @@ static void initialize_ffi_types(void)
     ffi_type_nsrange.alignment = 0;
     ffi_type_nsrange.type = FFI_TYPE_STRUCT;
     ffi_type_nsrange.elements = malloc(3 * sizeof(ffi_type*));
-#ifdef __x86_64__
-    ffi_type_nsrange.elements[0] = &ffi_type_uint64;
+#if defined(__x86_64__) || defined(__arm64__)
+	ffi_type_nsrange.elements[0] = &ffi_type_uint64;
     ffi_type_nsrange.elements[1] = &ffi_type_uint64;
 #else
     ffi_type_nsrange.elements[0] = &ffi_type_uint;
@@ -229,8 +229,8 @@ ffi_type *ffi_type_for_objc_type(const char *typeString)
         case 's': return &ffi_type_sshort;
         case 'I': return &ffi_type_uint;
         case 'i': return &ffi_type_sint;
-#ifdef __x86_64__
-        case 'L': return &ffi_type_ulong;
+#if defined(__x86_64__) || defined(__arm64__)
+		case 'L': return &ffi_type_ulong;
         case 'l': return &ffi_type_slong;
 #else
         case 'L': return &ffi_type_uint;

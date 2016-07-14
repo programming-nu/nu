@@ -65,7 +65,7 @@ static id make_cblock (NuBlock *nuBlock, NSString *signature)
     int i = 0xFFFF;
     void(^cBlock)(void)=[^(void){printf("%i",i);} copy];
     
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__arm64__)
     /*  this is what happens when a block is called on x86 64
      mov    %rax,-0x18(%rbp)		//the pointer to the block object is in rax
      mov    -0x18(%rbp),%rax
