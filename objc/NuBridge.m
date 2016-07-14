@@ -556,6 +556,11 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             *((float *) objc_value) = (float) [nu_value doubleValue];
             return NO;
         }
+		case 'B':
+		{
+			*((BOOL *) objc_value) = (BOOL) [nu_value boolValue];
+			return NO;
+		}
         case 'v':
         {
             return NO;
@@ -588,7 +593,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 !strcmp(typeString, CGRECT_SIGNATURE2)
                 ) {
                 NSRect *rect = (NSRect *) objc_value;
-                id cursor = nu_value;
+				id cursor = nu_value;
                 rect->origin.x = (CGFloat) [[cursor car] doubleValue];            cursor = [cursor cdr];
                 rect->origin.y = (CGFloat) [[cursor car] doubleValue];            cursor = [cursor cdr];
                 rect->size.width = (CGFloat) [[cursor car] doubleValue];          cursor = [cursor cdr];
