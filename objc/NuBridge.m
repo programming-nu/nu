@@ -558,7 +558,11 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
         }
 		case 'B':
 		{
-			*((BOOL *) objc_value) = (BOOL) [nu_value boolValue];
+      // if (nu_value == Nu__null) {
+      // 	*((BOOL *) objc_value) = (BOOL) 0;
+      // } else {
+				*((BOOL *) objc_value) = (BOOL) [nu_value boolValue];
+      //}
 			return NO;
 		}
         case 'v':
@@ -870,7 +874,7 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         case 'B':
         {
             if (*((unsigned int *)objc_value) == 0)
-                return [NSNull null];
+                return [NSNumber numberWithInt:0];
             else
                 return [NSNumber numberWithInt:1];
         }
