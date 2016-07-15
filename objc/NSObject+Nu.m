@@ -380,7 +380,13 @@
 - (id) valueForIvar:(NSString *) name
 {
     Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (!v) {
+	
+	if (!v) {
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+	}
+	
+	if (!v) {
         // look for sparse ivar storage
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (sparseIvars) {
@@ -402,7 +408,13 @@
 - (BOOL) hasValueForIvar:(NSString *) name
 {
     Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (!v) {
+	
+	if (!v) {
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+	}
+	
+	if (!v) {
         // look for sparse ivar storage
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (sparseIvars) {
@@ -425,7 +437,11 @@
 - (void) setValue:(id) value forIvar:(NSString *)name
 {
     Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (!v) {
+	if (!v) {
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+	}
+	if (!v) {
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (!sparseIvars) {
             sparseIvars = [[[NSMutableDictionary alloc] init] autorelease];
@@ -508,7 +524,11 @@
 + (NSString *) signatureForIvar:(NSString *)name
 {
     Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    return [NSString stringWithCString:ivar_getTypeEncoding(v) encoding:NSUTF8StringEncoding];
+	if (!v) {
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+	}
+	return [NSString stringWithCString:ivar_getTypeEncoding(v) encoding:NSUTF8StringEncoding];
 }
 
 + (id) inheritedByClass:(NuClass *) newClass
