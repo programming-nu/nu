@@ -1961,7 +1961,12 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 @implementation Nu_system_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    id cursor = cdr;
+#if TARGET_OS_IPHONE
+	NSLog(@"System operator currently not supported on iOS");
+	//FIXME: Use NSTask
+	return [NSNumber numberWithInt:1];
+#else
+	id cursor = cdr;
     NSMutableString *command = [NSMutableString string];
     while (cursor && (cursor != [NSNull null])) {
         [command appendString:[[[cursor car] evalWithContext:context] stringValue]];
@@ -1970,6 +1975,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     const char *commandString = [command cStringUsingEncoding:NSUTF8StringEncoding];
     int result = system(commandString) >> 8;      // this needs an explanation
     return [NSNumber numberWithInt:result];
+#endif
 }
 
 @end
