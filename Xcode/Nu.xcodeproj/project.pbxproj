@@ -231,6 +231,20 @@
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = Nu;
 		};
+		433CE5691D38EA4100EE7273 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 433CE5641D38EA4100EE7273 /* libffi.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DB13B1661849DF1E0010F42D;
+			remoteInfo = "libffi-iOS";
+		};
+		433CE56B1D38EA4100EE7273 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 433CE5641D38EA4100EE7273 /* libffi.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DB13B1911849DF510010F42D;
+			remoteInfo = "libffi-Mac";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -406,6 +420,7 @@
 		22EE2C0813A4731600895861 /* NuAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NuAppDelegate.h; sourceTree = "<group>"; };
 		22EE2C0913A4731600895861 /* NuAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NuAppDelegate.m; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* Nu_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Nu_Prefix.pch; sourceTree = "<group>"; };
+		433CE5641D38EA4100EE7273 /* libffi.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = libffi.xcodeproj; path = ../libffi/libffi.xcodeproj; sourceTree = "<group>"; };
 		43B5D4021D36686B00D1E1FD /* libNuTouch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNuTouch.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		43DCFCB21D369D8200CB6E63 /* libffi.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libffi.a; path = "../libffi/build/Debug-iphoneos/libffi.a"; sourceTree = "<group>"; };
 		4F43427B1420476C00AC1BFD /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ../main/main.m; sourceTree = "<group>"; };
@@ -466,6 +481,7 @@
 		0867D691FE84028FC02AAC07 /* Nu */ = {
 			isa = PBXGroup;
 			children = (
+				433CE5641D38EA4100EE7273 /* libffi.xcodeproj */,
 				56E07743170B028400FF0A4B /* Default-568h@2x.png */,
 				22B3B41C13B0359300B3AB31 /* objc */,
 				22B3B3E413B033EE00B3AB31 /* nu */,
@@ -724,6 +740,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		433CE5651D38EA4100EE7273 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				433CE56A1D38EA4100EE7273 /* libffi.a */,
+				433CE56C1D38EA4100EE7273 /* ffi.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		43DCFCB41D369D9400CB6E63 /* NuTouch */ = {
 			isa = PBXGroup;
 			children = (
@@ -882,6 +907,12 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* Nu */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 433CE5651D38EA4100EE7273 /* Products */;
+					ProjectRef = 433CE5641D38EA4100EE7273 /* libffi.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* Nu */,
@@ -891,6 +922,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		433CE56A1D38EA4100EE7273 /* libffi.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libffi.a;
+			remoteRef = 433CE5691D38EA4100EE7273 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		433CE56C1D38EA4100EE7273 /* ffi.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = ffi.dylib;
+			remoteRef = 433CE56B1D38EA4100EE7273 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		22EE2BF213A4731600895861 /* Resources */ = {
@@ -1310,6 +1358,8 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					"$(SRCROOT)/../objc",
+					../libffi/darwin_common/include,
+					../libffi/darwin_ios/include,
 				);
 				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
@@ -1346,6 +1396,8 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
 					"$(SRCROOT)/../objc",
+					../libffi/darwin_common/include,
+					../libffi/darwin_ios/include,
 				);
 				INFOPLIST_FILE = "NuApp/NuApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
