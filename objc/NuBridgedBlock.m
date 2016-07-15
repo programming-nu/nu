@@ -192,8 +192,13 @@ static void *construct_block_handler(NuBlock *block, const char *signature)
         NSLog(@"unable to prepare closure for signature %s (ffi_prep_cif failed)", signature);
         return NULL;
     }
-    ffi_closure *closure = (ffi_closure *)mmap(NULL, sizeof(ffi_closure), PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
-    if (closure == (ffi_closure *) -1) {
+#if TARGET_OS_IPHONE
+	void* funcPtr;
+	ffi_closure *closure = ffi_closure_alloc(sizeof(ffi_closure), &funcPtr);
+#else
+	ffi_closure *closure = (ffi_closure *)mmap(NULL, sizeof(ffi_closure), PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+#endif
+	if (closure == (ffi_closure *) -1) {
         NSLog(@"unable to prepare closure for signature %s (mmap failed with error %d)", signature, errno);
         return NULL;
     }
@@ -201,15 +206,23 @@ static void *construct_block_handler(NuBlock *block, const char *signature)
         NSLog(@"unable to prepare closure for signature %s (could not allocate memory for closure)", signature);
         return NULL;
     }
+#if TARGET_OS_IPHONE
+	if (ffi_prep_closure_loc(closure, cif, objc_calling_nu_block_handler, userdata, funcPtr) != FFI_OK) {
+#else
     if (ffi_prep_closure(closure, cif, objc_calling_nu_block_handler, userdata) != FFI_OK) {
+#endif
         NSLog(@"unable to prepare closure for signature %s (ffi_prep_closure failed)", signature);
         return NULL;
     }
+#ifdef TARGET_OS_IPHONE		
+		return funcPtr;
+#else
     if (mprotect(closure, sizeof(closure), PROT_READ | PROT_EXEC) == -1) {
         NSLog(@"unable to prepare closure for signature %s (mprotect failed with error %d)", signature, errno);
         return NULL;
     }
     return (void*)closure;
+#endif
 }
 
 #endif //__BLOCKS__
