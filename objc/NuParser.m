@@ -651,7 +651,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                         // try to parse a character literal.
                         // if that doesn't work, then interpret the quote as the quote operator.
                         bool isACharacterLiteral = false;
-                        int characterLiteralValue;
+                        int characterLiteralValue = 0;
                         if (i + 2 < imax) {
                             if ([string characterAtIndex:i+1] != '\\') {
                                 if ([string characterAtIndex:i+2] == '\'') {

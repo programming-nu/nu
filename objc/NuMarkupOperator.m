@@ -174,7 +174,7 @@ static NSDictionary *elementPrefixes = nil;
                 }
                 else if ([evaluatedItem isKindOfClass:[NSArray class]]) {
                     NSArray *evaluatedArray = (NSArray *) evaluatedItem;
-                    int max = [evaluatedArray count];
+                    NSUInteger max = [evaluatedArray count];
                     for (int i = 0; i < max; i++) {
                         id objectAtIndex = [evaluatedArray objectAtIndex:i];
                         [body appendString:[objectAtIndex stringValue]];
