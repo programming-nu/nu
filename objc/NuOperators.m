@@ -1813,10 +1813,6 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         childClass = [NuClass classWithClass:newClass];
         [childClass setRegistered:NO];
         //NSLog(@"created class %@", [childClass name]);
-        // it seems dangerous to call this here. Maybe it's better to wait until the new class is registered.
-        if ([parentClass respondsToSelector:@selector(inheritedByClass:)]) {
-            [parentClass inheritedByClass:childClass];
-        }
         
         if (!childClass) {
             // This class may have already been defined previously

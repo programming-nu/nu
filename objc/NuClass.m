@@ -239,6 +239,9 @@
     if (isRegistered == NO) {
         objc_registerClassPair(c);
         isRegistered = YES;
+		if ([class_getSuperclass(self->c) respondsToSelector:@selector(inheritedByClass:)]) {
+			[class_getSuperclass(self->c) inheritedByClass:self];
+		}
     }
 }
 
