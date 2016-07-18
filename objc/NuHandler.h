@@ -6,6 +6,9 @@
 //
 //
 
+#if !TARGET_OS_IPHONE
+
+
 #import <Foundation/Foundation.h>
 
 @class NuBlock;
@@ -17,6 +20,7 @@ struct nu_handler_description
     IMP handler;
     char **description;
 };
+
 
 /*!
  @class NuHandlerWarehouse
@@ -32,4 +36,4 @@ static void nu_handler(void *return_value,
                        id receiver,
                        va_list ap);
 
-
+#endif

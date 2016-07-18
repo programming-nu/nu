@@ -9,6 +9,8 @@
 #import "NuAppDelegate.h"
 
 #import "Nu.h"
+#import "NuBlock.h"
+#import "NuBridgedBlock.h"
 
 #import <UIKit/UIKit.h>
 
@@ -56,6 +58,13 @@
     [regex release];
     NSLog(@"running tests");
 	int failures = [[[Nu sharedParser] parseEval:@"(NuTestCase runAllTests)"] intValue];
+	
+	NSString* script = @"(do () (puts \"cBlock Work!\"))";
+	id parsed = [[Nu sharedParser] parse:script];
+	NuBlock* block = [[Nu sharedParser] eval:parsed];
+	void (^cblock)() = [NuBridgedBlock cBlockWithNuBlock:block	signature:@"v"];
+	cblock();
+	
 	if (failures == 0) {
 		view.backgroundColor = [UIColor greenColor];
 		label.text = @"Everything Nu!";

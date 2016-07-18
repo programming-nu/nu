@@ -1193,10 +1193,12 @@ static char **generate_userdata(SEL sel, NuBlock *block, const char *signature)
 static IMP construct_method_handler(SEL sel, NuBlock *block, const char *signature)
 {
     char **userdata = generate_userdata(sel, block, signature);
-    IMP imp = [NuHandlerWarehouse handlerWithSelector:sel block:block signature:signature userdata:userdata];
+#if !TARGET_OS_IPHONE
+	IMP imp = [NuHandlerWarehouse handlerWithSelector:sel block:block signature:signature userdata:userdata];
     if (imp) {
         return imp;
     }
+#endif
     int argument_count = 0;
     while (userdata[argument_count] != 0) argument_count++;
 #if 0

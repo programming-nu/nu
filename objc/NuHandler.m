@@ -4,7 +4,7 @@
 //
 //  Created by Tim Burks on 4/24/16.
 //
-
+#if !TARGET_OS_IPHONE
 #import "NuHandler.h"
 #import "NuCell.h"
 #import "NuInternals.h"
@@ -297,3 +297,4 @@ static NSMutableDictionary *handlerWarehouse = nil;
 }
 
 @end
+#endif

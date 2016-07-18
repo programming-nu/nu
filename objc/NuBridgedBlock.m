@@ -60,7 +60,7 @@ static void *construct_block_handler(NuBlock *block, const char *signature);
 //the caller gets ownership of the block
 static id make_cblock (NuBlock *nuBlock, NSString *signature)
 {
-    void *funcptr = construct_block_handler(nuBlock, [signature UTF8String]);
+    void(*funcptr)(void) = construct_block_handler(nuBlock, [signature UTF8String]);
     
     int i = 0xFFFF;
     void(^cBlock)(void)=[^(void){printf("%i",i);} copy];
@@ -74,7 +74,7 @@ static id make_cblock (NuBlock *nuBlock, NSString *signature)
      callq  *%rax
      */
     //2*(sizeof(void*)) = 0x10
-    *((void **)(id)cBlock + 2) = (void *)funcptr;
+	*((void **)(id)cBlock + 2) = (void *)funcptr;
 #else
     /*  this is what happens when a block is called on x86 32
      mov    %eax,-0x14(%ebp)		//the pointer to the block object is in eax
