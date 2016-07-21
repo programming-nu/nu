@@ -214,7 +214,7 @@ static void *construct_block_handler(NuBlock *block, const char *signature)
         NSLog(@"unable to prepare closure for signature %s (ffi_prep_closure failed)", signature);
         return NULL;
     }
-#ifdef TARGET_OS_IPHONE		
+#if TARGET_OS_IPHONE
 		return funcPtr;
 #else
     if (mprotect(closure, sizeof(closure), PROT_READ | PROT_EXEC) == -1) {

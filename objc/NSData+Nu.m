@@ -48,7 +48,7 @@
         else {
             fullCommand = [NSString stringWithFormat:@"%@ > %@", command, outputFileName];
         }
-        const char *commandString = [[fullCommand stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
+        const char *commandString = [fullCommand cStringUsingEncoding:NSUTF8StringEncoding];
         int result = system(commandString) >> 8;  // this needs an explanation
         if (!result)
             returnValue = [NSData dataWithContentsOfFile:outputFileName];
