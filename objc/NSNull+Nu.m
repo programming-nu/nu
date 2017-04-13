@@ -28,7 +28,7 @@
 
 - (NSMutableArray *) array
 {
-    return [NSMutableArray array];
+    return @[];
 }
 
 - (NSString *) stringValue
@@ -41,9 +41,9 @@
     return ((self == other) || (other == 0)) ? 1l : 0l;
 }
 
-- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
+- (const char *) UTF8String
 {
-    return [[self stringValue] cStringUsingEncoding:encoding];
+    return [[self stringValue] UTF8String];
 }
 
 @end

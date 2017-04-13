@@ -142,7 +142,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
 
 - (int) intValue
 {
-    return (value == [NSNull null]) ? 0 : 1;
+    return (value == Nu__null) ? 0 : 1;
 }
 
 - (bool) isGensym
@@ -179,10 +179,10 @@ static NuSymbolTable *sharedSymbolTable = 0;
     if (c == '@') {
         NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
         id object = [context lookupObjectForKey:[symbolTable symbolWithString:@"self"]];
-        if (!object) return [NSNull null];
+        if (!object) return Nu__null;
         id ivarName = [[self stringValue] substringFromIndex:1];
         id result = [object valueForIvar:ivarName];
-        return result ? result : (id) [NSNull null];
+        return result ? result : Nu__null;
     }
     
     // Next, try to find the symbol in the local evaluation context.
@@ -217,7 +217,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
     
     // Undefined globals evaluate to null.
     if (c == '$')
-        return [NSNull null];
+        return Nu__null;
     
     // Now we try looking in the bridge support dictionaries.
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
@@ -262,7 +262,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
         }
     }
     [NSException raise:@"NuUndefinedSymbol" format:@"%@", errorDescription];
-    return [NSNull null];
+    return Nu__null;
 }
 
 - (NSComparisonResult) compare:(NuSymbol *) anotherSymbol

@@ -1751,7 +1751,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     id arg_values = [[NuCell alloc] init];
     
     id cursor = [cdr car];
-    if ((cursor != [NSNull null]) && [[cursor car] atom]) {
+    if ((cursor != Nu__null) && [[cursor car] atom]) {
         [arg_names setCar:[cursor car]];
         [arg_values setCar:[[cursor cdr] car]];
     }
@@ -1966,7 +1966,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 #else
 	id cursor = cdr;
     NSMutableString *command = [NSMutableString string];
-    while (cursor && (cursor != [NSNull null])) {
+    while (cursor && (cursor != Nu__null)) {
         [command appendString:[[[cursor car] evalWithContext:context] stringValue]];
         cursor = [cursor cdr];
     }

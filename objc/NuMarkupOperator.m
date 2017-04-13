@@ -101,7 +101,7 @@ static NSDictionary *elementPrefixes = nil;
         prefix = @"";
     }
     [prefix retain];
-    contents = _contents ? _contents : [NSNull null];
+    contents = _contents ? _contents : Nu__null;
     [contents retain];
     empty = [voidHTMLElements containsObject:tag];
     return self;
@@ -146,27 +146,27 @@ static NSDictionary *elementPrefixes = nil;
     }
     for (int i = 0; i < 2; i++) {
         id cursor = (i == 0) ? contents : cdr;
-        while (cursor && (cursor != [NSNull null])) {
+        while (cursor && (cursor != Nu__null)) {
             id item = [cursor car];
             if ([item isKindOfClass:[NuSymbol class]] && [item isLabel]) {
                 cursor = [cursor cdr];
-                if (cursor && (cursor != [NSNull null])) {
+                if (cursor && (cursor != Nu__null)) {
                     id value = [[cursor car] evalWithContext:context];
                     id attributeName = [[item labelName] stringByReplacingOccurrencesOfString:@"=" withString:@":"];
-                    if ([value isEqual:[NSNull null]]) {
+                    if ([value isEqual:Nu__null]) {
                         // omit attributes that are "false"
                     } else if ([value isEqual:t_symbol]) {
                         // boolean attributes with "true" are written without values
                         [attributes appendFormat:@" %@", attributeName];
                     } else {
-                        id stringValue = [value isEqual:[NSNull null]] ? @"" : [value stringValue];
+                        id stringValue = [value isEqual:Nu__null] ? @"" : [value stringValue];
                         [attributes appendFormat:@" %@=\"%@\"", attributeName, stringValue];
                     }
                 }
             }
             else {
                 id evaluatedItem = [item evalWithContext:context];
-                if (!evaluatedItem || (evaluatedItem == [NSNull null])) {
+                if (!evaluatedItem || (evaluatedItem == Nu__null)) {
                     // do nothing
                 }
                 else if ([evaluatedItem isKindOfClass:[NSString class]]) {
@@ -184,7 +184,7 @@ static NSDictionary *elementPrefixes = nil;
                     [body appendString:[evaluatedItem stringValue]];
                 }
             }
-            if (cursor && (cursor != [NSNull null]))
+            if (cursor && (cursor != Nu__null))
                 cursor = [cursor cdr];
         }
     }

@@ -305,7 +305,7 @@
     // If the object responds to methodSignatureForSelector:, we should create and forward an invocation to it.
     NSMethodSignature *methodSignature = sel ? [self methodSignatureForSelector:sel] : 0;
     if (methodSignature) {
-        id result = [NSNull null];
+        id result = Nu__null;
         // Create an invocation to forward.
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
         [invocation setTarget:self];
@@ -331,7 +331,7 @@
                 [invocation getReturnValue:buffer];
                 result = get_nu_value_from_objc_value(buffer, [methodSignature methodReturnType]);
             } @catch (id exception) {
-                result = [NSNull null];
+                result = Nu__null;
             }
             free(buffer);
         }

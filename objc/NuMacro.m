@@ -138,7 +138,7 @@
 - (id) expandUnquotes:(id) oldBody withContext:(NSMutableDictionary *) context
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
-    if (oldBody == [NSNull null])
+    if (oldBody == Nu__null)
         return oldBody;
     id unquote = [symbolTable symbolWithString:@"unquote"];
     id car = [oldBody car];

@@ -50,7 +50,7 @@
 
 - (void) addPossiblyNullObject:(id)anObject
 {
-    [self addObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
+    [self addObject:((anObject == nil) ? Nu__null : anObject)];
 }
 
 @end

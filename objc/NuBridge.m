@@ -483,7 +483,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
         case 'c':
 #endif
         {
-            if (nu_value == [NSNull null]) {
+            if (nu_value == Nu__null) {
                 *((int *) objc_value) = 0;
                 return NO;
             }
@@ -512,7 +512,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
 #endif
         case 'L':
         {
-            if (nu_value == [NSNull null]) {
+            if (nu_value == Nu__null) {
                 *((unsigned long *) objc_value) = 0;
                 return NO;
             }
@@ -521,7 +521,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
         }
         case 'l':
         {
-            if (nu_value == [NSNull null]) {
+            if (nu_value == Nu__null) {
                 *((long *) objc_value) = 0;
                 return NO;
             }
@@ -530,7 +530,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
         }
         case 'Q':
         {
-            if (nu_value == [NSNull null]) {
+            if (nu_value == Nu__null) {
                 *((unsigned long long *) objc_value) = 0;
                 return NO;
             }
@@ -539,7 +539,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
         }
         case 'q':
         {
-            if (nu_value == [NSNull null]) {
+            if (nu_value == Nu__null) {
                 *((long long *) objc_value) = 0;
                 return NO;
             }
@@ -572,7 +572,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
         case ':':
         {
             // selectors must be strings (symbols could be ok too...)
-            if (!nu_value || (nu_value == [NSNull null])) {
+            if (!nu_value || (nu_value == Nu__null)) {
                 *((SEL *) objc_value) = 0;
                 return NO;
             }
@@ -647,7 +647,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             
         case '^':
         {
-            if (!nu_value || (nu_value == [NSNull null])) {
+            if (!nu_value || (nu_value == Nu__null)) {
                 *((char ***) objc_value) = NULL;
                 return NO;
             }
@@ -719,12 +719,12 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
     switch(typeChar) {
         case 'v':
         {
-            return [NSNull null];
+            return Nu__null;
         }
         case '@':
         {
             id result = *((id *)objc_value);
-            return result ? result : (id)[NSNull null];
+            return result ? result : Nu__null;
         }
         case '#':
         {
@@ -882,7 +882,7 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         {
             if (!strcmp(typeString, "^v")) {
                 if (*((unsigned long *)objc_value) == 0)
-                    return [NSNull null];
+                    return Nu__null;
                 else {
                     id nupointer = [[[NuPointer alloc] init] autorelease];
                     [nupointer setPointer:*((void **)objc_value)];
@@ -899,15 +899,15 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
             // CGImageRef is one. As we find others, we can add them here.
             else if (!strcmp(typeString, "^{CGImage=}")) {
                 id result = *((id *)objc_value);
-                return result ? result : (id)[NSNull null];
+                return result ? result : Nu__null;
             }
             else if (!strcmp(typeString, "^{CGColor=}")) {
                 id result = *((id *)objc_value);
-                return result ? result : (id)[NSNull null];
+                return result ? result : Nu__null;
             }
             else {
                 if (*((unsigned long *)objc_value) == 0)
-                    return [NSNull null];
+                    return Nu__null;
                 else {
                     id nupointer = [[[NuPointer alloc] init] autorelease];
                     [nupointer setPointer:*((void **)objc_value)];
@@ -915,11 +915,11 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
                     return nupointer;
                 }
             }
-            return [NSNull null];
+            return Nu__null;
         }
         default:
             NSLog (@"UNIMPLEMENTED: unable to wrap object of type %s", typeString);
-            return [NSNull null];
+            return Nu__null;
     }
     
 }
@@ -968,7 +968,7 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
         // ensure that methods declared to return void always return void.
         char return_type_buffer[BUFSIZE];
         method_getReturnType(m, return_type_buffer, BUFSIZE);
-        return (!strcmp(return_type_buffer, "v")) ? (id)[NSNull null] : result;
+        return (!strcmp(return_type_buffer, "v")) ? Nu__null : result;
     }
     
     id result;
@@ -976,7 +976,7 @@ id nu_calling_objc_method_handler(id target, Method m, NSMutableArray *args)
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     SEL s = method_getName(m);
-    result = [NSNull null];
+    result = Nu__null;
     
     // dynamically construct the method call
     
@@ -1267,7 +1267,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     IMP imp = construct_method_handler(selector, block, signature_str);
     if (imp == NULL) {
         NSLog(@"failed to construct handler for %s(%s)", method_name_str, signature_str);
-        return [NSNull null];
+        return Nu__null;
     }
     
     // save the block in a hash table keyed by the imp.
@@ -1278,7 +1278,7 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     // insert the method handler in the class method table
     nu_class_replaceMethod(c, selector, imp, signature_str);
     //NSLog(@"setting handler for %s(%s) in class %s", method_name_str, signature_str, class_getName(c));
-    return [NSNull null];
+    return Nu__null;
 }
 
 
@@ -1368,7 +1368,7 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
             [modifiers addObject:@"r"];
         }
         else if (cursor_car == void_symbol) {
-            if (![cursor cdr] || ([cursor cdr] == [NSNull null])) {
+            if (![cursor cdr] || ([cursor cdr] == Nu__null)) {
                 if (modifiers)
                     [signature appendString:[[modifiers sortedArrayUsingSelector:@selector(compare:)] componentsJoinedByString:@""]];
                 [signature appendString:@"v"];
@@ -1381,7 +1381,7 @@ NSString *signature_for_identifier(NuCell *cell, NuSymbolTable *symbolTable)
             }
         }
         else if (cursor_car == id_symbol) {
-            if (![cursor cdr] || ([cursor cdr] == [NSNull null])) {
+            if (![cursor cdr] || ([cursor cdr] == Nu__null)) {
                 if (modifiers)
                     [signature appendString:[[modifiers sortedArrayUsingSelector:@selector(compare:)] componentsJoinedByString:@""]];
                 [signature appendString:@"@"];
@@ -1478,17 +1478,17 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
 {
     NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
     
-    id returnType = [NSNull null];
+    id returnType = Nu__null;
     id selector = [[[NuCell alloc] init] autorelease];
-    id argumentTypes = [NSNull null];
-    id argumentNames = [NSNull null];
+    id argumentTypes = Nu__null;
+    id argumentNames = Nu__null;
     id isSymbol = [symbolTable symbolWithString:@"is"];
     id cursor = cdr;
     id selector_cursor = nil;
     id argumentTypes_cursor = nil;
     id argumentNames_cursor = nil;
     
-    if (cursor && (cursor != [NSNull null]) && ([cursor car] != isSymbol)) {
+    if (cursor && (cursor != Nu__null) && ([cursor car] != isSymbol)) {
         // scan the return type
         if (![[cursor car] atom]) {
             returnType = [cursor car] ;
@@ -1498,10 +1498,10 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
             // The return type specifier must be a list (in parens).  If it is missing, leave it as null.
             returnType = Nu__null;
         }
-        if (cursor && (cursor != [NSNull null])) {
+        if (cursor && (cursor != Nu__null)) {
             [selector setCar:[cursor car]];       // scan a part of the selector
             cursor = [cursor cdr];
-            if (cursor && (cursor != [NSNull null])) {
+            if (cursor && (cursor != Nu__null)) {
                 if ([cursor car] != isSymbol) {
                     argumentTypes = [[[NuCell alloc] init] autorelease];
                     argumentNames = [[[NuCell alloc] init] autorelease];
@@ -1510,10 +1510,10 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
                         [argumentTypes setCar:[cursor car]];
                         cursor = [cursor cdr];
                     }
-                    if (cursor && (cursor != [NSNull null])) {
+                    if (cursor && (cursor != Nu__null)) {
                         [argumentNames setCar:[cursor car]];
                         cursor = [cursor cdr];
-                        if (cursor && (cursor != [NSNull null])) {
+                        if (cursor && (cursor != Nu__null)) {
                             selector_cursor = selector;
                             argumentTypes_cursor = argumentTypes;
                             argumentNames_cursor = argumentNames;
@@ -1524,7 +1524,7 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
         }
     }
     // scan each remaining part of the selector
-    while (cursor && (cursor != [NSNull null]) && ([cursor car] != isSymbol)) {
+    while (cursor && (cursor != Nu__null) && ([cursor car] != isSymbol)) {
         [selector_cursor setCdr:[[[NuCell alloc] init] autorelease]];
         [argumentTypes_cursor setCdr:[[[NuCell alloc] init] autorelease]];
         [argumentNames_cursor setCdr:[[[NuCell alloc] init] autorelease]];
@@ -1534,20 +1534,20 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
         
         [selector_cursor setCar:[cursor car]];
         cursor = [cursor cdr];
-        if (cursor && (cursor != [NSNull null])) {
+        if (cursor && (cursor != Nu__null)) {
             if (![[cursor car] atom]) {
                 // the argument type specifier must be a list.  If it is missing, we'll use a default.
                 [argumentTypes_cursor setCar:[cursor car]];
                 cursor = [cursor cdr];
             }
-            if (cursor && (cursor != [NSNull null])) {
+            if (cursor && (cursor != Nu__null)) {
                 [argumentNames_cursor setCar:[cursor car]];
                 cursor = [cursor cdr];
             }
         }
     }
     
-    if (cursor && (cursor != [NSNull null])) {
+    if (cursor && (cursor != Nu__null)) {
         //NSLog(@"selector: %@", [selector stringValue]);
         //NSLog(@"argument names: %@", [argumentNames stringValue]);
         //NSLog(@"argument types:%@", [argumentTypes stringValue]);
@@ -1559,7 +1559,7 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
         // combine the selectors into the method name
         NSMutableString *methodName = [[[NSMutableString alloc] init] autorelease];
         selector_cursor = selector;
-        while (selector_cursor && (selector_cursor != [NSNull null])) {
+        while (selector_cursor && (selector_cursor != Nu__null)) {
             [methodName appendString:[[selector_cursor car] stringValue]];
             selector_cursor = [selector_cursor cdr];
         }
@@ -1595,7 +1595,7 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
             
             // then describe the arguments
             argumentTypes_cursor = argumentTypes;
-            while (argumentTypes_cursor && (argumentTypes_cursor != [NSNull null])) {
+            while (argumentTypes_cursor && (argumentTypes_cursor != Nu__null)) {
                 id typeIdentifier = [argumentTypes_cursor car];
                 [signature appendString:signature_for_identifier(typeIdentifier, symbolTable)];
                 argumentTypes_cursor = [argumentTypes_cursor cdr];

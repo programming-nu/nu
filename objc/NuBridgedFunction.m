@@ -90,7 +90,7 @@
     int status = ffi_prep_cif(cif, FFI_DEFAULT_ABI, argument_count, result_type, argument_types);
     if (status != FFI_OK) {
         NSLog (@"failed to prepare cif structure");
-        return [NSNull null];
+        return Nu__null;
     }
     
     id arg_cursor = cdr;
