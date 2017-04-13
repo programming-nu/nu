@@ -61,7 +61,7 @@ const char *nu_parsedFilename(int i)
 
 static id atomWithString(NSString *string, NuSymbolTable *symbolTable)
 {
-    const char *cstring = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *cstring = [string UTF8String];
     char *endptr;
     // If the string can be converted to a long, it's an NSNumber.
     long lvalue = strtol(cstring, &endptr, 0);
@@ -1038,13 +1038,13 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                 progn = [[self parse:[NSString stringWithCString:line encoding:NSUTF8StringEncoding]] retain];
             }
             @catch (NuException* nuException) {
-                printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
+                printf("%s\n", [[nuException dump] UTF8String]);
                 [self reset];
             }
             @catch (id exception) {
                 printf("%s: %s\n",
-                       [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
-                       [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
+                       [[exception name] UTF8String],
+                       [[exception reason] UTF8String]);
                 [self reset];
             }
             
@@ -1053,7 +1053,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                 while (cursor && (cursor != [NSNull null])) {
                     if ([cursor car] != [NSNull null]) {
                         id expression = [cursor car];
-                        //printf("evaluating %s\n", [[expression stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
+                        //printf("evaluating %s\n", [[expression stringValue] UTF8String]);
                         
                         @try
                         {
@@ -1066,16 +1066,16 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                                 else {
                                     stringToDisplay = [result stringValue];
                                 }
-                                printf("%s\n", [stringToDisplay cStringUsingEncoding:NSUTF8StringEncoding]);
+                                printf("%s\n", [stringToDisplay UTF8String]);
                             }
                         }
                         @catch (NuException* nuException) {
-                            printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
+                            printf("%s\n", [[nuException dump] UTF8String]);
                         }
                         @catch (id exception) {
                             printf("%s: %s\n",
-                                   [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
-                                   [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
+                                   [[exception name] UTF8String],
+                                   [[exception reason] UTF8String]);
                         }
                     }
                     cursor = [cursor cdr];

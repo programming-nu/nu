@@ -1511,7 +1511,7 @@
             }
             else {
 #endif
-                printf("%s\n", [string cStringUsingEncoding:NSUTF8StringEncoding]);
+                printf("%s\n", [string UTF8String]);
 #if !TARGET_OS_IPHONE
             }
 #endif
@@ -1558,7 +1558,7 @@
         }
         else {
 #endif
-            printf("%s", [string cStringUsingEncoding:NSUTF8StringEncoding]);
+            printf("%s", [string UTF8String]);
 #if !TARGET_OS_IPHONE
         }
 #endif
@@ -1634,7 +1634,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         NSString *string = [NSString stringWithContentsOfFile:fullPath];
         id value = Nu__null;
         if (string) {
-            id body = [parser parse:string asIfFromFilename:[fullPath cStringUsingEncoding:NSUTF8StringEncoding]];
+            id body = [parser parse:string asIfFromFilename:[fullPath UTF8String]];
             value = [body evalWithContext:context];
             return [symbolTable symbolWithString:@"t"];
         }
@@ -1697,7 +1697,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         if (fileName) {
             NSString *string = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL];
             if (string) {
-                id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
+                id body = [parser parse:string asIfFromFilename:[fileName UTF8String]];
                 [body evalWithContext:context];
                 return [symbolTable symbolWithString:@"t"];
             }
@@ -1811,7 +1811,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         
 #if defined(__x86_64__) || TARGET_OS_IPHONE
         
-        newClass = objc_allocateClassPair(parentClass, [[className stringValue] cStringUsingEncoding:NSUTF8StringEncoding], 0);
+        newClass = objc_allocateClassPair(parentClass, [[className stringValue] UTF8String], 0);
         childClass = [NuClass classWithClass:newClass];
         [childClass setRegistered:NO];
         //NSLog(@"created class %@", [childClass name]);
@@ -1920,8 +1920,8 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         cursor = [cursor cdr];
         NSString *signature = signature_for_identifier(variableType, symbolTable);
         nu_class_addInstanceVariable_withSignature(classToExtend,
-                                                   [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
-                                                   [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+                                                   [[variableName stringValue] UTF8String],
+                                                   [signature UTF8String]);
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
     return Nu__null;
@@ -1970,7 +1970,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         [command appendString:[[[cursor car] evalWithContext:context] stringValue]];
         cursor = [cursor cdr];
     }
-    const char *commandString = [command cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *commandString = [command UTF8String];
     int result = system(commandString) >> 8;      // this needs an explanation
     return @(result);
 #endif

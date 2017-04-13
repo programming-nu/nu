@@ -29,7 +29,7 @@
 
 + (NuClass *) classWithName:(NSString *)string
 {
-    const char *name = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *name = [string UTF8String];
     Class class = objc_getClass(name);
     if (class) {
         return [[[self alloc] initWithClass:class] autorelease];
@@ -51,7 +51,7 @@
 
 - (id) initWithClassNamed:(NSString *) string
 {
-    const char *name = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *name = [string UTF8String];
     Class class = objc_getClass(name);
     return [self initWithClass: class];
 }
@@ -159,7 +159,7 @@
 
 - (NuMethod *) classMethodWithName:(NSString *) methodName
 {
-    const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *methodNameString = [methodName UTF8String];
     NuMethod *method = Nu__null;
     unsigned int method_count;
     Method *method_list = class_copyMethodList(object_getClass([self wrappedClass]), &method_count);
@@ -175,7 +175,7 @@
 
 - (NuMethod *) instanceMethodWithName:(NSString *) methodName
 {
-    const char *methodNameString = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *methodNameString = [methodName UTF8String];
     NuMethod *method = Nu__null;
     unsigned int method_count;
     Method *method_list = class_copyMethodList([self wrappedClass], &method_count);
@@ -204,7 +204,7 @@
 - (id) addInstanceVariable:(NSString *)variableName signature:(NSString *)signature
 {
     //NSLog(@"adding instance variable %@", variableName);
-    nu_class_addInstanceVariable_withSignature(c, [variableName cStringUsingEncoding:NSUTF8StringEncoding], [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+    nu_class_addInstanceVariable_withSignature(c, [variableName UTF8String], [signature UTF8String]);
     return Nu__null;
 }
 
@@ -263,13 +263,13 @@
 - (BOOL) addPropertyWithName:(NSString *) name {
     const objc_property_attribute_t attributes[10];
     unsigned int attributeCount = 0;
-    return class_addProperty(c, [name cStringUsingEncoding:NSUTF8StringEncoding],
+    return class_addProperty(c, [name UTF8String],
                              attributes,
                              attributeCount);
 }
 
 - (NuProperty *) propertyWithName:(NSString *) name {
-    objc_property_t property = class_getProperty(c, [name cStringUsingEncoding:NSUTF8StringEncoding]);
+    objc_property_t property = class_getProperty(c, [name UTF8String]);
     
     return [NuProperty propertyWithProperty:(objc_property_t) property];
 }

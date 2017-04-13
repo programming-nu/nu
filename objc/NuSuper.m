@@ -58,7 +58,7 @@
             cursor = [cursor cdr];
         }
     }
-    SEL sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
+    SEL sel = sel_getUid([selectorString UTF8String]);
     
     // we're going to send the message to the handler of its superclass instead of one defined for its class.
     Class c = class_getSuperclass(class);

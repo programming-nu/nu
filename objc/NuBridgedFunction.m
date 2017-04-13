@@ -29,8 +29,8 @@
 
 - (NuBridgedFunction *) initWithName:(NSString *)n signature:(NSString *)s
 {
-    name = strdup([n cStringUsingEncoding:NSUTF8StringEncoding]);
-    signature = strdup([s cStringUsingEncoding:NSUTF8StringEncoding]);
+    name = strdup([n UTF8String]);
+    signature = strdup([s UTF8String]);
     function = dlsym(RTLD_DEFAULT, name);
     if (!function) {
         [NSException raise:@"NuCantFindBridgedFunction"
@@ -43,7 +43,7 @@
 
 + (NuBridgedFunction *) functionWithName:(NSString *)name signature:(NSString *)signature
 {
-    const char *function_name = [name cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *function_name = [name UTF8String];
     void *function = dlsym(RTLD_DEFAULT, function_name);
     if (!function) {
         [NSException raise:@"NuCantFindBridgedFunction"

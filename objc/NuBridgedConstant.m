@@ -14,7 +14,7 @@
 
 + (id) constantWithName:(NSString *) name signature:(NSString *) signature
 {
-    const char *constant_name = [name cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *constant_name = [name UTF8String];
     void *constant = dlsym(RTLD_DEFAULT, constant_name);
     if (!constant) {
         NSLog(@"%s", dlerror());
@@ -22,7 +22,7 @@
         NSLog(@"In Xcode, check the 'Preserve Private External Symbols' checkbox.");
         return nil;
     }
-    return get_nu_value_from_objc_value(constant, [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+    return get_nu_value_from_objc_value(constant, [signature UTF8String]);
 }
 
 @end

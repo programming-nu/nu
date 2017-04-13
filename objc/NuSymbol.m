@@ -101,7 +101,7 @@ static NuSymbolTable *sharedSymbolTable = 0;
 - (void) _setStringValue:(NSString *) string {
     self->stringValue = [string copy];
     
-    const char *cstring = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *cstring = [string UTF8String];
     NSUInteger len = strlen(cstring);
     self->isLabel = (cstring[len - 1] == ':');
     self->isGensym = (len > 2) && (cstring[0] == '_') && (cstring[1] == '_');

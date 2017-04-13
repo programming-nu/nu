@@ -27,7 +27,7 @@
 {
     if (!filename)
         return nil;
-    const char *path = [[filename stringByExpandingTildeInPath] cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *path = [[filename stringByExpandingTildeInPath] UTF8String];
     struct stat sb;
     int result = stat(path, &sb);
     if (result == -1) {
@@ -41,7 +41,7 @@
 {
     if (!filename)
         return nil;
-    const char *path = [[filename stringByExpandingTildeInPath] cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *path = [[filename stringByExpandingTildeInPath] UTF8String];
     struct stat sb;
     int result = stat(path, &sb);
     if (result == -1) {
@@ -54,7 +54,7 @@
 {
     if (!filename)
         return NO;
-    const char *path = [[filename stringByExpandingTildeInPath] cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *path = [[filename stringByExpandingTildeInPath] UTF8String];
     struct stat sb;
     int result = stat(path, &sb);
     if (result == -1) {
@@ -67,7 +67,7 @@
 {
     if (!filename)
         return NO;
-    const char *path = [[filename stringByExpandingTildeInPath] cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *path = [[filename stringByExpandingTildeInPath] UTF8String];
     struct stat sb;
     int result = stat(path, &sb);
     if (result == -1) {

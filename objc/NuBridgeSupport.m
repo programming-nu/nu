@@ -31,7 +31,7 @@ static NSString *getTypeStringFromNode(id node)
 + (void)importLibrary:(NSString *) libraryPath
 {
     //NSLog(@"importing library %@", libraryPath);
-    dlopen([libraryPath cStringUsingEncoding:NSUTF8StringEncoding], RTLD_LAZY | RTLD_GLOBAL);
+    dlopen([libraryPath UTF8String], RTLD_LAZY | RTLD_GLOBAL);
 }
 
 + (void)importFramework:(NSString *) framework fromPath:(NSString *) path intoDictionary:(NSMutableDictionary *) BridgeSupport

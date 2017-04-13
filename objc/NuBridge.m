@@ -576,7 +576,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                 *((SEL *) objc_value) = 0;
                 return NO;
             }
-            const char *selectorName = [nu_value cStringUsingEncoding:NSUTF8StringEncoding];
+            const char *selectorName = [nu_value UTF8String];
             if (selectorName) {
                 *((SEL *) objc_value) = sel_registerName(selectorName);
                 return NO;
@@ -659,7 +659,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
                     char **array = (char **) malloc (array_size * sizeof(char *));
                     int i;
                     for (i = 0; i < array_size; i++) {
-                        array[i] = strdup([[nu_value objectAtIndex:i] cStringUsingEncoding:NSUTF8StringEncoding]);
+                        array[i] = strdup([[nu_value objectAtIndex:i] UTF8String]);
                     }
                     *((char ***) objc_value) = array;
                     return NO;
@@ -690,7 +690,7 @@ int set_objc_value_from_nu_value(void *objc_value, id nu_value, const char *type
             
         case '*':
         {
-            *((char **) objc_value) = (char*)[[nu_value stringValue] cStringUsingEncoding:NSUTF8StringEncoding];
+            *((char **) objc_value) = (char*)[[nu_value stringValue] UTF8String];
             return NO;
         }
             
@@ -1257,8 +1257,8 @@ static IMP construct_method_handler(SEL sel, NuBlock *block, const char *signatu
 
 id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlock *block)
 {
-    const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
-    const char *signature_str = [signature cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *method_name_str = [methodName UTF8String];
+    const char *signature_str = [signature UTF8String];
     SEL selector = sel_registerName(method_name_str);
     
     //NuSymbolTable *symbolTable = [[block context] objectForKey:SYMBOLS_KEY];
@@ -1568,7 +1568,7 @@ id help_add_method_to_class(Class classToExtend, id cdr, NSMutableDictionary *co
         
         if ((returnType == Nu__null) || ([argumentTypes length] < [argumentNames length])) {
             // look up the signature
-            SEL selector = sel_registerName([methodName cStringUsingEncoding:NSUTF8StringEncoding]);
+            SEL selector = sel_registerName([methodName UTF8String]);
             NSMethodSignature *methodSignature = [classToExtend instanceMethodSignatureForSelector:selector];
             
             if (!methodSignature)

@@ -99,7 +99,7 @@
     if (!child) {
         child = [[[NuSelectorCache alloc] initWithSymbol:childSymbol parent:self] autorelease];
         NSString *selectorString = [child selectorName];
-        [child setSelector:sel_registerName([selectorString cStringUsingEncoding:NSUTF8StringEncoding])];
+        [child setSelector:sel_registerName([selectorString UTF8String])];
         [children setValue:child forKey:(id)childSymbol];
     }
     return child;
@@ -176,7 +176,7 @@
                 cursor = [cursor cdr];
             }
         }
-        // sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
+        // sel = sel_getUid([selectorString UTF8String]);
         sel = [selectorCache selector];
     }
     
@@ -298,7 +298,7 @@
                 cursor = [cursor cdr];
             }
         }
-        // sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
+        // sel = sel_getUid([selectorString UTF8String]);
         sel = [selectorCache selector];
     }
     
@@ -380,11 +380,11 @@
 
 - (id) valueForIvar:(NSString *) name
 {
-    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
+    Ivar v = class_getInstanceVariable([self class], [name UTF8String]);
 	
 	if (!v) {
 		//check if a _variable was synthesized
-		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  UTF8String]);
 	}
 	
 	if (!v) {
@@ -408,11 +408,11 @@
 
 - (BOOL) hasValueForIvar:(NSString *) name
 {
-    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
+    Ivar v = class_getInstanceVariable([self class], [name UTF8String]);
 	
 	if (!v) {
 		//check if a _variable was synthesized
-		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  UTF8String]);
 	}
 	
 	if (!v) {
@@ -437,10 +437,10 @@
 
 - (void) setValue:(id) value forIvar:(NSString *)name
 {
-    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
+    Ivar v = class_getInstanceVariable([self class], [name UTF8String]);
 	if (!v) {
 		//check if a _variable was synthesized
-		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  UTF8String]);
 	}
 	if (!v) {
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
@@ -524,10 +524,10 @@
 
 + (NSString *) signatureForIvar:(NSString *)name
 {
-    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
+    Ivar v = class_getInstanceVariable([self class], [name UTF8String]);
 	if (!v) {
 		//check if a _variable was synthesized
-		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  cStringUsingEncoding:NSUTF8StringEncoding]);
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  UTF8String]);
 	}
 	return [NSString stringWithCString:ivar_getTypeEncoding(v) encoding:NSUTF8StringEncoding];
 }
@@ -540,7 +540,7 @@
 + (id) createSubclassNamed:(NSString *) subclassName
 {
     Class c = [self class];
-    const char *name = [subclassName cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *name = [subclassName UTF8String];
     
     // does the class already exist?
     Class s = objc_getClass(name);
@@ -580,7 +580,7 @@
 {
     Class thisClass = [self class];
     Class otherClass = [prototypeClass wrappedClass];
-    const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *method_name_str = [methodName UTF8String];
     SEL selector = sel_registerName(method_name_str);
     BOOL result = nu_copyInstanceMethod(thisClass, otherClass, selector);
     return result;
@@ -665,7 +665,7 @@
         id value = [[cursor cdr] car];
         id label = ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) ? [key labelName] : key;
         if ([label isEqualToString:@"action"] && [self respondsToSelector:@selector(setAction:)]) {
-            SEL selector = sel_registerName([value cStringUsingEncoding:NSUTF8StringEncoding]);
+            SEL selector = sel_registerName([value UTF8String]);
             [(id<NuCanSetAction>) self setAction:selector];
         }
         else {

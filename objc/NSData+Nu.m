@@ -48,11 +48,11 @@
         else {
             fullCommand = [NSString stringWithFormat:@"%@ > %@", command, outputFileName];
         }
-        const char *commandString = [fullCommand cStringUsingEncoding:NSUTF8StringEncoding];
+        const char *commandString = [fullCommand UTF8String];
         int result = system(commandString) >> 8;  // this needs an explanation
         if (!result)
             returnValue = [NSData dataWithContentsOfFile:outputFileName];
-        system([[NSString stringWithFormat:@"rm -f %@ %@", inputFileName, outputFileName] cStringUsingEncoding:NSUTF8StringEncoding]);
+        system([[NSString stringWithFormat:@"rm -f %@ %@", inputFileName, outputFileName] UTF8String]);
     }
     free(input_template);
     free(output_template);
