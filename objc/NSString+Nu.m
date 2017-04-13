@@ -36,7 +36,7 @@
 
 - (id) nextObject {
     if (index < [string length]) {
-        return [NSNumber numberWithInt:[string characterAtIndex:index++]];
+        return @([string characterAtIndex:index++]);
     } else {
         return nil;
     }

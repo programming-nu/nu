@@ -20,7 +20,7 @@
 
 - (void)nuSetObject:(id)anObject forKey:(id)aKey
 {
-    [self nuSetObject:((anObject == nil) ? (id)[NSNull null] : anObject) forKey:aKey];
+    [self nuSetObject:((anObject == nil) ? (id)Nu__null : anObject) forKey:aKey];
 }
 
 @end
@@ -32,17 +32,17 @@
 
 - (void)nuAddObject:(id)anObject
 {
-    [self nuAddObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
+    [self nuAddObject:((anObject == nil) ? (id)Nu__null : anObject)];
 }
 
 - (void)nuInsertObject:(id)anObject atIndex:(int)index
 {
-    [self nuInsertObject:((anObject == nil) ? (id)[NSNull null] : anObject) atIndex:index];
+    [self nuInsertObject:((anObject == nil) ? (id)Nu__null : anObject) atIndex:index];
 }
 
 - (void)nuReplaceObjectAtIndex:(int)index withObject:(id)anObject
 {
-    [self nuReplaceObjectAtIndex:index withObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
+    [self nuReplaceObjectAtIndex:index withObject:((anObject == nil) ? Nu__null : anObject)];
 }
 
 @end
@@ -54,7 +54,7 @@
 
 - (void)nuAddObject:(id)anObject
 {
-    [self nuAddObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
+    [self nuAddObject:((anObject == nil) ? Nu__null : anObject)];
 }
 
 @end

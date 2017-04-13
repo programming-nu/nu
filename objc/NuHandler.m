@@ -4,7 +4,7 @@
 //
 //  Created by Tim Burks on 4/24/16.
 //
-
+#if !TARGET_OS_IPHONE
 #import "NuHandler.h"
 #import "NuCell.h"
 #import "NuInternals.h"
@@ -164,8 +164,8 @@ static IMP handler_returning_void(void *userdata) {
     });
 }
 
-#define MAKE_HANDLER_WITH_TYPE(type) \
-static IMP handler_returning_ ## type (void* userdata) \
+#define MAKE_HANDLER_WITH_TYPE_AND_SUFFIX(type, suffix) \
+static IMP handler_returning_ ## suffix (void* userdata) \
 { \
 return imp_implementationWithBlock(^(id receiver, ...) { \
 struct nu_handler_description description; \
@@ -178,12 +178,21 @@ nu_handler(&result, &description, receiver, ap); \
 return result; \
 }); \
 }
+#define MAKE_HANDLER_WITH_TYPE(type) MAKE_HANDLER_WITH_TYPE_AND_SUFFIX(type, type)
 
 MAKE_HANDLER_WITH_TYPE(id)
 MAKE_HANDLER_WITH_TYPE(int)
-MAKE_HANDLER_WITH_TYPE(bool)
 MAKE_HANDLER_WITH_TYPE(float)
 MAKE_HANDLER_WITH_TYPE(double)
+MAKE_HANDLER_WITH_TYPE_AND_SUFFIX(bool,bool) //bool is not passed right to the inner macro?
+
+/**
+ * Newly added for 64bit
+ * Do we need Q and L as well?
+ */
+MAKE_HANDLER_WITH_TYPE(long)
+MAKE_HANDLER_WITH_TYPE_AND_SUFFIX(long long,long_long)
+
 #ifdef DARWIN
 MAKE_HANDLER_WITH_TYPE(CGRect)
 MAKE_HANDLER_WITH_TYPE(CGPoint)
@@ -231,6 +240,12 @@ static NSMutableDictionary *handlerWarehouse = nil;
     else if ([returnType isEqualToString:@"d"]) {
         return handler_returning_double(userdata);
     }
+	else if ([returnType isEqualToString:@"l"]) {
+		return handler_returning_long(userdata);
+	}
+	else if ([returnType isEqualToString:@"q"]) {
+		return handler_returning_long_long(userdata);
+	}
 #ifdef DARWIN
     else if ([returnType isEqualToString:@"{CGRect={CGPoint=ff}{CGSize=ff}}"]) {
         return handler_returning_CGRect(userdata);
@@ -282,3 +297,4 @@ static NSMutableDictionary *handlerWarehouse = nil;
 }
 
 @end
+#endif

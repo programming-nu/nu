@@ -22,7 +22,7 @@
             key = [key labelName];
         }
         id value = [[cursor cdr] car];
-        if (!value || [value isEqual:[NSNull null]]) {
+        if (!value || [value isEqual:Nu__null]) {
             [d removeObjectForKey:key];
         } else {
             [d setValue:value forKey:key];
@@ -133,7 +133,7 @@
 
 - (void) setPossiblyNullObject:(id) anObject forKey:(id) aKey
 {
-    [self setObject:((anObject == nil) ? (id)[NSNull null] : anObject) forKey:aKey];
+    [self setObject:((anObject == nil) ? Nu__null : anObject) forKey:aKey];
 }
 
 @end

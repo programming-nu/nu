@@ -14,6 +14,7 @@
 #import "NSDictionary+Nu.h"
 #import "NuException.h"
 #import "NuCell.h"
+#include <readline/readline.h>
 
 #define PARSE_NORMAL     0
 #define PARSE_COMMENT    1
@@ -46,7 +47,7 @@ const char *nu_parsedFilename(int i)
 - (NuCell *) root;
 - (NuStack *) opens;
 - (NSString *) stringValue;
-- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding;
+- (const char *) UTF8String;
 - (id) init;
 - (void) openList;
 - (void) closeList;
@@ -60,7 +61,7 @@ const char *nu_parsedFilename(int i)
 
 static id atomWithString(NSString *string, NuSymbolTable *symbolTable)
 {
-    const char *cstring = [string cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *cstring = [string UTF8String];
     char *endptr;
     // If the string can be converted to a long, it's an NSNumber.
     long lvalue = strtol(cstring, &endptr, 0);
@@ -221,9 +222,9 @@ static id regexWithString(NSString *string)
     return [self description];
 }
 
-- (const char *) cStringUsingEncoding:(NSStringEncoding) encoding
+- (const char *) UTF8String
 {
-    return [[self stringValue] cStringUsingEncoding:encoding];
+    return [[self stringValue] UTF8String];
 }
 
 - (void) reset
@@ -251,7 +252,7 @@ static id regexWithString(NSString *string)
 
 - (id) init
 {
-    if (Nu__null == 0) Nu__null = [NSNull null];
+    if (Nu__null == 0) Nu__null = Nu__null;
     if ((self = [super init])) {
         
         filenum = -1;
@@ -278,7 +279,7 @@ static id regexWithString(NSString *string)
 - (void) close
 {
     // break this retain cycle so the parser can be deleted.
-    [context setPossiblyNullObject:[NSNull null] forKey:[symbolTable symbolWithString:@"_parser"]];
+    [context setPossiblyNullObject:Nu__null forKey:[symbolTable symbolWithString:@"_parser"]];
 }
 
 - (void) dealloc
@@ -404,10 +405,10 @@ static id regexWithString(NSString *string)
     --depth;
     
     if (addToCar) {
-        [current setCar:[NSNull null]];
+        [current setCar:Nu__null];
     }
     else {
-        [current setCdr:[NSNull null]];
+        [current setCdr:Nu__null];
         current = [stack pop];
     }
     addToCar = false;
@@ -556,7 +557,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
 
 -(id) parse:(NSString*)string
 {
-    if (!string) return [NSNull null];            // don't crash, at least.
+    if (!string) return Nu__null;            // don't crash, at least.
     
     column = 0;
     if (state != PARSE_REGEX)
@@ -574,7 +575,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                 switch(stri) {
                     case '(':
                         ParserDebug(@"Parser: (  %d on line %d", column, linenum);
-                        [opens push:[NSNumber numberWithInt:column]];
+                        [opens push:@(column)];
                         parens++;
                         if ([partial length] == 0) {
                             [self openList];
@@ -651,7 +652,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                         // try to parse a character literal.
                         // if that doesn't work, then interpret the quote as the quote operator.
                         bool isACharacterLiteral = false;
-                        int characterLiteralValue;
+                        int characterLiteralValue = 0;
                         if (i + 2 < imax) {
                             if ([string characterAtIndex:i+1] != '\\') {
                                 if ([string characterAtIndex:i+2] == '\'') {
@@ -693,13 +694,19 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                             }
                         }
                         if (isACharacterLiteral) {
-                            [self addAtom:[NSNumber numberWithInt:characterLiteralValue]];
+                            [self addAtom:@(characterLiteralValue)];
                         }
                         else {
                             [self quoteNextElement];
                         }
                         break;
                     }
+					case '~':
+					{
+						[self quasiquoteEvalNextElement];
+						[self quoteNextElement];
+						break;
+					}
                     case '`':
                     {
                         [self quasiquoteNextElement];
@@ -933,7 +940,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
         [partial retain];
     }
     if ([self incomplete]) {
-        return [NSNull null];
+        return Nu__null;
     }
     else {
         NuCell *expressions = root;
@@ -1031,22 +1038,22 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                 progn = [[self parse:[NSString stringWithCString:line encoding:NSUTF8StringEncoding]] retain];
             }
             @catch (NuException* nuException) {
-                printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
+                printf("%s\n", [[nuException dump] UTF8String]);
                 [self reset];
             }
             @catch (id exception) {
                 printf("%s: %s\n",
-                       [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
-                       [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
+                       [[exception name] UTF8String],
+                       [[exception reason] UTF8String]);
                 [self reset];
             }
             
-            if (progn && (progn != [NSNull null])) {
+            if (progn && (progn != Nu__null)) {
                 id cursor = [progn cdr];
-                while (cursor && (cursor != [NSNull null])) {
-                    if ([cursor car] != [NSNull null]) {
+                while (cursor && (cursor != Nu__null)) {
+                    if ([cursor car] != Nu__null) {
                         id expression = [cursor car];
-                        //printf("evaluating %s\n", [[expression stringValue] cStringUsingEncoding:NSUTF8StringEncoding]);
+                        //printf("evaluating %s\n", [[expression stringValue] UTF8String]);
                         
                         @try
                         {
@@ -1059,16 +1066,16 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                                 else {
                                     stringToDisplay = [result stringValue];
                                 }
-                                printf("%s\n", [stringToDisplay cStringUsingEncoding:NSUTF8StringEncoding]);
+                                printf("%s\n", [stringToDisplay UTF8String]);
                             }
                         }
                         @catch (NuException* nuException) {
-                            printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
+                            printf("%s\n", [[nuException dump] UTF8String]);
                         }
                         @catch (id exception) {
                             printf("%s: %s\n",
-                                   [[exception name] cStringUsingEncoding:NSUTF8StringEncoding],
-                                   [[exception reason] cStringUsingEncoding:NSUTF8StringEncoding]);
+                                   [[exception name] UTF8String],
+                                   [[exception reason] UTF8String]);
                         }
                     }
                     cursor = [cursor cdr];

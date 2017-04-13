@@ -13,6 +13,7 @@
 #import "NuMethod.h"
 #import "NuClass.h"
 #import "NuCell.h"
+#import "NSString+Nu.h"
 
 @protocol NuCanSetAction
 - (void) setAction:(SEL) action;
@@ -98,7 +99,7 @@
     if (!child) {
         child = [[[NuSelectorCache alloc] initWithSymbol:childSymbol parent:self] autorelease];
         NSString *selectorString = [child selectorName];
-        [child setSelector:sel_registerName([selectorString cStringUsingEncoding:NSUTF8StringEncoding])];
+        [child setSelector:sel_registerName([selectorString UTF8String])];
         [children setValue:child forKey:(id)childSymbol];
     }
     return child;
@@ -175,7 +176,7 @@
                 cursor = [cursor cdr];
             }
         }
-        // sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
+        // sel = sel_getUid([selectorString UTF8String]);
         sel = [selectorCache selector];
     }
     
@@ -297,14 +298,14 @@
                 cursor = [cursor cdr];
             }
         }
-        // sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
+        // sel = sel_getUid([selectorString UTF8String]);
         sel = [selectorCache selector];
     }
     
     // If the object responds to methodSignatureForSelector:, we should create and forward an invocation to it.
     NSMethodSignature *methodSignature = sel ? [self methodSignatureForSelector:sel] : 0;
     if (methodSignature) {
-        id result = [NSNull null];
+        id result = Nu__null;
         // Create an invocation to forward.
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
         [invocation setTarget:self];
@@ -330,7 +331,7 @@
                 [invocation getReturnValue:buffer];
                 result = get_nu_value_from_objc_value(buffer, [methodSignature methodReturnType]);
             } @catch (id exception) {
-                result = [NSNull null];
+                result = Nu__null;
             }
             free(buffer);
         }
@@ -379,8 +380,14 @@
 
 - (id) valueForIvar:(NSString *) name
 {
-    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (!v) {
+    Ivar v = class_getInstanceVariable([self class], [name UTF8String]);
+	
+	if (!v) {
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  UTF8String]);
+	}
+	
+	if (!v) {
         // look for sparse ivar storage
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (sparseIvars) {
@@ -401,8 +408,14 @@
 
 - (BOOL) hasValueForIvar:(NSString *) name
 {
-    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (!v) {
+    Ivar v = class_getInstanceVariable([self class], [name UTF8String]);
+	
+	if (!v) {
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  UTF8String]);
+	}
+	
+	if (!v) {
         // look for sparse ivar storage
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (sparseIvars) {
@@ -424,8 +437,12 @@
 
 - (void) setValue:(id) value forIvar:(NSString *)name
 {
-    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    if (!v) {
+    Ivar v = class_getInstanceVariable([self class], [name UTF8String]);
+	if (!v) {
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  UTF8String]);
+	}
+	if (!v) {
         NSMutableDictionary *sparseIvars = [self associatedObjectForKey:@"__nuivars"];
         if (!sparseIvars) {
             sparseIvars = [[[NSMutableDictionary alloc] init] autorelease];
@@ -507,8 +524,12 @@
 
 + (NSString *) signatureForIvar:(NSString *)name
 {
-    Ivar v = class_getInstanceVariable([self class], [name cStringUsingEncoding:NSUTF8StringEncoding]);
-    return [NSString stringWithCString:ivar_getTypeEncoding(v) encoding:NSUTF8StringEncoding];
+    Ivar v = class_getInstanceVariable([self class], [name UTF8String]);
+	if (!v) {
+		//check if a _variable was synthesized
+		v = class_getInstanceVariable([self class], [[@"_" stringByAppendingString:name]  UTF8String]);
+	}
+	return [NSString stringWithCString:ivar_getTypeEncoding(v) encoding:NSUTF8StringEncoding];
 }
 
 + (id) inheritedByClass:(NuClass *) newClass
@@ -519,7 +540,7 @@
 + (id) createSubclassNamed:(NSString *) subclassName
 {
     Class c = [self class];
-    const char *name = [subclassName cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *name = [subclassName UTF8String];
     
     // does the class already exist?
     Class s = objc_getClass(name);
@@ -559,7 +580,7 @@
 {
     Class thisClass = [self class];
     Class otherClass = [prototypeClass wrappedClass];
-    const char *method_name_str = [methodName cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *method_name_str = [methodName UTF8String];
     SEL selector = sel_registerName(method_name_str);
     BOOL result = nu_copyInstanceMethod(thisClass, otherClass, selector);
     return result;
@@ -644,7 +665,7 @@
         id value = [[cursor cdr] car];
         id label = ([key isKindOfClass:[NuSymbol class]] && [key isLabel]) ? [key labelName] : key;
         if ([label isEqualToString:@"action"] && [self respondsToSelector:@selector(setAction:)]) {
-            SEL selector = sel_registerName([value cStringUsingEncoding:NSUTF8StringEncoding]);
+            SEL selector = sel_registerName([value UTF8String]);
             [(id<NuCanSetAction>) self setAction:selector];
         }
         else {

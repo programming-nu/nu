@@ -39,7 +39,7 @@
 - (id) evalWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
     // By themselves, Objective-C objects evaluate to themselves.
-    if (!cdr || (cdr == [NSNull null]))
+    if (!cdr || (cdr == Nu__null))
         return object;
     
     //NSLog(@"messaging super with %@", [cdr stringValue]);
@@ -50,15 +50,15 @@
     id selector = [cursor car];
     NSMutableString *selectorString = [NSMutableString stringWithString:[selector stringValue]];
     cursor = [cursor cdr];
-    while (cursor && (cursor != [NSNull null])) {
+    while (cursor && (cursor != Nu__null)) {
         [args addObject:[[cursor car] evalWithContext:context]];
         cursor = [cursor cdr];
-        if (cursor && (cursor != [NSNull null])) {
+        if (cursor && (cursor != Nu__null)) {
             [selectorString appendString:[[cursor car] stringValue]];
             cursor = [cursor cdr];
         }
     }
-    SEL sel = sel_getUid([selectorString cStringUsingEncoding:NSUTF8StringEncoding]);
+    SEL sel = sel_getUid([selectorString UTF8String]);
     
     // we're going to send the message to the handler of its superclass instead of one defined for its class.
     Class c = class_getSuperclass(class);

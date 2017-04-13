@@ -142,17 +142,17 @@ static NSComparisonResult sortedArrayUsingBlockHelper(id a, id b, void *context)
 
 - (void) addPossiblyNullObject:(id)anObject
 {
-    [self addObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
+    [self addObject:((anObject == nil) ? Nu__null : anObject)];
 }
 
 - (void) insertPossiblyNullObject:(id)anObject atIndex:(int)index
 {
-    [self insertObject:((anObject == nil) ? (id)[NSNull null] : anObject) atIndex:index];
+    [self insertObject:((anObject == nil) ? Nu__null : anObject) atIndex:index];
 }
 
 - (void) replaceObjectAtIndex:(int)index withPossiblyNullObject:(id)anObject
 {
-    [self replaceObjectAtIndex:index withObject:((anObject == nil) ? (id)[NSNull null] : anObject)];
+    [self replaceObjectAtIndex:index withObject:((anObject == nil) ? Nu__null : anObject)];
 }
 
 - (void) sortUsingBlock:(NuBlock *) block

@@ -138,7 +138,7 @@ int NuMain(int argc, const char *argv[])
                 NSString *main_nu = [NSString stringWithContentsOfFile:main_path encoding:NSUTF8StringEncoding error:NULL];
                 if (main_nu) {
                     NuParser *parser = [Nu sharedParser];
-                    id script = [parser parse:main_nu asIfFromFilename:[main_nu cStringUsingEncoding:NSUTF8StringEncoding]];
+                    id script = [parser parse:main_nu asIfFromFilename:[main_nu UTF8String]];
                     [parser eval:script];
                     [parser release];
                     return 0;
@@ -214,7 +214,7 @@ int NuMain(int argc, const char *argv[])
         }
         @catch (NuException* nuException)
         {
-            printf("%s\n", [[nuException dump] cStringUsingEncoding:NSUTF8StringEncoding]);
+            printf("%s\n", [[nuException dump] UTF8String]);
         }
         @catch (id exception)
         {
@@ -249,7 +249,7 @@ void NuInit()
     initialized = YES;
     @autoreleasepool {
         // as a convenience, we set a file static variable to nil.
-        Nu__null = [NSNull null];
+        Nu__null = Nu__null;
         
         // add enumeration to collection classes
         [NSArray include: [NuClass classWithClass:[NuEnumerable class]]];
@@ -298,7 +298,7 @@ void NuInit()
 
 id _nunull()
 {
-    return [NSNull null];
+    return Nu__null;
 }
 
 id _nustring(const unsigned char *string)
@@ -402,7 +402,7 @@ id _nulist(id firstObject, ...)
         NSString *fileNu = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:NULL];
         if (fileNu) {
             NuParser *parser = [Nu sharedParser];
-            id script = [parser parse:fileNu asIfFromFilename:[filePath cStringUsingEncoding:NSUTF8StringEncoding]];
+            id script = [parser parse:fileNu asIfFromFilename:[filePath UTF8String]];
             if (!context) context = [parser context];
             [script evalWithContext:context];
             success = YES;

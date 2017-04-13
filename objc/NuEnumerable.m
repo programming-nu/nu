@@ -59,7 +59,7 @@
             @try
             {
                 [args setCar:object];
-                [[args cdr] setCar:[NSNumber numberWithInt:i]];
+                [[args cdr] setCar:@(i)];
                 [block evalWithArguments:args context:nil];
             }
             @catch (NuBreakException *exception) {
@@ -157,7 +157,7 @@
         int i = 0;
         while ((object = [enumerator nextObject])) {
             [args setCar:object];
-            [[args cdr] setCar:[NSNumber numberWithInt:i]];
+            [[args cdr] setCar:@(i)];
             [results addObject:[callable evalWithArguments:args context:nil]];
             i++;
         }

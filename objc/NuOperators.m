@@ -17,6 +17,8 @@
 #import "NuBridge.h"
 #import "NuBridgedFunction.h"
 #import "NuClass.h"
+#include <readline/readline.h>
+#import "NSString+Nu.h"
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
@@ -1266,7 +1268,7 @@
         product %= [[[cursor car] evalWithContext:context] intValue];
         cursor = [cursor cdr];
     }
-    return [NSNumber numberWithInt:product];
+    return @(product);
 }
 
 @end
@@ -1509,7 +1511,7 @@
             }
             else {
 #endif
-                printf("%s\n", [string cStringUsingEncoding:NSUTF8StringEncoding]);
+                printf("%s\n", [string UTF8String]);
 #if !TARGET_OS_IPHONE
             }
 #endif
@@ -1556,7 +1558,7 @@
         }
         else {
 #endif
-            printf("%s", [string cStringUsingEncoding:NSUTF8StringEncoding]);
+            printf("%s", [string UTF8String]);
 #if !TARGET_OS_IPHONE
         }
 #endif
@@ -1632,7 +1634,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         NSString *string = [NSString stringWithContentsOfFile:fullPath];
         id value = Nu__null;
         if (string) {
-            id body = [parser parse:string asIfFromFilename:[fullPath cStringUsingEncoding:NSUTF8StringEncoding]];
+            id body = [parser parse:string asIfFromFilename:[fullPath UTF8String]];
             value = [body evalWithContext:context];
             return [symbolTable symbolWithString:@"t"];
         }
@@ -1695,7 +1697,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         if (fileName) {
             NSString *string = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL];
             if (string) {
-                id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
+                id body = [parser parse:string asIfFromFilename:[fileName UTF8String]];
                 [body evalWithContext:context];
                 return [symbolTable symbolWithString:@"t"];
             }
@@ -1749,7 +1751,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     id arg_values = [[NuCell alloc] init];
     
     id cursor = [cdr car];
-    if ((cursor != [NSNull null]) && [[cursor car] atom]) {
+    if ((cursor != Nu__null) && [[cursor car] atom]) {
         [arg_names setCar:[cursor car]];
         [arg_values setCar:[[cursor cdr] car]];
     }
@@ -1809,14 +1811,10 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         
 #if defined(__x86_64__) || TARGET_OS_IPHONE
         
-        newClass = objc_allocateClassPair(parentClass, [[className stringValue] cStringUsingEncoding:NSUTF8StringEncoding], 0);
+        newClass = objc_allocateClassPair(parentClass, [[className stringValue] UTF8String], 0);
         childClass = [NuClass classWithClass:newClass];
         [childClass setRegistered:NO];
         //NSLog(@"created class %@", [childClass name]);
-        // it seems dangerous to call this here. Maybe it's better to wait until the new class is registered.
-        if ([parentClass respondsToSelector:@selector(inheritedByClass:)]) {
-            [parentClass inheritedByClass:childClass];
-        }
         
         if (!childClass) {
             // This class may have already been defined previously
@@ -1922,8 +1920,8 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
         cursor = [cursor cdr];
         NSString *signature = signature_for_identifier(variableType, symbolTable);
         nu_class_addInstanceVariable_withSignature(classToExtend,
-                                                   [[variableName stringValue] cStringUsingEncoding:NSUTF8StringEncoding],
-                                                   [signature cStringUsingEncoding:NSUTF8StringEncoding]);
+                                                   [[variableName stringValue] UTF8String],
+                                                   [signature UTF8String]);
         //NSLog(@"adding ivar %@ with signature %@", [variableName stringValue], signature);
     }
     return Nu__null;
@@ -1961,15 +1959,21 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 @implementation Nu_system_operator
 - (id) callWithArguments:(id)cdr context:(NSMutableDictionary *)context
 {
-    id cursor = cdr;
+#if TARGET_OS_IPHONE
+	NSLog(@"System operator currently not supported on iOS");
+	//FIXME: Use NSTask
+	return @1;
+#else
+	id cursor = cdr;
     NSMutableString *command = [NSMutableString string];
-    while (cursor && (cursor != [NSNull null])) {
+    while (cursor && (cursor != Nu__null)) {
         [command appendString:[[[cursor car] evalWithContext:context] stringValue]];
         cursor = [cursor cdr];
     }
-    const char *commandString = [command cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *commandString = [command UTF8String];
     int result = system(commandString) >> 8;      // this needs an explanation
-    return [NSNumber numberWithInt:result];
+    return @(result);
+#endif
 }
 
 @end
@@ -2006,7 +2010,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     else {
         [NSException raise: @"NuArityError" format:@"sleep expects 1 argument, got 0"];
     }
-    return [NSNumber numberWithInt:result];
+    return @(result);
 }
 
 @end
@@ -2390,7 +2394,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     
     // set some commonly-used globals
     [(NuSymbol *) [symbolTable symbolWithString:@"NSUTF8StringEncoding"]
-     setValue:[NSNumber numberWithInt:NSUTF8StringEncoding]];
+     setValue:@(NSUTF8StringEncoding)];
     
     [(NuSymbol *) [symbolTable symbolWithString:@"NSLog"] // let's make this an operator someday
      setValue:[NuBridgedFunction functionWithName:@"NSLog" signature:@"v@"]];

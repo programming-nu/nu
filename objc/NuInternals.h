@@ -26,7 +26,7 @@
 
 extern NSMutableDictionary *nu_block_table;
 
-id Nu__null;
+extern id Nu__null;
 
 // Execution contexts are NSMutableDictionaries that are keyed by
 // symbols.  Here we define two string keys that allow us to store

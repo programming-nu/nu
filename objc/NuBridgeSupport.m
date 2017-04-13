@@ -8,6 +8,8 @@
 
 #import "NuBridgeSupport.h"
 #import "NuInternals.h"
+#import "NSFileManager+Nu.h"
+
 
 #pragma mark - NuBridgeSupport.m
 
@@ -29,7 +31,7 @@ static NSString *getTypeStringFromNode(id node)
 + (void)importLibrary:(NSString *) libraryPath
 {
     //NSLog(@"importing library %@", libraryPath);
-    dlopen([libraryPath cStringUsingEncoding:NSUTF8StringEncoding], RTLD_LAZY | RTLD_GLOBAL);
+    dlopen([libraryPath UTF8String], RTLD_LAZY | RTLD_GLOBAL);
 }
 
 + (void)importFramework:(NSString *) framework fromPath:(NSString *) path intoDictionary:(NSMutableDictionary *) BridgeSupport
@@ -74,7 +76,7 @@ static NSString *getTypeStringFromNode(id node)
                              forKey:[[node attributeForName:@"name"] stringValue]];
             }
             else if ([[node name] isEqual:@"enum"]) {
-                [enums setValue:[NSNumber numberWithInt:[[[node attributeForName:@"value"] stringValue] intValue]]
+                [enums setValue:@([[[node attributeForName:@"value"] stringValue] intValue])
                          forKey:[[node attributeForName:@"name"] stringValue]];
             }
             else if ([[node name] isEqual:@"function"]) {

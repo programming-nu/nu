@@ -59,7 +59,7 @@
         if (string) {
             NuSymbolTable *symbolTable = [context objectForKey:SYMBOLS_KEY];
             id parser = [context lookupObjectForKey:[symbolTable symbolWithString:@"_parser"]];
-            id body = [parser parse:string asIfFromFilename:[fileName cStringUsingEncoding:NSUTF8StringEncoding]];
+            id body = [parser parse:string asIfFromFilename:[fileName UTF8String]];
             [body evalWithContext:context];
             return [symbolTable symbolWithString:@"t"];
         }

@@ -57,7 +57,7 @@
     if (thePointerIsMine)
         free(pointer);
     [self setTypeString:s];
-    const char *type = [s cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *type = [s UTF8String];
     while (*type && (*type != '^'))
         type++;
     if (*type)
@@ -77,7 +77,7 @@
 
 - (id) value
 {
-    const char *type = [typeString cStringUsingEncoding:NSUTF8StringEncoding];
+    const char *type = [typeString UTF8String];
     while (*type && (*type != '^'))
         type++;
     if (*type)
