@@ -249,7 +249,7 @@ void NuInit()
     initialized = YES;
     @autoreleasepool {
         // as a convenience, we set a file static variable to nil.
-        Nu__null = Nu__null;
+        Nu__null = [NSNull null];
         
         // add enumeration to collection classes
         [NSArray include: [NuClass classWithClass:[NuEnumerable class]]];
