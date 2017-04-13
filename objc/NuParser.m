@@ -252,7 +252,7 @@ static id regexWithString(NSString *string)
 
 - (id) init
 {
-    if (Nu__null == 0) Nu__null = Nu__null;
+    if (Nu__null == 0) Nu__null = [NSNull null];
     if ((self = [super init])) {
         
         filenum = -1;

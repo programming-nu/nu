@@ -28,7 +28,7 @@
 
 - (NSMutableArray *) array
 {
-    return @[];
+    return [@[] mutableCopy];
 }
 
 - (NSString *) stringValue
