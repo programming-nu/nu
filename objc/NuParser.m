@@ -575,7 +575,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                 switch(stri) {
                     case '(':
                         ParserDebug(@"Parser: (  %d on line %d", column, linenum);
-                        [opens push:[NSNumber numberWithInt:column]];
+                        [opens push:@(column)];
                         parens++;
                         if ([partial length] == 0) {
                             [self openList];
@@ -694,7 +694,7 @@ static NSUInteger nu_parse_escape_sequences(NSString *string, NSUInteger i, NSUI
                             }
                         }
                         if (isACharacterLiteral) {
-                            [self addAtom:[NSNumber numberWithInt:characterLiteralValue]];
+                            [self addAtom:@(characterLiteralValue)];
                         }
                         else {
                             [self quoteNextElement];

@@ -1268,7 +1268,7 @@
         product %= [[[cursor car] evalWithContext:context] intValue];
         cursor = [cursor cdr];
     }
-    return [NSNumber numberWithInt:product];
+    return @(product);
 }
 
 @end
@@ -1962,7 +1962,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
 #if TARGET_OS_IPHONE
 	NSLog(@"System operator currently not supported on iOS");
 	//FIXME: Use NSTask
-	return [NSNumber numberWithInt:1];
+	return @1;
 #else
 	id cursor = cdr;
     NSMutableString *command = [NSMutableString string];
@@ -1972,7 +1972,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     }
     const char *commandString = [command cStringUsingEncoding:NSUTF8StringEncoding];
     int result = system(commandString) >> 8;      // this needs an explanation
-    return [NSNumber numberWithInt:result];
+    return @(result);
 #endif
 }
 
@@ -2010,7 +2010,7 @@ id loadNuLibraryFile(NSString *nuFileName, id parser, id context, id symbolTable
     else {
         [NSException raise: @"NuArityError" format:@"sleep expects 1 argument, got 0"];
     }
-    return [NSNumber numberWithInt:result];
+    return @(result);
 }
 
 @end
@@ -2394,7 +2394,7 @@ void load_builtins(NuSymbolTable *symbolTable)
     
     // set some commonly-used globals
     [(NuSymbol *) [symbolTable symbolWithString:@"NSUTF8StringEncoding"]
-     setValue:[NSNumber numberWithInt:NSUTF8StringEncoding]];
+     setValue:@(NSUTF8StringEncoding)];
     
     [(NuSymbol *) [symbolTable symbolWithString:@"NSLog"] // let's make this an operator someday
      setValue:[NuBridgedFunction functionWithName:@"NSLog" signature:@"v@"]];

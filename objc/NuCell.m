@@ -345,7 +345,7 @@
         int i = 0;
         while (cursor && (cursor != Nu__null)) {
             [args setCar:[cursor car]];
-            [[args cdr] setCar:[NSNumber numberWithInt:i]];
+            [[args cdr] setCar:@(i)];
             [block evalWithArguments:args context:Nu__null];
             cursor = [cursor cdr];
             i++;

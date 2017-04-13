@@ -23,7 +23,7 @@
             @try
             {
                 NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-                [args setCar:[NSNumber numberWithInt:i]];
+                [args setCar:@(i)];
                 [block evalWithArguments:args context:Nu__null];
                 [pool release];
             }
@@ -56,7 +56,7 @@
             for (i = startValue; i >= finalValue; i--) {
                 @try
                 {
-                    [args setCar:[NSNumber numberWithInt:i]];
+                    [args setCar:@(i)];
                     [block evalWithArguments:args context:Nu__null];
                 }
                 @catch (NuBreakException *exception) {
@@ -85,7 +85,7 @@
         for (i = startValue; i <= finalValue; i++) {
             @try
             {
-                [args setCar:[NSNumber numberWithInt:i]];
+                [args setCar:@(i)];
                 [block evalWithArguments:args context:Nu__null];
             }
             @catch (NuBreakException *exception) {

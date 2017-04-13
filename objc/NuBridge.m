@@ -746,7 +746,7 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
 #endif
         case 'i':
         {
-            return [NSNumber numberWithInt:*((int *)objc_value)];
+            return @(*((int *)objc_value));
         }
 #ifndef __ppc__
         case 'C':
@@ -827,10 +827,10 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
                 NSRange *range = (NSRange *)objc_value;
                 NuCell *list = [[[NuCell alloc] init] autorelease];
                 id cursor = list;
-                [cursor setCar:[NSNumber numberWithInteger:range->location]];
+                [cursor setCar:@(range->location)];
                 [cursor setCdr:[[[NuCell alloc] init] autorelease]];
                 cursor = [cursor cdr];
-                [cursor setCar:[NSNumber numberWithInteger:range->length]];
+                [cursor setCar:@(range->length)];
                 return list;
             }
             else if (
@@ -874,9 +874,9 @@ id get_nu_value_from_objc_value(void *objc_value, const char *typeString)
         case 'B':
         {
             if (*((unsigned int *)objc_value) == 0)
-                return [NSNumber numberWithInt:0];
+                return @0;
             else
-                return [NSNumber numberWithInt:1];
+                return @1;
         }
         case '^':
         {
