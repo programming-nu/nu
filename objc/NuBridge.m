@@ -1275,9 +1275,6 @@ id add_method_to_class(Class c, NSString *methodName, NSString *signature, NuBlo
     if (!nu_block_table) nu_block_table = [[NSMutableDictionary alloc] init];
     // watch for problems caused by these ugly casts...
     [nu_block_table setObject:block forKey:[NSNumber numberWithUnsignedLong:(unsigned long) imp]];
-#if !TARGET_OS_IPHONE
-    [[NSGarbageCollector defaultCollector] disableCollectorForPointer: block];
-#endif
     // insert the method handler in the class method table
     nu_class_replaceMethod(c, selector, imp, signature_str);
     //NSLog(@"setting handler for %s(%s) in class %s", method_name_str, signature_str, class_getName(c));

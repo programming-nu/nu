@@ -13,6 +13,7 @@
 #import "NuMethod.h"
 #import "NuClass.h"
 #import "NuCell.h"
+#import "NSString+Nu.h"
 
 @protocol NuCanSetAction
 - (void) setAction:(SEL) action;

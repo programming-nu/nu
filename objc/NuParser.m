@@ -14,6 +14,7 @@
 #import "NSDictionary+Nu.h"
 #import "NuException.h"
 #import "NuCell.h"
+#include <readline/readline.h>
 
 #define PARSE_NORMAL     0
 #define PARSE_COMMENT    1

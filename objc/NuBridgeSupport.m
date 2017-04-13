@@ -8,6 +8,8 @@
 
 #import "NuBridgeSupport.h"
 #import "NuInternals.h"
+#import "NSFileManager+Nu.h"
+
 
 #pragma mark - NuBridgeSupport.m
 

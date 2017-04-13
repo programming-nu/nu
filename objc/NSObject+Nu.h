@@ -95,4 +95,6 @@
 /*! Property list helper. Return the binary property list representation of the object. */
 - (NSData *) binaryPropertyListRepresentation;
 
+- (NSString *) stringValue;
+
 @end

@@ -17,6 +17,8 @@
 #import "NuBridge.h"
 #import "NuBridgedFunction.h"
 #import "NuClass.h"
+#include <readline/readline.h>
+#import "NSString+Nu.h"
 
 #if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>

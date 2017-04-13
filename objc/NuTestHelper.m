@@ -115,17 +115,11 @@ static int deallocationCount = 0;
 
 + (void) resetDeallocationCount
 {
-#if !TARGET_OS_IPHONE
-    [[NSGarbageCollector defaultCollector] collectExhaustively];
-#endif
     deallocationCount = 0;
 }
 
 + (int) deallocationCount
 {
-#if !TARGET_OS_IPHONE
-    [[NSGarbageCollector defaultCollector] collectExhaustively];
-#endif
     return deallocationCount;
 }
 
