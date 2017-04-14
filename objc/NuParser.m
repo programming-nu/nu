@@ -14,7 +14,9 @@
 #import "NSDictionary+Nu.h"
 #import "NuException.h"
 #import "NuCell.h"
+#if !TARGET_OS_IPHONE
 #include <readline/readline.h>
+#endif
 
 #define PARSE_NORMAL     0
 #define PARSE_COMMENT    1
