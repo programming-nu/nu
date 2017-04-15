@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/timburks/nu.svg?branch=master)](https://travis-ci.org/timburks/nu)
+
 # Introduction
 
 Hello and welcome to Nu.
