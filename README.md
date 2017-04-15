@@ -1,4 +1,4 @@
-#INTRODUCTION
+# Introduction
 
 Hello and welcome to Nu.
 
@@ -23,42 +23,83 @@ Nu was designed to take full advantage of that.  It was also designed to
 provide many of the elements of successful scripting languages, notably 
 Ruby, while adding the syntactic simplicity and flexibility of Lisp.   
 
-##Legal
+## Legal
 
 Nu is copyrighted open-source software that is released under the Apache
 License, version 2.0.  For details on the license, see the LICENSE file.
 In its use to name a programming language, "Nu" is a trademark of Radtastical 
 Inc.
 
-##System Requirements
+## Installation
+
+### Macintosh
+
+These are the instructions for installing Nu on a Macintosh. The installation instructions for some other UNIX-based operating systems (Debian, OpenSolaris, and FreeBSD) are outdated and will probably not work.
+
+If you're installed Nu previously using a package manager (e.g. Fink, MacPorts), 
+start by using the package manager to uninstall the old version.
+
+#### Building Nu
+
+1. Use make to build mininush, a minimal version of the Nu shell.
+
+```bash
+$ make
+```
+
+2. Now use mininush to run nuke to complete the Nu build process.
+   This builds Nu.framework and nush, the Nu shell.
+
+```bash
+$ ./mininush tools/nuke
+```
+#### Installing & Testing
+
+3. Use mininush again to install Nu, nush, and the Nu tools.
+
+```bash
+$ ./mininush tools/nuke install
+```
+
+Since the copying step uses `sudo`, you will be prompted for your password.
+
+4. Test your installation.
+
+```bash
+$ nuke test
+```
+
+From now on, you can use the installed nush to run nuke. To see for
+yourself, rebuild everything from scratch:
+
+```bash
+$ nuke clobber
+$ nuke
+$ nuke install
+```
+
+See the Nukefile for other useful tasks.
+
+### System Requirements
 
 On Macintosh systems, Nu requires Mac OS X version 10.5 or greater.
 It is also possible to build Nu to run on Linux systems and the 
 Apple iPhone.
 
-##Installation
+## Going Further
 
-Installation instructions are in the notes/INSTALL file.
-
-##Going Further
-
-notes/DEMO contains a simple tutorial exercise that can acquaint you with Nu.
-
-notes/USAGE describes a few of the ways that you can use Nu.
-
-notes/ERRORS contains some pitfalls that I've encountered when programming 
-with Nu.
-
-notes/TODO contains some open issues that I'd like to address in Nu.
-
-The examples directory contains several fun and interesting examples.
+* [notes/DEMO](https://github.com/timburks/nu/blob/master/notes/DEMO) contains a simple tutorial exercise that can acquaint you with Nu.
+* [notes/USAGE](https://github.com/timburks/nu/blob/master/notes/USAGE) describes a few of the ways that you can use Nu.
+* [notes/ERRORS](https://github.com/timburks/nu/blob/master/notes/ERRORS) contains some pitfalls that I've encountered when programming with Nu.
+* [notes/TODO](https://github.com/timburks/nu/blob/master/notes/TODO) contains some open issues that I'd like to address in Nu.
+* The [examples](https://github.com/timburks/nu/tree/master/examples) directory contains several fun and interesting examples.
 
 TextMate users can drag and drop share/Nu.tmbundle onto the TextMate 
 application icon to add Nu-specific features to TextMate.
 
-##Author
+## Author
 
-Tim Burks (tim@radtastical.com)
-Radtastical Inc.
-Palo Alto, California, USA
+Tim Burks (tim@radtastical.com)<br/>
+Radtastical Inc.<br/>
+Palo Alto, California, USA<br/>
 http://www.radtastical.com
