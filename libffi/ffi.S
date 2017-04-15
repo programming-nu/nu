@@ -96,6 +96,8 @@
 #define UNWIND @
 #endif	
 
+.syntax unified
+
 /*	
 #if defined(__thumb__) && !defined(__THUMB_INTERWORK__)
 .macro	ARM_FUNC_START name
