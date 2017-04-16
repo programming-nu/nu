@@ -5,6 +5,7 @@
 //  Created by Tim Burks on 4/24/16.
 //
 //
+#define _GNU_SOURCE 1
 
 #import "NuBridgedConstant.h"
 #import "NuBridge.h"

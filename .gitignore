@@ -4,6 +4,8 @@ nush
 mininush
 Nu.framework
 libNu.a
+libNu.so
 examples/*/*.app
 xcuserdata
 *.xcscmblueprint
+*.d
