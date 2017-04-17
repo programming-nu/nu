@@ -45,7 +45,7 @@ and FreeBSD) are in [notes/OBSOLETE](notes/OBSOLETE) and will probably not
 work without modifications. Macintosh and Ubuntu builds are verified with
 [Travis](.travis.yml).
 
-If you're installed Nu previously using a package manager (e.g. Fink, MacPorts), 
+If you've installed Nu previously using a package manager (e.g. Fink, MacPorts), 
 start by using the package manager to uninstall the old version.
 
 #### Building Nu
