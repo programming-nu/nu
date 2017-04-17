@@ -34,9 +34,16 @@ Inc.
 
 ## Installation
 
-### Macintosh
+### Macintosh / Ubuntu 
 
-These are the instructions for installing Nu on a Macintosh. The installation instructions for some other UNIX-based operating systems (Debian, OpenSolaris, and FreeBSD) are outdated and will probably not work.
+These are the instructions for installing Nu on a Macintosh or Linux system. 
+Linux builds require several additional dependencies. The included 
+[ubuntu.sh](ubuntu.sh) script can be used to install these dependencies on 
+a system running Ubuntu 14.04 (and possibly other versions). Installation 
+instructions for some other UNIX-based operating systems (Debian, OpenSolaris, 
+and FreeBSD) are in [notes/OBSOLETE](notes/OBSOLETE) and will probably not 
+work without modifications. Macintosh and Ubuntu builds are verified with
+[Travis](.travis.yml).
 
 If you're installed Nu previously using a package manager (e.g. Fink, MacPorts), 
 start by using the package manager to uninstall the old version.
