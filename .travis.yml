@@ -1,4 +1,14 @@
-language: objective-c
+matrix:
+  include:
+    - os: linux
+      language: c
+      dist: trusty
+      sudo: required
+    - os: osx
+      language: objective-c
+      osx_image: xcode8.3
+before_install:
+ - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./ubuntu.sh; fi
 before_script:
  - make
  - ./mininush tools/nuke install
