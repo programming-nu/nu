@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/timburks/nu.svg?branch=master)](https://travis-ci.org/timburks/nu)
+[![Build Status](https://travis-ci.org/nulang/nu.svg?branch=master)](https://travis-ci.org/nulang/nu)
 
 # Introduction
 
