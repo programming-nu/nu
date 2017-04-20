@@ -7,9 +7,25 @@ matrix:
     - os: osx
       language: objective-c
       osx_image: xcode8.3
-before_install:
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./ubuntu.sh; fi
-before_script:
- - make
- - ./mininush tools/nuke install
-script: nuke test
+    - os: osx
+      language: objective-c
+      osx_image: xcode8.3
+      env:
+        - SIMULATOR=true
+
+before_install: |
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+    ./ubuntu.sh
+  fi
+before_script: |
+   if [[ ! $SIMULATOR ]]; then
+     make
+     ./mininush tools/nuke install
+   fi
+script: |
+  if [[ ! $SIMULATOR ]]; then
+    nuke test
+  else
+    xcodebuild -project Xcode/Nu.xcodeproj -list
+    xcodebuild test -project Xcode/Nu.xcodeproj -destination "platform=iOS Simulator,name=iPhone 7,OS=10.3" -scheme NuApp
+  fi

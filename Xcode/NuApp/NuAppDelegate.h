@@ -11,5 +11,10 @@
 @interface NuAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) UIView *view;
+@property (strong, nonatomic) UILabel *label;
+
+-(void)prepareTests;
+-(int)runTests;
 
 @end
