@@ -333,7 +333,7 @@ echo Installing Nu shared files and examples
 
 sudo mkdir -p "${INSTALL_PREFIX}/share/nu"
 sudo rm -rf "${INSTALL_PREFIX}/share/nu"*
-sudo cp -rp "${here}/share/nu" "${INSTALL_PREFIX}/share/nu"
+sudo cp -Rp "${here}/share/nu" "${INSTALL_PREFIX}/share/nu"
 
 sudo ditto "${here}/examples" "${INSTALL_PREFIX}/share/nu/examples"
 
