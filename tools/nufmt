@@ -1,7 +1,7 @@
 #!/usr/bin/env nush
 #
-# @file nustyle 
-# The Nu code beautification tool.
+# @file nufmt 
+# The Nu code formatter.
 #
 # @copyright Copyright (c) 2007 Tim Burks, Radtastical Inc.
 #

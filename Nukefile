@@ -245,7 +245,7 @@ END)
 (set @installprefix "#{@destdir}#{@prefix}")
 
 (task "install" => "nush" is
-      ('("nuke" "nustyle" "nutemplate" "nutest" "nudoc" "nubake" "nutmbundle") each:
+      ('("nuke" "nufmt" "nutemplate" "nutest" "nudoc" "nubake" "nutmbundle") each:
         (do (program)
             (SH "sudo cp tools/#{program} #{@installprefix}/bin")))
       (SH "sudo cp nush #{@installprefix}/bin")

@@ -9,7 +9,7 @@ BUNDLE_NAME="Nu.tmbundle"
 VERSION=`osascript -e 'tell application "TextMate" to version' | cut -d. -f1`
 
 function getbundle () {
-  git clone git://github.com/jsallis/nu.tmbundle.git $BUNDLE_NAME
+  git clone git://github.com/nulang/nu.tmbundle.git $BUNDLE_NAME
 }
 
 if [ $VERSION -eq 2 ]; then
