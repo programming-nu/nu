@@ -714,7 +714,7 @@ END)
                       (@framework_extra_install))
                   (SH "sudo mkdir -p #{FRAMEWORK_ROOT}")
                   (SH "sudo rm -rf #{FRAMEWORK_ROOT}/#{@framework}.framework")
-                  (SH "sudo cp -rp #{@framework}.framework #{FRAMEWORK_ROOT}/#{@framework}.framework"))
+                  (SH "sudo cp -Rp #{@framework}.framework #{FRAMEWORK_ROOT}/#{@framework}.framework"))
             
             (task "test" => "framework" is
                   (SH "nutest test/test_*.nu"))

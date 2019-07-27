@@ -98,7 +98,7 @@ cd nu
 
 rm -rf /usr/local/share/libNu
 mkdir -p /usr/local/share/libNu
-cp -rp nu /usr/local/share/libNu
+cp -Rp nu /usr/local/share/libNu
 
 gmake
 ./mininush tools/nuke

@@ -70,7 +70,7 @@ git clone git://github.com/timburks/nu.git
 cd nu
 
 mkdir -p /usr/local/share/libNu
-cp -rp nu/ /usr/local/share/libNu
+cp -Rp nu/ /usr/local/share/libNu
 
 make
 ./mininush tools/nuke

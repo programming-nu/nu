@@ -260,13 +260,13 @@ END)
                 ;; copy the headers
                 (SH "sudo rm -rf #{@installprefix}/include/Nu")
                 (SH "sudo mkdir -p #{@installprefix}/include/Nu")
-                (SH "sudo cp -rp objc/*.h #{@installprefix}/include/Nu")
+                (SH "sudo cp -Rp objc/*.h #{@installprefix}/include/Nu")
                 (SH "sudo rm -rf #{@installprefix}/share/libNu")
                 (SH "sudo mkdir -p #{@installprefix}/share/libNu")
-                (SH "sudo cp -rp nu/* #{@installprefix}/share/libNu"))
+                (SH "sudo cp -Rp nu/* #{@installprefix}/share/libNu"))
       (SH "sudo mkdir -p #{@installprefix}/share")
       (SH "sudo rm -rf #{@installprefix}/share/nu")
-      (SH "sudo cp -rp share/nu #{@installprefix}/share/nu")
+      (SH "sudo cp -Rp share/nu #{@installprefix}/share/nu")
       (ifDarwin
                (SH "sudo ditto examples #{@installprefix}/share/nu/examples")))
 
