@@ -27,5 +27,5 @@ script: |
     nuke test
   else
     xcodebuild -project Xcode/Nu.xcodeproj -list
-    xcodebuild test -project Xcode/Nu.xcodeproj -destination "platform=iOS Simulator,name=iPhone 7,OS=10.3" -scheme NuApp
+    xcodebuild test -project Xcode/Nu.xcodeproj -destination "platform=iOS Simulator,name=iPhone 7,OS=10.3.1" -scheme NuApp
   fi

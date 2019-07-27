@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/nulang/nu.svg?branch=master)](https://travis-ci.org/nulang/nu)
+[![Build Status](https://travis-ci.org/programming-nu/nu.svg?branch=master)](https://travis-ci.org/programming-nu/nu)
 
 # Introduction
 
