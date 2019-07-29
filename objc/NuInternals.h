@@ -8,14 +8,14 @@
 #ifndef NuInternals_h
 #define NuInternals_h
 
-#define NU_VERSION "2.2.2"
+#define NU_VERSION "2.3.0"
 #define NU_VERSION_MAJOR 2
-#define NU_VERSION_MINOR 2
-#define NU_VERSION_TWEAK 2
-#define NU_RELEASE_DATE "2017-04-17"
-#define NU_RELEASE_YEAR  2017
-#define NU_RELEASE_MONTH 04
-#define NU_RELEASE_DAY   17
+#define NU_VERSION_MINOR 3
+#define NU_VERSION_TWEAK 0
+#define NU_RELEASE_DATE "2019-07-28"
+#define NU_RELEASE_YEAR  2019
+#define NU_RELEASE_MONTH 07
+#define NU_RELEASE_DAY   28
 
 #import "Nu.h"
 
