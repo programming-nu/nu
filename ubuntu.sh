@@ -39,6 +39,12 @@ sudo apt-get install libxt-dev -y
 sudo apt-get install libgl1-mesa-dev -y
 sudo apt-get remove libdispatch-dev -y
 sudo apt-get install gdb -y
+sudo apt-get install cmake -y
+sudo apt-get install llvm -y
+sudo apt-get install libc++-dev -y
+sudo apt-get install libxslt1-dev -y
+sudo apt-get install libgnutls28-dev -y
+sudo apt-get install libdispatch-dev -y
 
 mkdir -p /tmp/SETUP
 cd /tmp/SETUP
@@ -48,34 +54,34 @@ cd /tmp/SETUP
 # libobjc2 and gnustep-base. To maintain stability, we
 # work with a fork on github.
 #
-git clone https://github.com/nulang/gnustep-libobjc2.git
-git clone https://github.com/nulang/gnustep-make.git
-git clone https://github.com/nulang/gnustep-base.git
+git clone https://github.com/programming-nu/gnustep-libobjc2.git
+git clone https://github.com/programming-nu/tools-make.git
+git clone https://github.com/programming-nu/libs-base.git
 
 echo Installing libobjc2
 export CC=clang
+export CXX=clang++
 cd gnustep-libobjc2
-make clean
-make
+mkdir Build
+cd Build
+cmake ..
 sudo make install
 cd /tmp/SETUP
 
 echo Installing gnustep-make
-cd gnustep-make
-./configure
+cd tools-make
+./configure --with-library-combo=ng-gnu-gnu CC=clang CXX=clang++
 make clean
 make
 sudo make install
 cd /tmp/SETUP
 
 echo Installing gnustep-base
-cd gnustep-base
-./configure
+cd libs-base
+./configure CC=clang CXX=clang++
 make clean
 make
 sudo make install
 cd /tmp/SETUP
-
-sudo apt-get install libdispatch-dev -y
 
 echo Pre-install script finished successfully. You may now build Nu.
