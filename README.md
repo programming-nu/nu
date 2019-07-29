@@ -39,7 +39,7 @@ Inc.
 These are the instructions for installing Nu on a Macintosh or Linux system. 
 Linux builds require several additional dependencies. The included 
 [ubuntu.sh](ubuntu.sh) script can be used to install these dependencies on 
-a system running Ubuntu 14.04 (and possibly other versions). Installation 
+a system running Ubuntu 18.04 (and possibly other versions). Installation 
 instructions for some other UNIX-based operating systems (Debian, OpenSolaris, 
 and FreeBSD) are in [notes/OBSOLETE](notes/OBSOLETE) and will probably not 
 work without modifications. Macintosh and Ubuntu builds are verified with
@@ -102,9 +102,6 @@ Apple iPhone.
 * [notes/ERRORS](https://github.com/timburks/nu/blob/master/notes/ERRORS) contains some pitfalls that I've encountered when programming with Nu.
 * [notes/TODO](https://github.com/timburks/nu/blob/master/notes/TODO) contains some open issues that I'd like to address in Nu.
 * The [examples](https://github.com/timburks/nu/tree/master/examples) directory contains several fun and interesting examples.
-
-TextMate users can drag and drop share/Nu.tmbundle onto the TextMate 
-application icon to add Nu-specific features to TextMate.
 
 ## Author
 

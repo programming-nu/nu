@@ -8,7 +8,7 @@
 # with Apple's modern Objective-C runtime. This new runtime
 # allows Nu to be ported to Linux+GNUstep without difficulty.
 #
-# Tested with ubuntu-14.04
+# Tested with ubuntu-18.04
 # Other Ubuntu and Debian installations may also work well.
 #
 # Thanks to Tobias Lensing for pointing the way.
@@ -37,7 +37,6 @@ sudo apt-get install libfreetype6-dev -y
 sudo apt-get install libcairo2-dev -y
 sudo apt-get install libxt-dev -y
 sudo apt-get install libgl1-mesa-dev -y
-sudo apt-get remove libdispatch-dev -y
 sudo apt-get install gdb -y
 sudo apt-get install cmake -y
 sudo apt-get install llvm -y
@@ -49,11 +48,6 @@ sudo apt-get install libdispatch-dev -y
 mkdir -p /tmp/SETUP
 cd /tmp/SETUP
 
-#
-# A few modifications were needed to fix problems with 
-# libobjc2 and gnustep-base. To maintain stability, we
-# work with a fork on github.
-#
 git clone https://github.com/programming-nu/gnustep-libobjc2.git
 git clone https://github.com/programming-nu/tools-make.git
 git clone https://github.com/programming-nu/libs-base.git
@@ -68,7 +62,7 @@ cmake ..
 sudo make install
 cd /tmp/SETUP
 
-echo Installing gnustep-make
+echo Installing gnustep make
 cd tools-make
 ./configure --with-library-combo=ng-gnu-gnu CC=clang CXX=clang++
 make clean
@@ -76,7 +70,7 @@ make
 sudo make install
 cd /tmp/SETUP
 
-echo Installing gnustep-base
+echo Installing gnustep base
 cd libs-base
 ./configure CC=clang CXX=clang++
 make clean
