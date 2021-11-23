@@ -76,7 +76,7 @@ static NSString *getTypeStringFromNode(id node)
                              forKey:[[node attributeForName:@"name"] stringValue]];
             }
             else if ([[node name] isEqual:@"enum"]) {
-                [enums setValue:@([[[node attributeForName:@"value"] stringValue] intValue])
+                [enums setValue:@([[[node attributeForName:@"value64"] stringValue] intValue])
                          forKey:[[node attributeForName:@"name"] stringValue]];
             }
             else if ([[node name] isEqual:@"function"]) {
