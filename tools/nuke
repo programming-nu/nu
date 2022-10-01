@@ -299,7 +299,7 @@
             (unless @includes (set @includes ""))
             (ifDarwin
                      (then (unless (and @arch (@arch length))
-                                   (set @arch (list (NSString stringWithShellCommand:"arch")))))
+                                   (set @arch (list (NSString stringWithShellCommand:"uname -m")))))
                      (else (set @arch (list "x86-linux"))))
             (@arch each: (do (architecture) (system "mkdir -p build/#{architecture}")))
             
@@ -517,7 +517,7 @@
 (macro tool-tasks ()
      `(
        (unless (and @arch (@arch length))
-               (set @arch (list (NSString stringWithShellCommand:"arch"))))
+               (set @arch (list (NSString stringWithShellCommand:"uname -m"))))
        
        (unless @ldflags (set @ldflags ""))
        (unless @tool_extras (set @tool_extras ""))
@@ -556,7 +556,7 @@
 (macro framework-tasks ()
      `(progn
             (unless (and @arch (@arch length))
-                    (set @arch (list (NSString stringWithShellCommand:"arch"))))
+                    (set @arch (list (NSString stringWithShellCommand:"uname -m"))))
             
             (ifDarwin
                      (then (set FRAMEWORK_ROOT "/Library/Frameworks"))
@@ -727,7 +727,7 @@ END)
 (macro bundle-tasks ()
      `(progn
             (unless (and @arch (@arch length))
-                    (set @arch (list (NSString stringWithShellCommand:"arch"))))
+                    (set @arch (list (NSString stringWithShellCommand:"uname -m"))))
             
             ;; bundle directory tasks
             (set @bundle_dir                    "#{@bundle}.bundle")
@@ -803,7 +803,7 @@ END)
 (macro library-tasks ()
      `(progn
             (unless (and @arch (@arch length))
-                    (set @arch (list (NSString stringWithShellCommand:"arch"))))
+                    (set @arch (list (NSString stringWithShellCommand:"uname -m"))))
             
             (unless @library_extras
                     (set @library_extras ""))
@@ -836,7 +836,7 @@ END)
 (macro dylib-tasks ()
      `(progn
             (unless (and @arch (@arch length))
-                    (set @arch (list (NSString stringWithShellCommand:"arch"))))
+                    (set @arch (list (NSString stringWithShellCommand:"uname -m"))))
             (set libext (ifDarwin (then "dylib") (else "so")))
             
             ;; library architecture-specific executable
