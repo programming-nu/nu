@@ -1,0 +1,52 @@
+name: Publish docker images
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # each 12:00 UTC
+  push:
+    branches: [ main ]
+    tags: [ 'v*.*.*' ] # semver release
+  pull_request:
+    branches: [ main ]
+
+env:
+  IMAGE: nu
+
+jobs:
+
+  build-container:
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
+    - name: Log into registry ghcr.io
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Extract Docker metadata
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=tag
+          type=schedule,pattern=nightly
+          type=raw,latest
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: "."
+        file: Dockerfile
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        platforms: linux/amd64
