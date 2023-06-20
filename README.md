@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/programming-nu/nu.svg?branch=master)](https://travis-ci.org/programming-nu/nu)
+[![Publish docker images](https://github.com/programming-nu/nu/actions/workflows/docker.yaml/badge.svg)](https://github.com/programming-nu/nu/actions/workflows/docker.yaml)
 
 # Introduction
 
@@ -105,7 +105,5 @@ Apple iPhone.
 
 ## Author
 
-Tim Burks (tim@radtastical.com)<br/>
-Radtastical Inc.<br/>
-Palo Alto, California, USA<br/>
-http://www.radtastical.com
+Tim Burks (timburks@gmail.com)<br/>
+Los Altos, California, USA
