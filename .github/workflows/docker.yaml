@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 env:
-  IMAGE: nu
+  IMAGE: nu-18.04
 
 jobs:
 
