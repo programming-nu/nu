@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 env:
-  IMAGE: nu-18.04
+  IMAGE: nu-ubuntu18.04
 
 jobs:
 
