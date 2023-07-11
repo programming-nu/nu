@@ -16,6 +16,7 @@
 #import "NuCell.h"
 #if !TARGET_OS_IPHONE
 #include <readline/readline.h>
+#include <readline/history.h>
 #endif
 
 #define PARSE_NORMAL     0
